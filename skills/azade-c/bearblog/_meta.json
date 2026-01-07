@@ -1,0 +1,11 @@
+{
+  "owner": "azade-c",
+  "slug": "bearblog",
+  "displayName": "Bear Blog",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767628816496,
+    "commit": null
+  },
+  "history": []
+}
