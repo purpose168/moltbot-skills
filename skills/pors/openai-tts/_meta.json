@@ -1,0 +1,11 @@
+{
+  "owner": "pors",
+  "slug": "openai-tts",
+  "displayName": "OpenAI TTS",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767688174911,
+    "commit": null
+  },
+  "history": []
+}
