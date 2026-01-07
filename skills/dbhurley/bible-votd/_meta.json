@@ -1,0 +1,11 @@
+{
+  "owner": "dbhurley",
+  "slug": "bible-votd",
+  "displayName": "Bible Verse of the Day",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1767649027081,
+    "commit": null
+  },
+  "history": []
+}
