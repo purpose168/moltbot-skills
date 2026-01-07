@@ -1,0 +1,11 @@
+{
+  "owner": "pors",
+  "slug": "clawdbot-release-check",
+  "displayName": "Clawdbot Release Check",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767698866586,
+    "commit": null
+  },
+  "history": []
+}
