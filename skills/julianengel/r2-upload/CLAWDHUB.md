@@ -1,6 +1,17 @@
 # r2-upload - Cloudflare R2 / S3 Upload Skill
 
-Upload files to Cloudflare R2 or any S3-compatible storage and generate presigned download links.
+> Upload files to Cloudflare R2, AWS S3, or any S3-compatible storage and generate secure presigned download links with configurable expiration.
+
+## Summary
+
+A TypeScript-based MCP skill for ClawdBot that makes file sharing easy. Upload files to cloud storage and get secure, temporary download links in seconds. Built with the AWS SDK v3, it supports Cloudflare R2 (recommended), AWS S3, MinIO, and any S3-compatible storage.
+
+**Key Features:**
+- 🚀 Fast uploads with automatic content-type detection
+- ⏱️ Secure presigned URLs (default: 5-minute expiration)
+- 🔧 Interactive TypeScript onboarding
+- 🗂️ Multi-bucket support
+- 🎨 Clean, typed API with 4 tools
 
 ## Features
 

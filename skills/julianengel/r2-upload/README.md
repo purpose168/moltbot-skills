@@ -1,6 +1,15 @@
 # R2/S3 Upload Skill
 
-Upload files to Cloudflare R2 or any S3-compatible storage and generate presigned download links.
+> Upload files to Cloudflare R2, AWS S3, or any S3-compatible storage and generate secure presigned download links with configurable expiration.
+
+## Summary
+
+A TypeScript-based MCP skill that lets you upload files to cloud storage and get shareable links. Perfect for quickly sharing files with temporary access. Features multi-bucket support, interactive onboarding, and 5-minute default expiration for security.
+
+**Quick Example:**
+- "Upload this report to R2" → Get a 5-minute download link
+- "List files in my bucket" → See what's uploaded
+- "Delete old-file.pdf" → Clean up storage
 
 ## Quick Setup
 

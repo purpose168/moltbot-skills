@@ -1,4 +1,10 @@
-# R2/S3 Upload Skill
+---
+name: Send Me My Files - R2 upload with short lived signed urls
+description: Upload files to Cloudflare R2, AWS S3, or any S3-compatible storage and generate secure presigned download links with configurable expiration.
+summary: TypeScript-based MCP skill for uploading files to cloud storage (R2, S3, MinIO) with secure, temporary download links. Features multi-bucket support, interactive onboarding, and 5-minute default expiration.
+---
+
+# Send Me My Files - R2 Upload with Short Lived Signed URLs
 
 Upload files to Cloudflare R2 or any S3-compatible storage and generate presigned download links.
 
