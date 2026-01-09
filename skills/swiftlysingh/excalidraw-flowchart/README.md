@@ -9,7 +9,7 @@ A Claude Code skill for creating Excalidraw flowcharts and diagrams from natural
 Install the CLI tool first:
 
 ```bash
-npm install -g excalidraw-cli
+npm i @swiftlysingh/excalidraw-cli
 ```
 
 ### Install the Skill

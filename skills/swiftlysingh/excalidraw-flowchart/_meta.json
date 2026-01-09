@@ -3,9 +3,15 @@
   "slug": "excalidraw-flowchart",
   "displayName": "Excalidraw Flowchart",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1767979148837,
-    "commit": "https://github.com/clawdbot/skills/commit/186855123e6b558b5fedd0eaf5226c90321e9276"
+    "version": "1.0.2",
+    "publishedAt": 1767980281110,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1767979148837,
+      "commit": "https://github.com/clawdbot/skills/commit/186855123e6b558b5fedd0eaf5226c90321e9276"
+    }
+  ]
 }

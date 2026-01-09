@@ -20,16 +20,16 @@ Create professional flowcharts and diagrams as Excalidraw files that can be open
 
 ## Prerequisites
 
-The `excalidraw-cli` tool must be installed:
+The `@swiftlysingh/excalidraw-cli` tool must be installed:
 
 ```bash
-npm install -g excalidraw-cli
+npm install -g @swiftlysingh/excalidraw-cli
 ```
 
 Or use via npx (no installation needed):
 
 ```bash
-npx excalidraw-cli create --inline "DSL" -o output.excalidraw
+npx @swiftlysingh/excalidraw-cli create --inline "DSL" -o output.excalidraw
 ```
 
 ## How to Create a Flowchart
@@ -61,13 +61,13 @@ Use this DSL syntax to describe the flowchart:
 Run the CLI to create the .excalidraw file:
 
 ```bash
-excalidraw-cli create --inline "YOUR_DSL_HERE" -o flowchart.excalidraw
+npx @swiftlysingh/excalidraw-cli create --inline "YOUR_DSL_HERE" -o flowchart.excalidraw
 ```
 
 Or for multi-line DSL, use a heredoc:
 
 ```bash
-excalidraw-cli create --inline "$(cat <<'EOF'
+npx @swiftlysingh/excalidraw-cli create --inline "$(cat <<'EOF'
 (Start) -> [Step 1] -> {Decision?}
 {Decision?} -> "yes" -> [Step 2] -> (End)
 {Decision?} -> "no" -> [Step 3] -> [Step 1]
@@ -135,7 +135,7 @@ Tell the user:
 Example with options:
 
 ```bash
-excalidraw-cli create --inline "[A] -> [B] -> [C]" --direction LR --spacing 80 -o horizontal-flow.excalidraw
+npx @swiftlysingh/excalidraw-cli create --inline "[A] -> [B] -> [C]" --direction LR --spacing 80 -o horizontal-flow.excalidraw
 ```
 
 ## Common Patterns
