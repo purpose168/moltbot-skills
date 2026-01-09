@@ -1,152 +1,332 @@
 ---
 name: apple-music
-version: 1.0.0
+version: 0.6.0
 description: Apple Music integration via AppleScript (macOS) or MusicKit API
 ---
 
-# Working with Apple Music
+# Apple Music Integration
 
-## Overview
-
-Guide for integrating with Apple Music using AppleScript (macOS) or MusicKit API (cross-platform). Covers workflows, common pitfalls, and the critical library-first requirement.
-
-**Recommended:** The [mcp-applemusic](https://github.com/epheterson/mcp-applemusic) MCP server wraps all this complexity into simple tools. See the comprehensive [MCP Tools Reference](#mcp-applemusic-tools-reference) below.
+Guide for integrating with Apple Music. Covers AppleScript (macOS), MusicKit API (cross-platform), and the critical library-first requirement.
 
 ## When to Use
 
 Invoke when users ask to:
-- Manage Apple Music playlists
-- Control playback
+- Manage playlists (create, add/remove tracks, list)
+- Control playback (play, pause, skip, volume)
 - Search catalog or library
 - Add songs to library
-- Access listening history
+- Access listening history or recommendations
 
 ## Critical Rule: Library-First Workflow
 
-**Most important concept:** You CANNOT add catalog songs directly to playlists.
+**You CANNOT add catalog songs directly to playlists.**
 
-Songs must be added to user's library first, regardless of method:
-- ❌ Catalog ID → Playlist (doesn't work)
-- ✅ Catalog ID → Library → Playlist (correct)
+Songs must be in the user's library first:
+- ❌ Catalog ID → Playlist (fails)
+- ✅ Catalog ID → Library → Playlist (works)
 
 **Why:** Playlists use library IDs (`i.abc123`), not catalog IDs (`1234567890`).
+
+This applies to both AppleScript and API approaches.
 
 ## Platform Comparison
 
 | Feature | AppleScript (macOS) | MusicKit API |
-|---------|-------------------|--------------|
-| Platform | macOS only | Any (needs auth) |
-| Playlist management | ✅ Full access | ✅ API-created only |
-| Playback control | ✅ Full | ❌ No |
-| Catalog search | ❌ No | ✅ Yes |
-| Library access | ✅ Instant | ✅ With tokens |
-| Setup complexity | None | High (dev account, tokens) |
+|---------|:-------------------:|:------------:|
+| Setup required | None | Dev account + tokens |
+| Playlist management | Full | API-created only |
+| Playback control | Full | None |
+| Catalog search | No | Yes |
+| Library access | Instant | With tokens |
+| Cross-platform | No | Yes |
 
-## AppleScript Patterns
+---
 
-### List Playlists
+# AppleScript (macOS)
 
-```applescript
-tell application "Music"
-    set playlistNames to name of every user playlist
-    return playlistNames
-end tell
-```
+Zero setup. Works immediately with the Music app.
 
-Execute via Bash:
+**Run via Bash:**
 ```bash
-osascript -e 'tell application "Music" to return name of every user playlist'
+osascript -e 'tell application "Music" to playpause'
+osascript -e 'tell application "Music" to return name of current track'
 ```
 
-### Get Playlist Tracks
+**Multi-line scripts:**
+```bash
+osascript <<'EOF'
+tell application "Music"
+    set t to current track
+    return {name of t, artist of t}
+end tell
+EOF
+```
+
+## Available Operations
+
+| Category | Operations |
+|----------|------------|
+| **Playback** | play, pause, stop, resume, next track, previous track, fast forward, rewind |
+| **Player State** | player position, player state, sound volume, mute, shuffle enabled/mode, song repeat |
+| **Current Track** | name, artist, album, duration, time, rating, loved, disliked, genre, year, track number |
+| **Library** | search, list tracks, get track properties, set ratings |
+| **Playlists** | list, create, delete, rename, add tracks, remove tracks, get tracks |
+| **AirPlay** | list devices, select device, current device |
+
+## Track Properties (Read)
 
 ```applescript
 tell application "Music"
-    set targetPlaylist to first user playlist whose name contains "Road Trip"
-    set trackList to name of every track of targetPlaylist
-    return trackList
+    set t to current track
+    -- Basic info
+    name of t           -- "Hey Jude"
+    artist of t         -- "The Beatles"
+    album of t          -- "1 (Remastered)"
+    album artist of t   -- "The Beatles"
+    composer of t       -- "Lennon-McCartney"
+    genre of t          -- "Rock"
+    year of t           -- 1968
+
+    -- Timing
+    duration of t       -- 431.0 (seconds)
+    time of t           -- "7:11" (formatted)
+    start of t          -- start time in seconds
+    finish of t         -- end time in seconds
+
+    -- Track info
+    track number of t   -- 21
+    track count of t    -- 27
+    disc number of t    -- 1
+    disc count of t     -- 1
+
+    -- Ratings
+    rating of t         -- 0-100 (20 per star)
+    loved of t          -- true/false
+    disliked of t       -- true/false
+
+    -- Playback
+    played count of t   -- 42
+    played date of t    -- date last played
+    skipped count of t  -- 3
+    skipped date of t   -- date last skipped
+
+    -- IDs
+    persistent ID of t  -- "ABC123DEF456"
+    database ID of t    -- 12345
 end tell
 ```
 
-### Play a Song
+## Track Properties (Writable)
 
 ```applescript
 tell application "Music"
+    set t to current track
+    set rating of t to 80          -- 4 stars
+    set loved of t to true
+    set disliked of t to false
+    set name of t to "New Name"    -- rename track
+    set genre of t to "Alternative"
+    set year of t to 1995
+end tell
+```
+
+## Player State Properties
+
+```applescript
+tell application "Music"
+    player state          -- stopped, playing, paused, fast forwarding, rewinding
+    player position       -- current position in seconds (read/write)
+    sound volume          -- 0-100 (read/write)
+    mute                  -- true/false (read/write)
+    shuffle enabled       -- true/false (read/write)
+    shuffle mode          -- songs, albums, groupings
+    song repeat           -- off, one, all (read/write)
+    current track         -- track object
+    current playlist      -- playlist object
+    current stream URL    -- URL if streaming
+end tell
+```
+
+## Playback Commands
+
+```applescript
+tell application "Music"
+    -- Play controls
+    play                          -- play current selection
+    pause
+    stop
+    resume
+    playpause                     -- toggle play/pause
+    next track
+    previous track
+    fast forward
+    rewind
+
+    -- Play specific content
+    play (first track of library playlist 1 whose name contains "Hey Jude")
+    play user playlist "Road Trip"
+
+    -- Settings
+    set player position to 60     -- seek to 1:00
+    set sound volume to 50        -- 0-100
+    set mute to true
+    set shuffle enabled to true
+    set song repeat to all        -- off, one, all
+end tell
+```
+
+## Library Queries
+
+```applescript
+tell application "Music"
+    -- All library tracks
+    every track of library playlist 1
+
+    -- Search by name
+    tracks of library playlist 1 whose name contains "Beatles"
+
+    -- Search by artist
+    tracks of library playlist 1 whose artist contains "Beatles"
+
+    -- Search by album
+    tracks of library playlist 1 whose album contains "Abbey Road"
+
+    -- Combined search
+    tracks of library playlist 1 whose name contains "Hey" and artist contains "Beatles"
+
+    -- By genre
+    tracks of library playlist 1 whose genre is "Rock"
+
+    -- By year
+    tracks of library playlist 1 whose year is 1969
+
+    -- By rating
+    tracks of library playlist 1 whose rating > 60  -- 3+ stars
+
+    -- Loved tracks
+    tracks of library playlist 1 whose loved is true
+
+    -- Recently played (sort by played date)
+    tracks of library playlist 1 whose played date > (current date) - 7 * days
+end tell
+```
+
+## Playlist Operations
+
+```applescript
+tell application "Music"
+    -- List all playlists
+    name of every user playlist
+
+    -- Get playlist
+    user playlist "Road Trip"
+    first user playlist whose name contains "Road"
+
+    -- Create playlist
+    make new user playlist with properties {name:"New Playlist", description:"My playlist"}
+
+    -- Delete playlist
+    delete user playlist "Old Playlist"
+
+    -- Rename playlist
+    set name of user playlist "Old Name" to "New Name"
+
+    -- Get playlist tracks
+    every track of user playlist "Road Trip"
+    name of every track of user playlist "Road Trip"
+
+    -- Add track to playlist (must be library track)
+    set targetPlaylist to user playlist "Road Trip"
     set targetTrack to first track of library playlist 1 whose name contains "Hey Jude"
-    play targetTrack
-end tell
-```
-
-**Note:** Track must be in library. AppleScript cannot access catalog.
-
-### Add Track to Playlist
-
-```applescript
-tell application "Music"
-    set targetPlaylist to first user playlist whose name contains "Workout Mix"
-    set targetTrack to first track of library playlist 1 whose name contains "Wonderwall"
     duplicate targetTrack to targetPlaylist
+
+    -- Remove track from playlist
+    delete (first track of user playlist "Road Trip" whose name contains "Hey Jude")
+
+    -- Playlist properties
+    duration of user playlist "Road Trip"   -- total duration
+    time of user playlist "Road Trip"       -- formatted duration
+    count of tracks of user playlist "Road Trip"
 end tell
 ```
 
-**Critical:** Uses `duplicate` to copy library track to playlist. Song must exist in library first.
-
-### Create Playlist
+## AirPlay
 
 ```applescript
 tell application "Music"
-    make new user playlist with properties {name:"Road Trip"}
+    -- List AirPlay devices
+    name of every AirPlay device
+
+    -- Get current device
+    current AirPlay devices
+
+    -- Set output device
+    set current AirPlay devices to {AirPlay device "Living Room"}
+
+    -- Multiple devices
+    set current AirPlay devices to {AirPlay device "Living Room", AirPlay device "Kitchen"}
+
+    -- Device properties
+    set d to AirPlay device "Living Room"
+    name of d
+    kind of d           -- computer, AirPort Express, Apple TV, AirPlay device, Bluetooth device
+    active of d         -- true if playing
+    available of d      -- true if reachable
+    selected of d       -- true if in current devices
+    sound volume of d   -- 0-100
 end tell
 ```
 
-### String Escaping
+## String Escaping
 
-Always escape quotes in user input:
+Always escape user input:
 ```python
 def escape_applescript(s):
     return s.replace('\\', '\\\\').replace('"', '\\"')
 
 safe_name = escape_applescript(user_input)
-script = f'tell application "Music" to return name of playlist "{safe_name}"'
+script = f'tell application "Music" to play user playlist "{safe_name}"'
 ```
 
-## MusicKit API Patterns
+## Limitations
 
-### Authentication Setup
+- **No catalog access** - only library content
+- **macOS only** - no Windows/Linux
+
+---
+
+# MusicKit API
+
+Cross-platform but requires Apple Developer account ($99/year) and token setup.
+
+## Authentication
 
 **Requirements:**
-1. Apple Developer account ($99/year)
-2. MusicKit key (.p8 file)
-3. Generate developer token (JWT, 180 day max)
-4. Get user music token (browser OAuth flow)
+1. Apple Developer account
+2. MusicKit key (.p8 file) from [developer portal](https://developer.apple.com/account/resources/authkeys/list)
+3. Developer token (JWT, 180 day max)
+4. User music token (browser OAuth)
 
-**Developer Token Generation:**
+**Generate developer token:**
 ```python
-import jwt
-import datetime
+import jwt, datetime
 
-# Read private key
-with open('AuthKey_XXXXXXXXXX.p8', 'r') as f:
+with open('AuthKey_XXXXXXXXXX.p8') as f:
     private_key = f.read()
 
-# Generate token
-headers = {
-    'alg': 'ES256',
-    'kid': 'YOUR_KEY_ID'
-}
-payload = {
-    'iss': 'YOUR_TEAM_ID',
-    'iat': int(datetime.datetime.now().timestamp()),
-    'exp': int((datetime.datetime.now() + datetime.timedelta(days=180)).timestamp())
-}
-token = jwt.encode(payload, private_key, algorithm='ES256', headers=headers)
+token = jwt.encode(
+    {
+        'iss': 'TEAM_ID',
+        'iat': int(datetime.datetime.now().timestamp()),
+        'exp': int((datetime.datetime.now() + datetime.timedelta(days=180)).timestamp())
+    },
+    private_key,
+    algorithm='ES256',
+    headers={'alg': 'ES256', 'kid': 'KEY_ID'}
+)
 ```
 
-**User Token:** Requires browser OAuth flow to `https://authorize.music.apple.com/woa`
-
-### Common Endpoints
-
-**Base URL:** `https://api.music.apple.com/v1`
+**Get user token:** Browser OAuth to `https://authorize.music.apple.com/woa`
 
 **Headers for all requests:**
 ```
@@ -154,343 +334,251 @@ Authorization: Bearer {developer_token}
 Music-User-Token: {user_music_token}
 ```
 
-### Search Catalog
+**Base URL:** `https://api.music.apple.com/v1`
+
+## Available Endpoints
+
+### Catalog (Public - dev token only)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/catalog/{storefront}/search` | GET | Search songs, albums, artists, playlists |
+| `/catalog/{storefront}/songs/{id}` | GET | Song details |
+| `/catalog/{storefront}/albums/{id}` | GET | Album details |
+| `/catalog/{storefront}/albums/{id}/tracks` | GET | Album tracks |
+| `/catalog/{storefront}/artists/{id}` | GET | Artist details |
+| `/catalog/{storefront}/artists/{id}/albums` | GET | Artist's albums |
+| `/catalog/{storefront}/artists/{id}/songs` | GET | Artist's top songs |
+| `/catalog/{storefront}/artists/{id}/related-artists` | GET | Similar artists |
+| `/catalog/{storefront}/playlists/{id}` | GET | Playlist details |
+| `/catalog/{storefront}/charts` | GET | Top charts |
+| `/catalog/{storefront}/genres` | GET | All genres |
+| `/catalog/{storefront}/search/suggestions` | GET | Search autocomplete |
+| `/catalog/{storefront}/stations/{id}` | GET | Radio station |
+
+### Library (Requires user token)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/me/library/songs` | GET | All library songs |
+| `/me/library/albums` | GET | All library albums |
+| `/me/library/artists` | GET | All library artists |
+| `/me/library/playlists` | GET | All library playlists |
+| `/me/library/playlists/{id}` | GET | Playlist details |
+| `/me/library/playlists/{id}/tracks` | GET | Playlist tracks |
+| `/me/library/search` | GET | Search library |
+| `/me/library` | POST | Add to library |
+| `/catalog/{sf}/songs/{id}/library` | GET | Get library ID from catalog ID |
+
+### Playlist Management
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/me/library/playlists` | POST | Create playlist |
+| `/me/library/playlists/{id}/tracks` | POST | Add tracks to playlist |
+
+### Personalization
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/me/recommendations` | GET | Personalized recommendations |
+| `/me/history/heavy-rotation` | GET | Frequently played |
+| `/me/recent/played` | GET | Recently played |
+| `/me/recent/added` | GET | Recently added |
+
+### Ratings
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/me/ratings/songs/{id}` | GET | Get song rating |
+| `/me/ratings/songs/{id}` | PUT | Set song rating |
+| `/me/ratings/songs/{id}` | DELETE | Remove rating |
+| `/me/ratings/albums/{id}` | GET/PUT/DELETE | Album ratings |
+| `/me/ratings/playlists/{id}` | GET/PUT/DELETE | Playlist ratings |
+
+### Storefronts
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/storefronts` | GET | All storefronts |
+| `/storefronts/{id}` | GET | Storefront details |
+| `/me/storefront` | GET | User's storefront |
+
+## Common Query Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `term` | Search query | `term=beatles` |
+| `types` | Resource types | `types=songs,albums` |
+| `limit` | Results per page (max 25) | `limit=10` |
+| `offset` | Pagination offset | `offset=25` |
+| `include` | Related resources | `include=artists,albums` |
+| `extend` | Additional attributes | `extend=editorialNotes` |
+| `l` | Language code | `l=en-US` |
+
+## Search Example
 
 ```bash
-GET /v1/catalog/{storefront}/search?term=wonderwall&types=songs&limit=10
-```
+GET /v1/catalog/us/search?term=wonderwall&types=songs&limit=10
 
-Response includes catalog IDs (numeric like `1234567890`).
-
-### Add to Library
-
-```bash
-POST /v1/me/library?ids[songs]=1234567890
-```
-
-**Returns:** Success/failure, but NOT the library ID.
-
-### Get Library ID from Catalog ID
-
-```bash
-GET /v1/catalog/{storefront}/songs/1234567890/library
-```
-
-Returns library-scoped ID (like `i.abc123def`).
-
-### Add to Playlist
-
-```bash
-POST /v1/me/library/playlists/{playlist_id}/tracks
-Content-Type: application/json
-
+Response:
 {
-  "data": [
-    {
-      "id": "i.abc123def",
-      "type": "library-songs"
+  "results": {
+    "songs": {
+      "data": [{
+        "id": "1234567890",
+        "type": "songs",
+        "attributes": {
+          "name": "Wonderwall",
+          "artistName": "Oasis",
+          "albumName": "(What's the Story) Morning Glory?",
+          "durationInMillis": 258773,
+          "releaseDate": "1995-10-02",
+          "genreNames": ["Alternative", "Music"]
+        }
+      }]
     }
-  ]
+  }
 }
 ```
 
-**Critical:** Must use library IDs, NOT catalog IDs.
+## Library-First Workflow (Complete)
 
-## Library-First Workflow Implementation
-
-### Complete Flow: Add Catalog Song to Playlist
+Adding a catalog song to a playlist requires 4 API calls:
 
 ```python
+import requests
+
+headers = {
+    "Authorization": f"Bearer {dev_token}",
+    "Music-User-Token": user_token
+}
+
 # 1. Search catalog
-response = requests.get(
-    f"https://api.music.apple.com/v1/catalog/us/search",
-    headers={"Authorization": f"Bearer {dev_token}"},
+r = requests.get(
+    "https://api.music.apple.com/v1/catalog/us/search",
+    headers=headers,
     params={"term": "Wonderwall Oasis", "types": "songs", "limit": 1}
 )
-catalog_id = response.json()['results']['songs']['data'][0]['id']
+catalog_id = r.json()['results']['songs']['data'][0]['id']
 
 # 2. Add to library
 requests.post(
     "https://api.music.apple.com/v1/me/library",
-    headers={
-        "Authorization": f"Bearer {dev_token}",
-        "Music-User-Token": user_token
-    },
+    headers=headers,
     params={"ids[songs]": catalog_id}
 )
 
-# 3. Get library ID
-response = requests.get(
+# 3. Get library ID (catalog ID → library ID)
+r = requests.get(
     f"https://api.music.apple.com/v1/catalog/us/songs/{catalog_id}/library",
-    headers={
-        "Authorization": f"Bearer {dev_token}",
-        "Music-User-Token": user_token
-    }
+    headers=headers
 )
-library_id = response.json()['data'][0]['id']
+library_id = r.json()['data'][0]['id']
 
-# 4. Add to playlist
+# 4. Add to playlist (library IDs only!)
 requests.post(
     f"https://api.music.apple.com/v1/me/library/playlists/{playlist_id}/tracks",
-    headers={
-        "Authorization": f"Bearer {dev_token}",
-        "Music-User-Token": user_token,
-        "Content-Type": "application/json"
-    },
-    json={
-        "data": [{"id": library_id, "type": "library-songs"}]
+    headers={**headers, "Content-Type": "application/json"},
+    json={"data": [{"id": library_id, "type": "library-songs"}]}
+)
+```
+
+## Create Playlist
+
+```bash
+POST /v1/me/library/playlists
+Content-Type: application/json
+
+{
+  "attributes": {
+    "name": "Road Trip",
+    "description": "Summer vibes"
+  },
+  "relationships": {
+    "tracks": {
+      "data": []
     }
-)
+  }
+}
 ```
 
-**This is why the workflow is complex!** 4 API calls just to add one song.
+## Ratings
 
-## Common Workflows
-
-### List Playlists (macOS)
 ```bash
-osascript -e 'tell application "Music" to return name of every user playlist'
+# Love a song (value: 1 = love, -1 = dislike)
+PUT /v1/me/ratings/songs/{id}
+Content-Type: application/json
+
+{"attributes": {"value": 1}}
 ```
 
-### List Playlists (API)
-```bash
-GET /v1/me/library/playlists
-```
+## Limitations
 
-### Search Library (macOS)
-```applescript
-tell application "Music"
-    set matches to (every track of library playlist 1 whose name contains "Beatles")
-    return name of matches
-end tell
-```
+- **No playback control** - API cannot play/pause/skip
+- **Playlist editing** - can only modify API-created playlists
+- **Token management** - dev tokens expire every 180 days
+- **Rate limits** - Apple enforces request limits
 
-### Search Library (API)
-```bash
-GET /v1/me/library/search?term=beatles&types=library-songs
-```
+---
 
-### Play Song (macOS only)
-```applescript
-tell application "Music"
-    set targetTrack to first track of library playlist 1 whose name contains "Hey Jude"
-    play targetTrack
-end tell
-```
+# Common Mistakes
 
-**No API equivalent:** MusicKit API doesn't support playback control.
-
-## Common Mistakes
-
-### ❌ Using Catalog IDs in Playlist Endpoints
-
+**❌ Using catalog IDs in playlists:**
 ```python
-# WRONG - will fail
-requests.post(
-    f"/v1/me/library/playlists/{id}/tracks",
-    json={"data": [{"id": "1234567890", "type": "catalog-songs"}]}
-)
+# WRONG
+json={"data": [{"id": "1234567890", "type": "songs"}]}
 ```
+**Fix:** Add to library first, get library ID, then add.
 
-**Fix:** Add to library first, get library ID, then add to playlist.
-
-### ❌ Trying to Play Catalog Songs with AppleScript
-
+**❌ Playing catalog songs via AppleScript:**
 ```applescript
-# WRONG - catalog not accessible
-tell application "Music"
-    play track id "1234567890"  -- Catalog ID won't work
-end tell
+# WRONG
+play track id "1234567890"
 ```
+**Fix:** Song must be in library.
 
-**Fix:** Add to library first, then play.
-
-### ❌ Forgetting to Escape AppleScript Strings
-
+**❌ Unescaped AppleScript strings:**
 ```python
-# WRONG - will break on quotes
+# WRONG
 name = "Rock 'n Roll"
-script = f'tell application "Music" to make playlist "{name}"'
+script = f'tell application "Music" to play playlist "{name}"'
 ```
+**Fix:** Escape quotes.
 
-**Fix:** Escape quotes: `Rock \'n Roll` or use proper escaping function.
+**❌ Expired tokens:**
+Dev tokens last 180 days max.
+**Fix:** Check expiration, handle 401 errors.
 
-### ❌ Not Handling Token Expiration
+---
 
-Developer tokens expire after 180 days max. User tokens can expire sooner.
+# The Easy Way: mcp-applemusic
 
-**Fix:** Check expiration, regenerate proactively, handle 401 errors.
+The [mcp-applemusic](https://github.com/epheterson/mcp-applemusic) MCP server handles all this complexity automatically: AppleScript escaping, token management, library-first workflow, ID conversions.
 
-## mcp-applemusic Tools Reference
-
-The [mcp-applemusic](https://github.com/epheterson/mcp-applemusic) MCP server handles all complexity: AppleScript escaping, API auth, library-first workflow, ID conversions, token management.
-
-**Installation:**
+**Install:**
 ```bash
 git clone https://github.com/epheterson/mcp-applemusic.git
-cd mcp-applemusic
-python3 -m venv venv && source venv/bin/activate
+cd mcp-applemusic && python3 -m venv venv && source venv/bin/activate
 pip install -e .
 ```
 
-Add to Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+**Configure Claude Desktop:**
 ```json
 {
   "mcpServers": {
     "Apple Music": {
-      "command": "/full/path/to/mcp-applemusic/venv/bin/python",
+      "command": "/path/to/mcp-applemusic/venv/bin/python",
       "args": ["-m", "applemusic_mcp"]
     }
   }
 }
 ```
 
-### playlist(action=...)
+On macOS, most features work immediately. For catalog features or Windows/Linux, see the repo README.
 
-| Action | Description | Platform |
-|--------|-------------|----------|
-| `list` | List all playlists | All |
-| `tracks` | Get playlist tracks with filter/pagination | All |
-| `search` | Search tracks within a playlist | All |
-| `create` | Create new playlist | All |
-| `add` | Smart add with auto_search (handles library-first) | All |
-| `copy` | Copy playlist to editable version | All |
-| `remove` | Remove tracks from playlist | macOS |
-| `delete` | Delete playlist | macOS |
-| `rename` | Rename playlist | macOS |
-
-```python
-playlist(action="list")
-playlist(action="create", name="Road Trip", description="Summer vibes")
-playlist(action="add", playlist="Road Trip", track="Hey Jude", artist="Beatles", auto_search=True)
-playlist(action="tracks", playlist="Road Trip", limit=50)
-playlist(action="remove", playlist="Road Trip", track="Hey Jude")
-```
-
-### library(action=...)
-
-| Action | Description | Platform |
-|--------|-------------|----------|
-| `search` | Search your library | All |
-| `add` | Add tracks/albums from catalog | All |
-| `browse` | List songs/albums/artists/videos | All |
-| `recently_played` | Recent listening history | All |
-| `recently_added` | Recently added content | All |
-| `rate` | Love/dislike/get/set ratings | All (stars: macOS) |
-| `remove` | Remove tracks from library | macOS |
-
-```python
-library(action="search", query="Beatles", types="songs", limit=25)
-library(action="add", album="Abbey Road", artist="Beatles")
-library(action="browse", item_type="songs", limit=100)
-library(action="recently_played", limit=30)
-library(action="rate", rate_action="love", track="Hey Jude")
-library(action="rate", rate_action="set", track="Hey Jude", stars=5)  # macOS
-```
-
-### catalog(action=...)
-
-| Action | Description | Platform |
-|--------|-------------|----------|
-| `search` | Search Apple Music catalog | All |
-| `album_tracks` | Get album tracks by name or ID | All |
-| `album_details` | Full album metadata + track listing | All |
-| `song_details` | Full song metadata | All |
-| `artist_details` | Artist info and discography | All |
-| `song_station` | Get radio station for song | All |
-| `genres` | List all available genres | All |
-
-```python
-catalog(action="search", query="90s alternative", types="songs", limit=50)
-catalog(action="album_details", album="Abbey Road", artist="Beatles")
-catalog(action="artist_details", artist="The Beatles")
-catalog(action="genres")
-```
-
-### discover(action=...)
-
-| Action | Description | Platform |
-|--------|-------------|----------|
-| `recommendations` | Personalized recommendations | All |
-| `heavy_rotation` | Your frequently played | All |
-| `charts` | Apple Music charts | All |
-| `top_songs` | Artist's popular songs | All |
-| `similar_artists` | Find similar artists | All |
-| `search_suggestions` | Autocomplete suggestions | All |
-| `personal_station` | Your personal radio station | All |
-
-```python
-discover(action="recommendations")
-discover(action="heavy_rotation")
-discover(action="charts", chart_type="songs")
-discover(action="top_songs", artist="The Beatles")
-discover(action="similar_artists", artist="Radiohead")
-```
-
-### Playback (macOS only)
-
-| Tool | Description |
-|------|-------------|
-| `play` | Play track, playlist, or album (with shuffle option) |
-| `playback_control` | Play, pause, stop, next, previous, seek |
-| `get_now_playing` | Current track info and player state |
-| `playback_settings` | Get/set volume, shuffle, repeat |
-
-```python
-play(track="Hey Jude", artist="Beatles")
-play(playlist="Road Trip", shuffle=True)
-playback_control(command="pause")
-playback_control(command="next")
-playback_control(command="seek", position=120)  # seconds
-get_now_playing()
-playback_settings(volume=50)
-playback_settings(shuffle=True, repeat="all")
-```
-
-### Utilities
-
-| Tool | Description | Platform |
-|------|-------------|----------|
-| `config(action=...)` | Preferences, storefronts, cache, audit log | All |
-| `check_auth_status()` | Verify tokens and API connection | All |
-| `airplay(device_name=...)` | List or switch AirPlay devices | macOS |
-| `reveal_in_music(track, artist)` | Show track in Music app | macOS |
-
-```python
-check_auth_status()
-config(action="info")
-config(action="set-pref", pref="auto_search", value=True)
-config(action="list-storefronts")
-airplay()  # list devices
-airplay(device_name="Living Room")
-```
-
-### Output Options
-
-Most tools support flexible output:
-
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `format` | `text`, `json`, `csv`, `none` | Response format |
-| `export` | `none`, `csv`, `json` | Write file to disk |
-| `full` | `True`/`False` | Include all metadata |
-
-```python
-library(action="search", query="beatles", format="json")
-library(action="browse", item_type="songs", export="csv")
-playlist(action="tracks", playlist="Favorites", export="json", full=True)
-```
-
-Exported files accessible via MCP resources: `exports://list`, `exports://{filename}`
-
-## Quick Comparison
-
-| Task | AppleScript | MusicKit API | mcp-applemusic |
-|------|------------|--------------|----------------|
-| List playlists | `osascript` | `GET /me/library/playlists` | `playlist(action="list")` |
-| Play song | `play track` | ❌ Not supported | `play(track="...")` |
-| Add to library | ❌ Manual | `POST /me/library` | `library(action="add")` |
-| Search catalog | ❌ Not supported | `GET /catalog/.../search` | `catalog(action="search")` |
-| Add to playlist | `duplicate` | 4-step workflow | `playlist(action="add", auto_search=True)` |
-| Get recommendations | ❌ Not supported | `GET /me/recommendations` | `discover(action="recommendations")` |
-| Rate tracks | ❌ Limited | `PUT /me/ratings` | `library(action="rate")` |
+| Manual | mcp-applemusic |
+|--------|----------------|
+| 4 API calls to add song | `playlist(action="add", auto_search=True)` |
+| AppleScript escaping | Automatic |
+| Token management | Automatic with warnings |
