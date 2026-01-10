@@ -1,0 +1,11 @@
+{
+  "owner": "rursache",
+  "slug": "solo-cli",
+  "displayName": "SOLO.ro cli",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1768044156980,
+    "commit": null
+  },
+  "history": []
+}
