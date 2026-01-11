@@ -155,8 +155,28 @@ if [[ "$status_only" == "true" ]]; then
   exit 0
 fi
 
-# Compare versions
+# Compare versions (semver-style: major.minor.patch)
+version_gt() {
+  # Returns 0 (true) if $1 > $2
+  local IFS='.'
+  read -ra v1 <<< "$1"
+  read -ra v2 <<< "$2"
+  for i in 0 1 2; do
+    local n1=${v1[i]:-0}
+    local n2=${v2[i]:-0}
+    if (( n1 > n2 )); then return 0; fi
+    if (( n1 < n2 )); then return 1; fi
+  done
+  return 1  # Equal
+}
+
+# Exit silently if current >= latest
 if [[ "$current_version" == "$latest_version" ]]; then
+  exit 0
+fi
+
+# Exit silently if running ahead of latest (dev build)
+if version_gt "$current_version" "$latest_version"; then
   exit 0
 fi
 
