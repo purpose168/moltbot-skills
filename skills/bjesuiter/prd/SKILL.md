@@ -1,11 +1,12 @@
 ---
 name: prd
-description: Create and manage Product Requirements Documents (PRDs) for AI coding agents. Use when: (1) Creating structured task lists for autonomous coding, (2) Specifying features with user stories and acceptance criteria, (3) Setting up Ralph pattern agentic loops, (4) Planning feature implementation for AI agents.
+description: "Create and manage Product Requirements Documents (PRDs). Use when: (1) Creating structured task lists with user stories, (2) Specifying features with acceptance criteria, (3) Planning feature implementation for AI agents or human developers."
+metadata: {"version":"2.0.4","clawdbot":{"emoji":"📋","os":["darwin","linux"]}}
 ---
 
-# PRD Skill for AI Agents
+# PRD Skill
 
-Create Product Requirements Documents (PRDs) that power autonomous AI coding agents. Based on the **Ralph Wiggum pattern** by Geoffrey Huntley.
+Create and manage Product Requirements Documents (PRDs) for feature planning.
 
 ## What is a PRD?
 
@@ -14,17 +15,12 @@ A **PRD (Product Requirements Document)** is a structured specification that:
 1. Breaks a feature into **small, independent user stories**
 2. Defines **verifiable acceptance criteria** for each story
 3. Orders tasks by **dependency** (schema → backend → UI)
-4. Enables **autonomous execution** without human intervention
-
-```bash
-while :; do cat PROMPT.md | claude-code ; done
-```
 
 ## Quick Start
 
-1. Create markdown PRD in `tasks/prd-[feature-name].md`
-2. Convert to `prd.json` format
-3. Run agentic loop with your preferred AI coding agent
+1. Create/edit `agents/prd.json` in the project
+2. Define user stories with acceptance criteria
+3. Track progress by updating `passes: false` → `true`
 
 ## prd.json Format
 
@@ -37,7 +33,7 @@ while :; do cat PROMPT.md | claude-code ; done
     {
       "id": "US-001",
       "title": "Add priority field to database",
-      "description": "As a developer, I need to store task priority so it persists.",
+      "description": "As a developer, I need to store task priority.",
       "acceptanceCriteria": [
         "Add priority column: 'high' | 'medium' | 'low'",
         "Generate and run migration",
@@ -59,7 +55,7 @@ while :; do cat PROMPT.md | claude-code ; done
 | `branchName` | Git branch for this feature (prefix with `ralph/`) |
 | `description` | One-line feature summary |
 | `userStories` | List of stories to complete |
-| `userStories[].id` | Unique identifier (US-001, US-002, etc.) |
+| `userStories[].id` | Unique identifier (US-001, US-002) |
 | `userStories[].title` | Short descriptive title |
 | `userStories[].description` | "As a [user], I want [feature] so that [benefit]" |
 | `userStories[].acceptanceCriteria` | Verifiable checklist items |
@@ -67,9 +63,9 @@ while :; do cat PROMPT.md | claude-code ; done
 | `userStories[].passes` | Completion status (`false` → `true` when done) |
 | `userStories[].notes` | Runtime notes added by agent |
 
-## Story Sizing: The #1 Rule
+## Story Sizing
 
-**Each story must complete in ONE context window.** The agent spawns fresh with no memory.
+**Each story should be completable in one context window.**
 
 ### ✅ Right-sized:
 - Add a database column and migration
@@ -80,9 +76,6 @@ while :; do cat PROMPT.md | claude-code ; done
 ### ❌ Too large (split these):
 - "Build the entire dashboard" → Split into: schema, queries, UI, filters
 - "Add authentication" → Split into: schema, middleware, login UI, session
-- "Refactor the API" → Split into one story per endpoint
-
-**Rule:** If you can't describe it in 2-3 sentences, it's too big.
 
 ## Story Ordering
 
@@ -106,113 +99,28 @@ Must be verifiable, not vague.
 ### ❌ Bad:
 - "Works correctly"
 - "User can do X easily"
-- "Good UX"
 
 **Always include:** `"Typecheck passes"`
 
-## Unattended Agentic Loop
-
-### Claude Code
-```bash
-while :; do
-  claude --print --dangerously-skip-permissions \
-    "Read prd.json, find first story where passes=false, implement it, run checks, update passes=true if successful"
-done
-```
-
-### OpenCode
-```bash
-opencode run "Load prd.json, implement next incomplete story, verify, mark complete"
-```
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `prd.json` | Task list with completion status |
-| `prompt.md` | Instructions for each iteration |
-| `progress.txt` | Append-only learnings log |
-
-## Human-in-the-Loop
-
-### Manual Story-by-Story
-```bash
-claude "Implement US-001 from prd.json"
-# Review, approve, continue to US-002
-```
-
-### Git Worktree Strategy
-```bash
-# Create worktree for feature
-git worktree add ../myapp-feature ralph/feature-name
-
-# Run agent in worktree
-cd ../myapp-feature
-claude "Implement prd.json stories"
-
-# Review in main repo
-cd ../myapp && git diff main..ralph/feature-name
-```
-
-## Agent Prompt Template
-
-```markdown
-# Agent Instructions
-
-1. Read `prd.json`
-2. Read `progress.txt` (check Codebase Patterns first)
-3. Checkout/create branch from PRD `branchName`
-4. Pick highest priority story where `passes: false`
-5. Implement that single story
-6. Run quality checks (typecheck, lint, test)
-7. If checks pass, commit: `feat: [Story ID] - [Story Title]`
-8. Update prd.json: set `passes: true`
-9. Append progress to `progress.txt`
-
-**Stop Condition:** When ALL stories have `passes: true`, output:
-<promise>COMPLETE</promise>
-```
-
 ## Progress Tracking
 
-Append to `progress.txt` after each iteration (never replace):
+Update `passes: true` when a story is complete. Use `notes` field for runtime observations:
 
-```markdown
-## 2026-01-10 18:00 - US-001
-- Implemented: Added priority column to tasks table
-- Files changed: migrations/001_add_priority.sql, src/types.ts
-- **Learnings:** Use `IF NOT EXISTS` for migrations
----
-```
-
-### Codebase Patterns (at top of progress.txt)
-
-```markdown
-## Codebase Patterns
-- Use `sql<number>` template for aggregations
-- Always use `IF NOT EXISTS` for migrations
-- Export types from actions.ts for UI components
+```json
+"notes": "Used IF NOT EXISTS for migrations"
 ```
 
 ## Quick Reference
 
 | Action | Command |
 |--------|---------|
-| Create PRD | Save markdown to `tasks/prd-[name].md` |
-| Convert to JSON | `claude "Convert tasks/prd-x.md to prd.json"` |
-| Run autonomous | `while :; do cat prompt.md \| claude; done` |
-| Check status | `cat prd.json \| jq '.userStories[] \| {id, passes}'` |
-
-## Checklist Before Running
-
-- [ ] Each story completable in one context window
-- [ ] Stories ordered by dependency (schema → backend → UI)
-- [ ] Every story has "Typecheck passes" criterion
-- [ ] Acceptance criteria are verifiable (not vague)
-- [ ] No story depends on a later story
+| Create PRD | Save to `agents/prd.json` |
+| Check status | `cat prd.json | jq '.userStories[] | {id, passes}'` |
+| View incomplete | `jq '.userStories[] | select(.passes == false)' prd.json` |
 
 ## Resources
 
 See `references/` for detailed documentation:
+- `agent-usage.md` - How AI agents execute PRDs (Claude Code, OpenCode, etc.)
 - `workflows.md` - Sequential workflow patterns
-- `output-patterns.md` - Template and example patterns
+- `output-patterns.md` - Templates and examples
