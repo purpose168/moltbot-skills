@@ -3,11 +3,23 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(__dirname, '..', 'data');
+// Always resolve skill folder from import.meta.url, not __dirname (which varies by CWD)
+const SKILL_FOLDER = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+// CLAWD_WORKSPACE env var takes precedence, otherwise walk up from skills folder
+// The workspace is typically the parent of the 'skills' directory
+const SKILLS_FOLDER = path.dirname(SKILL_FOLDER);
+const WORKSPACE_DIR = process.env.CLAWD_WORKSPACE || path.dirname(SKILLS_FOLDER);
+const DATA_DIR = path.join(WORKSPACE_DIR, 'notebook');
 const OBJECTS_DIR = path.join(DATA_DIR, 'objects');
 const TYPES_FILE = path.join(DATA_DIR, 'types.yaml');
 const INDEX_FILE = path.join(DATA_DIR, 'index.json');
+
+// Debug logging
+// console.error('DEBUG: SKILL_FOLDER =', SKILL_FOLDER);
+// console.error('DEBUG: SKILLS_FOLDER =', SKILLS_FOLDER);
+// console.error('DEBUG: WORKSPACE_DIR =', WORKSPACE_DIR);
+// console.error('DEBUG: DATA_DIR =', DATA_DIR);
+// console.error('DEBUG: TYPES_FILE =', TYPES_FILE);
 
 // Ensure directories exist
 function init() {

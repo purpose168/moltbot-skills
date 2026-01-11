@@ -6,6 +6,7 @@ description: Local-first personal knowledge base for tracking ideas, projects, t
 # Notebook Skill Object Based Personal Knowledge Base
 
 Purpose: Track any object type you define such as ideas, projects, tasks, habits, books, and people.
+
 Location: {WORKSPACE}/skills/notebook/
 
 ## Agent Onboarding Protocol
