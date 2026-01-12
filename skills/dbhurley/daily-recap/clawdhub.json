@@ -1,0 +1,39 @@
+{
+  "name": "daily-recap",
+  "version": "1.0.0",
+  "description": "Generate a daily recap image with your agent holding a posterboard of accomplishments",
+  "author": "dbhurley",
+  "license": "MIT",
+  "keywords": [
+    "daily",
+    "recap",
+    "summary",
+    "image",
+    "posterboard",
+    "accomplishments",
+    "cron",
+    "telegram"
+  ],
+  "dependencies": {
+    "skills": ["nano-banana-pro"]
+  },
+  "config": {
+    "env": {
+      "RECAP_LOCATION": {
+        "description": "Location for weather lookup (e.g., 'Boston, MA')",
+        "required": true
+      },
+      "RECAP_TELEGRAM_ID": {
+        "description": "Telegram chat ID for delivery",
+        "required": true
+      },
+      "RECAP_TIME": {
+        "description": "Time for daily cron in 24h format",
+        "required": false,
+        "default": "17:00"
+      }
+    }
+  },
+  "repository": "https://github.com/clawdbot/clawdbot",
+  "homepage": "https://clawdhub.com/skills/daily-recap"
+}
