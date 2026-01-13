@@ -1,0 +1,11 @@
+{
+  "owner": "morozred",
+  "slug": "chromecast-control",
+  "displayName": "Control Chromecast",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1768339500753,
+    "commit": null
+  },
+  "history": []
+}
