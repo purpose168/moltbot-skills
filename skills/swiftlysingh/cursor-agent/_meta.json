@@ -1,0 +1,11 @@
+{
+  "owner": "swiftlysingh",
+  "slug": "cursor-agent",
+  "displayName": "Cursor CLI Agent",
+  "latest": {
+    "version": "2.1.0",
+    "publishedAt": 1768339191701,
+    "commit": null
+  },
+  "history": []
+}
