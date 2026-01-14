@@ -1,0 +1,11 @@
+{
+  "owner": "baanish",
+  "slug": "pihole",
+  "displayName": "Pi-hole Control",
+  "latest": {
+    "version": "2.0.1",
+    "publishedAt": 1768365932139,
+    "commit": null
+  },
+  "history": []
+}
