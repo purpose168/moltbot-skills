@@ -123,7 +123,6 @@ For detailed API documentation, see [references/api.md](references/api.md).
 - Check API key is valid in n8n UI
 
 **Connection error:**
-- Verify n8n instance is running: `curl https://n8n.solosolo.nl`
 - Check N8N_BASE_URL if using custom URL
 
 **Command errors:**
