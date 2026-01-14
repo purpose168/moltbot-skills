@@ -1,7 +1,24 @@
 ---
 name: bridle
-description: "Unified configuration manager for AI coding assistants. Manage profiles, install skills/agents/commands, and switch configurations across Claude Code, OpenCode, Goose, and Amp."
-metadata: {"version":"1.0.0","homepage":"https://github.com/neiii/bridle","clawdbot":{"emoji":"🐴","os":["darwin","linux"],"requires":{"bins":["bridle"]},"install":[{"id":"brew","kind":"brew","formula":"neiii/bridle/bridle","bins":["bridle"],"label":"Install bridle via Homebrew"},{"id":"cargo","kind":"shell","command":"cargo install bridle","bins":["bridle"],"label":"Install bridle via Cargo"}]}}
+description: Unified configuration manager for AI coding assistants. Manage profiles, install skills/agents/commands, and switch configurations across Claude Code, OpenCode, Goose, and Amp.
+author: Benjamin Jesuiter <bjesuiter@gmail.com>
+metadata:
+  clawdbot:
+    emoji: "🐴"
+    os: ["darwin", "linux"]
+    requires:
+      bins: ["bridle"]
+    install:
+      - id: brew
+        kind: brew
+        formula: neiii/bridle/bridle
+        bins: ["bridle"]
+        label: Install bridle via Homebrew
+      - id: cargo
+        kind: shell
+        command: cargo install bridle
+        bins: ["bridle"]
+        label: Install bridle via Cargo
 ---
 
 # Bridle Skill
