@@ -70,6 +70,55 @@ class HistoricalPatterns:
 
 
 @dataclass
+class MarketContext:
+    vix_level: float
+    vix_status: str  # "calm", "elevated", "fear"
+    spy_trend_10d: float
+    qqq_trend_10d: float
+    market_regime: str  # "bull", "bear", "choppy"
+    score: float
+    explanation: str
+
+
+@dataclass
+class SectorComparison:
+    sector_name: str
+    industry_name: str
+    stock_return_1m: float
+    sector_return_1m: float
+    relative_strength: float
+    sector_trend: str  # "strong uptrend", "downtrend", etc.
+    score: float
+    explanation: str
+
+
+@dataclass
+class EarningsTiming:
+    days_until_earnings: int | None
+    days_since_earnings: int | None
+    next_earnings_date: str | None
+    last_earnings_date: str | None
+    timing_flag: str  # "pre_earnings", "post_earnings", "safe"
+    price_change_5d: float | None
+    confidence_adjustment: float
+    caveats: list[str]
+
+
+@dataclass
+class MomentumAnalysis:
+    rsi_14d: float | None
+    rsi_status: str  # "overbought", "oversold", "neutral"
+    price_vs_52w_low: float | None
+    price_vs_52w_high: float | None
+    near_52w_high: bool
+    near_52w_low: bool
+    volume_ratio: float | None
+    relative_strength_vs_sector: float | None
+    score: float
+    explanation: str
+
+
+@dataclass
 class Signal:
     ticker: str
     company_name: str
@@ -410,6 +459,382 @@ def analyze_historical_patterns(data: StockData) -> HistoricalPatterns | None:
         return None
 
 
+def analyze_market_context(verbose: bool = False) -> MarketContext | None:
+    """Analyze overall market conditions using VIX, SPY, and QQQ."""
+    try:
+        if verbose:
+            print("Fetching market indicators (VIX, SPY, QQQ)...", file=sys.stderr)
+
+        # Fetch market indicators
+        vix = yf.Ticker("^VIX")
+        spy = yf.Ticker("SPY")
+        qqq = yf.Ticker("QQQ")
+
+        # Get current VIX level
+        vix_info = vix.info
+        vix_level = vix_info.get("regularMarketPrice") or vix_info.get("currentPrice")
+
+        if not vix_level:
+            return None
+
+        # Determine VIX status
+        if vix_level < 20:
+            vix_status = "calm"
+            vix_score = 0.2
+        elif vix_level < 30:
+            vix_status = "elevated"
+            vix_score = 0.0
+        else:
+            vix_status = "fear"
+            vix_score = -0.5
+
+        # Get SPY and QQQ 10-day trends
+        spy_hist = spy.history(period="1mo")
+        qqq_hist = qqq.history(period="1mo")
+
+        if spy_hist.empty or qqq_hist.empty:
+            return None
+
+        # Calculate 10-day price changes
+        spy_10d_ago = spy_hist["Close"].iloc[-min(10, len(spy_hist))]
+        spy_current = spy_hist["Close"].iloc[-1]
+        spy_trend_10d = ((spy_current - spy_10d_ago) / spy_10d_ago) * 100
+
+        qqq_10d_ago = qqq_hist["Close"].iloc[-min(10, len(qqq_hist))]
+        qqq_current = qqq_hist["Close"].iloc[-1]
+        qqq_trend_10d = ((qqq_current - qqq_10d_ago) / qqq_10d_ago) * 100
+
+        # Determine market regime
+        avg_trend = (spy_trend_10d + qqq_trend_10d) / 2
+
+        if avg_trend > 3:
+            market_regime = "bull"
+            regime_score = 0.3
+        elif avg_trend < -3:
+            market_regime = "bear"
+            regime_score = -0.4
+        else:
+            market_regime = "choppy"
+            regime_score = -0.1
+
+        # Calculate overall score
+        overall_score = (vix_score + regime_score) / 2
+
+        # Build explanation
+        explanation = f"VIX {vix_level:.1f} ({vix_status}), Market {market_regime} (SPY {spy_trend_10d:+.1f}%, QQQ {qqq_trend_10d:+.1f}% 10d)"
+
+        return MarketContext(
+            vix_level=vix_level,
+            vix_status=vix_status,
+            spy_trend_10d=spy_trend_10d,
+            qqq_trend_10d=qqq_trend_10d,
+            market_regime=market_regime,
+            score=overall_score,
+            explanation=explanation,
+        )
+
+    except Exception as e:
+        if verbose:
+            print(f"Error analyzing market context: {e}", file=sys.stderr)
+        return None
+
+
+def get_sector_etf_ticker(sector: str) -> str | None:
+    """Map sector name to corresponding sector ETF ticker."""
+    sector_map = {
+        "Financial Services": "XLF",
+        "Financials": "XLF",
+        "Technology": "XLK",
+        "Healthcare": "XLV",
+        "Consumer Cyclical": "XLY",
+        "Consumer Defensive": "XLP",
+        "Utilities": "XLU",
+        "Basic Materials": "XLB",
+        "Real Estate": "XLRE",
+        "Communication Services": "XLC",
+        "Industrials": "XLI",
+        "Energy": "XLE",
+    }
+
+    return sector_map.get(sector)
+
+
+def analyze_sector_performance(data: StockData, verbose: bool = False) -> SectorComparison | None:
+    """Compare stock performance to its sector."""
+    try:
+        sector = data.info.get("sector")
+        industry = data.info.get("industry")
+
+        if not sector:
+            return None
+
+        sector_etf_ticker = get_sector_etf_ticker(sector)
+
+        if not sector_etf_ticker:
+            if verbose:
+                print(f"No sector ETF mapping for {sector}", file=sys.stderr)
+            return None
+
+        if verbose:
+            print(f"Comparing to sector ETF: {sector_etf_ticker}", file=sys.stderr)
+
+        # Fetch sector ETF data
+        sector_etf = yf.Ticker(sector_etf_ticker)
+        sector_hist = sector_etf.history(period="3mo")
+
+        if sector_hist.empty or data.price_history is None or data.price_history.empty:
+            return None
+
+        # Calculate 1-month returns
+        stock_1m_ago = data.price_history["Close"].iloc[-min(22, len(data.price_history))]
+        stock_current = data.price_history["Close"].iloc[-1]
+        stock_return_1m = ((stock_current - stock_1m_ago) / stock_1m_ago) * 100
+
+        sector_1m_ago = sector_hist["Close"].iloc[-min(22, len(sector_hist))]
+        sector_current = sector_hist["Close"].iloc[-1]
+        sector_return_1m = ((sector_current - sector_1m_ago) / sector_1m_ago) * 100
+
+        # Calculate relative strength
+        relative_strength = stock_return_1m / sector_return_1m if sector_return_1m != 0 else 1.0
+
+        # Sector 10-day trend
+        sector_10d_ago = sector_hist["Close"].iloc[-min(10, len(sector_hist))]
+        sector_trend_10d = ((sector_current - sector_10d_ago) / sector_10d_ago) * 100
+
+        if sector_trend_10d > 5:
+            sector_trend = "strong uptrend"
+        elif sector_trend_10d > 2:
+            sector_trend = "uptrend"
+        elif sector_trend_10d < -5:
+            sector_trend = "downtrend"
+        elif sector_trend_10d < -2:
+            sector_trend = "weak"
+        else:
+            sector_trend = "neutral"
+
+        # Calculate score
+        score = 0.0
+
+        # Relative performance score
+        if relative_strength > 1.05:  # Outperforming by >5%
+            score += 0.3
+        elif relative_strength < 0.95:  # Underperforming by >5%
+            score -= 0.3
+
+        # Sector trend score
+        if sector_trend_10d > 5:
+            score += 0.2
+        elif sector_trend_10d < -5:
+            score -= 0.2
+
+        explanation = f"{sector} sector {sector_trend} ({sector_return_1m:+.1f}% 1m), stock {stock_return_1m:+.1f}% vs sector"
+
+        return SectorComparison(
+            sector_name=sector,
+            industry_name=industry or "Unknown",
+            stock_return_1m=stock_return_1m,
+            sector_return_1m=sector_return_1m,
+            relative_strength=relative_strength,
+            sector_trend=sector_trend,
+            score=score,
+            explanation=explanation,
+        )
+
+    except Exception as e:
+        if verbose:
+            print(f"Error analyzing sector performance: {e}", file=sys.stderr)
+        return None
+
+
+def analyze_earnings_timing(data: StockData) -> EarningsTiming | None:
+    """Check earnings timing and flag pre/post-earnings periods."""
+    try:
+        from datetime import datetime, timedelta
+
+        if data.earnings_history is None or data.earnings_history.empty:
+            return None
+
+        current_date = datetime.now()
+        earnings_dates = data.earnings_history.sort_index(ascending=False)
+
+        # Find next and last earnings dates
+        next_earnings_date = None
+        last_earnings_date = None
+
+        for earnings_date in earnings_dates.index:
+            earnings_dt = pd.Timestamp(earnings_date).to_pydatetime()
+
+            if earnings_dt > current_date and next_earnings_date is None:
+                next_earnings_date = earnings_dt
+            elif earnings_dt <= current_date and last_earnings_date is None:
+                last_earnings_date = earnings_dt
+                break
+
+        # Calculate days until/since earnings
+        days_until_earnings = None
+        days_since_earnings = None
+
+        if next_earnings_date:
+            days_until_earnings = (next_earnings_date - current_date).days
+
+        if last_earnings_date:
+            days_since_earnings = (current_date - last_earnings_date).days
+
+        # Determine timing flag
+        timing_flag = "safe"
+        confidence_adjustment = 0.0
+        caveats = []
+
+        # Pre-earnings check (< 14 days)
+        if days_until_earnings is not None and days_until_earnings <= 14:
+            timing_flag = "pre_earnings"
+            confidence_adjustment = -0.3
+            caveats.append(f"Earnings in {days_until_earnings} days - high volatility expected")
+
+        # Post-earnings check (< 5 days)
+        price_change_5d = None
+        if days_since_earnings is not None and days_since_earnings <= 5:
+            # Calculate 5-day price change
+            if data.price_history is not None and len(data.price_history) >= 5:
+                price_5d_ago = data.price_history["Close"].iloc[-5]
+                price_current = data.price_history["Close"].iloc[-1]
+                price_change_5d = ((price_current - price_5d_ago) / price_5d_ago) * 100
+
+                if price_change_5d > 15:
+                    timing_flag = "post_earnings"
+                    confidence_adjustment = -0.2
+                    caveats.append(f"Up {price_change_5d:.1f}% in 5 days - gains may be priced in")
+
+        return EarningsTiming(
+            days_until_earnings=days_until_earnings,
+            days_since_earnings=days_since_earnings,
+            next_earnings_date=next_earnings_date.strftime("%Y-%m-%d") if next_earnings_date else None,
+            last_earnings_date=last_earnings_date.strftime("%Y-%m-%d") if last_earnings_date else None,
+            timing_flag=timing_flag,
+            price_change_5d=price_change_5d,
+            confidence_adjustment=confidence_adjustment,
+            caveats=caveats,
+        )
+
+    except Exception:
+        return None
+
+
+def calculate_rsi(prices: pd.Series, period: int = 14) -> float | None:
+    """Calculate RSI (Relative Strength Index)."""
+    try:
+        if len(prices) < period + 1:
+            return None
+
+        # Calculate price changes
+        delta = prices.diff()
+
+        # Separate gains and losses
+        gains = delta.where(delta > 0, 0)
+        losses = -delta.where(delta < 0, 0)
+
+        # Calculate average gains and losses
+        avg_gain = gains.rolling(window=period).mean()
+        avg_loss = losses.rolling(window=period).mean()
+
+        # Calculate RS
+        rs = avg_gain / avg_loss
+
+        # Calculate RSI
+        rsi = 100 - (100 / (1 + rs))
+
+        return float(rsi.iloc[-1])
+
+    except Exception:
+        return None
+
+
+def analyze_momentum(data: StockData) -> MomentumAnalysis | None:
+    """Analyze momentum indicators (RSI, 52w range, volume, relative strength)."""
+    try:
+        if data.price_history is None or data.price_history.empty:
+            return None
+
+        # Calculate RSI
+        rsi_14d = calculate_rsi(data.price_history["Close"], period=14)
+
+        if rsi_14d:
+            if rsi_14d > 70:
+                rsi_status = "overbought"
+            elif rsi_14d < 30:
+                rsi_status = "oversold"
+            else:
+                rsi_status = "neutral"
+        else:
+            rsi_status = "unknown"
+
+        # Get 52-week high/low
+        high_52w = data.info.get("fiftyTwoWeekHigh")
+        low_52w = data.info.get("fiftyTwoWeekLow")
+        current_price = data.info.get("regularMarketPrice") or data.info.get("currentPrice")
+
+        price_vs_52w_low = None
+        price_vs_52w_high = None
+        near_52w_high = False
+        near_52w_low = False
+
+        if high_52w and low_52w and current_price:
+            price_range = high_52w - low_52w
+            if price_range > 0:
+                price_vs_52w_low = ((current_price - low_52w) / price_range) * 100
+                price_vs_52w_high = ((high_52w - current_price) / price_range) * 100
+
+                near_52w_high = price_vs_52w_low > 90
+                near_52w_low = price_vs_52w_low < 10
+
+        # Volume analysis
+        volume_ratio = None
+        if "Volume" in data.price_history.columns and len(data.price_history) >= 60:
+            recent_vol = data.price_history["Volume"].iloc[-5:].mean()
+            avg_vol = data.price_history["Volume"].iloc[-60:].mean()
+            volume_ratio = recent_vol / avg_vol if avg_vol > 0 else None
+
+        # Calculate score
+        score = 0.0
+        explanations = []
+
+        if rsi_14d:
+            if rsi_14d > 70:
+                score -= 0.5
+                explanations.append(f"RSI {rsi_14d:.0f} (overbought)")
+            elif rsi_14d < 30:
+                score += 0.5
+                explanations.append(f"RSI {rsi_14d:.0f} (oversold)")
+
+        if near_52w_high:
+            score -= 0.3
+            explanations.append("Near 52w high")
+        elif near_52w_low:
+            score += 0.3
+            explanations.append("Near 52w low")
+
+        if volume_ratio and volume_ratio > 1.5:
+            explanations.append(f"Volume {volume_ratio:.1f}x average")
+
+        explanation = "; ".join(explanations) if explanations else "Momentum indicators neutral"
+
+        return MomentumAnalysis(
+            rsi_14d=rsi_14d,
+            rsi_status=rsi_status,
+            price_vs_52w_low=price_vs_52w_low,
+            price_vs_52w_high=price_vs_52w_high,
+            near_52w_high=near_52w_high,
+            near_52w_low=near_52w_low,
+            volume_ratio=volume_ratio,
+            relative_strength_vs_sector=None,  # Could be enhanced with sector comparison
+            score=score,
+            explanation=explanation,
+        )
+
+    except Exception:
+        return None
+
+
 def synthesize_signal(
     ticker: str,
     company_name: str,
@@ -417,6 +842,10 @@ def synthesize_signal(
     fundamentals: Fundamentals | None,
     analysts: AnalystSentiment | None,
     historical: HistoricalPatterns | None,
+    market_context: MarketContext | None,
+    sector: SectorComparison | None,
+    earnings_timing: EarningsTiming | None,
+    momentum: MomentumAnalysis | None,
 ) -> Signal:
     """Synthesize all components into a final signal."""
 
@@ -426,18 +855,31 @@ def synthesize_signal(
 
     if earnings:
         components.append(("earnings", earnings.score))
-        weights.append(0.35)
+        weights.append(0.30)  # reduced from 0.35
 
     if fundamentals:
         components.append(("fundamentals", fundamentals.score))
-        weights.append(0.25)
+        weights.append(0.20)  # reduced from 0.25
 
     if analysts and analysts.score is not None:
         components.append(("analysts", analysts.score))
-        weights.append(0.25)
+        weights.append(0.20)  # reduced from 0.25
 
     if historical:
         components.append(("historical", historical.score))
+        weights.append(0.10)  # reduced from 0.15
+
+    # NEW COMPONENTS
+    if market_context:
+        components.append(("market", market_context.score))
+        weights.append(0.10)
+
+    if sector:
+        components.append(("sector", sector.score))
+        weights.append(0.15)
+
+    if momentum:
+        components.append(("momentum", momentum.score))
         weights.append(0.15)
 
     # Require at least 2 components
@@ -471,6 +913,26 @@ def synthesize_signal(
 
     confidence = abs(final_score)
 
+    # Apply earnings timing adjustments and overrides
+    if earnings_timing:
+        confidence *= (1.0 + earnings_timing.confidence_adjustment)
+
+        # Override recommendation if needed
+        if earnings_timing.timing_flag == "pre_earnings":
+            if recommendation == "BUY":
+                recommendation = "HOLD"
+
+        elif earnings_timing.timing_flag == "post_earnings":
+            if earnings_timing.price_change_5d and earnings_timing.price_change_5d > 15:
+                if recommendation == "BUY":
+                    recommendation = "HOLD"
+
+    # Check overbought + near 52w high
+    if momentum and momentum.rsi_14d and momentum.rsi_14d > 70 and momentum.near_52w_high:
+        if recommendation == "BUY":
+            recommendation = "HOLD"
+            confidence *= 0.7
+
     # Generate supporting points
     supporting_points = []
 
@@ -488,9 +950,36 @@ def synthesize_signal(
     if historical and historical.pattern_desc:
         supporting_points.append(f"Historical pattern: {historical.pattern_desc}")
 
+    if market_context and market_context.explanation:
+        supporting_points.append(f"Market: {market_context.explanation}")
+
+    if sector and sector.explanation:
+        supporting_points.append(f"Sector: {sector.explanation}")
+
+    if momentum and momentum.explanation:
+        supporting_points.append(f"Momentum: {momentum.explanation}")
+
     # Generate caveats
     caveats = []
 
+    # Add earnings timing caveats first (most important)
+    if earnings_timing and earnings_timing.caveats:
+        caveats.extend(earnings_timing.caveats)
+
+    # Add momentum warnings
+    if momentum and momentum.rsi_14d:
+        if momentum.rsi_14d > 70 and momentum.near_52w_high:
+            caveats.append("Overbought conditions - high risk entry")
+
+    # Add sector warnings
+    if sector and sector.score < -0.2:
+        caveats.append(f"Sector {sector.sector_name} is weak despite stock fundamentals")
+
+    # Add market warnings
+    if market_context and market_context.vix_status == "fear":
+        caveats.append(f"High market volatility (VIX {market_context.vix_level:.0f})")
+
+    # Original caveats
     if not analysts or analysts.score is None:
         caveats.append("Limited or no analyst coverage")
 
@@ -502,6 +991,9 @@ def synthesize_signal(
 
     if not caveats:
         caveats.append("Market conditions can change rapidly")
+
+    # Limit to 5 caveats
+    caveats = caveats[:5]
 
     # Build components dict for output
     components_dict = {}
@@ -535,6 +1027,45 @@ def synthesize_signal(
             "score": historical.score,
             "beats_last_4q": historical.beats_last_4q,
             "avg_reaction_pct": historical.avg_reaction_pct,
+        }
+
+    if market_context:
+        components_dict["market_context"] = {
+            "score": market_context.score,
+            "vix_level": market_context.vix_level,
+            "vix_status": market_context.vix_status,
+            "spy_trend_10d": market_context.spy_trend_10d,
+            "qqq_trend_10d": market_context.qqq_trend_10d,
+            "market_regime": market_context.market_regime,
+        }
+
+    if sector:
+        components_dict["sector_performance"] = {
+            "score": sector.score,
+            "sector_name": sector.sector_name,
+            "stock_return_1m": sector.stock_return_1m,
+            "sector_return_1m": sector.sector_return_1m,
+            "relative_strength": sector.relative_strength,
+            "sector_trend": sector.sector_trend,
+        }
+
+    if earnings_timing:
+        components_dict["earnings_timing"] = {
+            "days_until_earnings": earnings_timing.days_until_earnings,
+            "days_since_earnings": earnings_timing.days_since_earnings,
+            "timing_flag": earnings_timing.timing_flag,
+            "price_change_5d": earnings_timing.price_change_5d,
+            "confidence_adjustment": earnings_timing.confidence_adjustment,
+        }
+
+    if momentum:
+        components_dict["momentum"] = {
+            "score": momentum.score,
+            "rsi_14d": momentum.rsi_14d,
+            "rsi_status": momentum.rsi_status,
+            "near_52w_high": momentum.near_52w_high,
+            "near_52w_low": momentum.near_52w_low,
+            "volume_ratio": momentum.volume_ratio,
         }
 
     return Signal(
@@ -642,12 +1173,36 @@ def main():
         analysts = analyze_analyst_sentiment(data)
         historical = analyze_historical_patterns(data)
 
+        # NEW: Analyze market context (shared across all tickers if analyzing multiple)
+        if args.verbose:
+            print(f"Analyzing market context...", file=sys.stderr)
+        market_context = analyze_market_context(verbose=args.verbose)
+
+        # NEW: Analyze sector performance
+        if args.verbose:
+            print(f"Analyzing sector performance...", file=sys.stderr)
+        sector = analyze_sector_performance(data, verbose=args.verbose)
+
+        # NEW: Analyze earnings timing
+        if args.verbose:
+            print(f"Checking earnings timing...", file=sys.stderr)
+        earnings_timing = analyze_earnings_timing(data)
+
+        # NEW: Analyze momentum
+        if args.verbose:
+            print(f"Analyzing momentum...", file=sys.stderr)
+        momentum = analyze_momentum(data)
+
         if args.verbose:
             print(f"Components analyzed:", file=sys.stderr)
             print(f"  Earnings: {'✓' if earnings else '✗'}", file=sys.stderr)
             print(f"  Fundamentals: {'✓' if fundamentals else '✗'}", file=sys.stderr)
             print(f"  Analysts: {'✓' if analysts and analysts.score else '✗'}", file=sys.stderr)
-            print(f"  Historical: {'✓' if historical else '✗'}\n", file=sys.stderr)
+            print(f"  Historical: {'✓' if historical else '✗'}", file=sys.stderr)
+            print(f"  Market Context: {'✓' if market_context else '✗'}", file=sys.stderr)
+            print(f"  Sector: {'✓' if sector else '✗'}", file=sys.stderr)
+            print(f"  Earnings Timing: {'✓' if earnings_timing else '✗'}", file=sys.stderr)
+            print(f"  Momentum: {'✓' if momentum else '✗'}\n", file=sys.stderr)
 
         # Synthesize signal
         signal = synthesize_signal(
@@ -657,6 +1212,10 @@ def main():
             fundamentals=fundamentals,
             analysts=analysts,
             historical=historical,
+            market_context=market_context,  # NEW
+            sector=sector,  # NEW
+            earnings_timing=earnings_timing,  # NEW
+            momentum=momentum,  # NEW
         )
 
         results.append(signal)
