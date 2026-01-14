@@ -1,8 +1,8 @@
 ---
 name: Excalidraw Flowchart
 slug: excalidraw-flowchart
-version: 1.0.0
-description: Create Excalidraw flowcharts from descriptions. Use when user asks to "create a flowchart", "draw a diagram", "visualize a process", "make a flow diagram", "architecture diagram", or discusses workflow/process visualization.
+version: 1.1.0
+description: Create Excalidraw flowcharts from descriptions. Use when user asks to "create a flowchart", "draw a diagram", "visualize a process", "make a flow diagram", "architecture diagram", or discusses workflow/process visualization. Supports DSL, DOT/Graphviz, and JSON formats.
 repo: https://github.com/swiftlysingh/excalidraw-skill
 ---
 
@@ -52,9 +52,23 @@ Use this DSL syntax to describe the flowchart:
 | `{Label?}` | Diamond | Decisions, conditionals |
 | `(Label)` | Ellipse | Start/End points |
 | `[[Label]]` | Database | Data storage |
+| `![path]` | Image | Inline images |
+| `![path](WxH)` | Sized Image | Images with explicit dimensions |
 | `->` | Arrow | Connections |
 | `-> "text" ->` | Labeled Arrow | Connections with labels |
 | `-->` | Dashed Arrow | Optional/alternative paths |
+
+### DSL Directives
+
+| Directive | Description | Example |
+|-----------|-------------|---------|
+| `@direction` | Set flow direction | `@direction LR` |
+| `@spacing` | Set node spacing | `@spacing 60` |
+| `@image` | Position image | `@image logo.png at 100,50` |
+| `@decorate` | Attach decoration to node | `@decorate icon.png top-right` |
+| `@sticker` | Add sticker from library | `@sticker checkmark at 200,100` |
+| `@library` | Set sticker library path | `@library ./assets/stickers` |
+| `@scatter` | Scatter images on canvas | `@scatter star.png count:5` |
 
 ### Step 3: Generate the File
 
@@ -128,14 +142,117 @@ Tell the user:
 
 ## CLI Options
 
-- `--direction <TB|BT|LR|RL>` - Flow direction (default: TB = top to bottom)
-- `--spacing <number>` - Node spacing in pixels (default: 50)
-- `--output <path>` - Output file path
+- `-o, --output <file>` - Output file path (default: flowchart.excalidraw)
+- `-f, --format <type>` - Input format: dsl, json, dot (default: auto-detected)
+- `-d, --direction <TB|BT|LR|RL>` - Flow direction (default: TB = top to bottom)
+- `-s, --spacing <number>` - Node spacing in pixels (default: 50)
+- `--inline <dsl>` - Inline DSL/DOT string
+- `--stdin` - Read input from stdin
+- `--verbose` - Verbose output
 
 Example with options:
 
 ```bash
 npx @swiftlysingh/excalidraw-cli create --inline "[A] -> [B] -> [C]" --direction LR --spacing 80 -o horizontal-flow.excalidraw
+```
+
+## DOT/Graphviz Format (New in v1.1.0)
+
+The CLI now supports DOT/Graphviz format for creating diagrams. This is useful when working with existing DOT files or when you prefer the DOT syntax.
+
+### DOT Syntax
+
+```dot
+digraph {
+    rankdir=LR
+
+    start [shape=ellipse label="Start"]
+    process [shape=box label="Process Data"]
+    decision [shape=diamond label="Valid?"]
+    end [shape=ellipse label="End"]
+
+    start -> process
+    process -> decision
+    decision -> end [label="yes"]
+    decision -> process [label="no" style=dashed]
+}
+```
+
+### Supported DOT Features
+
+| Feature | DOT Syntax | Maps To |
+|---------|-----------|---------|
+| Rectangle | `shape=box` or `shape=rect` | `[Label]` |
+| Diamond | `shape=diamond` | `{Label}` |
+| Ellipse | `shape=ellipse` or `shape=circle` | `(Label)` |
+| Database | `shape=cylinder` | `[[Label]]` |
+| Direction | `rankdir=TB\|BT\|LR\|RL` | `@direction` |
+| Edge labels | `[label="text"]` | `-> "text" ->` |
+| Dashed edges | `[style=dashed]` | `-->` |
+| Colors | `[fillcolor="..." color="..."]` | Node styling |
+
+### Using DOT Files
+
+```bash
+# From file (auto-detected by .dot or .gv extension)
+npx @swiftlysingh/excalidraw-cli create diagram.dot -o output.excalidraw
+
+# Inline DOT
+npx @swiftlysingh/excalidraw-cli create --format dot --inline "digraph { A -> B -> C }" -o output.excalidraw
+```
+
+## Images and Decorations (New in v1.1.0)
+
+### Image Nodes
+
+Include images as flow elements:
+
+```
+(Start) -> ![logo.png](100x50) -> [Process] -> (End)
+```
+
+### Positioned Images
+
+Place images at specific positions:
+
+```
+@image background.png at 0,0
+@image logo.png near (Start) top-right
+
+(Start) -> [Process] -> (End)
+```
+
+### Node Decorations
+
+Attach small icons/badges to nodes:
+
+```
+[Deploy to Production]
+@decorate checkmark.png top-right
+
+[Review Required]
+@decorate warning.png top-left
+```
+
+Decoration anchors: `top`, `bottom`, `left`, `right`, `top-left`, `top-right`, `bottom-left`, `bottom-right`
+
+### Sticker Library
+
+Use a library of reusable stickers:
+
+```
+@library ./assets/stickers
+@sticker success at 100,100
+@sticker warning near (Error) top-right
+```
+
+### Scatter Images
+
+Distribute images randomly across the canvas:
+
+```
+@scatter confetti.png count:10
+@scatter star.png count:5 width:20 height:20
 ```
 
 ## Common Patterns

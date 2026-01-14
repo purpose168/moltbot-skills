@@ -47,8 +47,18 @@ Once installed, Claude Code will automatically use this skill when you ask it to
 | `{Label?}` | Diamond (decision) |
 | `(Label)` | Ellipse (start/end) |
 | `[[Label]]` | Database |
+| `![path]` | Image |
 | `->` | Arrow |
 | `-> "text" ->` | Labeled arrow |
+| `-->` | Dashed arrow |
+
+## New in v1.1.0
+
+- **DOT/Graphviz support** - Use existing `.dot` files or DOT syntax
+- **Image nodes** - Include images in your flowcharts with `![path]`
+- **Decorations** - Attach icons/badges to nodes with `@decorate`
+- **Stickers** - Use a library of reusable images with `@sticker`
+- **Scatter** - Distribute images across the canvas with `@scatter`
 
 ## Example
 
