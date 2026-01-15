@@ -3,9 +3,15 @@
   "slug": "apple-contacts",
   "displayName": "Apple Contacts",
   "latest": {
-    "version": "1.1.1",
-    "publishedAt": 1768374427066,
-    "commit": "https://github.com/clawdbot/skills/commit/023aadc36c679c11ffcaae5023bfb3d0294295b7"
+    "version": "1.2.0",
+    "publishedAt": 1768477582354,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.1.1",
+      "publishedAt": 1768374427066,
+      "commit": "https://github.com/clawdbot/skills/commit/023aadc36c679c11ffcaae5023bfb3d0294295b7"
+    }
+  ]
 }
