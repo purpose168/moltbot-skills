@@ -58,7 +58,7 @@ function buildBaseUrl(domain) {
   return `https://${domain.replace(/\/$/, '')}`;
 }
 
-function buildQuery(params) {
+function buildTableQuery(params) {
   const query = new URLSearchParams();
   const allowed = [
     'sysparm_query',
@@ -71,6 +71,71 @@ function buildQuery(params) {
     'sysparm_query_category',
     'sysparm_query_no_domain',
     'sysparm_no_count',
+  ];
+  if (params.sysparm_display_value === undefined) {
+    query.set('sysparm_display_value', 'true');
+  }
+  for (const key of allowed) {
+    if (params[key] !== undefined) {
+      query.set(key, String(params[key]));
+    }
+  }
+  return query.toString();
+}
+
+function buildAttachmentQuery(params) {
+  const query = new URLSearchParams();
+  const allowed = [
+    'sysparm_query',
+    'sysparm_suppress_pagination_header',
+    'sysparm_limit',
+    'sysparm_query_category',
+  ];
+  for (const key of allowed) {
+    if (params[key] !== undefined) {
+      query.set(key, String(params[key]));
+    }
+  }
+  return query.toString();
+}
+
+function buildAggregateQuery(params) {
+  const query = new URLSearchParams();
+  const allowed = [
+    'sysparm_query',
+    'sysparm_avg_fields',
+    'sysparm_count',
+    'sysparm_min_fields',
+    'sysparm_max_fields',
+    'sysparm_sum_fields',
+    'sysparm_group_by',
+    'sysparm_order_by',
+    'sysparm_having',
+    'sysparm_display_value',
+    'sysparm_query_category',
+  ];
+  for (const key of allowed) {
+    if (params[key] !== undefined) {
+      query.set(key, String(params[key]));
+    }
+  }
+  return query.toString();
+}
+
+function buildServiceCatalogQuery(params) {
+  const query = new URLSearchParams();
+  const allowed = [
+    'sysparm_view',
+    'sysparm_limit',
+    'sysparm_text',
+    'sysparm_offset',
+    'sysparm_category',
+    'sysparm_type',
+    'sysparm_catalog',
+    'sysparm_top_level_only',
+    'record_id',
+    'template_id',
+    'mode',
   ];
   for (const key of allowed) {
     if (params[key] !== undefined) {
@@ -94,6 +159,14 @@ Usage:
   cli.mjs list <table> [options]
   cli.mjs get <table> <sys_id> [options]
   cli.mjs batch <file.json> [options]
+  cli.mjs attach list [options]
+  cli.mjs attach get <sys_id>
+  cli.mjs attach file <sys_id> [--out <path>]
+  cli.mjs attach file-by-name <table_sys_id> <file_name> [--out <path>]
+  cli.mjs stats <table> [options]
+  cli.mjs schema <table>
+  cli.mjs history <table> <sys_id>
+  cli.mjs sc <endpoint> [args] [options]
 
 Auth (flags override env):
   --domain <domain>     ServiceNow instance domain
@@ -107,11 +180,19 @@ Common options:
   --sysparm_display_value <true|false|all>
   --sysparm_exclude_reference_link <true|false>
   --pretty              Pretty-print JSON
+  --out <path>           Save binary attachment content to a file
 
 Examples:
   node cli.mjs list incident --sysparm_limit 5 --sysparm_fields number,short_description
   node cli.mjs get incident <sys_id> --sysparm_fields number,opened_at
   node cli.mjs batch specialists/incidents.json
+  node cli.mjs attach list --sysparm_query "table_name=incident" --sysparm_limit 5
+  node cli.mjs attach file <sys_id> --out /tmp/error.png
+  node cli.mjs stats incident --sysparm_query "active=true" --sysparm_count true
+  node cli.mjs schema incident
+  node cli.mjs history incident <sys_id>
+  node cli.mjs sc catalogs --sysparm_text "laptop" --sysparm_limit 5
+  node cli.mjs sc item-variables <item_sys_id>
 `;
 }
 
@@ -131,10 +212,26 @@ async function requestJson(baseUrl, username, password, pathAndQuery) {
   return text;
 }
 
+async function requestBinary(baseUrl, username, password, pathAndQuery) {
+  const auth = Buffer.from(`${username}:${password}`).toString('base64');
+  const url = `${baseUrl}${pathAndQuery}`;
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Basic ${auth}`,
+    },
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`HTTP ${response.status}: ${text.slice(0, 500)}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
 async function handleList(args, auth, pretty) {
   const table = args._[1];
   if (!table) throw new Error('Missing <table>');
-  const query = buildQuery(args);
+  const query = buildTableQuery(args);
   const pathAndQuery = query
     ? `/api/now/table/${encodeURIComponent(table)}?${query}`
     : `/api/now/table/${encodeURIComponent(table)}`;
@@ -145,7 +242,7 @@ async function handleGet(args, auth, pretty) {
   const table = args._[1];
   const sysId = args._[2];
   if (!table || !sysId) throw new Error('Missing <table> or <sys_id>');
-  const query = buildQuery(args);
+  const query = buildTableQuery(args);
   const pathAndQuery = query
     ? `/api/now/table/${encodeURIComponent(table)}/${encodeURIComponent(sysId)}?${query}`
     : `/api/now/table/${encodeURIComponent(table)}/${encodeURIComponent(sysId)}`;
@@ -174,7 +271,7 @@ async function handleBatch(args, auth, pretty) {
     delete params.name;
     delete params.table;
     delete params.sys_id;
-    const query = buildQuery(params);
+    const query = buildTableQuery(params);
 
     let pathAndQuery = `/api/now/table/${encodeURIComponent(table)}`;
     if (req.sys_id) {
@@ -193,6 +290,189 @@ async function handleBatch(args, auth, pretty) {
   }
 
   return JSON.stringify(results, null, pretty ? 2 : 0);
+}
+
+async function handleAttachment(args, auth) {
+  const sub = args._[1];
+  if (sub === 'list') {
+    const query = buildAttachmentQuery(args);
+    const pathAndQuery = query ? `/api/now/attachment?${query}` : '/api/now/attachment';
+    return requestJson(auth.baseUrl, auth.username, auth.password, pathAndQuery);
+  }
+  if (sub === 'get') {
+    const sysId = args._[2];
+    if (!sysId) throw new Error('Missing <sys_id>');
+    return requestJson(auth.baseUrl, auth.username, auth.password, `/api/now/attachment/${encodeURIComponent(sysId)}`);
+  }
+  if (sub === 'file') {
+    const sysId = args._[2];
+    if (!sysId) throw new Error('Missing <sys_id>');
+    const data = await requestBinary(auth.baseUrl, auth.username, auth.password, `/api/now/attachment/${encodeURIComponent(sysId)}/file`);
+    return { binary: data };
+  }
+  if (sub === 'file-by-name') {
+    const tableSysId = args._[2];
+    const fileName = args._[3];
+    if (!tableSysId || !fileName) throw new Error('Missing <table_sys_id> or <file_name>');
+    const data = await requestBinary(
+      auth.baseUrl,
+      auth.username,
+      auth.password,
+      `/api/now/attachment/${encodeURIComponent(tableSysId)}/${encodeURIComponent(fileName)}/file`
+    );
+    return { binary: data };
+  }
+  throw new Error('Unknown attach command. Use: list | get | file | file-by-name');
+}
+
+async function handleStats(args, auth) {
+  const table = args._[1];
+  if (!table) throw new Error('Missing <table>');
+  const query = buildAggregateQuery(args);
+  const pathAndQuery = query
+    ? `/api/now/stats/${encodeURIComponent(table)}?${query}`
+    : `/api/now/stats/${encodeURIComponent(table)}`;
+  return requestJson(auth.baseUrl, auth.username, auth.password, pathAndQuery);
+}
+
+async function handleServiceCatalog(args, auth) {
+  const endpoint = args._[1];
+  if (!endpoint) throw new Error('Missing <endpoint>');
+  const query = buildServiceCatalogQuery(args);
+  let path = '';
+
+  switch (endpoint) {
+    case 'cart':
+      path = '/api/sn_sc/servicecatalog/cart';
+      break;
+    case 'delivery-address': {
+      const userId = args._[2];
+      if (!userId) throw new Error('Missing <user_id>');
+      path = `/api/sn_sc/servicecatalog/cart/delivery_address/${encodeURIComponent(userId)}`;
+      break;
+    }
+    case 'validate-categories':
+      path = '/api/sn_sc/servicecatalog/catalog_builder/validate_catalog_categories';
+      break;
+    case 'on-change-choices': {
+      const entityId = args._[2];
+      if (!entityId) throw new Error('Missing <entity_id>');
+      path = `/api/sn_sc/servicecatalog/catalog_client_script/on_change_choices/${encodeURIComponent(entityId)}`;
+      break;
+    }
+    case 'catalogs':
+      path = '/api/sn_sc/servicecatalog/catalogs';
+      break;
+    case 'catalog': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/catalogs/${encodeURIComponent(sysId)}`;
+      break;
+    }
+    case 'catalog-categories': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/catalogs/${encodeURIComponent(sysId)}/categories`;
+      break;
+    }
+    case 'category': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/categories/${encodeURIComponent(sysId)}`;
+      break;
+    }
+    case 'items':
+      path = '/api/sn_sc/servicecatalog/items';
+      break;
+    case 'item': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/items/${encodeURIComponent(sysId)}`;
+      break;
+    }
+    case 'item-variables': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/items/${encodeURIComponent(sysId)}/variables`;
+      break;
+    }
+    case 'item-delegation': {
+      const itemSysId = args._[2];
+      const userSysId = args._[3];
+      if (!itemSysId || !userSysId) throw new Error('Missing <item_sys_id> or <user_sys_id>');
+      path = `/api/sn_sc/servicecatalog/items/${encodeURIComponent(itemSysId)}/delegation/${encodeURIComponent(userSysId)}`;
+      break;
+    }
+    case 'producer-record': {
+      const producerId = args._[2];
+      const recordId = args._[3];
+      if (!producerId || !recordId) throw new Error('Missing <producer_id> or <record_id>');
+      path = `/api/sn_sc/servicecatalog/producer/${encodeURIComponent(producerId)}/record/${encodeURIComponent(recordId)}`;
+      break;
+    }
+    case 'record-wizard': {
+      const recordId = args._[2];
+      const wizardId = args._[3];
+      if (!recordId || !wizardId) throw new Error('Missing <record_id> or <wizard_id>');
+      path = `/api/sn_sc/servicecatalog/record_id/${encodeURIComponent(recordId)}/wizard/${encodeURIComponent(wizardId)}`;
+      break;
+    }
+    case 'generate-stage-pool': {
+      const quantity = args._[2];
+      if (!quantity) throw new Error('Missing <quantity>');
+      path = `/api/sn_sc/servicecatalog/service_fulfillment/generateStagePoolIds/${encodeURIComponent(quantity)}`;
+      break;
+    }
+    case 'step-configs':
+      path = '/api/sn_sc/servicecatalog/service_fulfillment/step_configs';
+      break;
+    case 'wishlist':
+      path = '/api/sn_sc/servicecatalog/wishlist';
+      break;
+    case 'wishlist-item': {
+      const cartItemId = args._[2];
+      if (!cartItemId) throw new Error('Missing <cart_item_id>');
+      path = `/api/sn_sc/servicecatalog/wishlist/${encodeURIComponent(cartItemId)}`;
+      break;
+    }
+    case 'wizard': {
+      const sysId = args._[2];
+      if (!sysId) throw new Error('Missing <sys_id>');
+      path = `/api/sn_sc/servicecatalog/wizard/${encodeURIComponent(sysId)}`;
+      break;
+    }
+    default:
+      throw new Error('Unknown service catalog endpoint');
+  }
+
+  const pathAndQuery = query ? `${path}?${query}` : path;
+  return requestJson(auth.baseUrl, auth.username, auth.password, pathAndQuery);
+}
+
+async function handleSchema(args, auth, pretty) {
+  const table = args._[1];
+  if (!table) throw new Error('Missing <table>');
+
+  const query = `name=${table}^elementISNOTEMPTY`;
+  const fields = 'element,column_label,internal_type,reference';
+
+  const pathAndQuery = `/api/now/table/sys_dictionary?sysparm_query=${encodeURIComponent(query)}&sysparm_fields=${fields}`;
+
+  return requestJson(auth.baseUrl, auth.username, auth.password, pathAndQuery, pretty);
+}
+
+async function handleHistory(args, auth, pretty) {
+  const table = args._[1];
+  const sysId = args._[2];
+  if (!table || !sysId) throw new Error('Missing <table> or <sys_id>');
+
+  const query = `name=${table}^element_id=${sysId}`;
+  const sort = 'sys_created_on';
+  const fields = 'value,element,sys_created_on,sys_created_by';
+
+  const pathAndQuery = `/api/now/table/sys_journal_field?sysparm_query=${encodeURIComponent(query)}&sysparm_order_by=${sort}&sysparm_fields=${fields}`;
+
+  return requestJson(auth.baseUrl, auth.username, auth.password, pathAndQuery, pretty);
 }
 
 async function main() {
@@ -221,6 +501,27 @@ async function main() {
     text = await handleGet(args, auth, pretty);
   } else if (command === 'batch') {
     text = await handleBatch(args, auth, pretty);
+  } else if (command === 'attach') {
+    const result = await handleAttachment(args, auth);
+    if (result && result.binary) {
+      const outPath = args.out;
+      if (outPath) {
+        fs.writeFileSync(outPath, result.binary);
+        console.log(`Saved ${result.binary.length} bytes to ${outPath}`);
+        return;
+      }
+      console.log(result.binary.toString('base64'));
+      return;
+    }
+    text = result;
+  } else if (command === 'stats') {
+    text = await handleStats(args, auth);
+  } else if (command === 'schema') {
+    text = await handleSchema(args, auth, pretty);
+  } else if (command === 'history') {
+    text = await handleHistory(args, auth, pretty);
+  } else if (command === 'sc') {
+    text = await handleServiceCatalog(args, auth);
   } else {
     throw new Error(`Unknown command: ${command}`);
   }
