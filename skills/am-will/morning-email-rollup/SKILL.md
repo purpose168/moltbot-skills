@@ -8,9 +8,18 @@ metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["gog","jq","date"]}}}
 
 Automatically generates a daily summary of important emails and delivers it to Telegram at 8am Denver time.
 
+## Setup
+
+**Required:** Set your Gmail account email:
+```bash
+export GOG_ACCOUNT="your-email@gmail.com"
+```
+
+Or edit the script directly to set the default.
+
 ## What It Does
 
-- Runs every day at 8:00 AM (America/Denver timezone)
+- Runs every day at 8:00 AM (configurable timezone)
 - **Shows today's calendar events** from Google Calendar
 - Searches for emails marked as **important** or **starred** from the last 24 hours
 - Shows up to 20 most important emails with:
@@ -25,12 +34,17 @@ Automatically generates a daily summary of important emails and delivers it to T
 
 ### Manual Run
 ```bash
-bash /home/willr/clawd/skills/morning-email-rollup/rollup.sh
+# Default (10 emails)
+bash skills/morning-email-rollup/rollup.sh
+
+# Custom number of emails
+MAX_EMAILS=20 bash skills/morning-email-rollup/rollup.sh
+MAX_EMAILS=5 bash skills/morning-email-rollup/rollup.sh
 ```
 
 ### View Log
 ```bash
-cat /home/willr/clawd/morning-email-rollup-log.md
+cat $HOME/clawd/morning-email-rollup-log.md
 ```
 
 ## How It Works
@@ -52,7 +66,7 @@ The script automatically includes today's calendar events from your Google Calen
 
 **Requirements:**
 - `gog` must be installed and authenticated
-- Uses the same Google account configured for Gmail (`am.will.ryan@gmail.com` in the script)
+- Uses the same Google account configured for Gmail (set via `GOG_ACCOUNT` environment variable)
 
 ## Email Criteria
 
@@ -63,16 +77,37 @@ Emails are included if they match **any** of:
 
 ## Cron Schedule
 
-Automatically runs daily at 8:00 AM Denver time:
+Set up a daily cron job at your preferred time:
 ```bash
-0 8 * * * (America/Denver)
+cron add --name "Morning Email Rollup" \
+  --schedule "0 8 * * *" \
+  --tz "America/Denver" \
+  --session isolated \
+  --message "bash /path/to/skills/morning-email-rollup/rollup.sh"
 ```
+
+Adjust the time (8:00 AM) and timezone to your preference.
 
 ## Customization
 
+### Change Number of Emails
+
+By default, the rollup shows **10 emails**. To change this:
+
+**Temporary (one-time):**
+```bash
+MAX_EMAILS=20 bash skills/morning-email-rollup/rollup.sh
+```
+
+**Permanent:**
+Edit `skills/morning-email-rollup/rollup.sh`:
+```bash
+MAX_EMAILS="${MAX_EMAILS:-20}"  # Change 10 to your preferred number
+```
+
 ### Change Search Criteria
 
-Edit `/home/willr/clawd/skills/morning-email-rollup/rollup.sh`:
+Edit `skills/morning-email-rollup/rollup.sh`:
 
 ```bash
 # Current: important or starred from last 24h
@@ -115,7 +150,7 @@ cron list
 cron runs <job-id>
 
 # Test manually
-bash /home/willr/clawd/skills/morning-email-rollup/rollup.sh
+bash skills/morning-email-rollup/rollup.sh
 ```
 
 ### Missing emails
@@ -131,7 +166,7 @@ bash /home/willr/clawd/skills/morning-email-rollup/rollup.sh
 
 All rollup runs are logged to:
 ```
-/home/willr/clawd/morning-email-rollup-log.md
+$HOME/clawd/morning-email-rollup-log.md
 ```
 
 Format:
