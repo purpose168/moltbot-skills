@@ -1,13 +1,18 @@
 {
   "owner": "silversteez",
   "slug": "kagi-search",
-  "displayName": "kagi-search",
+  "displayName": "Kagi Search",
   "latest": {
-    "version": "1.0.5",
-    "publishedAt": 1768862276516,
-    "commit": "https://github.com/clawdbot/skills/commit/b884628d8193c7655b180d0c064c9c630925e230"
+    "version": "1.1.0",
+    "publishedAt": 1768875476695,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.0.5",
+      "publishedAt": 1768862276516,
+      "commit": "https://github.com/clawdbot/skills/commit/b884628d8193c7655b180d0c064c9c630925e230"
+    },
     {
       "version": "1.0.1",
       "publishedAt": 1768805467958,

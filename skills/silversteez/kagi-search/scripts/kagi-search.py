@@ -42,26 +42,23 @@ def search(query: str, limit: int = 10, offset: int = 0, json_output: bool = Fal
     """
     api_key = get_api_key()
     
-    data = {
+    # Build query params for GET request
+    params = {
         "q": query,
         "limit": limit,
         "offset": offset,
         "backend": "fast",
-        "related": include_related,
+        "related": str(include_related).lower(),
     }
     
+    url = f"{API_BASE}?{urlencode(params)}"
+    
     headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
+        "Authorization": f"Bot {api_key}",
     }
     
     try:
-        request = Request(
-            API_BASE,
-            data=json.dumps(data).encode("utf-8"),
-            headers=headers,
-            method="POST"
-        )
+        request = Request(url, headers=headers, method="GET")
         with urlopen(request, timeout=30) as response:
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as e:
@@ -74,21 +71,21 @@ def search(query: str, limit: int = 10, offset: int = 0, json_output: bool = Fal
 def format_results(results: dict, query: str) -> str:
     """Format search results for display."""
     output = []
-    data = results.get("data", {})
+    data = results.get("data", [])
     
     # Query info
     output.append(f"[Query: {query}]")
     
-    # Results count
-    results_list = data.get("results", [])
+    # Results count - count items that have 'url' field (actual results, not metadata)
+    results_list = [r for r in data if isinstance(r, dict) and r.get('url')]
     output.append(f"[Results: {len(results_list)}]")
     
     # API balance
-    meta = data.get("meta", {})
-    if "ops_remaining" in meta:
-        output.append(f"[API Balance: ${meta['ops_remaining']:.3f}]")
-    if "took_ms" in meta:
-        output.append(f"[Time: {meta['took_ms']}ms]")
+    meta = results.get("meta", {})
+    if "api_balance" in meta:
+        output.append(f"[API Balance: ${meta['api_balance']:.3f}]")
+    if "ms" in meta:
+        output.append(f"[Time: {meta['ms']}ms]")
     
     output.append("-" * 40)
     
@@ -103,10 +100,12 @@ def format_results(results: dict, query: str) -> str:
             output.append(f"[{result['published']}]")
         output.append("---")
     
-    # Related searches
-    if data.get('related'):
-        related = ", ".join(data['related'])
-        output.append(f"Related: {related}")
+    # Related searches - find item with 'list' key
+    for item in data:
+        if isinstance(item, dict) and item.get('list'):
+            related = ", ".join(item['list'][:10])
+            output.append(f"Related: {related}")
+            break
     
     return "\n".join(output)
 
