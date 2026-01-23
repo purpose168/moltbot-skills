@@ -1,0 +1,11 @@
+{
+  "owner": "mvanhorn",
+  "slug": "xai",
+  "displayName": "xAI / Grok",
+  "latest": {
+    "version": "1.1.0",
+    "publishedAt": 1769195975976,
+    "commit": null
+  },
+  "history": []
+}
