@@ -1,7 +1,7 @@
 ---
 name: gotify
 description: Send push notifications via Gotify when long-running tasks complete or important events occur. Use when the user asks to "send a Gotify notification", "notify me when this finishes", "push notification", "alert me via Gotify", or wants to be notified of task completion.
-version: 1.0.0
+version: 1.0.1
 metadata:
   clawdbot:
     emoji: "🔔"
