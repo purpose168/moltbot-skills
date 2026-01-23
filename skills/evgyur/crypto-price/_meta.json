@@ -1,0 +1,11 @@
+{
+  "owner": "evgyur",
+  "slug": "crypto-price",
+  "displayName": "Crypto Price",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1769147666544,
+    "commit": null
+  },
+  "history": []
+}
