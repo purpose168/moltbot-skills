@@ -1,11 +1,62 @@
 ---
 name: web-search-plus
-description: Unified search skill with Serper (Google results), Tavily (AI-optimized research), and Exa (neural semantic search). Choose the right provider for your task - product specs, deep research, or similar page discovery.
+description: Unified search skill with Smart Auto-Routing. Automatically selects between Serper (Google), Tavily (Research), and Exa (Neural) based on query analysis. Just search - the skill picks the best provider.
 ---
 
 # Web Search Plus
 
-Multi-provider web search: **Serper** (Google), **Tavily** (Research), **Exa** (Neural).
+Multi-provider web search with **Smart Auto-Routing**: Serper (Google), Tavily (Research), Exa (Neural).
+
+**NEW in v2.0.0**: Smart Auto-Routing analyzes your query and automatically selects the best provider!
+
+---
+
+## 🚀 Smart Auto-Routing (NEW)
+
+No need to choose a provider - just search! The skill analyzes your query and routes it to the optimal provider:
+
+```bash
+# These queries are automatically routed to the best provider:
+python3 scripts/search.py -q "iPhone 16 price"              # → Serper (shopping keyword)
+python3 scripts/search.py -q "how does quantum computing work"  # → Tavily (research keyword)  
+python3 scripts/search.py -q "companies similar to Stripe"  # → Exa (similarity keyword)
+python3 scripts/search.py -q "weather in Vienna"            # → Serper (local/weather)
+python3 scripts/search.py -q "explain transformer architecture"  # → Tavily (explain keyword)
+python3 scripts/search.py -q "AI startups like OpenAI"      # → Exa (companies like)
+```
+
+### How It Works
+
+| Query Contains | Routes To | Why |
+|---------------|-----------|-----|
+| "price", "buy", "shop", "cost", "deal" | **Serper** | Shopping/product queries |
+| "near me", "local", "restaurant", "hotel" | **Serper** | Local business queries |
+| "weather", "news", "latest" | **Serper** | Real-time information |
+| "how does", "how to", "explain", "what is" | **Tavily** | Research/educational |
+| "research", "study", "analyze", "compare" | **Tavily** | Deep dive queries |
+| "tutorial", "guide", "learn", "understand" | **Tavily** | Learning content |
+| "similar to", "companies like", "alternatives" | **Exa** | Similarity search |
+| "startup", "YC company", "Series A" | **Exa** | Company discovery |
+| "github", "research paper", "arxiv" | **Exa** | Technical discovery |
+
+### Debug Auto-Routing
+
+See exactly why a provider was selected:
+
+```bash
+python3 scripts/search.py --explain-routing -q "best laptop to buy 2024"
+```
+
+Output:
+```json
+{
+  "query": "best laptop to buy 2024",
+  "selected_provider": "serper",
+  "reason": "matched_keywords (score=2)",
+  "matched_keywords": ["buy", "best"],
+  "available_providers": ["serper", "tavily", "exa"]
+}
+```
 
 ---
 
@@ -47,8 +98,11 @@ Multi-provider web search: **Serper** (Google), **Tavily** (Research), **Exa** (
 
 ```
                     ┌─────────────────────────────┐
-                    │     What type of search?    │
+                    │  Just use auto-routing!     │
+                    │  python3 search.py -q "..." │
                     └─────────────┬───────────────┘
+                                  │
+                     (Or choose manually:)
                                   │
         ┌─────────────────────────┼─────────────────────────┐
         │                         │                         │
@@ -119,6 +173,16 @@ Multi-provider web search: **Serper** (Google), **Tavily** (Research), **Exa** (
 ---
 
 ## Usage Patterns
+
+### Pattern 0: Auto-Routed (Recommended)
+
+Let the skill choose the best provider:
+
+```bash
+python3 scripts/search.py -q "iPhone 16 Pro Max price"
+python3 scripts/search.py -q "how does mRNA vaccination work"
+python3 scripts/search.py -q "companies like Linear"
+```
 
 ### Pattern 1: Quick Lookup (Serper)
 
@@ -224,6 +288,92 @@ python3 scripts/search.py -p exa --similar-url "https://openai.com" --category c
 
 ---
 
+## ⚙️ Configuration
+
+### config.json Options
+
+```json
+{
+  "defaults": {
+    "provider": "serper",       // Default when auto-routing is disabled
+    "max_results": 5            // Default number of results
+  },
+  
+  "auto_routing": {
+    "enabled": true,            // Enable/disable smart routing
+    "fallback_provider": "serper",  // Used when no keywords match
+    "provider_priority": ["serper", "tavily", "exa"],  // Tie-breaker order
+    "disabled_providers": [],   // Providers to skip (e.g., ["exa"])
+    "keyword_mappings": {
+      "serper": ["price", "buy", "shop", ...],
+      "tavily": ["how does", "explain", "research", ...],
+      "exa": ["similar to", "companies like", ...]
+    }
+  },
+  
+  "serper": {
+    "country": "us",
+    "language": "en"
+  },
+  
+  "tavily": {
+    "depth": "basic",
+    "topic": "general"
+  },
+  
+  "exa": {
+    "type": "neural"
+  }
+}
+```
+
+### Customization Examples
+
+**Disable a provider:**
+```json
+{
+  "auto_routing": {
+    "disabled_providers": ["exa"]
+  }
+}
+```
+
+**Add custom keywords:**
+```json
+{
+  "auto_routing": {
+    "keyword_mappings": {
+      "serper": ["price", "buy", "shop", "amazon", "ebay"],
+      "tavily": ["how does", "explain", "tutorial", "course"],
+      "exa": ["similar to", "competitors", "YC batch"]
+    }
+  }
+}
+```
+
+**Change fallback provider:**
+```json
+{
+  "auto_routing": {
+    "fallback_provider": "tavily"
+  }
+}
+```
+
+**Disable auto-routing entirely:**
+```json
+{
+  "auto_routing": {
+    "enabled": false
+  },
+  "defaults": {
+    "provider": "serper"
+  }
+}
+```
+
+---
+
 ## Cost Optimization
 
 ### Budget Strategy
@@ -236,10 +386,10 @@ python3 scripts/search.py -p exa --similar-url "https://openai.com" --category c
 
 ### Cost-Saving Tips
 
-1. **Start with Serper** for general queries (cheapest)
+1. **Use auto-routing** - it defaults to Serper (cheapest) when no keywords match
 2. **Use Tavily `basic`** before trying `advanced` (50% cheaper)
-3. **Set `max_results` appropriately** — don't fetch 10 when 3 suffice
-4. **Use Exa only for semantic queries** — don't waste on keyword searches
+3. **Set `max_results` appropriately** - don't fetch 10 when 3 suffice
+4. **Use Exa only for semantic queries** - don't waste on keyword searches
 5. **Cache repeated queries** in your application
 
 ### Cost per Query Type
@@ -252,78 +402,6 @@ python3 scripts/search.py -p exa --similar-url "https://openai.com" --category c
 | Deep research | Tavily advanced | ~$0.008 |
 | Semantic search | Exa neural | ~$0.001 |
 | Similar pages | Exa | ~$0.001 |
-
----
-
-## Advanced Patterns
-
-### Chaining for Comprehensive Research
-
-```bash
-# Step 1: Understand the basics (Tavily)
-BASICS=$(python3 scripts/search.py -p tavily -q "quantum computing basics")
-
-# Step 2: Find recent developments (Exa)
-RECENT=$(python3 scripts/search.py -p exa -q "quantum computing breakthroughs" --start-date 2024-01-01)
-
-# Step 3: Get specific details (Serper)
-DETAILS=$(python3 scripts/search.py -p serper -q "IBM quantum computer specs")
-```
-
-### Domain-Specific Research
-
-```bash
-# Academic only
-python3 scripts/search.py -p tavily -q "machine learning" \
-  --include-domains arxiv.org scholar.google.com nature.com science.org
-
-# News only
-python3 scripts/search.py -p tavily -q "tech news" \
-  --include-domains techcrunch.com theverge.com arstechnica.com
-
-# Official sources only
-python3 scripts/search.py -p tavily -q "EU AI Act" \
-  --include-domains europa.eu ec.europa.eu
-```
-
-### Time-Sensitive Queries
-
-```bash
-# Last hour (breaking news)
-python3 scripts/search.py -p serper -q "breaking news" --type news --time-range hour
-
-# Last day
-python3 scripts/search.py -p serper -q "stock market" --type news --time-range day
-
-# Specific date range (Exa)
-python3 scripts/search.py -p exa -q "AI announcements" \
-  --start-date 2024-06-01 --end-date 2024-06-30
-```
-
-### Category-Specific Discovery (Exa)
-
-```bash
-# Companies
-python3 scripts/search.py -p exa -q "fintech startups" --category company
-
-# Research papers
-python3 scripts/search.py -p exa -q "LLM reasoning" --category "research paper"
-
-# GitHub projects
-python3 scripts/search.py -p exa -q "RAG implementation" --category github
-
-# Twitter/X discussions
-python3 scripts/search.py -p exa -q "AI safety debate" --category tweet
-
-# Personal blogs
-python3 scripts/search.py -p exa -q "startup advice" --category "personal site"
-
-# LinkedIn profiles
-python3 scripts/search.py -p exa -q "AI researcher" --category "linkedin profile"
-
-# PDFs/Documents
-python3 scripts/search.py -p exa -q "machine learning textbook" --category pdf
-```
 
 ---
 
@@ -347,7 +425,13 @@ Unified JSON structure from all providers:
   ],
   "images": ["url1", "url2"],
   "answer": "Synthesized answer",
-  "knowledge_graph": { }
+  "knowledge_graph": { },
+  "routing": {
+    "auto_routed": true,
+    "selected_provider": "serper",
+    "reason": "matched_keywords (score=2)",
+    "matched_keywords": ["price", "buy"]
+  }
 }
 ```
 
@@ -376,3 +460,43 @@ export EXA_API_KEY="..."      # https://exa.ai
 | Tavily | max_results | 5 |
 | Exa | type | `neural` |
 | Exa | max_results | 5 |
+
+---
+
+## FAQ
+
+### General
+
+**Q: Do I need API keys for all three providers?**
+> No. You only need keys for providers you want to use. Auto-routing automatically skips providers without keys.
+
+**Q: What happens if auto-routing can't find a match?**
+> It uses the fallback provider (default: Serper, the fastest).
+
+**Q: Can I force a specific provider?**
+> Yes, use `-p serper`, `-p tavily`, or `-p exa` to bypass auto-routing.
+
+**Q: How do I know which provider was used?**
+> Check the `routing` field in the JSON output.
+
+### Auto-Routing
+
+**Q: Why did my query go to the wrong provider?**
+> Use `--explain-routing` to debug. You can also add custom keywords to config.json.
+
+**Q: Can I add my own keywords?**
+> Yes! Edit `config.json` → `auto_routing.keyword_mappings`.
+
+**Q: How does scoring work?**
+> Multi-word phrases get higher weights. "companies like" scores 2, "like" scores 1.
+
+### Troubleshooting
+
+**Q: I get "Missing API key" error**
+> Set the environment variable for the provider you want to use.
+
+**Q: Results are empty**
+> Try a different provider or broaden your query.
+
+**Q: Auto-routing always picks Serper**
+> Your query may not contain keywords for other providers, or they don't have API keys set.

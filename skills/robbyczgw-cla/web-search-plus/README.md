@@ -1,10 +1,22 @@
 # Web Search Plus
 
-> Unified multi-provider web search supporting **Serper**, **Tavily**, and **Exa** — choose the right tool for every search task.
+> Unified multi-provider web search with **Smart Auto-Routing** — supporting **Serper**, **Tavily**, and **Exa**. Just search, and the skill picks the best provider!
 
 [![ClawdHub](https://img.shields.io/badge/ClawdHub-web--search--plus-blue)](https://clawdhub.com)
-[![Version](https://img.shields.io/badge/version-1.0.4-green)](https://clawdhub.com)
+[![Version](https://img.shields.io/badge/version-2.0.0-green)](https://clawdhub.com)
 [![GitHub](https://img.shields.io/badge/GitHub-web--search--plus-blue)](https://github.com/robbyczgw-cla/web-search-plus)
+
+---
+
+## 🚀 What's New in v2.0.0
+
+**Smart Auto-Routing** — No more choosing providers! The skill analyzes your query and automatically routes to the best search engine:
+
+```bash
+python3 scripts/search.py -q "iPhone 16 price"              # → Serper (shopping)
+python3 scripts/search.py -q "how does quantum computing work"  # → Tavily (research)
+python3 scripts/search.py -q "companies similar to Stripe"  # → Exa (semantic)
+```
 
 ---
 
@@ -42,11 +54,9 @@
 ## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Provider Deep Dives](#provider-deep-dives)
-  - [Serper (Google Search API)](#serper-google-search-api)
-  - [Tavily (Research Search)](#tavily-research-search)
-  - [Exa (Neural Search)](#exa-neural-search)
+- [Smart Auto-Routing](#smart-auto-routing)
 - [Configuration Guide](#configuration-guide)
+- [Provider Deep Dives](#provider-deep-dives)
 - [Usage Examples](#usage-examples)
 - [Workflow Examples](#workflow-examples)
 - [Optimization Tips](#optimization-tips)
@@ -63,10 +73,220 @@ export SERPER_API_KEY="your-key"   # https://serper.dev
 export TAVILY_API_KEY="your-key"   # https://tavily.com
 export EXA_API_KEY="your-key"      # https://exa.ai
 
-# 2. Run a search
+# 2. Run a search (auto-routed!)
+python3 scripts/search.py -q "best laptop 2024"
+
+# 3. Or specify a provider explicitly
 python3 scripts/search.py -p serper -q "iPhone 16 specs"
 python3 scripts/search.py -p tavily -q "quantum computing explained" --depth advanced
 python3 scripts/search.py -p exa -q "AI startups 2024" --category company
+```
+
+---
+
+## Smart Auto-Routing
+
+### How It Works
+
+When you don't specify a provider, the skill analyzes your query and routes it to the best provider:
+
+| Query Contains | Routes To | Example |
+|---------------|-----------|---------|
+| "price", "buy", "shop", "cost" | **Serper** | "iPhone 16 price" |
+| "near me", "restaurant", "hotel" | **Serper** | "pizza near me" |
+| "weather", "news", "latest" | **Serper** | "weather Vienna" |
+| "how does", "explain", "what is" | **Tavily** | "how does TCP work" |
+| "research", "study", "analyze" | **Tavily** | "climate research" |
+| "tutorial", "guide", "learn" | **Tavily** | "python tutorial" |
+| "similar to", "companies like" | **Exa** | "companies like Stripe" |
+| "startup", "Series A" | **Exa** | "AI startups Series A" |
+| "github", "research paper" | **Exa** | "LLM papers arxiv" |
+
+### Examples
+
+```bash
+# These are all auto-routed to the optimal provider:
+python3 scripts/search.py -q "MacBook Pro M3 price"           # → Serper
+python3 scripts/search.py -q "how does HTTPS work"            # → Tavily
+python3 scripts/search.py -q "startups like Notion"           # → Exa
+python3 scripts/search.py -q "best sushi restaurant near me"  # → Serper
+python3 scripts/search.py -q "explain attention mechanism"    # → Tavily
+python3 scripts/search.py -q "alternatives to Figma"          # → Exa
+```
+
+### Debug Auto-Routing
+
+See exactly why a provider was selected:
+
+```bash
+python3 scripts/search.py --explain-routing -q "best laptop to buy"
+```
+
+Output:
+```json
+{
+  "query": "best laptop to buy",
+  "selected_provider": "serper",
+  "reason": "matched_keywords (score=2)",
+  "matched_keywords": ["buy", "best"],
+  "available_providers": ["serper", "tavily", "exa"]
+}
+```
+
+### Routing Info in Results
+
+Every search result includes routing information:
+
+```json
+{
+  "provider": "serper",
+  "query": "iPhone 16 price",
+  "results": [...],
+  "routing": {
+    "auto_routed": true,
+    "selected_provider": "serper",
+    "reason": "matched_keywords (score=1)",
+    "matched_keywords": ["price"]
+  }
+}
+```
+
+---
+
+## Configuration Guide
+
+### Environment Variables
+
+Create a `.env` file or set these in your shell:
+
+```bash
+# Required: Set at least one
+export SERPER_API_KEY="your-serper-key"
+export TAVILY_API_KEY="your-tavily-key"
+export EXA_API_KEY="your-exa-key"
+```
+
+### Config File (config.json)
+
+The `config.json` file lets you customize auto-routing and provider defaults:
+
+```json
+{
+  "defaults": {
+    "provider": "serper",
+    "max_results": 5
+  },
+  
+  "auto_routing": {
+    "enabled": true,
+    "fallback_provider": "serper",
+    "provider_priority": ["serper", "tavily", "exa"],
+    "disabled_providers": [],
+    "keyword_mappings": {
+      "serper": ["price", "buy", "shop", "cost", "deal", "near me", "weather"],
+      "tavily": ["how does", "explain", "research", "what is", "tutorial"],
+      "exa": ["similar to", "companies like", "alternatives", "startup", "github"]
+    }
+  },
+  
+  "serper": {
+    "country": "us",
+    "language": "en"
+  },
+  
+  "tavily": {
+    "depth": "basic",
+    "topic": "general"
+  },
+  
+  "exa": {
+    "type": "neural"
+  }
+}
+```
+
+### Configuration Examples
+
+#### Example 1: Disable Exa (Only Use Serper + Tavily)
+
+```json
+{
+  "auto_routing": {
+    "disabled_providers": ["exa"]
+  }
+}
+```
+
+#### Example 2: Make Tavily the Default
+
+```json
+{
+  "auto_routing": {
+    "fallback_provider": "tavily"
+  }
+}
+```
+
+#### Example 3: Add Custom Keywords
+
+```json
+{
+  "auto_routing": {
+    "keyword_mappings": {
+      "serper": [
+        "price", "buy", "shop", "amazon", "ebay", "walmart",
+        "deal", "discount", "coupon", "sale", "cheap"
+      ],
+      "tavily": [
+        "how does", "explain", "research", "what is",
+        "coursera", "udemy", "learn", "course", "certification"
+      ],
+      "exa": [
+        "similar to", "companies like", "competitors",
+        "YC company", "funded startup", "Series A", "Series B"
+      ]
+    }
+  }
+}
+```
+
+#### Example 4: German Locale for Serper
+
+```json
+{
+  "serper": {
+    "country": "de",
+    "language": "de"
+  }
+}
+```
+
+#### Example 5: Disable Auto-Routing
+
+```json
+{
+  "auto_routing": {
+    "enabled": false
+  },
+  "defaults": {
+    "provider": "serper"
+  }
+}
+```
+
+#### Example 6: Research-Heavy Config
+
+```json
+{
+  "auto_routing": {
+    "fallback_provider": "tavily",
+    "provider_priority": ["tavily", "serper", "exa"]
+  },
+  "tavily": {
+    "depth": "advanced",
+    "include_raw_content": true
+  }
+}
 ```
 
 ---
@@ -95,20 +315,6 @@ python3 scripts/search.py -p exa -q "AI startups 2024" --category company
 - ✅ News headlines and current events
 - ✅ Image searches
 - ✅ When you need "what Google shows"
-
-#### When NOT to Use
-- ❌ Deep research requiring full article content
-- ❌ Semantic/conceptual queries
-- ❌ Finding similar companies or pages
-
-#### Pricing (as of 2024)
-| Tier | Queries | Price |
-|------|---------|-------|
-| Free | 2,500 | $0 |
-| Starter | 50,000/mo | $50/mo |
-| Standard | 100,000/mo | $75/mo |
-
-**Cost per query:** ~$0.001 (paid tier)
 
 #### Getting Your API Key
 1. Go to [serper.dev](https://serper.dev)
@@ -140,22 +346,6 @@ python3 scripts/search.py -p exa -q "AI startups 2024" --category company
 - ✅ Domain-specific research (filter to authoritative sources)
 - ✅ News research with context
 - ✅ RAG/LLM applications
-
-#### When NOT to Use
-- ❌ Quick factual lookups (overkill)
-- ❌ Shopping/product searches
-- ❌ Local business searches
-- ❌ Image searches
-
-#### Pricing (as of 2024)
-| Tier | Queries | Price |
-|------|---------|-------|
-| Free | 1,000/mo | $0 |
-| Basic | 1,000/mo | $5/mo |
-| Pro | 10,000/mo | $40/mo |
-| Enterprise | Custom | Contact |
-
-**Cost per query:** $0.004-0.005 (paid tier)
 
 #### Getting Your API Key
 1. Go to [tavily.com](https://tavily.com)
@@ -189,21 +379,6 @@ python3 scripts/search.py -p exa -q "AI startups 2024" --category company
 - ✅ Date-filtered searches for recent content
 - ✅ When keyword matching fails
 
-#### When NOT to Use
-- ❌ Quick factual lookups
-- ❌ Shopping/product searches
-- ❌ Local business searches
-- ❌ Real-time news (better suited: Serper/Tavily)
-
-#### Pricing (as of 2024)
-| Tier | Queries | Price |
-|------|---------|-------|
-| Free | 1,000/mo | $0 |
-| Pay-as-you-go | Variable | ~$0.001/query |
-| Enterprise | Custom | Contact |
-
-**Cost per query:** ~$0.001
-
 #### Getting Your API Key
 1. Go to [exa.ai](https://exa.ai)
 2. Sign up with email or Google
@@ -213,68 +388,15 @@ python3 scripts/search.py -p exa -q "AI startups 2024" --category company
 
 ---
 
-## Configuration Guide
-
-### Environment Variables
-
-Create a `.env` file or set these in your shell:
-
-```bash
-# Required: Set at least one
-export SERPER_API_KEY="your-serper-key"
-export TAVILY_API_KEY="your-tavily-key"
-export EXA_API_KEY="your-exa-key"
-```
-
-### Config File (Optional)
-
-Create `config.json` in the skill directory to set default preferences:
-
-```json
-{
-  "defaults": {
-    "provider": "serper",
-    "max_results": 5
-  },
-  "serper": {
-    "country": "us",
-    "language": "en"
-  },
-  "tavily": {
-    "depth": "basic",
-    "topic": "general"
-  },
-  "exa": {
-    "type": "neural"
-  }
-}
-```
-
-### Validation
-
-The script validates API keys and provides helpful errors:
-
-```bash
-$ python3 scripts/search.py -p serper -q "test"
-# If key missing:
-{"error": "Missing API key. Set SERPER_API_KEY environment variable.", "provider": "serper"}
-```
-
----
-
 ## Usage Examples
 
-### Basic Searches
+### Auto-Routed Searches (Recommended)
 
 ```bash
-# Serper - Google search
-python3 scripts/search.py -p serper -q "best laptop 2024"
-
-# Tavily - Research search
-python3 scripts/search.py -p tavily -q "how does mRNA vaccine work"
-
-# Exa - Semantic search
-python3 scripts/search.py -p exa -q "startups building AI coding assistants"
+# Just search — the skill picks the best provider
+python3 scripts/search.py -q "Tesla Model 3 price"
+python3 scripts/search.py -q "how do neural networks learn"
+python3 scripts/search.py -q "YC startups like Stripe"
 ```
 
 ### Serper Options
@@ -284,17 +406,14 @@ python3 scripts/search.py -p exa -q "startups building AI coding assistants"
 python3 scripts/search.py -p serper -q "gaming monitor" --type shopping
 python3 scripts/search.py -p serper -q "coffee shop" --type places
 python3 scripts/search.py -p serper -q "AI news" --type news
-python3 scripts/search.py -p serper -q "cute cats" --type images
 
 # With time filter
 python3 scripts/search.py -p serper -q "OpenAI news" --time-range day
-python3 scripts/search.py -p serper -q "tech layoffs" --time-range week
 
 # Include images
 python3 scripts/search.py -p serper -q "iPhone 16 Pro" --images
 
 # Different locale
-python3 scripts/search.py -p serper -q "weather" --country us --language en
 python3 scripts/search.py -p serper -q "Wetter Wien" --country at --language de
 ```
 
@@ -304,44 +423,25 @@ python3 scripts/search.py -p serper -q "Wetter Wien" --country at --language de
 # Deep research mode
 python3 scripts/search.py -p tavily -q "quantum computing applications" --depth advanced
 
-# News topic
-python3 scripts/search.py -p tavily -q "climate policy" --topic news
-
 # With full page content
 python3 scripts/search.py -p tavily -q "transformer architecture" --raw-content
 
 # Domain filtering
 python3 scripts/search.py -p tavily -q "AI research" --include-domains arxiv.org nature.com
-python3 scripts/search.py -p tavily -q "product reviews" --exclude-domains reddit.com
-
-# Combined options
-python3 scripts/search.py -p tavily -q "machine learning trends" \
-  --depth advanced --topic general --max-results 10 --images
 ```
 
 ### Exa Options
 
 ```bash
-# Neural vs keyword search
-python3 scripts/search.py -p exa -q "companies like Stripe" --exa-type neural
-python3 scripts/search.py -p exa -q "Stripe API documentation" --exa-type keyword
-
 # Category filtering
 python3 scripts/search.py -p exa -q "AI startups Series A" --category company
 python3 scripts/search.py -p exa -q "attention mechanism" --category "research paper"
-python3 scripts/search.py -p exa -q "React hooks tutorial" --category github
-python3 scripts/search.py -p exa -q "tech industry thoughts" --category tweet
 
 # Date filtering
 python3 scripts/search.py -p exa -q "YC companies" --start-date 2024-01-01
-python3 scripts/search.py -p exa -q "AI announcements" --start-date 2024-06-01 --end-date 2024-12-31
 
 # Find similar pages
-python3 scripts/search.py -p exa --similar-url "https://openai.com"
 python3 scripts/search.py -p exa --similar-url "https://stripe.com" --category company
-
-# Domain filtering
-python3 scripts/search.py -p exa -q "startup news" --include-domains techcrunch.com ycombinator.com
 ```
 
 ---
@@ -350,114 +450,41 @@ python3 scripts/search.py -p exa -q "startup news" --include-domains techcrunch.
 
 ### 🛒 Product Research Workflow
 
-**Goal:** Research a product before purchasing
-
 ```bash
-# Step 1: Get product specs (Serper - Google's knowledge graph)
-python3 scripts/search.py -p serper -q "MacBook Pro M3 Max specs" --max-results 3
+# Step 1: Get product specs (auto-routed to Serper)
+python3 scripts/search.py -q "MacBook Pro M3 Max specs"
 
-# Step 2: Check current prices (Serper - Shopping)
-python3 scripts/search.py -p serper -q "MacBook Pro M3 Max price" --type shopping
+# Step 2: Check prices (auto-routed to Serper)
+python3 scripts/search.py -q "MacBook Pro M3 Max price comparison"
 
-# Step 3: Find in-depth reviews (Tavily - Full content)
-python3 scripts/search.py -p tavily -q "MacBook Pro M3 Max review 2024" \
-  --depth advanced --include-domains theverge.com arstechnica.com
-
-# Step 4: Get images (Serper)
-python3 scripts/search.py -p serper -q "MacBook Pro M3 Max" --images
+# Step 3: In-depth reviews (auto-routed to Tavily)
+python3 scripts/search.py -q "detailed MacBook Pro M3 Max review"
 ```
 
 ### 📚 Academic Research Workflow
 
-**Goal:** Research a technical topic thoroughly
-
 ```bash
-# Step 1: Get foundational understanding (Tavily)
-python3 scripts/search.py -p tavily -q "transformer architecture deep learning" \
-  --depth advanced --raw-content
+# Step 1: Understand the topic (auto-routed to Tavily)
+python3 scripts/search.py -q "explain transformer architecture in deep learning"
 
-# Step 2: Find recent papers (Exa - Research papers)
-python3 scripts/search.py -p exa -q "transformer improvements efficiency" \
-  --category "research paper" --start-date 2023-01-01
+# Step 2: Find recent papers (Exa)
+python3 scripts/search.py -p exa -q "transformer improvements" --category "research paper" --start-date 2024-01-01
 
-# Step 3: Find related papers to a key paper (Exa - Similar)
-python3 scripts/search.py -p exa --similar-url "https://arxiv.org/abs/1706.03762"
-
-# Step 4: Find implementations (Exa - GitHub)
-python3 scripts/search.py -p exa -q "transformer implementation pytorch" --category github
-```
-
-### 📰 News Monitoring Workflow
-
-**Goal:** Stay updated on a topic
-
-```bash
-# Step 1: Breaking news (Serper - Fast, real-time)
-python3 scripts/search.py -p serper -q "OpenAI news" --type news --time-range day
-
-# Step 2: In-depth coverage (Tavily - News topic)
-python3 scripts/search.py -p tavily -q "OpenAI latest developments" \
-  --topic news --depth advanced
-
-# Step 3: Industry reactions (Exa - Tweets)
-python3 scripts/search.py -p exa -q "OpenAI announcement reactions" --category tweet
-
-# Step 4: Analysis pieces (Tavily - Specific sources)
-python3 scripts/search.py -p tavily -q "OpenAI analysis" \
-  --include-domains stratechery.com theinformation.com
-```
-
-### 🖼️ Image Search Workflow
-
-**Goal:** Find images for a project
-
-```bash
-# Step 1: General image search (Serper)
-python3 scripts/search.py -p serper -q "minimalist logo design" --type images
-
-# Step 2: Get images with context (Serper)
-python3 scripts/search.py -p serper -q "modern office interior design" --images
-
-# Step 3: Find image sources with context (Tavily)
-python3 scripts/search.py -p tavily -q "stock photo websites free commercial use" --images
-```
-
-### 🔍 Similar Page Discovery Workflow
-
-**Goal:** Find companies/pages similar to a reference
-
-```bash
-# Step 1: Find companies similar to a known one (Exa)
-python3 scripts/search.py -p exa --similar-url "https://notion.so" --category company
-
-# Step 2: Find similar products
-python3 scripts/search.py -p exa --similar-url "https://figma.com" --max-results 10
-
-# Step 3: Find similar content/blogs
-python3 scripts/search.py -p exa --similar-url "https://paulgraham.com" --category "personal site"
-
-# Step 4: Research the discovered companies (Tavily)
-python3 scripts/search.py -p tavily -q "Coda vs Notion comparison" --depth advanced
+# Step 3: Find implementations (Exa)
+python3 scripts/search.py -p exa -q "transformer implementation" --category github
 ```
 
 ### 🏢 Competitive Analysis Workflow
 
-**Goal:** Research competitors in a space
-
 ```bash
-# Step 1: Find competitors (Exa - Company discovery)
-python3 scripts/search.py -p exa -q "project management software startups" --category company
+# Step 1: Find competitors (auto-routed to Exa)
+python3 scripts/search.py -q "companies like Notion"
 
-# Step 2: Find recent funding news (Exa - Date filtered)
-python3 scripts/search.py -p exa -q "project management startup funding" \
-  --category news --start-date 2024-01-01
+# Step 2: Find similar products (Exa)
+python3 scripts/search.py -p exa --similar-url "https://notion.so" --category company
 
-# Step 3: Deep dive on specific competitor (Tavily)
-python3 scripts/search.py -p tavily -q "Monday.com vs Asana features comparison" \
-  --depth advanced --raw-content
-
-# Step 4: Find user reviews (Serper)
-python3 scripts/search.py -p serper -q "Monday.com reviews" --type search
+# Step 3: Deep dive comparison (Tavily)
+python3 scripts/search.py -p tavily -q "Notion vs Coda comparison" --depth advanced
 ```
 
 ---
@@ -468,46 +495,18 @@ python3 scripts/search.py -p serper -q "Monday.com reviews" --type search
 
 | Tip | Savings |
 |-----|---------|
-| Use Serper for quick lookups | Cheapest per query |
-| Use Tavily `basic` depth first, `advanced` only when needed | ~50% cost reduction |
-| Set appropriate `max_results` (don't over-fetch) | Linear cost savings |
-| Cache results for repeated queries | 100% on duplicates |
-| Use Exa's free tier for semantic searches | 1,000 free/month |
+| Use auto-routing (defaults to Serper, cheapest) | Best value |
+| Use Tavily `basic` before `advanced` | ~50% cost reduction |
+| Set appropriate `max_results` | Linear cost savings |
+| Use Exa only for semantic queries | Avoid waste |
 
 ### Performance Optimization
 
 | Tip | Impact |
 |-----|--------|
 | Serper is fastest (~200ms) | Use for time-sensitive queries |
-| Tavily `basic` is faster than `advanced` | ~2x faster |
-| Exa `keyword` is faster than `neural` | ~1.5x faster |
+| Tavily `basic` faster than `advanced` | ~2x faster |
 | Lower `max_results` = faster response | Linear improvement |
-
-### Quality Optimization
-
-| Goal | Recommendation |
-|------|----------------|
-| Best factual accuracy | Serper (Google's quality) |
-| Best research synthesis | Tavily with `advanced` depth |
-| Best semantic matching | Exa with `neural` type |
-| Best for recent content | Exa with date filters |
-| Best for specific domains | Tavily with domain filters |
-
-### Provider Selection Quick Guide
-
-```
-Is it a quick fact/product/local search?
-  └─ YES → Serper
-  └─ NO → Continue
-
-Do you need full article content or synthesized answers?
-  └─ YES → Tavily
-  └─ NO → Continue
-
-Is it a conceptual/semantic query or finding similar pages?
-  └─ YES → Exa
-  └─ NO → Serper (default)
-```
 
 ---
 
@@ -515,22 +514,34 @@ Is it a conceptual/semantic query or finding similar pages?
 
 ### General Questions
 
+**Q: Do I need API keys for all three providers?**
+> No. You only need keys for providers you want to use. Auto-routing skips providers without keys.
+
 **Q: Which provider should I start with?**
-> Start with Serper for most queries — it's the most versatile and has the largest free tier (2,500 queries). Use Tavily for research and Exa for semantic/discovery tasks.
+> Serper — it's the fastest, cheapest, and has the largest free tier (2,500 queries).
 
 **Q: Can I use multiple providers in one workflow?**
-> Yes! That's the recommended approach. Use Serper for quick lookups, Tavily for deep dives, and Exa for discovery. See [Workflow Examples](#workflow-examples).
+> Yes! That's the recommended approach. See [Workflow Examples](#workflow-examples).
 
 **Q: How do I reduce API costs?**
-> 1. Use the cheapest provider for each task type
-> 2. Start with lower `max_results` and increase if needed
-> 3. Use Tavily `basic` before trying `advanced`
-> 4. Cache results for repeated queries
+> Use auto-routing (defaults to cheapest), start with lower `max_results`, use Tavily `basic` before `advanced`.
 
-**Q: What's the difference between Exa neural and keyword search?**
-> - **Neural:** Understands meaning/concepts ("companies like Uber for pets")
-> - **Keyword:** Traditional matching ("uber pets company")
-> Use neural for conceptual queries, keyword for specific terms.
+### Auto-Routing Questions
+
+**Q: Why did my query go to the wrong provider?**
+> Use `--explain-routing` to debug. Add custom keywords to config.json if needed.
+
+**Q: Can I add my own keywords?**
+> Yes! Edit `config.json` → `auto_routing.keyword_mappings`.
+
+**Q: How does keyword scoring work?**
+> Multi-word phrases get higher weights. "companies like" (2 words) scores higher than "like" (1 word).
+
+**Q: What if no keywords match?**
+> Uses the fallback provider (default: Serper).
+
+**Q: Can I force a specific provider?**
+> Yes, use `-p serper`, `-p tavily`, or `-p exa`.
 
 ### Troubleshooting
 
@@ -541,52 +552,19 @@ echo $SERPER_API_KEY
 
 # Set it
 export SERPER_API_KEY="your-key"
-
-# Or use .env file
-echo 'SERPER_API_KEY=your-key' >> .env
-source .env
 ```
 
 **Error: "API Error (401)"**
-> Your API key is invalid or expired. Generate a new one from the provider's dashboard.
+> Your API key is invalid or expired. Generate a new one.
 
 **Error: "API Error (429)"**
-> Rate limited. Wait a moment or upgrade your plan.
-
-**Error: "Network Error"**
-> Check your internet connection. The APIs require outbound HTTPS access.
+> Rate limited. Wait and retry, or upgrade your plan.
 
 **Empty results?**
-> - Try a different provider
-> - Broaden your query
-> - Remove restrictive filters (domains, dates, categories)
-> - Check if the query makes sense for that provider
+> Try a different provider, broaden your query, or remove restrictive filters.
 
 **Slow responses?**
-> - Reduce `max_results`
-> - Use Tavily `basic` instead of `advanced`
-> - Use Exa `keyword` instead of `neural`
-> - Try Serper (fastest)
-
-### Provider-Specific Issues
-
-**Serper: Results in wrong language**
-```bash
-# Explicitly set country and language
-python3 scripts/search.py -p serper -q "news" --country us --language en
-```
-
-**Tavily: Not getting full content**
-```bash
-# Enable raw content extraction
-python3 scripts/search.py -p tavily -q "article" --raw-content --depth advanced
-```
-
-**Exa: Not finding recent content**
-```bash
-# Add date filter for recent content
-python3 scripts/search.py -p exa -q "AI news" --start-date 2024-01-01
-```
+> Reduce `max_results`, use Tavily `basic`, or use Serper (fastest).
 
 ---
 
@@ -604,22 +582,20 @@ All providers return unified JSON:
     {
       "title": "Page Title",
       "url": "https://example.com/page",
-      "snippet": "Content excerpt or description...",
+      "snippet": "Content excerpt...",
       "score": 0.95,
       "date": "2024-01-15",
-      "raw_content": "Full page content (if requested)"
+      "raw_content": "Full page content (Tavily only)"
     }
   ],
-  "images": [
-    "https://example.com/image1.jpg",
-    "https://example.com/image2.jpg"
-  ],
-  "answer": "Synthesized answer (Tavily) or top snippet",
-  "knowledge_graph": {
-    "title": "Entity name",
-    "type": "Product|Company|Person",
-    "description": "Knowledge graph description",
-    "attributes": {"key": "value"}
+  "images": ["url1", "url2"],
+  "answer": "Synthesized answer",
+  "knowledge_graph": { },
+  "routing": {
+    "auto_routed": true,
+    "selected_provider": "serper",
+    "reason": "matched_keywords (score=1)",
+    "matched_keywords": ["price"]
   }
 }
 ```
@@ -628,24 +604,27 @@ All providers return unified JSON:
 
 | Option | Providers | Description |
 |--------|-----------|-------------|
-| `-p, --provider` | All | Provider: serper, tavily, exa |
 | `-q, --query` | All | Search query |
+| `-p, --provider` | All | Provider: auto, serper, tavily, exa |
 | `-n, --max-results` | All | Max results (default: 5) |
+| `--auto` | All | Force auto-routing |
+| `--explain-routing` | All | Debug auto-routing |
 | `--images` | Serper, Tavily | Include images |
-| `--country` | Serper | Country code (us, uk, ca, au, de, fr, es, it, at, etc.) (default: us) |
-| `--language` | Serper | Language code (en, de, fr, es, it, nl, pt, ru, zh, ja, ko, etc.) (default: en) |
+| `--country` | Serper | Country code (default: us) |
+| `--language` | Serper | Language code (default: en) |
 | `--type` | Serper | search/news/images/videos/places/shopping |
 | `--time-range` | Serper | hour/day/week/month/year |
 | `--depth` | Tavily | basic/advanced |
 | `--topic` | Tavily | general/news |
 | `--raw-content` | Tavily | Include full page content |
 | `--exa-type` | Exa | neural/keyword |
-| `--category` | Exa | company/research paper/news/pdf/github/tweet/personal site/linkedin profile |
+| `--category` | Exa | company/research paper/news/pdf/github/tweet |
 | `--start-date` | Exa | Start date (YYYY-MM-DD) |
 | `--end-date` | Exa | End date (YYYY-MM-DD) |
 | `--similar-url` | Exa | Find similar pages |
 | `--include-domains` | Tavily, Exa | Only these domains |
 | `--exclude-domains` | Tavily, Exa | Exclude these domains |
+| `--compact` | All | Compact JSON output |
 
 ---
 
