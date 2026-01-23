@@ -1,0 +1,11 @@
+{
+  "owner": "dbhurley",
+  "slug": "mbta",
+  "displayName": "MBTA Transit",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769206509133,
+    "commit": null
+  },
+  "history": []
+}
