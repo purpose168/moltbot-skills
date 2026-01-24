@@ -1,0 +1,11 @@
+{
+  "owner": "camelsprout",
+  "slug": "duckdb-cli-ai-skills",
+  "displayName": "DuckDB CLI skills",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769247814673,
+    "commit": null
+  },
+  "history": []
+}
