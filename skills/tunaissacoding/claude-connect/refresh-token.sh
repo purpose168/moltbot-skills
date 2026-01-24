@@ -194,6 +194,38 @@ TIME_LEFT_MIN=$((TIME_LEFT_MS / 60000))
 
 if [[ "$FORCE_REFRESH" == "false" ]] && [[ $TIME_LEFT_MIN -gt $REFRESH_BUFFER ]]; then
     log "Token still valid for ${TIME_LEFT_MIN} minutes (buffer: ${REFRESH_BUFFER}m)"
+    
+    # Sync token to auth-profiles.json if not already there (first run)
+    ACCESS_TOKEN=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; print(json.load(sys.stdin)['$KEYCHAIN_FIELD'].get('accessToken', ''))" 2>/dev/null || echo "")
+    
+    if [[ -n "$ACCESS_TOKEN" ]]; then
+        CURRENT_AUTH_TOKEN=""
+        if [[ -f "$AUTH_FILE" ]]; then
+            CURRENT_AUTH_TOKEN=$(python3 -c "import json; f=open('$AUTH_FILE'); d=json.load(f); print(d.get('profiles',{}).get('$PROFILE_NAME',{}).get('token',''))" 2>/dev/null || echo "")
+        fi
+        
+        if [[ "$CURRENT_AUTH_TOKEN" != "$ACCESS_TOKEN" ]]; then
+            log "Syncing token to auth-profiles.json..."
+            mkdir -p "$(dirname "$AUTH_FILE")"
+            python3 << PYEOF
+import json
+import os
+data = {'version': 1, 'profiles': {}}
+if os.path.exists('$AUTH_FILE'):
+    with open('$AUTH_FILE') as f:
+        data = json.load(f)
+if 'profiles' not in data:
+    data['profiles'] = {}
+if '$PROFILE_NAME' not in data['profiles']:
+    data['profiles']['$PROFILE_NAME'] = {'type': 'token', 'provider': 'anthropic'}
+data['profiles']['$PROFILE_NAME']['token'] = '$ACCESS_TOKEN'
+with open('$AUTH_FILE', 'w') as f:
+    json.dump(data, f, indent=2)
+PYEOF
+            log "✓ Token synced to auth-profiles.json"
+        fi
+    fi
+    
     echo "✅ Token still valid ($TIME_LEFT_MIN minutes remaining)"
     echo "Use --force to refresh anyway"
     exit 0
