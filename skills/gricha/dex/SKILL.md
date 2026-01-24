@@ -5,63 +5,35 @@ description: Task tracking for async/multi-step work. Use dex to create, track, 
 
 # Dex Task Tracking
 
-Use `dex` CLI for tracking work that isn't a single back-and-forth—async tasks, coding agent dispatches, multi-step projects.
+Track async work: coding agent dispatches, multi-step projects, anything needing follow-up.
 
-## When to Use Dex
-
-- Dispatching work to OpenCode/Claude Code (track workspace, branch, session)
-- Multi-step projects spanning sessions
-- Anything requiring follow-up or handoff
-- Coordinating parallel work streams
-
-## Core Commands
-
+## Commands
 ```bash
-# Create task with full context
-dex create -d "Short description" --context "Background, requirements, approach, done-when criteria"
-
-# List tasks
-dex list                    # Pending tasks (tree view)
+dex create -d "Description" --context "Background, goal, done-when"
+dex list                    # Pending tasks
 dex list --all              # Include completed
-dex list --json             # For scripting
-
-# View task
-dex show <id>               # Summary
+dex show <id>               # View task
 dex show <id> --full        # Full context
-
-# Complete task
-dex complete <id> --result "What was done, decisions made, follow-ups"
-
-# Subtasks
-dex create -d "Subtask" --context "..." --parent <parent-id>
-
-# Delete
+dex complete <id> --result "What was done, decisions, follow-ups"
+dex edit <id> --context "Updated context"
 dex delete <id>
 ```
 
 ## Task Structure
+- **Description**: One-line summary
+- **Context**: Background, requirements, done criteria
+- **Result**: What was built, decisions, follow-ups
 
-**Description**: One-line summary (like issue title)  
-**Context**: Full background—what, why, requirements, approach, done criteria  
-**Result**: On completion—what was built, decisions, trade-offs, follow-ups
-
-## Example: Coding Agent Dispatch
-
+## Example
 ```bash
-# Create task before dispatching
-dex create -d "Fix Sentry auth bug on PR #145" \
-  --context "Workspace: feat1 (100.109.173.45)
-Branch: feat/auth-token-support
-Issue: Auth check blocks static files, users can't load web UI
-Fix: Add static paths to PUBLIC_PATHS or reorder handlers
-Done when: Commit pushed, CI passes"
+# Before dispatching agent
+dex create -d "Add caching to API" --context "Workspace: feat1 (100.x.x.x)
+Branch: feat/cache
+Done when: PR merged, CI green"
 
-# After completion
-dex complete abc123 --result "Fixed in commit b483647
-- Reordered handlers to serve static files before auth
-- Pushed to branch, CI running"
+# After work complete
+dex complete abc123 --result "Merged PR #50. Redis caching with 5min TTL."
 ```
 
 ## Storage
-
-Tasks stored in `.dex/tasks/{id}.json` (git root or home). One file per task = git-friendly, no conflicts.
+`.dex/tasks/{id}.json` — one file per task, git-friendly.
