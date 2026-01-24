@@ -1,0 +1,11 @@
+{
+  "owner": "ddevaal",
+  "slug": "azure-cli",
+  "displayName": "azure-cli",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769255775347,
+    "commit": null
+  },
+  "history": []
+}
