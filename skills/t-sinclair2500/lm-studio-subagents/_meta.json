@@ -1,0 +1,11 @@
+{
+  "owner": "t-sinclair2500",
+  "slug": "lm-studio-subagents",
+  "displayName": "Offload Tasks to LM Studio Models",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769310793928,
+    "commit": null
+  },
+  "history": []
+}
