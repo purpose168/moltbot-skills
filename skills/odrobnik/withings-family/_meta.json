@@ -1,0 +1,11 @@
+{
+  "owner": "odrobnik",
+  "slug": "withings-family",
+  "displayName": "Withings Family",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769376527221,
+    "commit": null
+  },
+  "history": []
+}
