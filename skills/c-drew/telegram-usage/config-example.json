@@ -3,7 +3,7 @@
   "channels": {
     "telegram": {
       "enabled": true,
-      "botToken": "8251959160:AAF4l6HWzr-yDXiavRCDSKofvnXK_X7pMNM",
+      "botToken": "YOUR_BOT_TOKEN_HERE",
       "customCommands": [
         {
           "command": "usage",
