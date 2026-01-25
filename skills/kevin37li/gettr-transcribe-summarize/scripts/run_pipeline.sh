@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # GETTR Transcribe Pipeline
-# Usage: run_pipeline.sh <gettr_post_url> [output_base_dir]
+# Usage: run_pipeline.sh [--language <code>] <gettr_post_url> [output_base_dir]
 #
 # Runs the full pipeline:
 #   1. Extract video URL and slug from GETTR post
@@ -17,11 +17,40 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Parse optional --language flag
+LANGUAGE=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --language|-l)
+      if [[ -n "${2:-}" ]]; then
+        LANGUAGE="$2"
+        shift 2
+      else
+        echo "[error] --language requires a language code (e.g., zh, en, ja)" >&2
+        exit 2
+      fi
+      ;;
+    -*)
+      echo "[error] Unknown option: $1" >&2
+      exit 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
 if [[ $# -lt 1 ]]; then
-  echo "Usage: run_pipeline.sh <gettr_post_url> [output_base_dir]" >&2
+  echo "Usage: run_pipeline.sh [--language <code>] <gettr_post_url> [output_base_dir]" >&2
   echo "" >&2
   echo "Options:" >&2
+  echo "  --language, -l   Language code for transcription (e.g., zh, en, ja, ko)" >&2
+  echo "                   If not specified, language is auto-detected." >&2
   echo "  output_base_dir  Base directory for output (default: ./out)" >&2
+  echo "" >&2
+  echo "Common language codes:" >&2
+  echo "  zh = Chinese, en = English, ja = Japanese, ko = Korean" >&2
+  echo "  es = Spanish, fr = French, de = German, ru = Russian" >&2
   exit 2
 fi
 
@@ -85,19 +114,31 @@ echo "=== Step 3: Transcribing with MLX Whisper ===" >&2
 # -f vtt: VTT format for timestamps
 # --condition-on-previous-text False: prevents hallucination propagation
 # --word-timestamps True: more precise timing (if supported)
-# Language is auto-detected (transcribes in original language)
+# --language: explicit language if provided (otherwise auto-detected)
+
+# Build language flag if specified
+LANG_FLAG=""
+if [[ -n "$LANGUAGE" ]]; then
+  LANG_FLAG="--language $LANGUAGE"
+  echo "[info] Using explicit language: $LANGUAGE" >&2
+else
+  echo "[info] Language will be auto-detected" >&2
+fi
+
 mlx_whisper "$AUDIO_FILE" \
   -f vtt \
   -o "$OUT_DIR" \
   --model mlx-community/whisper-large-v3-turbo \
   --condition-on-previous-text False \
   --word-timestamps True \
+  $LANG_FLAG \
   2>&1 || {
     echo "[warn] Retrying without extra flags..." >&2
     mlx_whisper "$AUDIO_FILE" \
       -f vtt \
       -o "$OUT_DIR" \
-      --model mlx-community/whisper-large-v3-turbo
+      --model mlx-community/whisper-large-v3-turbo \
+      $LANG_FLAG
   }
 
 echo "[info] Transcript saved: $VTT_FILE" >&2

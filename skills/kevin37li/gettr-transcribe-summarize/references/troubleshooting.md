@@ -47,6 +47,32 @@ If the playlist uses redirects, test manually:
 ffmpeg -hide_banner -loglevel warning -i "<m3u8>" -t 00:00:30 -vn -ac 1 -ar 16000 /tmp/test.wav
 ```
 
+### HTTP 412 Precondition Failed
+If ffmpeg fails with `HTTP error 412 Precondition Failed`, the `og:video` URL has an expired or invalid signature.
+
+**Why this happens:**
+GETTR's streaming CDN (`stream.video.gettr.com`) uses signed URLs that are dynamically generated per session via JavaScript. The Python extraction script fetches static HTML which may contain a stale/invalid URL, while the browser executes JavaScript that fetches a fresh signed URL and updates the `og:video` meta tag.
+
+This is common for:
+- Streaming URLs (`gettr.com/streaming/<slug>`)
+- Live stream replays
+
+**Solution — Use browser extraction:**
+1. Open the GETTR streaming URL in a browser and wait for the page to fully load (JavaScript must execute)
+2. Extract the `og:video` meta tag content from the rendered DOM:
+   ```javascript
+   document.querySelector('meta[property="og:video"]').getAttribute('content')
+   ```
+3. Use that fresh URL for the download step
+
+The browser-extracted URL will have a valid signature and work with ffmpeg.
+
+**Manual alternative (ask the user):**
+1. Open the GETTR page in their browser
+2. Use DevTools (F12) → Elements tab → search for `og:video`
+3. Copy the `content` attribute value
+4. Provide that URL directly to the download script
+
 ## Private/gated GETTR posts (auth)
 This skill does **not** handle GETTR authentication.
 

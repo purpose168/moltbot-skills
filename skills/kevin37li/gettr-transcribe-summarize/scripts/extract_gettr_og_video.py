@@ -38,10 +38,6 @@ CONTENT_RE = re.compile(r"content\s*=\s*['\"](?P<val>[^'\"]+)['\"]", re.IGNORECA
 
 PREF_ORDER = ["og:video:secure_url", "og:video:url", "og:video"]
 
-# Base URL for GETTR media (used when og:video contains a relative path)
-GETTR_MEDIA_BASE = "https://media.gettr.com/"
-
-
 MAX_RETRIES = 3
 BACKOFF_BASE = 1.5  # seconds
 
@@ -150,9 +146,6 @@ def main(argv: list[str]) -> int:
     for key in PREF_ORDER:
         v = found.get(key)
         if v:
-            # Handle relative paths (GETTR often uses paths like "group5/getter/.../out.m3u8")
-            if not v.startswith(("http://", "https://")):
-                v = GETTR_MEDIA_BASE + v.lstrip("/")
             print(v)
             print(slug)
             return 0
