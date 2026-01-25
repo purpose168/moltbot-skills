@@ -310,7 +310,7 @@ If format is unclear, ask for clarification."
 ## Quick Reference: Common Fixes
 
 | Problem | Quick Fix |
-|---------|----------|
+|---------|-----------|
 | Inconsistent | Add format specification + examples |
 | Hallucinations | Ask for sources + confidence levels |
 | Vague | Add specific details + examples |

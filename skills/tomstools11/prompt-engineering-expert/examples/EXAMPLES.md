@@ -155,7 +155,7 @@ Scenario: [YOUR SCENARIO HERE]
         <copy>
           Headline: "Cut Project Delays by 40%"
           Body: "Teams waste 8 hours weekly on status updates. Our tool automates coordination..."
-        </copy>
+        </example>
       </example>
     </examples>
   </instructions>
