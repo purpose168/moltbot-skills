@@ -1,0 +1,11 @@
+{
+  "owner": "chrisvoncsefalvay",
+  "slug": "wandb-monitor",
+  "displayName": "Weights & Biases Monitor",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769468234686,
+    "commit": null
+  },
+  "history": []
+}
