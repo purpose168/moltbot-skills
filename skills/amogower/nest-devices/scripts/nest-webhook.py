@@ -23,10 +23,10 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 GATEWAY_URL = os.environ.get('CLAWDBOT_GATEWAY_URL', 'http://localhost:18789')
 HOOKS_TOKEN = os.environ.get('CLAWDBOT_HOOKS_TOKEN', '')
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
-TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '8294369833')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')
 
 # 1Password token for Nest API credentials
-OP_TOKEN = os.environ.get('OP_TOKEN_ANDREW', '')
+OP_TOKEN = os.environ.get('OP_SVC_ACCT_TOKEN', '')
 
 # Cache for Nest credentials and access token
 _nest_creds = {}
@@ -48,7 +48,7 @@ def get_nest_creds():
         return _nest_creds
 
     if not OP_TOKEN:
-        print("[NEST] No OP_TOKEN_ANDREW set")
+        print("[NEST] No OP_SVC_ACCT_TOKEN set")
         return None
 
     env = {**os.environ, 'OP_SERVICE_ACCOUNT_TOKEN': OP_TOKEN}
@@ -338,18 +338,55 @@ class NestWebhookHandler(BaseHTTPRequestHandler):
 
         print(f"[EVENT] {json.dumps(data, indent=2)}")
 
+        # Check event age — skip stale events (>5 min old)
+        event_ts_str = data.get('timestamp', '')
+        if event_ts_str:
+            try:
+                from datetime import timezone
+                # Parse ISO timestamp (may have fractional seconds)
+                event_ts_str_clean = event_ts_str.replace('Z', '+00:00')
+                event_time = datetime.fromisoformat(event_ts_str_clean)
+                now = datetime.now(timezone.utc)
+                age_seconds = (now - event_time).total_seconds()
+                if age_seconds > 300:  # 5 minutes
+                    print(f"[EVENT] STALE event ({age_seconds:.0f}s old) — skipping alert")
+                    return
+            except Exception as e:
+                print(f"[EVENT] Could not parse timestamp: {e}")
+
         resource_update = data.get('resourceUpdate', {})
         events = resource_update.get('events', {})
         device_id = resource_update.get('name', '')
 
+        # Which events to send to Telegram (doorbell always, person always, others log-only)
+        ALERT_EVENTS = {
+            'sdm.devices.events.DoorbellChime.Chime',
+            'sdm.devices.events.CameraPerson.Person',
+        }
+        LOG_ONLY_EVENTS = {
+            'sdm.devices.events.CameraMotion.Motion',
+            'sdm.devices.events.CameraSound.Sound',
+            'sdm.devices.events.CameraClipPreview.ClipPreview',
+        }
+
         for event_type, event_data in events.items():
             description = EVENT_TYPES.get(event_type, f'Event: {event_type}')
             event_id = event_data.get('eventId', '')
-            timestamp = datetime.utcnow().strftime('%H:%M:%S UTC')
+            try:
+                from datetime import timezone
+                timestamp = datetime.now(timezone.utc).strftime('%H:%M:%S UTC')
+            except ImportError:
+                timestamp = datetime.utcnow().strftime('%H:%M:%S UTC')
 
             print(f"[EVENT] {description} | device: {device_id[-8:]} | eventId: {event_id[:12]}")
 
-            # For doorbell/camera events with an eventId, try to get an image
+            # Only alert on doorbell and person events
+            if event_type in LOG_ONLY_EVENTS:
+                print(f"[EVENT] Logged only (not alerting): {event_type}")
+                send_clawdbot_hook(description)
+                continue
+
+            # For doorbell/person events with an eventId, try to get an image
             if event_id and ('Doorbell' in event_type or 'Camera' in event_type):
                 caption = f"{description}\n🕐 {timestamp}"
 

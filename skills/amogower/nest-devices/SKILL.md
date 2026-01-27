@@ -158,9 +158,13 @@ gcloud config set project YOUR_GCP_PROJECT_ID
 # Create topic
 gcloud pubsub topics create nest-events
 
-# Grant SDM permission to publish
+# Grant SDM permission to publish (both the service account and publisher group)
 gcloud pubsub topics add-iam-policy-binding nest-events \
   --member="serviceAccount:sdm-prod@sdm-prod.iam.gserviceaccount.com" \
+  --role="roles/pubsub.publisher"
+
+gcloud pubsub topics add-iam-policy-binding nest-events \
+  --member="group:sdm-publisher@googlegroups.com" \
   --role="roles/pubsub.publisher"
 ```
 
@@ -277,19 +281,46 @@ curl -X POST http://localhost:8420/nest/events \
 
 ### Supported Events
 
-| Event | Alert |
-|-------|-------|
-| `DoorbellChime.Chime` | 🔔 Doorbell rang! |
-| `CameraMotion.Motion` | 📹 Motion detected |
-| `CameraPerson.Person` | 🚶 Person detected |
-| `CameraSound.Sound` | 🔊 Sound detected |
-| `CameraClipPreview.ClipPreview` | 🎬 Clip ready |
+| Event | Behaviour |
+|-------|-----------|
+| `DoorbellChime.Chime` | 🔔 **Alerts** — sends photo to Telegram |
+| `CameraPerson.Person` | 🚶 **Alerts** — sends photo to Telegram |
+| `CameraMotion.Motion` | 📹 Logged only (no alert) |
+| `CameraSound.Sound` | 🔊 Logged only (no alert) |
+| `CameraClipPreview.ClipPreview` | 🎬 Logged only (no alert) |
+
+> **Staleness filter:** Events older than 5 minutes are logged but never alerted. This prevents notification floods if queued Pub/Sub messages are delivered late.
+
+### Image Capture
+
+When a doorbell or person event triggers an alert:
+
+1. **Primary:** SDM `GenerateImage` API — fast, event-specific snapshot
+2. **Fallback:** RTSP live stream frame capture via `ffmpeg` (requires `ffmpeg` installed)
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `CLAWDBOT_GATEWAY_URL` | No | Gateway URL (default: `http://localhost:18789`) |
+| `CLAWDBOT_HOOKS_TOKEN` | Yes | Gateway hooks token for awareness notifications |
+| `OP_SVC_ACCT_TOKEN` | Yes | 1Password service account token for Nest API credentials |
+| `TELEGRAM_BOT_TOKEN` | Yes | Telegram bot token for sending alerts |
+| `TELEGRAM_CHAT_ID` | Yes | Telegram chat ID to receive alerts |
+| `PORT` | No | Webhook server port (default: `8420`) |
+
+### Important Setup Notes
+
+- **Verify the full Pub/Sub topic path** in Device Access Console matches your GCP project exactly: `projects/YOUR_GCP_PROJECT_ID/topics/nest-events`
+- **Use a push subscription**, not pull — the webhook expects HTTP POST delivery
+- **Test end-to-end** after setup: ring the doorbell and confirm a photo arrives. Don't rely on simulated POST requests alone.
 
 ---
 
 ## Limitations
 
-- Camera streams expire after ~5 minutes
+- Camera event images expire after ~5 minutes (RTSP fallback captures current frame instead)
 - Real-time events require Pub/Sub setup (see above)
 - Quick tunnels (without Cloudflare account) have no uptime guarantee
 - Some older Nest devices may not support all features
+- Motion and sound events are intentionally not alerted to avoid notification fatigue

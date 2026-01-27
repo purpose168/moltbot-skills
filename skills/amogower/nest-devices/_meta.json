@@ -3,11 +3,16 @@
   "slug": "nest-devices",
   "displayName": "Nest Devices",
   "latest": {
-    "version": "1.2.0",
-    "publishedAt": 1769419400857,
-    "commit": "https://github.com/clawdbot/skills/commit/a6e98b450420acf3d38b7109078848f6f46e8c21"
+    "version": "2.0.1",
+    "publishedAt": 1769503256649,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.2.0",
+      "publishedAt": 1769419400857,
+      "commit": "https://github.com/clawdbot/skills/commit/a6e98b450420acf3d38b7109078848f6f46e8c21"
+    },
     {
       "version": "1.1.0",
       "publishedAt": 1769333123647,
