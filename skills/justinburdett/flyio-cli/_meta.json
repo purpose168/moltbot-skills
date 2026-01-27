@@ -1,0 +1,11 @@
+{
+  "owner": "justinburdett",
+  "slug": "flyio-cli",
+  "displayName": "Fly.io CLI",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769314716010,
+    "commit": null
+  },
+  "history": []
+}
