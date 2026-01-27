@@ -1,0 +1,11 @@
+{
+  "owner": "abk234",
+  "slug": "searxng",
+  "displayName": "Searxng",
+  "latest": {
+    "version": "1.0.3",
+    "publishedAt": 1769472992634,
+    "commit": null
+  },
+  "history": []
+}
