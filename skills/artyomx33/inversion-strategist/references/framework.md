@@ -1,109 +1,109 @@
-# Inversion Framework - Detailed Methodology
+# 反转框架 - 详细方法论
 
-## The Munger Method
+## 芒格方法
 
-Charlie Munger (Warren Buffett's partner) lives by inversion:
+查理·芒格（沃伦·巴菲特的合伙人）遵循反转原则：
 
-"All I want to know is where I'm going to die, so I'll never go there."
+"我只想知道我将死在哪里，所以我永远不会去那里。"
 
-Applied to business:
-- Don't ask "How do I build a great company?"
-- Ask "What destroys companies?" → Then don't do those things
+应用于商业：
+- 不问"如何建立一家伟大的公司？"
+- 而是问"什么会毁掉公司？" → 然后不要做这些事情
 
-## Categories of Failure
+## 失败类别
 
-### Type 1: Single-Point Failures
-One thing goes wrong → entire project fails
-- Key person leaves
-- Single customer churns
-- Regulatory change
-- Technical system failure
+### 类型一：单点失败
+一件事出错 → 整个项目失败
+- 关键人员离开
+- 单个客户流失
+- 监管变化
+- 技术系统故障
 
-**Inversion Strategy:** Eliminate single points of failure
+**反转策略：** 消除单点故障
 
-### Type 2: Slow Decay Failures
-Gradual erosion you don't notice
-- Culture drift
-- Quality decline
-- Customer satisfaction erosion
-- Technical debt accumulation
+### 类型二：缓慢衰败失败
+逐渐侵蚀，你没有注意到
+- 文化漂移
+- 质量下降
+- 客户满意度侵蚀
+- 技术债务积累
 
-**Inversion Strategy:** Build measurement systems, regular audits
+**反转策略：** 构建测量系统、定期审计
 
-### Type 3: Self-Inflicted Failures
-You cause your own downfall
-- Overconfidence
-- Moving too fast
-- Ignoring feedback
-- Misaligned incentives
+### 类型三：自招失败
+你自己造成自己的灭亡
+- 过度自信
+- 行动太快
+- 忽略反馈
+- 激励措施不对齐
 
-**Inversion Strategy:** Humility, feedback loops, incentive audits
+**反转策略：** 谦逊、反馈回路、激励审计
 
-### Type 4: External Shock Failures
-Things outside your control
-- Market crash
-- Pandemic
-- Competitor breakthrough
-- Regulatory change
+### 类型四：外部冲击失败
+你无法控制的事情
+- 市场崩溃
+- 疫情
+- 竞争对手突破
+- 监管变化
 
-**Inversion Strategy:** Build resilience, maintain reserves, diversify
+**反转策略：** 建立韧性、保持储备、多元化
 
-## Inversion Questions by Domain
+## 按领域的反转问题
 
-### Product Development
-- What would make users HATE this?
-- What would make this impossible to use?
-- What would make people uninstall immediately?
+### 产品开发
+- 什么会让用户**讨厌**这个？
+- 什么会让这个无法使用？
+- 什么会让人立即卸载？
 
-### Business Strategy
-- What would bankrupt us?
-- What would make customers leave en masse?
-- What would make talent refuse to work here?
+### 商业策略
+- 什么会让我们破产？
+- 什么会让客户大规模离开？
+- 什么会让人才拒绝在这里工作？
 
-### Relationships/Partnerships
-- What would destroy this partnership?
-- What would make them never trust us again?
-- What would turn allies into enemies?
+### 关系/合作伙伴关系
+- 什么会破坏这种伙伴关系？
+- 什么会让他们永远不会再次信任我们？
+- 什么会把盟友变成敌人？
 
-### Personal Productivity
-- What would guarantee I waste this day?
-- What would make me miss this deadline?
-- What would ensure I never finish this project?
+### 个人生产力
+- 什么会保证我浪费这一天？
+- 什么会让我错过这个截止日期？
+- 什么会确保我永远不会完成这个项目？
 
-## The Anti-Checklist Concept
+## 反检查清单概念
 
-Atul Gawande's "Checklist Manifesto" shows checklists save lives.
+Atul Gawande 的"检查清单宣言"显示检查清单可以救命。
 
-But ANTI-checklists might be more powerful:
+但**反检查清单**可能更强大：
 
-**Regular Checklist:** "Do X, Y, Z"
-**Anti-Checklist:** "Never do A, B, C"
+**常规检查清单：** "做 X, Y, Z"
+**反检查清单：** "永远不要做 A, B, C"
 
-The anti-checklist catches you BEFORE mistakes.
+反检查清单在你犯错**之前**抓住你。
 
-### Structure
+### 结构
 ```
-BEFORE LAUNCH, VERIFY NONE OF THESE:
-□ Single point of failure exists
-□ No rollback plan
-□ Untested with real users
-□ No monitoring/alerting
-□ Team unclear on ownership
+发布前，验证这些都不存在：
+□ 存在单点故障
+□ 无回滚计划
+□ 未经过真实用户测试
+□ 无监控/警报
+□ 团队对所有权不明确
 ```
 
-## Integration with Other Skills
+## 与其他技能的组合
 
-- **First Principles**: After decomposing, invert to find risks
-- **Second-Order**: Invert the consequences - what if reactions are negative?
-- **Pre-Mortem**: Inversion applied specifically to project planning
-- **Six Hats**: Black Hat thinking is essentially inversion
+- **第一性原理**：分解后，反转以找出风险
+- **二阶效应**：反转后果——如果反应是负面的怎么办？
+- **预死分析**：反转专门应用于项目规划
+- **六顶思考帽**：黑帽思维本质上是反转
 
-## Advanced: Double Inversion
+## 高级：双重反转
 
-1. State goal: "Launch successful app"
-2. First inversion: "What would make app fail?"
-3. Answer: "Poor user experience"
-4. Second inversion: "What would make UX amazing?"
-5. Answer: "Obsessive user testing, fast iteration"
+1. 陈述目标："成功推出应用"
+2. 第一次反转："什么会让应用失败？"
+3. 回答："糟糕的用户体验"
+4. 第二次反转："什么会让用户体验惊人？"
+5. 回答："痴迷的用户测试、快速迭代"
 
-Double inversion often reveals more actionable insights.
+双重反转通常揭示更多可操作的见解。

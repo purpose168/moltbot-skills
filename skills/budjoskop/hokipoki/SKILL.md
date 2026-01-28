@@ -1,83 +1,85 @@
 ---
 name: hokipoki
-description: "Switch AI models without switching tabs using the HokiPoki CLI. Hop between Claude, Codex, and Gemini when one gets stuck. Use when the user wants to request help from a different AI model, hop to another AI, get a second opinion from another model, switch models, share AI subscriptions with teammates, or manage HokiPoki provider/listener mode. Triggers on: 'use codex/gemini for this', 'hop to another model', 'ask another AI', 'get a second opinion', 'switch models', 'hokipoki', 'listen for requests'."
+description: "使用 HokiPoki CLI 无需切换标签页即可在不同 AI 模型之间切换。通过 Claude、Codex 和 Gemini 解决任务，当一个模型卡住时切换到另一个模型。当用户请求从不同的 AI 模型获取帮助、跳转到另一个 AI、获取第二个意见、切换模型、与团队成员共享 AI 订阅或管理 HokiPoki 提供者/监听模式时使用。触发词包括：'使用 codex/gemini 处理这个'、'跳转到另一个模型'、'询问另一个 AI'、'获取第二个意见'、'切换模型'、'hokipoki'、'监听请求'。"
 ---
 
-# HokiPoki Skill
+# HokiPoki 技能
 
-Route tasks to different AI CLIs (Claude, Codex, Gemini) via the HokiPoki P2P network. API keys never leave the provider's machine; only encrypted requests and results are exchanged.
+通过 HokiPoki P2P 网络将任务路由到不同的 AI 命令行工具（Claude、Codex、 Gemini）。API 密钥永远不会离开提供者的机器；只有加密的请求和结果会被交换。
 
-## Prerequisites
+## 前置条件
 
-HokiPoki CLI must be installed and authenticated:
+必须安装并认证 HokiPoki CLI：
 
 ```bash
+# 全局安装 HokiPoki CLI
 npm install -g @next-halo/hokipoki-cli
+# 登录认证
 hokipoki login
 ```
 
-Verify with `hokipoki whoami`. If not installed, guide the user through setup.
+使用 `hokipoki whoami` 验证安装状态。如果未安装，请引导用户完成设置。
 
-## Requesting Help from Another AI
+## 请求其他 AI 的帮助
 
-Send a task to a remote AI model. Always use `--json` for parseable output:
+将任务发送到远程 AI 模型。始终使用 `--json` 参数以获得可解析的输出：
 
 ```bash
-# Specific files
-hokipoki request --tool claude --task "Fix the auth bug" --files src/auth.ts --json
+# 处理特定文件
+hokipoki request --tool claude --task "修复身份验证 bug" --files src/auth.ts --json
 
-# Entire directory
-hokipoki request --tool codex --task "Add error handling" --dir src/services/ --json
+# 处理整个目录
+hokipoki request --tool codex --task "添加错误处理" --dir src/services/ --json
 
-# Whole project (respects .gitignore)
-hokipoki request --tool gemini --task "Review for security issues" --all --json
+# 处理整个项目（遵守 .gitignore 规则）
+hokipoki request --tool gemini --task "审查安全问题" --all --json
 
-# Route to a team workspace
-hokipoki request --tool claude --task "Optimize queries" --files src/db.ts --workspace my-team --json
+# 路由到团队工作区
+hokipoki request --tool claude --task "优化查询" --files src/db.ts --workspace my-team --json
 
-# Skip auto-apply (just save the patch)
-hokipoki request --tool codex --task "Refactor module" --dir src/ --no-auto-apply --json
+# 跳过自动应用（仅保存补丁）
+hokipoki request --tool codex --task "重构模块" --dir src/ --no-auto-apply --json
 ```
 
-Tool selection: if the user doesn't specify a tool, ask which model to use or omit `--tool` to let HokiPoki choose.
+**工具选择**：如果用户未指定工具，请询问要省略 `--tool` 让 HokiPoki 自动选择。
 
-### Patch Auto-Apply
+### 使用哪个模型，或补丁自动应用
 
-Patches auto-apply when the target directory is a git repo with committed files. If auto-apply fails, inform the user and suggest:
+当目标目录是已提交文件的 git 仓库时，补丁会自动应用。如果自动应用失败，请通知用户并建议执行：
 
 ```bash
 git init && git add . && git commit -m "initial"
 ```
 
-## Provider Mode (Sharing Your AI)
+## 提供者模式（共享你的 AI）
 
-Register and listen for incoming requests:
+注册并监听传入请求：
 
 ```bash
-# Register as a provider (one-time)
+# 注册为提供者（一次性操作）
 hokipoki register --as-provider --tools claude codex gemini
 
-# Start listening
+# 开始监听
 hokipoki listen --tools claude codex
 ```
 
-Tasks execute in isolated Docker containers (read-only filesystem, tmpfs workspace, auto-cleanup). Docker must be running.
+任务在隔离的 Docker 容器中执行（只读文件系统、tmpfs 工作区、自动清理）。Docker 必须正在运行。
 
-## Status & Account
+## 状态与账户
 
 ```bash
-hokipoki whoami      # Current user info
-hokipoki status      # Account, workspaces, history
-hokipoki dashboard   # Open web dashboard in browser
+hokipoki whoami      # 当前用户信息
+hokipoki status      # 账户、工作区、历史记录
+hokipoki dashboard   # 在浏览器中打开 Web 仪表板
 ```
 
-## When to Suggest Hopping
+## 建议切换 AI 的时机
 
-- User is stuck on a problem after multiple attempts
-- User asks for a different approach or fresh perspective
-- Task involves a domain where another model excels (e.g., Codex for boilerplate, Gemini for large-context analysis)
-- User explicitly asks to try another AI
+- 用户在多次尝试后仍然卡在某个问题上
+- 用户请求不同的方法或新视角
+- 任务涉及另一个模型擅长的领域（例如：Codex 适合样板代码，Gemini 适合大上下文分析）
+- 用户明确要求尝试另一个 AI
 
-## Full Command Reference
+## 完整命令参考
 
-See [references/commands.md](references/commands.md) for all CLI options, auth token locations, and advanced usage.
+请参阅 [命令参考文档](references/commands.md) 了解所有 CLI 选项、身份验证令牌位置和高级用法。

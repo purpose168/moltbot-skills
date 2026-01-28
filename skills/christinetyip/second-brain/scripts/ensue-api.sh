@@ -1,35 +1,39 @@
 #!/bin/bash
-# Ensue API wrapper for Second Brain skill
-# Usage: ./scripts/ensue-api.sh <method> '<json_args>'
+# Ensue API 包装脚本 - 第二大脑技能
+# 用法: ./scripts/ensue-api.sh <method> '<json_args>'
 #
-# Methods:
-#   list_keys        - List keys by prefix
-#   get_memory       - Get specific entries
-#   create_memory    - Create new entries
-#   update_memory    - Update existing entry
-#   delete_memory    - Delete an entry
-#   discover_memories - Semantic search
+# 方法:
+#   list_keys        - 按前缀列出键
+#   get_memory       - 获取特定条目
+#   create_memory    - 创建新条目
+#   update_memory    - 更新现有条目
+#   delete_memory    - 删除条目
+#   discover_memories - 语义搜索
 #
-# Examples:
+# 示例:
 #   ./scripts/ensue-api.sh list_keys '{"prefix": "public/concepts/", "limit": 10}'
-#   ./scripts/ensue-api.sh discover_memories '{"query": "how does caching work", "limit": 5}'
+#   ./scripts/ensue-api.sh discover_memories '{"query": "缓存是如何工作的", "limit": 5}'
 
 METHOD="$1"
 ARGS="$2"
 
+# 检查环境变量中是否设置了 API 密钥
 if [ -z "$ENSUE_API_KEY" ]; then
-  echo '{"error":"ENSUE_API_KEY not set. Configure in clawdbot.json under skills.entries.second-brain.apiKey or get a key at https://ensue-network.ai/dashboard"}'
+  echo '{"error":"未设置 ENSUE_API_KEY。请在 clawdbot.json 的 skills.entries.second-brain.apiKey 下配置，或在 https://www.ensue-network.ai/dashboard 获取密钥"}'
   exit 1
 fi
 
+# 检查是否指定了方法
 if [ -z "$METHOD" ]; then
-  echo '{"error":"No method specified. Available: list_keys, get_memory, create_memory, update_memory, delete_memory, discover_memories"}'
+  echo '{"error":"未指定方法。可用方法: list_keys, get_memory, create_memory, update_memory, delete_memory, discover_memories"}'
   exit 1
 fi
 
-# Default empty args
+# 默认空参数为空 JSON 对象
 [ -z "$ARGS" ] && ARGS='{}'
 
+# 调用 Ensue API
+# 使用 curl 发送 POST 请求到 Ensue API 端点
 curl -s -X POST https://api.ensue-network.ai/ \
   -H "Authorization: Bearer $ENSUE_API_KEY" \
   -H "Content-Type: application/json" \

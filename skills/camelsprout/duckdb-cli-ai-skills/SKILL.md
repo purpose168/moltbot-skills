@@ -1,245 +1,245 @@
 ---
 name: duckdb-en
-description: DuckDB CLI specialist for SQL analysis, data processing and file conversion. Use for SQL queries, CSV/Parquet/JSON analysis, database queries, or data conversion. Triggers on "duckdb", "sql", "query", "data analysis", "parquet", "convert data".
+description: "DuckDB CLI 专业技能，用于 SQL 数据分析、数据处理和文件转换。用于 SQL 查询、CSV/Parquet/JSON 分析、数据库查询或数据转换。触发词包括：'duckdb'、'sql'、'query'、'数据分析'、'parquet'、'数据转换'。"
 ---
 
-# DuckDB CLI Specialist
+# DuckDB CLI 专业技能
 
-Helps with data analysis, SQL queries and file conversion via DuckDB CLI.
+通过 DuckDB CLI 帮助进行数据分析、SQL 查询和文件转换。
 
-## Quick Start
+## 快速开始
 
-### Read data files directly with SQL
+### 直接用 SQL 读取数据文件
 ```bash
-# CSV
+# CSV 文件
 duckdb -c "SELECT * FROM 'data.csv' LIMIT 10"
 
-# Parquet
+# Parquet 文件
 duckdb -c "SELECT * FROM 'data.parquet'"
 
-# Multiple files with glob
+# 使用通配符读取多个文件
 duckdb -c "SELECT * FROM read_parquet('logs/*.parquet')"
 
-# JSON
+# JSON 文件
 duckdb -c "SELECT * FROM read_json_auto('data.json')"
 ```
 
-### Open persistent databases
+### 打开持久化数据库
 ```bash
-# Create/open database
+# 创建/打开数据库
 duckdb my_database.duckdb
 
-# Read-only mode
+# 只读模式
 duckdb -readonly existing.duckdb
 ```
 
-## Command Line Arguments
+## 命令行参数
 
-### Output formats (as flags)
-| Flag | Format |
-|------|--------|
-| `-csv` | Comma-separated |
-| `-json` | JSON array |
-| `-table` | ASCII table |
-| `-markdown` | Markdown table |
-| `-html` | HTML table |
-| `-line` | One value per line |
+### 输出格式（作为标志）
+| 标志 | 格式 |
+|------|------|
+| `-csv` | 逗号分隔 |
+| `-json` | JSON 数组 |
+| `-table` | ASCII 表格 |
+| `-markdown` | Markdown 表格 |
+| `-html` | HTML 表格 |
+| `-line` | 每行一个值 |
 
-### Execution arguments
-| Argument | Description |
-|----------|-------------|
-| `-c COMMAND` | Run SQL and exit |
-| `-f FILENAME` | Run script from file |
-| `-init FILE` | Use alternative to ~/.duckdbrc |
-| `-readonly` | Open in read-only mode |
-| `-echo` | Show commands before execution |
-| `-bail` | Stop on first error |
-| `-header` / `-noheader` | Show/hide column headers |
-| `-nullvalue TEXT` | Text for NULL values |
-| `-separator SEP` | Column separator |
+### 执行参数
+| 参数 | 功能描述 |
+|------|---------|
+| `-c 命令` | 执行 SQL 并退出 |
+| `-f 文件名` | 从文件执行脚本 |
+| `-init 文件` | 使用替代的 ~/.duckdbrc |
+| `-readonly` | 以只读模式打开 |
+| `-echo` | 执行前显示命令 |
+| `-bail` | 遇到第一个错误时停止 |
+| `-header` / `-noheader` | 显示/隐藏列标题 |
+| `-nullvalue 文本` | NULL 值的显示文本 |
+| `-separator 分隔符` | 列分隔符 |
 
-## Data Conversion
+## 数据转换
 
-### CSV to Parquet
+### CSV 转 Parquet
 ```bash
 duckdb -c "COPY (SELECT * FROM 'input.csv') TO 'output.parquet' (FORMAT PARQUET)"
 ```
 
-### Parquet to CSV
+### Parquet 转 CSV
 ```bash
 duckdb -c "COPY (SELECT * FROM 'input.parquet') TO 'output.csv' (HEADER, DELIMITER ',')"
 ```
 
-### JSON to Parquet
+### JSON 转 Parquet
 ```bash
 duckdb -c "COPY (SELECT * FROM read_json_auto('input.json')) TO 'output.parquet' (FORMAT PARQUET)"
 ```
 
-### Convert with filtering
+### 带筛选条件的转换
 ```bash
 duckdb -c "COPY (SELECT * FROM 'data.csv' WHERE amount > 1000) TO 'filtered.parquet' (FORMAT PARQUET)"
 ```
 
-## Dot Commands
+## 点命令
 
-### Schema inspection
-| Command | Description |
-|---------|-------------|
-| `.tables [pattern]` | Show tables (with LIKE pattern) |
-| `.schema [table]` | Show CREATE statements |
-| `.databases` | Show attached databases |
+### 架构检查
+| 命令 | 功能描述 |
+|------|---------|
+| `.tables [模式]` | 显示表（支持 LIKE 模式） |
+| `.schema [表]` | 显示 CREATE 语句 |
+| `.databases` | 显示附加的数据库 |
 
-### Output control
-| Command | Description |
-|---------|-------------|
-| `.mode FORMAT` | Change output format |
-| `.output file` | Send output to file |
-| `.once file` | Next output to file |
-| `.headers on/off` | Show/hide column headers |
-| `.separator COL ROW` | Set separators |
+### 输出控制
+| 命令 | 功能描述 |
+|------|---------|
+| `.mode 格式` | 更改输出格式 |
+| `.output 文件` | 将输出发送到文件 |
+| `.once 文件` | 下一个输出到文件 |
+| `.headers on/off` | 显示/隐藏列标题 |
+| `.separator 列 行` | 设置分隔符 |
 
-### Queries
-| Command | Description |
-|---------|-------------|
-| `.timer on/off` | Show execution time |
-| `.echo on/off` | Show commands before execution |
-| `.bail on/off` | Stop on error |
-| `.read file.sql` | Run SQL from file |
+### 查询相关
+| 命令 | 功能描述 |
+|------|---------|
+| `.timer on/off` | 显示执行时间 |
+| `.echo on/off` | 执行前显示命令 |
+| `.bail on/off` | 遇到第一个错误时停止 |
+| `.read sql文件.sql` | 从文件执行 SQL |
 
-### Editing
-| Command | Description |
-|---------|-------------|
-| `.edit` or `\e` | Open query in external editor |
-| `.help [pattern]` | Show help |
+### 编辑操作
+| 命令 | 功能描述 |
+|------|---------|
+| `.edit` 或 `\e` | 在外部编辑器中打开查询 |
+| `.help [模式]` | 显示帮助信息 |
 
-## Output Formats (18 available)
+## 输出格式（18 种可用格式）
 
-### Data export
-- **csv** - Comma-separated for spreadsheets
-- **tabs** - Tab-separated
-- **json** - JSON array
-- **jsonlines** - Newline-delimited JSON (streaming)
+### 数据导出
+- **csv** - 逗号分隔，适用于电子表格
+- **tabs** - 制表符分隔
+- **json** - JSON 数组
+- **jsonlines** - 换行符分隔的 JSON（流式）
 
-### Readable formats
-- **duckbox** (default) - Pretty ASCII with unicode box-drawing
-- **table** - Simple ASCII table
-- **markdown** - For documentation
-- **html** - HTML table
-- **latex** - For academic papers
+### 可读格式
+- **duckbox**（默认）- 带有 Unicode 框线字符的漂亮 ASCII 表格
+- **table** - 简单 ASCII 表格
+- **markdown** - 适用于文档
+- **html** - HTML 表格
+- **latex** - 适用于学术论文
 
-### Specialized
-- **insert TABLE** - SQL INSERT statements
-- **column** - Columns with adjustable width
-- **line** - One value per line
-- **list** - Pipe-separated
-- **trash** - Discard output
+### 专用格式
+- **insert 表名** - SQL INSERT 语句
+- **column** - 可调宽度的列
+- **line** - 每行一个值
+- **list** - 管道分隔
+- **trash** - 丢弃输出
 
-## Keyboard Shortcuts (macOS/Linux)
+## 键盘快捷键（macOS/Linux）
 
-### Navigation
-| Shortcut | Action |
-|----------|--------|
-| `Home` / `End` | Start/end of line |
-| `Ctrl+Left/Right` | Jump word |
-| `Ctrl+A` / `Ctrl+E` | Start/end of buffer |
+### 导航
+| 快捷键 | 功能 |
+|--------|------|
+| `Home` / `End` | 行首/行尾 |
+| `Ctrl+左/右` | 跳跃一个单词 |
+| `Ctrl+A` / `Ctrl+E` | 缓冲区开头/结尾 |
 
-### History
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+P` / `Ctrl+N` | Previous/next command |
-| `Ctrl+R` | Search history |
-| `Alt+<` / `Alt+>` | First/last in history |
+### 历史记录
+| 快捷键 | 功能 |
+|--------|------|
+| `Ctrl+P` / `Ctrl+N` | 上一个/下一个命令 |
+| `Ctrl+R` | 搜索历史记录 |
+| `Alt+<` / `Alt+>` | 历史记录中第一个/最后一个 |
 
-### Editing
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+W` | Delete word backward |
-| `Alt+D` | Delete word forward |
-| `Alt+U` / `Alt+L` | Uppercase/lowercase word |
-| `Ctrl+K` | Delete to end of line |
+### 编辑
+| 快捷键 | 功能 |
+|--------|------|
+| `Ctrl+W` | 向后删除一个单词 |
+| `Alt+D` | 向前删除一个单词 |
+| `Alt+U` / `Alt+L` | 单词大写/小写 |
+| `Ctrl+K` | 删除到行尾 |
 
-### Autocomplete
-| Shortcut | Action |
-|----------|--------|
-| `Tab` | Autocomplete / next suggestion |
-| `Shift+Tab` | Previous suggestion |
-| `Esc+Esc` | Undo autocomplete |
+### 自动补全
+| 快捷键 | 功能 |
+|--------|------|
+| `Tab` | 自动补全/下一个建议 |
+| `Shift+Tab` | 上一个建议 |
+| `Esc+Esc` | 撤销自动补全 |
 
-## Autocomplete
+## 自动补全
 
-Context-aware autocomplete activated with `Tab`:
-- **Keywords** - SQL commands
-- **Table names** - Database objects
-- **Column names** - Fields and functions
-- **File names** - Path completion
+使用 `Tab` 激活上下文感知的自动补全：
+- **关键词** - SQL 命令
+- **表名** - 数据库对象
+- **列名** - 字段和函数
+- **文件名** - 路径补全
 
-## Database Operations
+## 数据库操作
 
-### Create table from file
+### 从文件创建表
 ```sql
 CREATE TABLE sales AS SELECT * FROM 'sales_2024.csv';
 ```
 
-### Insert data
+### 插入数据
 ```sql
 INSERT INTO sales SELECT * FROM 'sales_2025.csv';
 ```
 
-### Export table
+### 导出表
 ```sql
 COPY sales TO 'backup.parquet' (FORMAT PARQUET);
 ```
 
-## Analysis Examples
+## 分析示例
 
-### Quick statistics
+### 快速统计
 ```sql
 SELECT
-    COUNT(*) as count,
-    AVG(amount) as average,
-    SUM(amount) as total
+    COUNT(*) as 数量,
+    AVG(amount) as 平均值,
+    SUM(amount) as 总和
 FROM 'transactions.csv';
 ```
 
-### Grouping
+### 分组统计
 ```sql
 SELECT
     category,
-    COUNT(*) as count,
-    SUM(amount) as total
+    COUNT(*) as 数量,
+    SUM(amount) as 总和
 FROM 'data.csv'
 GROUP BY category
-ORDER BY total DESC;
+ORDER BY 总和 DESC;
 ```
 
-### Join on files
+### 文件连接
 ```sql
 SELECT a.*, b.name
 FROM 'orders.csv' a
 JOIN 'customers.parquet' b ON a.customer_id = b.id;
 ```
 
-### Describe data
+### 描述数据
 ```sql
 DESCRIBE SELECT * FROM 'data.csv';
 ```
 
-## Pipe and stdin
+## 管道和标准输入输出
 
 ```bash
-# Read from stdin
+# 从标准输入读取
 cat data.csv | duckdb -c "SELECT * FROM read_csv('/dev/stdin')"
 
-# Pipe to another command
+# 管道到另一个命令
 duckdb -csv -c "SELECT * FROM 'data.parquet'" | head -20
 
-# Write to stdout
+# 写入标准输出
 duckdb -c "COPY (SELECT * FROM 'data.csv') TO '/dev/stdout' (FORMAT CSV)"
 ```
 
-## Configuration
+## 配置
 
-Save common settings in `~/.duckdbrc`:
+在 `~/.duckdbrc` 中保存常用设置：
 ```sql
 .timer on
 .mode duckbox
@@ -247,7 +247,7 @@ Save common settings in `~/.duckdbrc`:
 .highlight on
 ```
 
-### Syntax highlighting colors
+### 语法高亮颜色
 ```sql
 .keyword green
 .constant yellow
@@ -255,26 +255,26 @@ Save common settings in `~/.duckdbrc`:
 .error red
 ```
 
-## External Editor
+## 外部编辑器
 
-Open complex queries in your editor:
+在编辑器中打开复杂查询：
 ```sql
 .edit
 ```
 
-Editor is chosen from: `DUCKDB_EDITOR` → `EDITOR` → `VISUAL` → `vi`
+编辑器选择优先级：`DUCKDB_EDITOR` → `EDITOR` → `VISUAL` → `vi`
 
-## Safe Mode
+## 安全模式
 
-Secure mode that restricts file access. When enabled:
-- No external file access
-- Disables `.read`, `.output`, `.import`, `.sh` etc.
-- **Cannot** be disabled in the same session
+限制文件访问的安全模式。启用时：
+- 无法访问外部文件
+- 禁用 `.read`、`.output`、`.import`、`.sh` 等
+- **无法**在同一会话中禁用
 
-## Tips
+## 使用技巧
 
-- Use `LIMIT` on large files for quick preview
-- Parquet is faster than CSV for repeated queries
-- `read_csv_auto` and `read_json_auto` guess column types
-- Arguments are processed in order (like SQLite CLI)
-- WSL2 may show incorrect `memory_limit` values on some Ubuntu versions
+- 在大文件上使用 `LIMIT` 进行快速预览
+- Parquet 比 CSV 更适合重复查询
+- `read_csv_auto` 和 `read_json_auto` 会自动推断列类型
+- 参数按顺序处理（类似于 SQLite CLI）
+- WSL2 在某些 Ubuntu 版本上可能显示不正确的 `memory_limit` 值

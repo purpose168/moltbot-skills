@@ -1,8 +1,8 @@
-# Setting Up Automated Monitoring
+# 设置自动化监控
 
-## Option 1: Add via Clawdbot Config (Recommended)
+## 方式 1：通过 Clawdbot 配置添加（推荐）
 
-Add this to your Clawdbot Gateway config (`~/.clawdbot/clawdbot.json`):
+将此添加到您的 Clawdbot Gateway 配置（`~/.clawdbot/clawdbot.json`）：
 
 ```json
 {
@@ -22,56 +22,56 @@ Add this to your Clawdbot Gateway config (`~/.clawdbot/clawdbot.json`):
 }
 ```
 
-Replace `YOUR_CHAT_ID` with your Telegram chat ID (usually your phone number).
+将 `YOUR_CHAT_ID` 替换为您的 Telegram 聊天 ID（通常是您的电话号码）。
 
-Then restart Clawdbot:
+然后重启 Clawdbot：
 ```bash
 clawdbot daemon restart
 ```
 
-## Option 2: System Cron (Alternative)
+## 方式 2：系统 Cron（替代方案）
 
-Add to your system crontab:
+添加到您的系统 crontab：
 
 ```bash
 crontab -e
 ```
 
-Add this line:
+添加这一行：
 ```
 */30 * * * * /Users/ali/clawd/skills/claude-code-usage/scripts/monitor-usage.sh > /tmp/claude-monitor.log 2>&1
 ```
 
-**Note:** System cron won't send Telegram notifications directly. You'll need to check `/tmp/claude-monitor.log` for reset notifications.
+**注意：** 系统 cron 不会直接发送 Telegram 通知。您需要检查 `/tmp/claude-monitor.log` 获取重置通知。
 
-## Option 3: Manual Testing
+## 方式 3：手动测试
 
-Test the monitor anytime:
+随时测试监控器：
 ```bash
 /Users/ali/clawd/skills/claude-code-usage/scripts/monitor-usage.sh
 ```
 
-## Verification
+## 验证
 
-Check if monitoring is working:
+检查监控是否正常工作：
 ```bash
-# View state file
+# 查看状态文件
 cat /tmp/claude-usage-state.json
 
-# View last check time
+# 查看上次检查时间
 cat /tmp/claude-usage-state.json | grep last_check
 ```
 
-## Notification Format
+## 通知格式
 
-When a reset is detected, you'll receive:
+检测到重置时，您将收到：
 
 ```
-🎉 Claude Code Session Reset!
+🎉 Claude Code 会话已重置！
 
-⏱️  Your 5-hour quota has reset
-📊 Usage: 2%
-⏰ Next reset: 4h 58m
+⏱️  您的5小时配额已重置
+📊 使用量: 2%
+⏰ 下次重置: 4小时 58分钟
 
-Fresh usage available! 🦞
+新的使用量已可用！🦞
 ```

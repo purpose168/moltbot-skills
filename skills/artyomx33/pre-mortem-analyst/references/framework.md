@@ -1,120 +1,120 @@
-# Pre-Mortem Framework - Detailed Methodology
+# 预死框架 - 详细方法论
 
-## The Psychology Behind Pre-Mortems
+## 预死背后的心理学
 
-### Why Pre-Mortems Work
+### 为什么预死 有效
 
-1. **Prospective Hindsight**: Imagining future failure as certain activates different thinking
-2. **Permission to Criticize**: "The project failed" removes social pressure to be positive
-3. **Specificity Forcing**: Must generate concrete causes, not vague concerns
-4. **Ownership Distribution**: Everyone can contribute without being "negative"
+1. **预期后见之明**：将未来失败想象为确定激活不同思维
+2. **批评许可**："项目失败"消除积极的社会压力
+3. **具体性强制**：必须生成具体原因，而非模糊担忧
+4. **所有权分配**：每个人都可以贡献而不被"负面"
 
-Research by Gary Klein shows pre-mortems improve outcome prediction by 30%.
+Gary Klein 的研究显示预死 将结果预测提高 30%。
 
-## The Facilitation Process
+## 促进过程
 
-### For Solo Use (With Claude)
-1. State project clearly
-2. Set specific failure date and scenario
-3. Generate at least 10 causes
-4. Rate and prioritize
-5. Create action plans
+### 单独使用（与 Claude）
+1. 清楚陈述项目
+2. 设置特定失败日期和场景
+3. 生成至少10个原因
+4. 评级和优先
+5. 创建行动计划
 
-### For Team Use
-1. Explain pre-mortem concept (2 min)
-2. Set scenario: "It's [date]. This has failed catastrophically."
-3. Silent brainstorm - everyone writes (5 min)
-4. Round-robin sharing - no discussion yet (10 min)
-5. Categorize on whiteboard (5 min)
-6. Dot-vote on severity (3 min)
-7. Discuss top items and actions (15 min)
+### 团队使用
+1. 解释预死概念（2分钟）
+2. 设置场景："现在是[日期]。这灾难性地失败了。"
+3. 安静集思广益 - 每个人都写（5分钟）
+4. 轮流分享 - 还没讨论（10分钟）
+5. 在白板上分类（5分钟）
+6. 点投票严重性（3分钟）
+7. 讨论顶级项目和行动（15分钟）
 
-## Failure Cause Templates
+## 失败原因模板
 
-### The 10 Universal Failure Modes
+### 10个通用失败模式
 
-1. **Scope Creep** - We tried to do too much
-2. **Resource Shortage** - We ran out of time/money/people
-3. **Key Person Dependency** - Critical person left/unavailable
-4. **Communication Breakdown** - Teams/stakeholders misaligned
-5. **Technical Debt** - Shortcuts caught up with us
-6. **Market Misread** - Customers didn't want this
-7. **Competitor Move** - Someone else got there first/better
-8. **Integration Failure** - Pieces didn't fit together
-9. **Stakeholder Resistance** - Key people blocked progress
-10. **External Shock** - Something outside our control happened
+1. **范围蔓延** - 我们试图做太多
+2. **资源短缺** - 我们耗尽时间/金钱/人员
+3. **关键人员依赖** - 关键人员离开/不可用
+4. **沟通断裂** - 团队/利益相关者不对齐
+5. **技术债务** - 捷径追赶我们
+6. **市场误读** - 客户不想要这个
+7. **竞争对手行动** - 有人先/更好地到达
+8. **集成失败** - 部分不适合一起
+9. **利益相关者阻力** - 关键人员阻止进展
+10. **外部冲击** - 我们控制之外的事情发生
 
-### Industry-Specific Additions
+### 行业特定添加
 
-**For Childcare/Education:**
-- Regulatory compliance issue
-- Parent trust incident
-- Staff turnover at critical moment
-- Enrollment below projections
+**对于儿童保育/教育：**
+- 监管合规问题
+- 家长信任事件
+- 关键时刻员工流失
+- 注册低于预期
 
-**For Technology Products:**
-- Scaling failure at launch
-- Security/privacy breach
-- User adoption below threshold
-- API/integration dependency fails
+**对于技术产品：**
+- 启动时扩展失败
+- 安全/隐私漏洞
+- 用户采用低于阈值
+- API/集成依赖失败
 
-**For Sales/Expansion:**
-- Decision maker changed
-- Budget cycle misalignment
-- Competitor undercutting
-- Implementation complexity underestimated
+**对于销售/扩张：**
+- 决策者改变
+- 预算周期不对齐
+- 竞争对手削弱
+- 实施复杂性低估
 
-## The Warning Signs System
+## 警告信号系统
 
-For each failure cause, identify:
+对于每个失败原因，识别：
 
-### Leading Indicators (Early Warning)
-Signals that appear BEFORE failure becomes visible
-- Example: "Engineers expressing frustration in standups" → Technical debt risk
+### 领先指标（早期警告）
+失败可见**之前**出现的信号
+- 示例："工程师在站会表达挫折" → 技术债务风险
 
-### Lagging Indicators (Confirmation)
-Signals that confirm failure is happening
-- Example: "Bug reports increasing weekly" → Technical debt materializing
+### 滞后指标（确认）
+确认失败正在发生的信号
+- 示例："错误报告每周增加" → 技术债务实现
 
-### Threshold Triggers
-Specific numbers that trigger action
-- Example: "More than 5 P1 bugs in a week → Emergency technical review"
+### 阈值触发器
+触发行动的特定数字
+- 示例："一周内超过5个P1错误 → 紧急技术审查"
 
-## Prevention Hierarchy
+## 预防层次
 
-### Level 1: Eliminate
-Remove the failure mode entirely
-"We won't build feature X, eliminating complexity risk"
+### 级别一：消除
+完全移除失败模式
+"我们不会构建功能X，消除复杂性风险"
 
-### Level 2: Substitute
-Replace risky element with safer alternative
-"Use proven vendor instead of building custom"
+### 级别二：替代
+用更安全的替代品替换风险元素
+"使用经过验证的供应商而非构建自定义"
 
-### Level 3: Engineering Controls
-Build systems to prevent failure
-"Automated testing catches bugs before release"
+### 级别三：工程控制
+构建系统防止失败
+"自动化测试在发布前捕获错误"
 
-### Level 4: Administrative Controls
-Processes and reviews to catch issues
-"Weekly risk review meetings"
+### 级别四：行政控制
+流程和审查捕获问题
+"每周风险审查会议"
 
-### Level 5: Response Planning
-Plans for when failure happens anyway
-"Rollback procedure documented and tested"
+### 级别五：响应计划
+当失败仍然发生时计划
+"回滚程序已记录和测试"
 
-## Integration with Other Skills
+## 与其他技能的组合
 
-- **Inversion**: Pre-mortem IS applied inversion for projects
-- **Second-Order**: Consider downstream effects of each failure mode
-- **First Principles**: Ensure project foundation is solid before pre-mortem
-- **Six Hats**: Black hat thinking IS pre-mortem mode
+- **反转**：预死是应用于项目的反转
+- **二阶效应**：考虑每个失败模式的下游效应
+- **第一性原理**：确保项目基础在预死之前稳固
+- **六顶思考帽**：黑帽思维是预死模式
 
-## Post-Project Retroactive Analysis
+## 项目后回顾性分析
 
-After project completes, compare:
-- What failure modes did we predict?
-- What actually went wrong?
-- What did we miss?
-- How can we improve future pre-mortems?
+项目完成后，比较：
+- 我们预测了哪些失败模式？
+- 实际上什么出错了？
+- 我们错过了什么？
+- 如何改进未来的预死？
 
-This feedback loop improves prediction accuracy over time.
+这个反馈循环随着时间提高预测准确性。

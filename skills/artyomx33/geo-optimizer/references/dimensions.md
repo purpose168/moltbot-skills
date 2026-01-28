@@ -1,173 +1,173 @@
-# GEO Dimensions Scoring Guide
+# GEO 维度评分指南
 
-## Dimension 1: Definition Clarity
+## 维度一：定义清晰度
 
-### Score 1-2 (Low)
-- Vague or incomplete definitions
-- No specific metrics or comparisons
-- Can't be quoted directly
+### 评分 1-2（低）
+- 模糊或不完整的定义
+- 没有具体指标或比较
+- 不能直接引用
 
-**Example (Bad):**
-> "Email marketing is important for businesses."
+**示例（差）：**
+> "电子邮件营销对企业很重要。"
 
-### Score 4-5 (High)
-- Clear, standalone definitions
-- Includes specific metrics
-- Directly quotable by AI
+### 评分 4-5（高）
+- 清晰、独立的定义
+- 包含具体指标
+- AI可直接引用
 
-**Example (Good):**
-> "Email marketing is a digital acquisition channel delivering $42 ROI per $1 invested, making it the highest-performing digital marketing method."
+**示例（好）：**
+> "电子邮件营销是一种数字获取渠道，每投入1美元可获得42美元的ROI，使其成为表现最好的数字营销方法。"
 
-### How to Improve
-- Add the category: "[Term] is a [category]"
-- Add the function: "that [does what]"
-- Add a distinguishing metric: "delivering [specific result]"
-
----
-
-## Dimension 2: Quotable Statements
-
-### Score 1-2 (Low)
-- Vague claims
-- No specifics
-- "Many", "some", "often"
-
-**Example (Bad):**
-> "Many companies use email marketing successfully."
-
-### Score 4-5 (High)
-- Specific facts
-- Clear attribution
-- Memorable phrasing
-
-**Example (Good):**
-> "81% of small businesses rely on email as their primary customer acquisition channel" (Emarsys, 2024).
-
-### Patterns for Quotability
-1. **Statistic + Source**: "X% of Y do Z (Source, Year)"
-2. **Comparison**: "X generates Y, compared to Z for alternatives"
-3. **Expert Quote**: "[Expert], [Title], states: '[insight]'"
+### 如何改进
+- 添加类别："[术语]是[类别]"
+- 添加功能："做[什么]"
+- 添加区分指标："提供[具体结果]"
 
 ---
 
-## Dimension 3: Factual Density
+## 维度二：可引用声明
 
-### Score 1-2 (Low)
-- Opinion-heavy
-- Few concrete facts
-- Fluffy filler content
+### 评分 1-2（低）
+- 模糊声明
+- 没有具体内容
+- "许多"、"一些"、"经常"
 
-**Example (Bad):**
-> "Social media marketing is popular for businesses. Many companies use it to reach customers. It's important for brand awareness."
+**示例（差）：**
+> "许多企业成功使用电子邮件营销。"
 
-### Score 4-5 (High)
-- Packed with statistics
-- Multiple data points
-- Verified claims
+### 评分 4-5（高）
+- 具体事实
+- 清晰归属
+- 令人难忘的措辞
 
-**Example (Good):**
-> "4.9 billion users access social media daily (Statista, 2024). Businesses using social platforms report 66% higher lead generation (HubSpot, 2024). Facebook, Instagram, and TikTok account for 78% of social ad spend (eMarketer, 2024)."
+**示例（好）：**
+> "81%的小型企业将电子邮件作为主要客户获取渠道"（Emarsys，2024年）。
 
----
-
-## Dimension 4: Source Citations
-
-### Score 1-2 (Low)
-- No citations
-- "Studies show..."
-- Vague attributions
-
-### Score 4-5 (High)
-- Named sources
-- Dates included
-- Traceable references
-
-**Pattern:**
-> "According to [Source Name], [specific finding] ([Year])."
+### 可引用模式
+1. **统计 + 来源**："X%的Y做Z（来源，年份）"
+2. **比较**："X产生Y，与Z替代方案相比"
+3. **专家引言**："[专家]，[头衔]，说：'[见解]'"
 
 ---
 
-## Dimension 5: Q&A Format
+## 维度三：事实密度
 
-### Score 1-2 (Low)
-- Prose only
-- No structured Q&A
-- Headers don't match queries
+### 评分 1-2（低）
+- 意见为主
+- 很少具体事实
+- 空洞的填充内容
 
-### Score 4-5 (High)
-- Explicit questions as headers
-- Direct answers following
-- Matches search intent
+**示例（差）：**
+> "社交媒体营销对企业很受欢迎。许多公司用它接触客户。对品牌认知很重要。"
 
-**Structure:**
+### 评分 4-5（高）
+- 充满统计
+- 多个数据点
+- 经过验证的声明
+
+**示例（好）：**
+> "49.4亿用户每日访问社交媒体（Statista，2024年）。使用社交平台的企业报告66%更高的潜在客户生成（HubSpot，2024年）。Facebook、Instagram和TikTok占社交广告支出的78%（eMarketer，2024年）。"
+
+---
+
+## 维度四：来源引用
+
+### 评分 1-2（低）
+- 无引用
+- "研究表明......"
+- 模糊归属
+
+### 评分 4-5（高）
+- 命名来源
+- 包含日期
+- 可追溯参考
+
+**模式：**
+> "根据[来源名称]，[具体发现]（[年份]）。"
+
+---
+
+## 维度五：问答格式
+
+### 评分 1-2（低）
+- 仅散文
+- 没有结构化问答
+- 标题不匹配查询
+
+### 评分 4-5（高）
+- 明确的问题作为标题
+- 随之而来的直接回答
+- 匹配搜索意图
+
+**结构：**
 ```markdown
-## What is email marketing?
-Email marketing is a digital channel delivering $42 ROI per $1 invested...
+## 什么是电子邮件营销？
+电子邮件营销是一个数字渠道，每投入1美元可获得42美元的投资回报率...
 
-## How does email marketing work?
-Email systems send targeted messages to subscriber lists...
+## 电子邮件营销如何运作？
+电子邮件系统向订阅者列表发送有针对性的消息...
 ```
 
 ---
 
-## Dimension 6: Authority Signals
+## 维度六：权威信号
 
-### Score 1-2 (Low)
-- No author credentials
-- No expertise indicators
-- Anonymous content
+### 评分 1-2（低）
+- 无作者凭证
+- 无专业知识指标
+- 匿名内容
 
-### Score 4-5 (High)
-- Author byline with credentials
-- Expert quotes with titles
-- Original research cited
+### 评分 4-5（高）
+- 带凭证的作者署名
+- 带标题的专家引言
+- 引用的原始研究
 
-**Include:**
-- Author name and title
-- Years of experience
-- Relevant credentials
-- Original research/case studies
-
----
-
-## Dimension 7: Content Freshness
-
-### Score 1-2 (Low)
-- No dates
-- Outdated statistics
-- Old references
-
-### Score 4-5 (High)
-- Publication date visible
-- "Last updated" marker
-- Recent citations (within 2 years)
+**包括：**
+- 作者姓名和头衔
+- 经验年限
+- 相关凭证
+- 原始研究/案例研究
 
 ---
 
-## Dimension 8: Structural Clarity
+## 维度七：内容新鲜度
 
-### Score 1-2 (Low)
-- Wall of text
-- Poor hierarchy
-- No visual organization
+### 评分 1-2（低）
+- 无日期
+- 过时统计
+- 旧引用
 
-### Score 4-5 (High)
-- Clear section headers
-- Bullet points and numbered lists
-- Tables for comparisons
-- Headers match common queries
+### 评分 4-5（高）
+- 出版日期可见
+- "最后更新"标记
+- 最近引用（2年内）
 
 ---
 
-## Quick Reference Scorecard
+## 维度八：结构清晰度
 
-| Dimension | 1-2 | 3 | 4-5 |
-|-----------|-----|---|-----|
-| Definitions | Vague | Partial | Citable with metrics |
-| Statements | Generic | Some specifics | Facts + sources |
-| Factual Density | Opinion | Mixed | Data-packed |
-| Citations | None | Some | All attributed |
-| Q&A Format | Prose | Some headers | Full Q&A |
-| Authority | None | Some | Clear credentials |
-| Freshness | Outdated | Mixed | Recent, dated |
-| Structure | Poor | OK | Clear hierarchy |
+### 评分 1-2（低）
+- 大段文字
+- 层次差
+- 无视觉组织
+
+### 评分 4-5（高）
+- 清晰的章节标题
+- 项目符号和编号列表
+- 用于比较的表格
+- 标题匹配常见查询
+
+---
+
+## 快速参考评分卡
+
+| 维度 | 1-2 | 3 | 4-5 |
+|------|-----|---|-----|
+| 定义 | 模糊 | 部分 | 带指标可引用 |
+| 声明 | 通用 | 部分细节 | 事实+来源 |
+| 事实密度 | 意见 | 混合 | 数据丰富 |
+| 引用 | 无 | 一些 | 全部归因 |
+| 问答格式 | 散文 | 一些标题 | 完整问答 |
+| 权威 | 无 | 一些 | 清晰凭证 |
+| 新鲜度 | 过时 | 混合 | 最近、注明日期 |
+| 结构 | 差 | 还可以 | 清晰层次 |

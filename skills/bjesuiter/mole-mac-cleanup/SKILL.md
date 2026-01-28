@@ -1,139 +1,123 @@
 ---
 name: mole-mac-cleanup
-description: Mac cleanup & optimization tool combining CleanMyMac, AppCleaner, DaisyDisk features. Deep cleaning, smart uninstaller, disk insights, and project artifact purge.
+description: macOS 清理和维护工具。清理缓存、释放磁盘空间、管理启动项和优化系统性能。
 author: Benjamin Jesuiter <bjesuiter@gmail.com>
 metadata:
   clawdbot:
     emoji: "🧹"
     os: ["darwin"]
-    requires:
-      bins: ["mo"]
-    install:
-      - id: brew
-        kind: brew
-        formula: mole
-        bins: ["mo"]
-        label: Install Mole via Homebrew
 ---
 
-# Mole - Mac Cleanup & Optimization Tool
+# macOS 清理工具
 
-**Repo:** https://github.com/tw93/Mole
-**Command:** `mo` (not `mole`!)
-**Install:** `brew install mole`
+macOS 清理和维护工具。
 
-> **Note for humans:** `mo` without params opens an interactive TUI mode. Not useful for agents, but you might wanna try it manually! 😉
+## 快速参考
 
-## What It Does
+| 操作 | 命令 |
+|------|------|
+| 清理缓存 | `bash scripts/cleanup.sh caches` |
+| 清理日志 | `bash scripts/cleanup.sh logs` |
+| 清理下载 | `bash scripts/cleanup.sh downloads` |
+| 完整清理 | `bash scripts/cleanup.sh all --dry-run` |
+| 分析磁盘 | `bash scripts/analyze.sh` |
 
-All-in-one toolkit combining CleanMyMac, AppCleaner, DaisyDisk, and iStat Menus:
-- **Deep cleaning** — removes caches, logs, browser leftovers
-- **Smart uninstaller** — removes apps + hidden remnants
-- **Disk insights** — visualizes usage, manages large files
-- **Live monitoring** — real-time system stats
-- **Project artifact purge** — cleans `node_modules`, `target`, `build`, etc.
+## 清理类型
 
----
+### 缓存清理
 
-## Non-Interactive Commands (Clawd-friendly)
+清理系统缓存：
 
-### Preview / Dry Run (ALWAYS USE FIRST)
 ```bash
-mo clean --dry-run              # Preview cleanup plan
-mo clean --dry-run --debug      # Detailed preview with risk levels & file info
-mo optimize --dry-run           # Preview optimization actions
-mo optimize --dry-run --debug   # Detailed optimization preview
+# 清理用户缓存
+bash scripts/cleanup.sh caches
+
+# 清理特定应用缓存
+bash scripts/cleanup.sh caches --app "Chrome" "Safari"
+
+# 清理所有缓存
+bash scripts/cleanup.sh caches --all
 ```
 
-### Execute Cleanup
+### 日志清理
+
+清理系统日志：
+
 ```bash
-mo clean                        # Run deep cleanup (caches, logs, browser data, trash)
-mo clean --debug                # Cleanup with detailed logs
+# 清理系统日志
+bash scripts/cleanup.sh logs
+
+# 清理应用日志
+bash scripts/cleanup.sh logs --older-than 7d
+
+# 保留最近日志
+bash scripts/cleanup.sh logs --keep 3
 ```
 
-### System Optimization
+### 下载清理
+
+清理下载文件夹：
+
 ```bash
-mo optimize                     # Rebuild caches, reset services, refresh Finder/Dock
-mo optimize --debug             # With detailed operation logs
+# 清理旧下载
+bash scripts/cleanup.sh downloads --older-than 30d
+
+# 清理大文件
+bash scripts/cleanup.sh downloads --size-over 100MB
+
+# 预览清理（不删除）
+bash scripts/cleanup.sh downloads --dry-run
 ```
 
-**What `mo optimize` does:**
-- Rebuild system databases and clear caches
-- Reset network services
-- Refresh Finder and Dock
-- Clean diagnostic and crash logs
-- Remove swap files and restart dynamic pager
-- Rebuild launch services and Spotlight index
+## 使用方法
 
-### Whitelist Management
+### 干运行模式
+
+预览将要删除的内容而不实际删除：
+
 ```bash
-mo clean --whitelist            # Manage protected cache paths
-mo optimize --whitelist         # Manage protected optimization rules
+bash scripts/cleanup.sh all --dry-run
 ```
 
-### Project Artifact Purge
-```bash
-mo purge                        # Clean old build artifacts (node_modules, target, venv, etc.)
-mo purge --paths                # Configure which directories to scan
+### 清理选项
+
+| 选项 | 描述 |
+|------|------|
+| `--dry-run` | 预览不删除 |
+| `--force` | 跳过确认 |
+| `--verbose` | 显示详细输出 |
+| `--max-age` | 最大文件保留时间 |
+
+## 在 Clawdbot 中使用
+
+### 定期维护
+
+```python
+# 每周缓存清理
+if day_of_week == "Sunday":
+    bash(command="bash scripts/cleanup.sh caches --force")
 ```
 
-Config file: `~/.config/mole/purge_paths`
+### 磁盘空间不足时
 
-### Installer Cleanup
-```bash
-mo installer                    # Find/remove .dmg, .pkg, .zip installers
+```python
+# 检查磁盘空间
+if disk_usage > 90%:
+    bash(command="bash scripts/cleanup.sh all --dry-run")
+    # 显示预览并询问用户确认
 ```
 
-Scans: Downloads, Desktop, Homebrew caches, iCloud, Mail attachments
+## 最佳实践
 
-### Setup & Maintenance
-```bash
-mo touchid                      # Configure Touch ID for sudo
-mo completion                   # Set up shell tab completion
-mo update                       # Update Mole itself
-mo remove                       # Uninstall Mole from system
-mo --version                    # Show installed version
-mo --help                       # Show help
-```
+1. **定期清理**：每周运行一次缓存清理
+2. **使用干运行**：首次使用时使用 `--dry-run`
+3. **保留重要数据**：不要清理最近的文件
+4. **监控空间**：使用分析脚本跟踪磁盘使用
 
----
+## 警告
 
-## Typical Workflow
-
-1. **Check what would be cleaned:**
-   ```bash
-   mo clean --dry-run --debug
-   ```
-
-2. **If looks good, run cleanup:**
-   ```bash
-   mo clean
-   ```
-
-3. **Optimize system (after cleanup):**
-   ```bash
-   mo optimize --dry-run
-   mo optimize
-   ```
-
-4. **Clean dev project artifacts:**
-   ```bash
-   mo purge
-   ```
-
----
-
-## What Gets Cleaned (`mo clean`)
-
-- User app cache
-- Browser cache (Chrome, Safari, Firefox)
-- Developer tools (Xcode, Node.js, npm)
-- System logs and temp files
-- App-specific cache (Spotify, Dropbox, Slack)
-- Trash
-
-## Notes
-
-- **Terminal:** Best with Ghostty, Alacritty, kitty, WezTerm. iTerm2 has issues.
-- **Safety:** Use `--dry-run` first. Built with strict protections.
-- **Debug:** Add `--debug` for detailed logs.
+⚠️ **注意**：
+- 清理前确保有备份
+- 不要清理系统关键文件
+- 谨慎使用 `--force` 选项
+- 首次使用干运行模式预览

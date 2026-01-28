@@ -1,6 +1,6 @@
-# Blockchain Operations
+# 区块链操作
 
-## Read Contract
+## 读取合约
 
 ```typescript
 import { readContract } from 'viem/actions'
@@ -14,7 +14,7 @@ const balance = await readContract(bot.viem, {
 })
 ```
 
-## Execute Transaction
+## 执行交易
 
 ```typescript
 import { execute } from 'viem/experimental/erc7821'
@@ -34,9 +34,9 @@ const hash = await execute(bot.viem, {
 await waitForTransactionReceipt(bot.viem, { hash })
 ```
 
-## Verify Transaction (Critical for Payments)
+## 验证交易（对支付至关重要）
 
-**Never grant access based on txHash alone.** Always verify on-chain:
+**永远不要仅基于 txHash 授予访问权限。** 始终验证链上情况：
 
 ```typescript
 bot.onInteractionResponse(async (handler, event) => {
@@ -49,42 +49,42 @@ bot.onInteractionResponse(async (handler, event) => {
     })
 
     if (receipt.status !== 'success') {
-      await handler.sendMessage(event.channelId, 'Transaction failed on-chain')
+      await handler.sendMessage(event.channelId, '链上交易失败')
       return
     }
 
-    // NOW safe to grant access
+    // 现在可以安全地授予访问权限
     await grantUserAccess(event.userId)
-    await handler.sendMessage(event.channelId, 'Payment confirmed!')
+    await handler.sendMessage(event.channelId, '支付已确认！')
   }
 })
 ```
 
-## Debug Transaction Failures
+## 调试交易失败
 
 ```typescript
 try {
   const hash = await execute(bot.viem, { /* ... */ })
-  console.log('TX submitted:', hash)
+  console.log('交易已提交:', hash)
 
   const receipt = await waitForTransactionReceipt(bot.viem, { hash })
-  console.log('TX result:', {
+  console.log('交易结果:', {
     status: receipt.status,
     gasUsed: receipt.gasUsed.toString(),
     blockNumber: receipt.blockNumber
   })
 
   if (receipt.status !== 'success') {
-    console.error('TX reverted. Check on basescan:',
+    console.error('交易回滚。在 basescan 检查:',
       'https://basescan.org/tx/' + hash)
   }
 } catch (err) {
-  console.error('TX failed:', err.message)
-  // Common: insufficient funds, nonce issues, contract revert
+  console.error('交易失败:', err.message)
+  // 常见问题：余额不足、nonce 问题、合约回退
 }
 ```
 
-## Token Addresses (Base Mainnet)
+## 代币地址（Base 主网）
 
 ```typescript
 import { zeroAddress } from 'viem'
@@ -96,7 +96,7 @@ const TOKENS = {
 }
 ```
 
-## Check Balances
+## 检查余额
 
 ```typescript
 import { formatEther } from 'viem'
@@ -107,7 +107,7 @@ console.log('Gas: ' + formatEther(gasBalance) + ' ETH')
 console.log('Treasury: ' + formatEther(treasuryBalance) + ' ETH')
 ```
 
-## Get User's Smart Account
+## 获取用户的智能账户
 
 ```typescript
 import { getSmartAccountFromUserId } from '@towns-protocol/bot'

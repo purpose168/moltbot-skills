@@ -1,4 +1,4 @@
-"""Chart.js configuration generation for HTML output."""
+"""HTML 输出的 Chart.js 配置生成。"""
 
 import json
 
@@ -7,19 +7,19 @@ from ouracli.chart_utils import bucket_regular_data, bucket_timeseries_data, cre
 
 def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -> str:
     """
-    Create Chart.js configuration for heart rate data.
+    为心率数据创建 Chart.js 配置。
 
-    Args:
-        heartrate_data: List of dicts with 'timestamp' and 'bpm' keys
-        chart_id: Unique ID for the chart
+    参数:
+        heartrate_data: 包含 'timestamp' 和 'bpm' 键的字典列表
+        chart_id: 图表的唯一 ID
 
-    Returns:
-        JavaScript code to render the chart
+    返回:
+        渲染图表的 JavaScript 代码
     """
     if not heartrate_data:
         return ""
 
-    # Get actual min/max from raw data for Y-axis range
+    # 从原始数据获取 Y 轴范围的实际最小值/最大值
     all_bpms: list[float] = [
         float(reading.get("bpm"))  # type: ignore[arg-type]
         for reading in heartrate_data
@@ -28,18 +28,18 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
     if not all_bpms:
         return ""
 
-    actual_min: float = min(all_bpms) - 10  # Floor 10 BPM below minimum
+    actual_min: float = min(all_bpms) - 10  # 最小值以下 10 BPM
     actual_max: float = max(all_bpms)
 
-    # Create 288 buckets (24 hours * 12 = one bucket per 5 minutes)
+    # 创建 288 个桶（24 小时 * 12 = 每 5 分钟一个桶）
     bucket_averages = bucket_timeseries_data(
         heartrate_data, "timestamp", "bpm", bucket_minutes=5, buckets_per_day=288
     )
 
-    # Create labels: show hour labels at hour boundaries
+    # 创建标签：在小时边界显示小时标签
     labels = create_hour_labels(num_buckets=288, buckets_per_hour=12)
 
-    # Convert None to null and keep numbers as-is for Chart.js
+    # 将 None 转换为 null，数字保持原样用于 Chart.js
     data_values = [round(v) if v is not None else None for v in bucket_averages]
 
     return f"""
@@ -48,7 +48,7 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
         data: {{
             labels: {json.dumps(labels)},
             datasets: [{{
-                label: 'BPM (5-min avg)',
+                label: 'BPM (5分钟平均)',
                 data: {json.dumps(data_values)},
                 backgroundColor: 'rgba(76, 175, 80, 0.8)',
                 borderColor: 'rgba(46, 125, 50, 1)',
@@ -66,7 +66,7 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
                 }},
                 title: {{
                     display: true,
-                    text: '24-Hour Heart Rate (5-minute resolution)',
+                    text: '24小时心率（5分钟分辨率）',
                     color: '#333',
                     font: {{
                         size: 16
@@ -105,7 +105,7 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
                 x: {{
                     title: {{
                         display: true,
-                        text: 'Hour',
+                        text: '小时',
                         color: '#666'
                     }},
                     ticks: {{
@@ -116,7 +116,7 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
                     }},
                     grid: {{
                         color: function(context) {{
-                            // Hour boundaries have darker grid lines
+                            // 小时边界有较暗的网格线
                             const isHourBoundary = context.index % 12 === 0;
                             return isHourBoundary ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)';
                         }}
@@ -130,26 +130,26 @@ def create_chartjs_heartrate_config(heartrate_data: list[dict], chart_id: str) -
 
 def create_chartjs_config(met_items: list[float], chart_id: str) -> str:
     """
-    Create Chart.js configuration for MET activity data.
+    为 MET 活动数据创建 Chart.js 配置。
 
-    Args:
-        met_items: List of MET values (one per minute, typically 1440 items)
-        chart_id: Unique ID for the chart
+    参数:
+        met_items: MET 值列表（每分钟一个，通常为 1440 个项目）
+        chart_id: 图表的唯一 ID
 
-    Returns:
-        JavaScript code to render the chart
+    返回:
+        渲染图表的 JavaScript 代码
     """
-    # Group into 5-minute buckets (288 buckets = 24 hours * 12)
+    # 分组为 5 分钟桶（288 个桶 = 24 小时 * 12）
     five_minute_buckets = bucket_regular_data(met_items, target_buckets=288, aggregation="avg")
 
-    # Pad with zeros if needed
+    # 如有需要，用零填充
     while len(five_minute_buckets) < 288:
         five_minute_buckets.append(0)
 
-    # Create labels: show hour labels at hour boundaries
+    # 创建标签：在小时边界显示小时标签
     labels = create_hour_labels(num_buckets=288, buckets_per_hour=12)
 
-    # Round to 2 decimal places for MET values
+    # MET 值四舍五入到 2 位小数
     data_values = [round(v, 2) for v in five_minute_buckets]
 
     return f"""
@@ -158,7 +158,7 @@ def create_chartjs_config(met_items: list[float], chart_id: str) -> str:
         data: {{
             labels: {json.dumps(labels)},
             datasets: [{{
-                label: 'MET (5-min avg)',
+                label: 'MET (5分钟平均)',
                 data: {json.dumps(data_values)},
                 backgroundColor: 'rgba(76, 175, 80, 0.8)',
                 borderColor: 'rgba(46, 125, 50, 1)',
@@ -176,7 +176,7 @@ def create_chartjs_config(met_items: list[float], chart_id: str) -> str:
                 }},
                 title: {{
                     display: true,
-                    text: '24-Hour MET Activity (5-minute resolution)',
+                    text: '24小时MET活动（5分钟分辨率）',
                     color: '#333',
                     font: {{
                         size: 16
@@ -214,7 +214,7 @@ def create_chartjs_config(met_items: list[float], chart_id: str) -> str:
                 x: {{
                     title: {{
                         display: true,
-                        text: 'Hour',
+                        text: '小时',
                         color: '#666'
                     }},
                     ticks: {{
@@ -225,7 +225,7 @@ def create_chartjs_config(met_items: list[float], chart_id: str) -> str:
                     }},
                     grid: {{
                         color: function(context) {{
-                            // Hour boundaries have darker grid lines
+                            // 小时边界有较暗的网格线
                             const isHourBoundary = context.index % 12 === 0;
                             return isHourBoundary ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)';
                         }}

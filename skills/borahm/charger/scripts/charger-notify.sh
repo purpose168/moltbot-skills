@@ -3,23 +3,23 @@ set -euo pipefail
 
 # charger-notify.sh
 #
-# Prints a notification message ONLY when availability flips from NO/UNKNOWN -> YES.
-# Keeps state in ~/.cache/charger-notify/<target>.state
+# 仅在可用性从 NO/UNKNOWN 变为 YES 时打印通知消息。
+# 状态保存在 ~/.cache/charger-notify/<target>.state
 #
-# Usage:
-#   bash charger-notify.sh <favorite|place-id|query>
+# 使用方法：
+#   bash charger-notify.sh <收藏夹|地点ID|查询>
 
 if [[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]]; then
   cat >&2 <<'EOF'
-Usage:
-  charger-notify.sh <favorite|place-id|query>
+使用方法：
+  charger-notify.sh <收藏夹|地点ID|查询>
 
-Behavior:
-- Runs `charger check <target>`
-- If it detects `Any free: YES` and last state was not YES, prints a one-line notification.
-- Otherwise prints nothing.
+行为说明：
+- 运行 `charger check <target>`
+- 如果检测到 `Any free: YES` 且上次状态不是 YES，打印一行通知。
+- 否则不打印任何内容。
 
-State:
+状态文件：
 - ~/.cache/charger-notify/<target>.state
 EOF
   exit 2
@@ -32,6 +32,7 @@ export PATH="/home/claw/clawd/bin:$PATH"
 cache_dir="${HOME}/.cache/charger-notify"
 mkdir -p "$cache_dir"
 
+# 安全的文件名（替换特殊字符）
 safe_target="${target//[^a-zA-Z0-9_.-]/_}"
 state_file="$cache_dir/${safe_target}.state"
 
@@ -42,7 +43,7 @@ fi
 
 out="$(charger check "$target" 2>&1 || true)"
 
-# Detect current availability.
+# 检测当前可用性状态
 current="UNKNOWN"
 if echo "$out" | grep -q "^\- Any free: YES$"; then
   current="YES"
@@ -50,17 +51,17 @@ elif echo "$out" | grep -q "^\- Any free: NO$"; then
   current="NO"
 fi
 
-# Always record current state (so UNKNOWN doesn't spam, but still updates).
+# 始终记录当前状态（UNKNOWN 不会产生垃圾通知，但仍然更新状态）
 echo "$current" > "$state_file"
 
 if [[ "$current" == "YES" && "$last" != "YES" ]]; then
-  # Pull details from charger output.
+  # 从充电器输出中提取详细信息
   name="$(echo "$out" | head -n 1)"
   address="$(echo "$out" | sed -n 's/^\- Address: //p' | head -n 1)"
   availability="$(echo "$out" | sed -n 's/^\- Availability: //p' | head -n 1)"
   updated="$(echo "$out" | sed -n 's/^\- Updated: //p' | head -n 1)"
 
-  msg="EV charger available: ${name}"
+  msg="电动汽车充电器可用: ${name}"
   if [[ -n "$address" ]]; then
     msg+=" — ${address}"
   fi
@@ -68,7 +69,7 @@ if [[ "$current" == "YES" && "$last" != "YES" ]]; then
     msg+=" — ${availability}"
   fi
   if [[ -n "$updated" ]]; then
-    msg+=" (updated ${updated})"
+    msg+=" (更新时间 ${updated})"
   fi
 
   echo "$msg"

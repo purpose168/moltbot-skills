@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ElevenLabs Speech-to-Text transcription script
-# Usage: transcribe.sh <audio_file> [options]
+# ElevenLabs 语音转文本转录脚本
+# 用法: transcribe.sh <音频文件> [选项]
 
 show_help() {
     cat << EOF
-Usage: $(basename "$0") <audio_file> [options]
+用法: $(basename "$0") <音频文件> [选项]
 
-Options:
-  --diarize     Enable speaker diarization
-  --lang CODE   ISO language code (e.g., en, pt, es, fr)
-  --json        Output full JSON response
-  --events      Tag audio events (laughter, music, etc.)
-  -h, --help    Show this help
+选项:
+  --diarize     启用说话人分离
+  --lang CODE   ISO 语言代码（例如 en、pt、es、fr）
+  --json        输出完整 JSON 响应
+  --events      标记音频事件（笑声、音乐等）
+  -h, --help    显示此帮助
 
-Environment:
-  ELEVENLABS_API_KEY  Required API key
+环境变量:
+  ELEVENLABS_API_KEY  必需的 API 密钥
 
-Examples:
+示例:
   $(basename "$0") voice_note.ogg
   $(basename "$0") meeting.mp3 --diarize --lang en
   $(basename "$0") podcast.mp3 --json > transcript.json
@@ -26,14 +26,14 @@ EOF
     exit 0
 }
 
-# Defaults
+# 默认值
 DIARIZE="false"
 LANG_CODE=""
 JSON_OUTPUT="false"
 TAG_EVENTS="false"
 FILE=""
 
-# Parse arguments
+# 解析参数
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help) show_help ;;
@@ -41,30 +41,30 @@ while [[ $# -gt 0 ]]; do
         --lang) LANG_CODE="$2"; shift 2 ;;
         --json) JSON_OUTPUT="true"; shift ;;
         --events) TAG_EVENTS="true"; shift ;;
-        -*) echo "Unknown option: $1" >&2; exit 1 ;;
+        -*) echo "未知选项: $1" >&2; exit 1 ;;
         *) FILE="$1"; shift ;;
     esac
 done
 
-# Validate
+# 验证
 if [[ -z "$FILE" ]]; then
-    echo "Error: No audio file specified" >&2
+    echo "错误: 未指定音频文件" >&2
     show_help
 fi
 
 if [[ ! -f "$FILE" ]]; then
-    echo "Error: File not found: $FILE" >&2
+    echo "错误: 文件不存在: $FILE" >&2
     exit 1
 fi
 
-# API key (check env, then fall back to skill config)
+# API 密钥（检查环境变量，然后回退到技能配置）
 API_KEY="${ELEVENLABS_API_KEY:-}"
 if [[ -z "$API_KEY" ]]; then
-    echo "Error: ELEVENLABS_API_KEY not set" >&2
+    echo "错误: 未设置 ELEVENLABS_API_KEY" >&2
     exit 1
 fi
 
-# Build curl command
+# 构建 curl 命令
 CURL_ARGS=(
     -s
     -X POST
@@ -80,21 +80,21 @@ if [[ -n "$LANG_CODE" ]]; then
     CURL_ARGS+=(-F "language_code=$LANG_CODE")
 fi
 
-# Make request
+# 发送请求
 RESPONSE=$(curl "${CURL_ARGS[@]}")
 
-# Check for errors
+# 检查错误
 if echo "$RESPONSE" | grep -q '"detail"'; then
-    echo "Error from API:" >&2
+    echo "API 错误:" >&2
     echo "$RESPONSE" | jq -r '.detail.message // .detail' >&2
     exit 1
 fi
 
-# Output
+# 输出
 if [[ "$JSON_OUTPUT" == "true" ]]; then
     echo "$RESPONSE" | jq .
 else
-    # Extract just the text
+    # 仅提取文本
     TEXT=$(echo "$RESPONSE" | jq -r '.text // empty')
     if [[ -n "$TEXT" ]]; then
         echo "$TEXT"

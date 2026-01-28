@@ -1,82 +1,82 @@
 # Humanizer
 
-A Clawdbot skill that removes signs of AI-generated writing from text, making it sound more natural and human.
+一个 Clawdbot 技能，可从文本中去除 AI 生成写作的痕迹，使其听起来更自然、更像人类。
 
-## Installation
+## 安装
 
-Install via ClawdHub:
+通过 ClawdHub 安装：
 
 ```bash
 clawdhub install humanizer
 ```
 
-## Usage
+## 使用方法
 
-Ask your agent to humanize text:
+要求您的助手对文本进行人性化处理：
 
 ```
-Please humanize this text: [your text]
+请人性化以下文本：[您的文本]
 ```
 
-Or invoke directly when editing documents.
+或在编辑文档时直接调用。
 
-## Overview
+## 概述
 
-Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. This comprehensive guide comes from observations of thousands of instances of AI-generated text.
+基于 [Wikipedia 的"AI 写作痕迹"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) 指南，由 WikiProject AI Cleanup 维护。这个综合指南来自对数千个 AI 生成文本实例的观察。
 
-### Key Insight
+### 关键洞察
 
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+> "LLM 使用统计算法来猜测接下来应该出现什么。结果往往倾向于适用于最广泛情况的统计学上最可能的结果。"
 
-## 24 Patterns Detected
+## 检测到的 24 种模式
 
-### Content Patterns
-1. **Significance inflation** - "marking a pivotal moment..." → specific facts
-2. **Notability name-dropping** - listing sources without context
-3. **Superficial -ing analyses** - "symbolizing... reflecting..."
-4. **Promotional language** - "nestled within the breathtaking..."
-5. **Vague attributions** - "Experts believe..."
-6. **Formulaic challenges** - "Despite challenges... continues to thrive"
+### 内容模式
+1. **重要性膨胀** - "标志着关键时刻..." → 具体事实
+2. **名望提及** - 列出没有上下文的来源
+3. **表面 -ing 分析** - "象征... 反映..."
+4. **促销语言** - "坐落在令人惊叹的..."
+5. **模糊归属** - "专家认为..."
+6. **公式化挑战** - "尽管有挑战... 继续蓬勃发展"
 
-### Language Patterns
-7. **AI vocabulary** - "Additionally... testament... landscape..."
-8. **Copula avoidance** - "serves as" instead of "is"
-9. **Negative parallelisms** - "It's not just X, it's Y"
-10. **Rule of three** - forcing ideas into groups of three
-11. **Synonym cycling** - excessive synonym substitution
-12. **False ranges** - "from X to Y" on non-meaningful scales
+### 语言模式
+7. **AI 词汇** - "此外... 见证... 格局..."
+8. **避免系动词** - "作为"而不是"是"
+9. **负面平行结构** - "不仅仅是 X，也是 Y"
+10. **三的法则** - 强制将想法分成三组
+11. **同义循环** - 过度同义替换
+12. **虚假范围** - "从 X 到 Y" 在无意义的尺度上
 
-### Style Patterns
-13. **Em dash overuse**
-14. **Boldface overuse**
-15. **Inline-header lists**
-16. **Title Case Headings**
-17. **Emoji decoration**
-18. **Curly quotation marks**
+### 风格模式
+13. **过度使用破折号**
+14. **过度使用粗体**
+15. **行内标题列表**
+16. **标题大小写标题**
+17. **表情符号装饰**
+18. **弯引号**
 
-### Communication Patterns
-19. **Chatbot artifacts** - "I hope this helps!"
-20. **Cutoff disclaimers** - "While details are limited..."
-21. **Sycophantic tone** - "Great question!"
+### 交流模式
+19. **聊天机器人痕迹** - "希望这有帮助！"
+20. **截断免责声明** - "虽然细节有限..."
+21. **奉承语气** - "好问题！"
 
-### Filler and Hedging
-22. **Filler phrases** - "In order to", "Due to the fact that"
-23. **Excessive hedging** - "could potentially possibly"
-24. **Generic conclusions** - "The future looks bright"
+### 填充和委婉
+22. **填充短语** - "为了"、"由于事实是"
+23. **过度委婉** - "可能也许"
+24. **通用结论** - "未来看起来很光明"
 
-## Full Example
+## 完整示例
 
-**Before (AI-sounding):**
-> The new software update serves as a testament to the company's commitment to innovation. Moreover, it provides a seamless, intuitive, and powerful user experience—ensuring that users can accomplish their goals efficiently.
+**之前（像 AI 的）：**
+> 这个新软件更新证明了公司对创新的承诺。此外，它提供了无缝、直观和强大的用户体验——确保用户能够高效地实现他们的目标。
 
-**After (Humanized):**
-> The software update adds batch processing, keyboard shortcuts, and offline mode. Early feedback from beta testers has been positive, with most reporting faster task completion.
+**之后（人性化后）：**
+> 这个软件更新添加了批处理、键盘快捷键和离线模式。来自测试版测试者的早期反馈是积极的，大多数报告说任务完成速度更快。
 
-## References
+## 参考资料
 
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+- [Wikipedia: AI 写作痕迹](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
 - [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup)
 
-## License
+## 许可证
 
 MIT

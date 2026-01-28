@@ -7,7 +7,7 @@ import (
 
 var usersCmd = &cobra.Command{
 	Use:   "users",
-	Short: "List users",
+	Short: "列出用户",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -26,7 +26,7 @@ var usersCmd = &cobra.Command{
 		}
 
 		if len(resp.Users) == 0 {
-			println("No users found")
+			println("未找到用户")
 			return nil
 		}
 
@@ -39,7 +39,7 @@ var usersCmd = &cobra.Command{
 
 var userCmd = &cobra.Command{
 	Use:   "user <id|slug>",
-	Short: "Get a single user",
+	Short: "获取单个用户",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -59,19 +59,19 @@ var userCmd = &cobra.Command{
 		}
 
 		printf("ID:    %s\n", user.ID)
-		printf("Name:  %s\n", user.Name)
-		printf("Slug:  %s\n", user.Slug)
-		printf("Email: %s\n", user.Email)
+		printf("名称:  %s\n", user.Name)
+		printf("别名:  %s\n", user.Slug)
+		printf("邮箱: %s\n", user.Email)
 		if user.Bio != "" {
-			printf("Bio:   %s\n", user.Bio)
+			printf("简介:  %s\n", user.Bio)
 		}
 		return nil
 	},
 }
 
 func init() {
-	usersCmd.Flags().Bool("json", false, "Output as JSON")
-	userCmd.Flags().Bool("json", false, "Output as JSON")
+	usersCmd.Flags().Bool("json", false, "以JSON格式输出")
+	userCmd.Flags().Bool("json", false, "以JSON格式输出")
 
 	rootCmd.AddCommand(usersCmd)
 	rootCmd.AddCommand(userCmd)

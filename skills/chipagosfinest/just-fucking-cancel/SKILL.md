@@ -1,82 +1,87 @@
 ---
 name: just-fucking-cancel
-description: Analyze bank transaction CSVs to find recurring charges, categorize subscriptions, and cancel what you don't need. Use when user says "cancel subscriptions", "audit subscriptions", "find recurring charges", or "what am I paying for". Supports Apple Card, Chase, Mint, and generic CSV formats. Outputs interactive HTML audit with copy-to-cancel workflow.
-attribution: Originally created by rohunvora (https://github.com/rohunvora/just-fucking-cancel)
+description: 分析银行交易 CSV 文件，查找定期扣费，对订阅进行分类，并取消不需要的项目。当用户说"取消订阅"、"审核订阅"、"查找定期扣费"或"我在付什么钱"时使用。支持 Apple Card、Chase、Mint 和通用 CSV 格式。输出交互式 HTML 审核报告，带有一键取消工作流。
+attribution: 最初由 rohunvora 创建 (https://github.com/rohunvora/just-fucking-cancel)
 ---
 
-# just-fucking-cancel
+# just-fucking-cancel（订阅取消助手）
 
-Analyze transactions, categorize subscriptions, generate HTML audit, help cancel.
+分析交易记录，分类订阅，生成 HTML 审核报告，辅助取消不需要的订阅。
 
-## Triggers
-- "cancel subscriptions", "audit subscriptions"
-- "find recurring charges", "what am I paying for"
-- "subscription audit", "clean up subscriptions"
+## 触发词
+- "取消订阅"、"审核订阅"
+- "查找定期扣费"、"我在付什么钱"
+- "订阅审核"、"清理订阅"
 
-## Workflow
+## 工作流程
 
-### 1. Get Transaction CSV
-Ask user for bank/card CSV export. Common sources:
-- Apple Card: Wallet → Card Balance → Export
-- Chase: Accounts → Download activity → CSV
-- Mint: Transactions → Export
+### 1. 获取交易 CSV
 
-### 2. Analyze Recurring Charges
-Read CSV, identify recurring patterns:
-- Same merchant, similar amounts, monthly/annual frequency
-- Flag subscription-like charges (streaming, SaaS, memberships)
-- Note charge frequency and total annual cost
+请用户提供银行/信用卡 CSV 导出文件。常见来源：
+- Apple Card：钱包 → 卡片余额 → 导出
+- Chase：账户 → 下载交易记录 → CSV
+- Mint：交易记录 → 导出
 
-### 3. Categorize with User
-For each subscription, ask user to categorize:
-- **Cancel** - Stop immediately
-- **Investigate** - Needs decision (unsure, trapped in contract)
-- **Keep** - Intentional, continue paying
+### 2. 分析定期扣费
 
-Ask in batches of 5-10 to avoid overwhelming.
+读取 CSV 文件，识别重复模式：
+- 相同商户、相似金额、月度/年度频率
+- 标记类似订阅的扣费（流媒体、SaaS、会员）
+- 记录扣费频率和年度总成本
 
-### 4. Generate HTML Audit
-Copy [template.html](assets/template.html) and populate:
-- Update header summary:
-  - Scope line: "found N subscriptions · N transactions"
-  - Breakdown: "Cancelled N · Keeping N"
-  - Savings: yearly amount big, monthly in parentheses
-  - Timestamp: current date
-- Add rows to appropriate sections (cancelled/investigate/keep)
-- Include notes from user responses
+### 3. 与用户一起分类
 
-Row templates in the HTML comments show the structure.
+对于每个订阅，请用户进行分类：
+- **取消** - 立即停止
+- **调查** - 需要决策（不确定、被合同困住）
+- **保留** - 有意继续付费
 
-### 5. Cancel Subscriptions
-When user checks items and copies from floating button, they'll paste:
-`Cancel these: Service1 ($XX), Service2 ($XX)...`
+每次询问 5-10 个，避免让用户感到 overwhelming。
 
-For each service:
-1. Check [common-services.md](references/common-services.md) for cancel URL
-2. Use browser automation to navigate and cancel
-3. Update HTML row to cancelled status with date
+### 4. 生成 HTML 审核报告
 
-## HTML Structure
+复制 [template.html](assets/template.html) 并填充内容：
+- 更新头部摘要：
+  - 范围行："发现 N 个订阅 · N 笔交易"
+  - 分类统计："已取消 N · 保留 N"
+  - 节省金额：年度金额（大），月度金额（小括号内）
+  - 时间戳：当前日期
+- 将行添加到相应的部分（已取消/调查中/保留）
+- 包含用户回复中的备注
 
-Three sections, auto-hide when empty:
-- **Cancelled** (green badge, strikethrough) - Done items, the win
-- **Needs Decision** (orange badge) - Has checkboxes for cancel selection
-- **Keeping** (grey badge) - No checkboxes, just reference
+HTML 注释中的行模板显示了结构。
 
-Features:
-- Floating copy button appears when items checked
-- Privacy toggle blurs service names
-- Collapsible sections via header click
-- Dark mode support
+### 5. 取消订阅
 
-## Cancellation Tips
+当用户勾选项目并从浮动按钮复制时，他们会粘贴：
+`取消这些: Service1 ($XX), Service2 ($XX)...`
 
-For difficult services, see [common-services.md](references/common-services.md):
-- Direct cancel URLs for 50+ services
-- Dark pattern warnings (gym contracts, phone-only)
-- Retention script responses
-- Credit card dispute backup
+对于每个服务：
+1. 在 [common-services.md](references/common-services.md) 中查找取消链接
+2. 使用浏览器自动化导航并取消
+3. 将 HTML 行更新为已取消状态并注明日期
 
-## Privacy
+## HTML 结构
 
-All data stays local. Transaction CSVs are analyzed in-session only.
+三个部分，为空时自动隐藏：
+- **已取消**（绿色徽章，删除线）- 已完成的项目，成功的记录
+- **需要决策**（橙色徽章）- 包含用于取消选择的复选框
+- **保留**（灰色徽章）- 无复选框，仅供参考
+
+功能特点：
+- 勾选项目时显示浮动复制按钮
+- 隐私切换可模糊服务名称
+- 点击标题可折叠部分
+- 支持深色模式
+
+## 取消技巧
+
+对于难以取消的服务，请参阅 [common-services.md](references/common-services.md)：
+- 50+ 服务的直接取消链接
+- 暗黑模式警告（健身房合同、电话专属）
+- 挽留脚本应对
+- 信用卡争议备用方案
+
+## 隐私
+
+所有数据保留在本地。交易 CSV 仅在会话期间分析。

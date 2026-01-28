@@ -1,82 +1,82 @@
 ---
 name: first-principles-decomposer
-description: Break any problem down to fundamental truths, then rebuild solutions from atoms up. Use when user says "firstp", "first principles", "from scratch", "what are we assuming", "break this down", "atomic", "fundamental truth", "physics thinking", "Elon method", "bedrock", "ground up", "core problem", "strip away", or challenges assumptions about how things are done.
+description: 将任何问题分解到基本真理，然后从原子层面重建解决方案。当用户说"firstp"、"first principles"、"从零开始"、"我们在假设什么"、"分解这个"、"原子"、"根本真理"、"物理思维"、"Elon方法"、"基岩"、"从下而上"、"核心问题"、"剥离"或质疑事物的运作方式时使用。
 ---
 
-# First Principles Decomposer
+# 第一性原理分解器
 
-## When To Use
-- Designing new products or features
-- Feeling stuck on a complex problem
-- Existing solutions seem overcomplicated
-- Need to challenge assumptions
-- Starting any new project or initiative
+## 何时使用
+- 设计新产品或功能
+- 在复杂问题上感到卡住
+- 现有解决方案似乎过于复杂
+- 需要挑战假设
+- 开始任何新项目或计划
 
-## The Process
+## 工作流程
 
-### Phase 1: Identify Assumptions
-Ask: "What am I assuming to be true that might not be?"
-List every assumption embedded in the current approach.
+### 第一阶段：识别假设
+问："我假设为真的事情中，哪些可能不是真的？"
+列出当前方法中嵌入的每个假设。
 
-### Phase 2: Break to Atoms
-For each assumption, ask: "What is the most fundamental truth here?"
-Keep asking "why?" until you hit bedrock facts.
+### 第二阶段：分解到原子
+对于每个假设，问："这里最根本的真理是什么？"
+一直问"为什么？"直到触及基岩事实。
 
-### Phase 3: Rebuild From Truth
-Starting ONLY from verified fundamentals, ask:
-"What's the simplest solution that addresses the core need?"
+### 第三阶段：从真理重建
+只从经过验证的基本原理开始，问：
+"解决核心需求的最简单方案是什么？"
 
-## Interactive Flow
+## 交互流程
 
-When user invokes this skill:
+当用户调用此技能时：
 
-1. **Clarify the problem** (1-2 questions max)
-2. **Surface assumptions** - list what's being taken for granted
-3. **Decompose to fundamentals** - show the atomic truths
-4. **Rebuild solution** - construct from ground up
-5. **Compare** - show how this differs from conventional approach
+1. **澄清问题**（最多1-2个问题）
+2. **暴露假设** - 列出被视为理所当然的事情
+3. **分解到基本原理** - 展示原子级真理
+4. **重建解决方案** - 从头构建
+5. **对比** - 展示这与传统方法的区别
 
-## Output Format
+## 输出格式
 
 ```
-PROBLEM: [stated problem]
+问题：[陈述的问题]
 
-ASSUMPTIONS IDENTIFIED:
-1. [assumption] → Challenge: [why this might be wrong]
-2. [assumption] → Challenge: [why this might be wrong]
+识别的假设：
+1. [假设] → 挑战：[为什么这可能是错的]
+2. [假设] → 挑战：[为什么这可能是错的]
 
-FUNDAMENTAL TRUTHS:
-• [bedrock fact 1]
-• [bedrock fact 2]
-• [bedrock fact 3]
+根本真理：
+• [基岩事实 1]
+• [基岩事实 2]
+• [基岩事实 3]
 
-REBUILT SOLUTION:
-[New approach built only from fundamentals]
+重建的解决方案：
+[仅从基本原理构建的新方法]
 
-VS CONVENTIONAL:
-[How this differs from the obvious approach]
+与传统对比：
+[这与显而易见的方法有何不同]
 ```
 
-## Example Triggers
-- "Break down our parent communication problem from first principles"
-- "I want to rethink how we do [X] from the ground up"
-- "What are we assuming about [problem] that might be wrong?"
+## 示例触发词
+- "从第一性原理分解我们的家长沟通问题"
+- "我想从根本上重新思考我们如何做[X]"
+- "关于[问题]，我们在假设什么可能是错的？"
 
-## Integration
+## 组合使用
 
-This skill compounds with:
-- **inversion-strategist** - After rebuilding from fundamentals, invert to find what would guarantee failure of the new approach
-- **second-order-consequences** - Project downstream effects of implementing the rebuilt solution
-- **pre-mortem-analyst** - Stress-test the rebuilt solution by imagining its failure
-- **six-thinking-hats** - Apply all six perspectives to validate each fundamental truth identified
+此技能与以下技能协同增效：
+- **inversion-strategist** - 从基本原理重建后，反转以找出什么会保证新方法失败
+- **second-order-consequences** - 预测实施重建解决方案的下游效应
+- **pre-mortem-analyst** - 通过想象其失败来压力测试重建的解决方案
+- **six-thinking-hats** - 应用所有六种视角来验证每个识别的根本真理
 
-## Skill Metadata
-**Created**: 2026-01-06
-**Last Updated**: 2026-01-06
-**Author**: Artem
-**Version**: 1.0
+## 技能元数据
+**创建时间**：2026-01-06
+**最后更新**：2026-01-06
+**作者**：Artem
+**版本**：1.0
 
 ---
-See references/framework.md for detailed methodology
-See references/examples.md for Artem-specific examples
-See references/integrated-frameworks.md for Stanford Design Thinking + MIT Systems Engineering combo
+查看 references/framework.md 获取详细方法论
+查看 references/examples.md 获取 Artem 特定案例
+查看 references/integrated-frameworks.md 获取斯坦福设计思维 + MIT 系统工程组合

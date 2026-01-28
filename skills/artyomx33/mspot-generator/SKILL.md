@@ -1,69 +1,69 @@
 ---
 name: mspot-generator
-description: Create one-page strategic alignment documents. Mission, Strategy, Projects, Omissions, Tracking. Forces clarity on what you WILL and WON'T do. Use when user says "mspot", "strategic plan", "quarterly plan", "what are we NOT doing", "omissions", "team alignment", "OKRs alternative", "priorities", "what should we focus on".
+description: 创建单页战略对齐文档。使命、战略、项目、省略、追踪。强制清晰你将和不会做什么。当用户说"mspot"、"战略计划"、"季度计划"、"我们不做什么"、"省略"、"团队对齐"、"OKR替代"、"优先级"、"我们应该关注什么"时使用。
 ---
 
-# MSPOT Generator
+# MSPOT 生成器
 
-## What is MSPOT?
+## 什么是 MSPOT？
 
-One-page strategic clarity (from HubSpot):
-- **M**ission: Why we exist (rarely changes)
-- **S**trategy: How we'll win this period
-- **P**rojects: The 3-5 big bets
-- **O**missions: What we're explicitly NOT doing
-- **T**racking: How we'll measure success
+单页战略清晰度（来自 HubSpot）：
+- **M**使命：我们为什么存在（很少改变）
+- **S**战略：我们将如何赢得这个时期
+- **P**项目：3-5个大赌注
+- **O**省略：我们明确**不**做什么
+- **T**追踪：我们如何衡量成功
 
-## Why It Works
+## 为什么有效
 
-1. **Forces Omissions:** Saying NO is harder and more valuable
-2. **Limits Projects:** 3-5 max prevents spreading thin
-3. **One Page:** If it doesn't fit, it's not clear
-4. **Trackable:** Decision-useful metrics only
+1. **强制省略：** 说"不"更难，也更有价值
+2. **限制项目：** 3-5个 max 防止分散
+3. **单页：** 如果不合适，就不清晰
+4. **可追踪：** 只有决策有用的指标
 
-## Output Format
+## 输出格式
 
 ```
 ═══════════════════════════════════════════════
-MSPOT: [Name]
-Period: [Timeframe] | Owner: [Person]
+MSPOT：[名称]
+时期：[时间范围] | 负责人：[人]
 ═══════════════════════════════════════════════
 
-MISSION: [One sentence: Why this exists]
+使命：[一句话：为什么存在]
 
-STRATEGY: [2-3 sentences: How we'll win]
+战略：[2-3句话：我们将如何赢]
 
-PROJECTS (3-5 max):
-1. [Name] - Outcome: [X] - Owner: [Y] - Due: [Z]
-2. [Name] - Outcome: [X] - Owner: [Y] - Due: [Z]
-3. [Name] - Outcome: [X] - Owner: [Y] - Due: [Z]
+项目（3-5 max）：
+1. [名称] - 结果：[X] - 负责人：[Y] - 截止：[Z]
+2. [名称] - 结果：[X] - 负责人：[Y] - 截止：[Z]
+3. [名称] - 结果：[X] - 负责人：[Y] - 截止：[Z]
 
-OMISSIONS:
-✗ NOT [X] - Because: [reason]
-✗ NOT [Y] - Because: [reason]
+省略：
+✗ 不做 [X] - 因为：[原因]
+✗ 不做 [Y] - 因为：[原因]
 
-TRACKING:
-Lead: [Activity] → Target: [X]
-Lag: [Result] → Target: [Y] by [date]
+追踪：
+领先：[活动] → 目标：[X]
+滞后：[结果] → 目标：[Y] 到 [日期]
 ═══════════════════════════════════════════════
 ```
 
-## Key Questions
+## 关键问题
 
-| Section | Question |
-|---------|----------|
-| **Mission** | "If we succeed, what changes?" |
-| **Strategy** | "What's our unfair advantage?" |
-| **Projects** | "If only 3 things, which ones?" |
-| **Omissions** | "What are we tempted to do but shouldn't?" |
-| **Tracking** | "What number tells us we're winning?" |
+| 部分 | 问题 |
+|------|------|
+| **使命** | "如果我们成功，什么会改变？" |
+| **战略** | "我们的不公平优势是什么？" |
+| **项目** | "如果只有3件事，哪几件？" |
+| **省略** | "我们被诱惑做什么但不应该？" |
+| **追踪** | "什么数字告诉我们正在赢？" |
 
-## Integration
+## 组合使用
 
-Compounds with:
-- **pre-mortem-analyst** → Pre-mortem each Project before committing
-- **inversion-strategist** → Invert to find Omissions
-- **artem-decision-journal** → Log major MSPOT decisions
+与以下技能协同增效：
+- **pre-mortem-analyst** - 在承诺之前对每个项目进行预死分析
+- **inversion-strategist** - 反转以找出省略
+- **artem-decision-journal** - 记录主要 MSPOT 决策
 
 ---
-See references/examples.md for TeddySnaps/TISA/GolfTab MSPOTs
+查看 references/examples.md 获取 TeddySnaps/TISA/GolfTab MSPOTs

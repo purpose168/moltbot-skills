@@ -1,59 +1,224 @@
 ---
 name: whoop-morning
-description: Check WHOOP recovery/sleep/strain each morning and send suggestions.
+description: 生成个性化的 Whoop 早晨简报，包括恢复分数、睡眠表现、本周训练负荷趋势和 HSC（硬度分数计算）。用于 Clawdbot cron 任务。
 metadata:
   clawdbot:
     config:
       requiredEnv:
-        - WHOOP_CLIENT_ID
-        - WHOOP_CLIENT_SECRET
-        - WHOOP_REFRESH_TOKEN
+        - WHOOP_API_TOKEN
 ---
 
-# whoop-morning
+# Whoop 早晨简报技能
 
-Morning WHOOP check-in:
-- fetches your latest WHOOP data (Recovery, Sleep, Cycle/Strain)
-- generates a short set of suggestions for the day
+🌅 为 Clawdbot cron 任务生成个性化的 Whoop 早晨简报。
 
-## Setup
+此技能整合以下数据：
+- 恢复分数（Recovery Score）
+- 睡眠表现（Sleep Performance）
+- 本周训练负荷趋势（Training Load Trend）
+- HSC（硬度分数计算）
 
-### 1) Create WHOOP OAuth credentials
+## 工作流程
 
-You already have:
-- `WHOOP_CLIENT_ID`
-- `WHOOP_CLIENT_SECRET`
+### 1. 数据收集
 
-Store these in `~/.clawdbot/.env`.
+从 Whoop API 获取：
+- 今天的恢复数据（最近一次恢复）
+- 最近的周期数据（过去 7 天）
+- 训练负荷数据（过去 7-28 天）
 
-### 2) Authorize once (get refresh token)
+### 2. 数据分析
 
-Run:
+分析关键指标：
+- 恢复分数趋势
+- 睡眠时长和质量
+- 急慢性负荷比（ACWR）
+- 训练建议
+
+### 3. 生成简报
+
+生成结构化的早晨简报，包含：
+- 今日恢复概览
+- 睡眠表现总结
+- 负荷状态和建议
+- 训练推荐
+
+## 使用方法
+
+### 基本用法
 
 ```bash
-/home/claw/clawd/skills/whoop-morning/bin/whoop-auth --scopes offline read:recovery read:sleep read:cycles read:profile
+# 生成今天的早晨简报
+node bin/whoop-morning.js
 ```
 
-This prints an authorization URL.
-Open it in your browser, approve, and paste the `code` back into the terminal.
-
-The script will exchange it for tokens and write `WHOOP_REFRESH_TOKEN=...` to `~/.clawdbot/.env`.
-
-### 3) Run the morning report
+### 指定日期
 
 ```bash
-/home/claw/clawd/skills/whoop-morning/bin/whoop-morning
+# 生成特定日期的简报
+node bin/whoop-morning.js 2024-01-15
 ```
 
-## Automation
+### 输出格式
 
-Recommended: schedule with Gateway cron (daily, morning).
-The cron job should run `whoop-morning` and send its output as a message.
+默认输出适合在消息中显示的格式：
 
-## Notes
+```
+🌅 Whoop 早晨简报 - 2024年1月15日
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- This skill uses WHOOP OAuth2:
-  - auth URL: `https://api.prod.whoop.com/oauth/oauth2/auth`
-  - token URL: `https://api.prod.whoop.com/oauth/oauth2/token`
-- WHOOP rotates refresh tokens; avoid running multiple refreshes in parallel.
-- API availability/fields can change; if WHOOP returns 401/400 during token refresh, re-run `whoop-auth`.
+📊 恢复状态：85%（高恢复）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+心率变异性 (HRV): 62 ms (+5%)
+静息心率 (RHR): 48 bpm (-2 bpm)
+睡眠表现: 92%（高于平均）
+呼吸率: 14 rpm（正常范围）
+
+💤 睡眠概览
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+总睡眠: 7小时42分钟
+睡眠效率: 88%
+深度睡眠: 22%
+快速眼动睡眠: 24%
+
+🏋️ 训练负荷
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+慢性负荷 (ATL): 12.5
+急性负荷 (ITL): 15.2
+ACWR: 1.22（最佳范围）
+
+📈 建议
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ 高恢复日！适合高强度训练。
+✅ 训练负荷在最佳范围内。
+⚠️ 注意保持睡眠一致性。
+```
+
+## 配置
+
+### 环境变量
+
+添加到 `~/.clawdbot/clawdbot.json`：
+
+```json
+{
+  "skills": {
+    "entries": {
+      "whoop-morning": {
+        "enabled": true,
+        "env": {
+          "WHOOP_API_TOKEN": "您的 Whoop 访问令牌"
+        }
+      }
+    }
+  }
+}
+```
+
+### Clawdbot Cron 集成
+
+在 Clawdbot 中设置定时任务：
+
+```yaml
+schedule: "0 7 * * *"  # 每天早上 7 点
+command: "node /path/to/whoop-morning/bin/whoop-morning.js"
+output: true  # 发送输出到您的消息渠道
+```
+
+## 关键指标说明
+
+### 恢复分数
+
+反映您的身体准备程度：
+- **0-33%**：低恢复 - 建议休息或轻松活动
+- **34-66%**：中等恢复 - 可进行正常训练
+- **67-100%**：高恢复 - 适合高强度训练
+
+### 睡眠表现
+
+与您正常的睡眠模式比较：
+- 高于 100%：超出正常水平
+- 100%：正常
+- 低于 100%：低于正常水平
+
+### ACWR（急慢性负荷比）
+
+评估训练压力的关键指标：
+- **< 0.80**：恢复不足 - 训练不足
+- **0.80-1.30**：最佳范围 - 维持当前训练
+- **> 1.30**：过度训练风险 - 建议减少训练
+
+### HSC（硬度分数）
+
+与 ACWR 类似，衡量训练强度：
+- **低 (0-40)**：恢复期
+- **中等 (41-70)**：维持期
+- **高 (71-100)**：超负荷期
+
+## 与 Clawdbot 配合使用
+
+### 示例对话
+
+用户："早上好！"
+
+助手自动调用：
+```
+node bin/whoop-morning.js
+```
+
+并返回今日简报。
+
+### 响应示例
+
+```
+早上好！☀️ 这是您的 Whoop 早晨简报：
+
+📊 今日恢复：85%（高恢复）
+💤 昨晚睡眠：7小时42分钟，睡眠表现 92%
+🏋️ 训练负荷：ACWR 1.22（最佳范围）
+
+建议：✅ 高恢复日！适合高强度训练。
+```
+
+## 故障排除
+
+### 令牌问题
+
+如果您看到"令牌未配置"错误：
+1. 确保已设置 WHOOP_API_TOKEN 环境变量
+2. 检查令牌是否过期
+
+### 无数据
+
+如果某些指标显示为"无数据"：
+- 可能是因为您刚佩戴 Whoop
+- 或者某些天没有同步数据
+
+### API 错误
+
+如果遇到 API 错误：
+1. 检查网络连接
+2. 稍后重试
+3. 如果持续出现，可能需要重新获取令牌
+
+## 技术细节
+
+### 数据来源
+
+- 恢复数据：`/api/developer/recovery`
+- 周期数据：`/api/developer/cycle`
+- 训练数据：`/api/developer/workout`
+
+### 计算方法
+
+- ACWR = 急性负荷 / 慢性负荷
+- 慢性负荷 = 过去 7 天平均训练负荷
+- 急性负荷 = 过去 1 天训练负荷
+
+## 扩展功能
+
+此技能可以扩展以支持：
+- 周度/月度趋势图表
+- 长期历史分析
+- 自定义训练建议
+- 与其他健康数据整合

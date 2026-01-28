@@ -1,60 +1,62 @@
 ---
 name: measuring-text
-description: Measuring text dimensions, fitting text to containers, and checking overflow
+description: 测量文本尺寸、将文本适应容器、检查溢出
 metadata:
   tags: measure, text, layout, dimensions, fitText, fillTextBox
 ---
 
-# Measuring text in Remotion
+# 在 Remotion 中测量文本
 
-## Prerequisites
+## 前置条件
 
-Install @remotion/layout-utils if it is not already installed:
+如果尚未安装 @remotion/layout-utils，请先安装：
 
 ```bash
-npx remotion add @remotion/layout-utils # If project uses npm
-bunx remotion add @remotion/layout-utils # If project uses bun
-yarn remotion add @remotion/layout-utils # If project uses yarn
-pnpm exec remotion add @remotion/layout-utils # If project uses pnpm
+npx remotion add @remotion/layout-utils # 如果项目使用 npm
+bunx remotion add @remotion/layout-utils # 如果项目使用 bun
+yarn remotion add @remotion/layout-utils # 如果项目使用 yarn
+pnpm exec remotion add @remotion/layout-utils # 如果项目使用 pnpm
 ```
 
-## Measuring text dimensions
+## 测量文本尺寸
 
-Use `measureText()` to calculate the width and height of text:
+使用 `measureText()` 计算文本的宽度和高度：
 
 ```tsx
-import { measureText } from "@remotion/layout-utils";
+import { measureText } from "@remotion/layout-utils"; // 导入文本测量函数
 
+// 测量文本尺寸
 const { width, height } = measureText({
-  text: "Hello World",
-  fontFamily: "Arial",
-  fontSize: 32,
-  fontWeight: "bold",
+  text: "Hello World", // 要测量的文本
+  fontFamily: "Arial", // 字体族
+  fontSize: 32, // 字体大小
+  fontWeight: "bold", // 字重
 });
 ```
 
-Results are cached - duplicate calls return the cached result.
+结果会被缓存 - 重复调用返回缓存的结果。
 
-## Fitting text to a width
+## 将文本适应宽度
 
-Use `fitText()` to find the optimal font size for a container:
+使用 `fitText()` 找到容器的最佳字体大小：
 
 ```tsx
-import { fitText } from "@remotion/layout-utils";
+import { fitText } from "@remotion/layout-utils"; // 导入文本适应函数
 
+// 计算最佳字体大小
 const { fontSize } = fitText({
-  text: "Hello World",
-  withinWidth: 600,
-  fontFamily: "Inter",
-  fontWeight: "bold",
+  text: "Hello World", // 要适应的文本
+  withinWidth: 600, // 最大宽度
+  fontFamily: "Inter", // 字体族
+  fontWeight: "bold", // 字重
 });
 
 return (
   <div
     style={{
-      fontSize: Math.min(fontSize, 80), // Cap at 80px
-      fontFamily: "Inter",
-      fontWeight: "bold",
+      fontSize: Math.min(fontSize, 80), // 最大限制为 80px
+      fontFamily: "Inter", // 字体族
+      fontWeight: "bold", // 字重
     }}
   >
     Hello World
@@ -62,82 +64,90 @@ return (
 );
 ```
 
-## Checking text overflow
+## 检查文本溢出
 
-Use `fillTextBox()` to check if text exceeds a box:
+使用 `fillTextBox()` 检查文本是否超出盒子：
 
 ```tsx
-import { fillTextBox } from "@remotion/layout-utils";
+import { fillTextBox } from "@remotion/layout-utils"; // 导入文本盒子填充函数
 
+// 创建文本盒子，指定最大宽度和最大行数
 const box = fillTextBox({ maxBoxWidth: 400, maxLines: 3 });
 
-const words = ["Hello", "World", "This", "is", "a", "test"];
+const words = ["Hello", "World", "This", "is", "a", "test"]; // 要添加的单词列表
 for (const word of words) {
+  // 向盒子添加单词
   const { exceedsBox } = box.add({
-    text: word + " ",
-    fontFamily: "Arial",
-    fontSize: 24,
+    text: word + " ", // 添加的文本（包括空格）
+    fontFamily: "Arial", // 字体族
+    fontSize: 24, // 字体大小
   });
   if (exceedsBox) {
-    // Text would overflow, handle accordingly
-    break;
+    // 文本会溢出，进行相应处理
+    break; // 跳出循环
   }
 }
 ```
 
-## Best practices
+## 最佳实践
 
-**Load fonts first:** Only call measurement functions after fonts are loaded.
+**先加载字体：** 仅在字体加载完成后调用测量函数。
 
 ```tsx
-import { loadFont } from "@remotion/google-fonts/Inter";
+import { loadFont } from "@remotion/google-fonts/Inter"; // 导入字体加载函数
 
+// 加载 Inter 字体
 const { fontFamily, waitUntilDone } = loadFont("normal", {
-  weights: ["400"],
-  subsets: ["latin"],
+  weights: ["400"], // 加载 400 字重
+  subsets: ["latin"], // 加载拉丁文字子集
 });
 
+// 等待字体加载完成后进行测量
 waitUntilDone().then(() => {
-  // Now safe to measure
+  // 现在可以安全地进行测量
   const { width } = measureText({
-    text: "Hello",
-    fontFamily,
-    fontSize: 32,
+    text: "Hello", // 要测量的文本
+    fontFamily, // 字体族
+    fontSize: 32, // 字体大小
   });
 })
 ```
 
-**Use validateFontIsLoaded:** Catch font loading issues early:
+**使用 validateFontIsLoaded：** 尽早捕获字体加载问题：
 
 ```tsx
 measureText({
-  text: "Hello",
-  fontFamily: "MyCustomFont",
-  fontSize: 32,
-  validateFontIsLoaded: true, // Throws if font not loaded
+  text: "Hello", // 要测量的文本
+  fontFamily: "MyCustomFont", // 字体族
+  fontSize: 32, // 字体大小
+  validateFontIsLoaded: true, // 如果字体未加载则抛出错误
 });
 ```
 
-**Match font properties:** Use the same properties for measurement and rendering:
+**匹配字体属性：** 测量和渲染使用相同的属性：
 
 ```tsx
+// 定义字体样式对象
 const fontStyle = {
-  fontFamily: "Inter",
-  fontSize: 32,
-  fontWeight: "bold" as const,
-  letterSpacing: "0.5px",
+  fontFamily: "Inter", // 字体族
+  fontSize: 32, // 字体大小
+  fontWeight: "bold" as const, // 字重
+  letterSpacing: "0.5px", // 字母间距
 };
 
+// 使用相同属性进行测量
 const { width } = measureText({
-  text: "Hello",
-  ...fontStyle,
+  text: "Hello", // 要测量的文本
+  ...fontStyle, // 展开字体样式
 });
 
+// 使用相同样式进行渲染
 return <div style={fontStyle}>Hello</div>;
 ```
 
-**Avoid padding and border:** Use `outline` instead of `border` to prevent layout differences:
+**避免使用 padding 和 border：** 使用 `outline` 代替 `border` 以防止布局差异：
 
 ```tsx
+{/* 使用 outline 代替 border */}
 <div style={{ outline: "2px solid red" }}>Text</div>
 ```

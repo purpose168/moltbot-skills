@@ -1,10 +1,10 @@
-# Budget Templates
+# 预算模板
 
-Suggested budgets by lifestyle. All amounts in CHF, adjust for your currency.
+按生活方式的建议预算。所有金额以 CHF 为单位，请根据您的货币调整。
 
-## Single Professional (Zurich)
+## 单身上班族（苏黎世）
 
-High income, moderate lifestyle.
+高收入，适度生活方式。
 
 ```bash
 python -m watch_my_money set-budget --category rent --amount 2000 --currency CHF
@@ -17,11 +17,11 @@ python -m watch_my_money set-budget --category shopping --amount 300 --currency 
 python -m watch_my_money set-budget --category health --amount 100 --currency CHF
 ```
 
-**Total: ~3,650 CHF/month**
+**总计：约 3,650 瑞士法郎/月**
 
-## Couple (Shared Expenses)
+## 情侣（共同开支）
 
-Split household costs.
+分摊家庭成本。
 
 ```bash
 python -m watch_my_money set-budget --category rent --amount 1500 --currency CHF
@@ -34,11 +34,11 @@ python -m watch_my_money set-budget --category shopping --amount 200 --currency 
 python -m watch_my_money set-budget --category health --amount 80 --currency CHF
 ```
 
-**Total: ~2,710 CHF/month per person**
+**总计：每人约 2,710 瑞士法郎/月**
 
-## Student / Entry Level
+## 学生 / 入门级
 
-Tight budget, essentials focus.
+紧张预算，专注于必需品。
 
 ```bash
 python -m watch_my_money set-budget --category rent --amount 900 --currency CHF
@@ -50,11 +50,11 @@ python -m watch_my_money set-budget --category subscriptions --amount 30 --curre
 python -m watch_my_money set-budget --category shopping --amount 100 --currency CHF
 ```
 
-**Total: ~1,590 CHF/month**
+**总计：约 1,590 瑞士法郎/月**
 
-## FIRE / Frugal
+## FIRE / 节俭
 
-Aggressive savings, minimal discretionary.
+积极储蓄，最小化可自由支配开支。
 
 ```bash
 python -m watch_my_money set-budget --category rent --amount 1200 --currency CHF
@@ -67,26 +67,26 @@ python -m watch_my_money set-budget --category shopping --amount 50 --currency C
 python -m watch_my_money set-budget --category health --amount 50 --currency CHF
 ```
 
-**Total: ~1,880 CHF/month**
+**总计：约 1,880 瑞士法郎/月**
 
 ---
 
-## The 50/30/20 Rule
+## 50/30/20 法则
 
-Classic budgeting framework:
+经典预算框架：
 
-- **50% Needs**: rent, utilities, groceries, transport, health
-- **30% Wants**: eating_out, subscriptions, shopping, travel
-- **20% Savings**: Not tracked here (goes to savings account)
+- **50% 需求**：房租、水电费、杂货、交通、健康
+- **30% 想要**：外出就餐、订阅、购物、旅行
+- **20% 储蓄**：不在这里跟踪（存入储蓄账户）
 
-For 6,000 CHF net income:
-- Needs: 3,000 CHF
-- Wants: 1,800 CHF
-- Savings: 1,200 CHF
+对于 6,000 瑞士法郎的净收入：
+- 需求：3,000 瑞士法郎
+- 想要：1,800 瑞士法郎
+- 储蓄：1,200 瑞士法郎
 
-## Adjusting for Your Reality
+## 根据您的实际情况调整
 
-1. Track 2-3 months without budgets first
-2. Review your actual spending patterns
-3. Set budgets 10-20% below current spend
-4. Tighten gradually month-over-month
+1. 首先无预算跟踪 2-3 个月
+2. 查看您实际的支出模式
+3. 设置比当前支出低 10-20% 的预算
+4. 逐月逐渐收紧

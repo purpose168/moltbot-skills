@@ -1,57 +1,79 @@
 #!/usr/bin/env bash
 set -e
 
+# ============================================================================
+# Spotify History 技能设置脚本
+# 
+# 功能说明：
+# 此脚本引导用户完成 Spotify History 技能的初始设置，包括：
+# 1. 创建 Spotify 开发者应用
+# 2. 输入客户端凭据
+# 3. 运行 OAuth 授权流程
+# ============================================================================
+
+# 获取脚本所在目录路径
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 获取技能目录（上一级目录）
 SKILL_DIR="$(dirname "$SCRIPT_DIR")"
+# 获取工作区目录（再上一级）
 WORKSPACE_DIR="$(dirname "$(dirname "$SKILL_DIR")")"
+# 凭据文件目录和路径
 CREDS_DIR="$WORKSPACE_DIR/credentials"
 CREDS_FILE="$CREDS_DIR/spotify.json"
 
-echo "🎵 Spotify History Skill Setup"
+echo "🎵 Spotify History 技能设置"
 echo "================================"
 echo
 
-# Check if already set up
+# ----------------------------------------------------------------------------
+# 检查是否已设置
+# ----------------------------------------------------------------------------
 if [ -f "$CREDS_FILE" ]; then
-    echo "✓ Credentials already exist at: $CREDS_FILE"
-    read -p "Overwrite? (y/N): " -n 1 -r
+    echo "✓ 凭据已存在于：$CREDS_FILE"
+    read -p "覆盖现有凭据？(y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Keeping existing credentials."
+        echo "保留现有凭据。"
         exit 0
     fi
 fi
 
-echo "Step 1: Create Spotify Developer App"
+echo "步骤 1：创建 Spotify 开发者应用"
 echo "-------------------------------------"
-echo "1. Go to: https://developer.spotify.com/dashboard"
-echo "2. Click 'Create App'"
-echo "3. Fill in:"
-echo "   - App name: Clawd (or any name)"
-echo "   - App description: Personal assistant integration"
-echo "   - Redirect URI: http://127.0.0.1:8888/callback"
-echo "4. Save and copy your Client ID and Client Secret"
+echo "1. 访问：https://developer.spotify.com/dashboard"
+echo "2. 点击'创建应用'"
+echo "3. 填写信息："
+echo "   - 应用名称：Clawd（或任何名称）"
+echo "   - 应用描述：个人助手集成"
+echo "   - 重定向 URI：http://127.0.0.1:8888/callback"
+echo "4. 保存并复制您的客户端 ID 和客户端密钥"
 echo
-read -p "Press Enter when ready..."
+read -p "准备就绪后按 Enter 键继续..."
 echo
 
-# Get credentials
-echo "Step 2: Enter Credentials"
+# ----------------------------------------------------------------------------
+# 获取凭据
+# ----------------------------------------------------------------------------
+echo "步骤 2：输入凭据"
 echo "-------------------------"
-read -p "Client ID: " CLIENT_ID
-read -p "Client Secret: " CLIENT_SECRET
+read -p "客户端 ID: " CLIENT_ID
+read -p "客户端密钥: " CLIENT_SECRET
 echo
 
-# Validate input
+# ----------------------------------------------------------------------------
+# 验证输入
+# ----------------------------------------------------------------------------
 if [ -z "$CLIENT_ID" ] || [ -z "$CLIENT_SECRET" ]; then
-    echo "❌ Error: Client ID and Secret are required"
+    echo "❌ 错误：需要提供客户端 ID 和密钥"
     exit 1
 fi
 
-# Create credentials directory
+# ----------------------------------------------------------------------------
+# 创建凭据目录并保存凭据
+# ----------------------------------------------------------------------------
 mkdir -p "$CREDS_DIR"
 
-# Save credentials
+# 安全保存凭据到 JSON 文件
 cat > "$CREDS_FILE" <<EOF
 {
   "client_id": "$CLIENT_ID",
@@ -60,23 +82,26 @@ cat > "$CREDS_FILE" <<EOF
 }
 EOF
 
+# 设置仅所有者可读写权限
 chmod 600 "$CREDS_FILE"
-echo "✓ Credentials saved to: $CREDS_FILE"
+echo "✓ 凭据已保存到：$CREDS_FILE"
 echo
 
-# Run auth flow
-echo "Step 3: Authorize Spotify Access"
+# ----------------------------------------------------------------------------
+# 运行授权流程
+# ----------------------------------------------------------------------------
+echo "步骤 3：授权 Spotify 访问"
 echo "---------------------------------"
-echo "Running OAuth flow..."
+echo "正在运行 OAuth 流程..."
 echo
 
 cd "$WORKSPACE_DIR"
 python3 scripts/spotify-auth.py
 
 echo
-echo "✅ Setup Complete!"
+echo "✅ 设置完成！"
 echo
-echo "Test it:"
+echo "测试命令："
 echo "  python3 scripts/spotify-api.py recent"
 echo "  python3 scripts/spotify-api.py top-artists"
 echo "  python3 scripts/spotify-api.py recommend"

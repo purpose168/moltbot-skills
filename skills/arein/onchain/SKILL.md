@@ -1,160 +1,141 @@
 ---
 name: onchain
-description: CLI for crypto portfolio tracking, market data, and CEX history. Use when the user asks about crypto prices, wallet balances, portfolio values, Coinbase/Binance holdings, or Polymarket predictions.
+description: 用于加密货币投资组合跟踪、市场数据和 CEX 历史记录的 CLI。当用户询问加密货币价格、钱包余额、投资组合价值、Coinbase/Binance 持仓或 Polymarket 预测时使用。
 ---
 
 # Onchain CLI
 
-CLI for crypto portfolio tracking, market data, and CEX history.
+用于加密货币投资组合跟踪、市场数据和 CEX 历史记录的 CLI。
 
-## First-Time Setup (Required)
-
-Before using most features, users must configure their API keys:
-
-```bash
-onchain setup
-```
-
-This interactive wizard helps configure:
-- **Coinbase/Binance** - For CEX balances and trade history
-- **DeBank** - For EVM wallet data (Ethereum, Polygon, Arbitrum, etc.)
-- **Helius** - For Solana wallet data
-
-**Without setup**: Only `onchain price` and `onchain markets` work (using free CoinGecko tier).
-
-**Verify setup**: Run `onchain test` to check which providers are configured and working.
-
-**Agent note**: If a command fails with "not configured" or "API key required", guide the user to run `onchain setup` first, then `onchain test` to verify.
-
-## Invocation
+## 调用方式
 
 ```
 onchain <command>
 ```
 
-## Commands
+## 命令
 
-### Market Data
+### 市场数据
 
 ```bash
-onchain price <token>         # Token price (btc, eth, sol, etc.)
-onchain markets               # Market overview with trending
+onchain price <token>         # 代币价格（btc、eth、sol 等）
+onchain markets               # 市场概览及热门趋势
 ```
 
-### Wallet Data
+### 钱包数据
 
 ```bash
-onchain balance [address]           # Token balances (auto-detects EVM/Solana)
-onchain balance --chain polygon     # Filter by chain
-onchain history [address]           # Transaction history
-onchain portfolio [address]         # Full portfolio with DeFi positions
+onchain balance [address]           # 代币余额（自动检测 EVM/Solana）
+onchain balance --chain polygon     # 按链筛选
+onchain history [address]           # 交易历史
+onchain portfolio [address]         # 完整投资组合及 DeFi 持仓
 ```
 
-### CEX Data
+### CEX 数据
 
 ```bash
-onchain coinbase balance      # Coinbase balances
-onchain coinbase history      # Coinbase trade history
-onchain binance balance       # Binance balances
-onchain binance history       # Binance trade history
+onchain coinbase balance      # Coinbase 余额
+onchain coinbase history      # Coinbase 交易历史
+onchain binance balance       # Binance 余额
+onchain binance history       # Binance 交易历史
 ```
 
-### Prediction Markets
+### 预测市场
 
 ```bash
-onchain polymarket trending          # Trending markets
-onchain polymarket search <query>    # Search markets
-onchain polymarket view <slug>       # View market details
+onchain polymarket trending          # 热门市场
+onchain polymarket search <query>    # 搜索市场
+onchain polymarket view <slug>       # 查看市场详情
 ```
 
-### Configuration
+### 配置
 
 ```bash
-onchain setup                 # Interactive setup wizard
-onchain config                # View current config
+onchain setup                 # 交互式设置向导
+onchain config                # 查看当前配置
 onchain config wallet add <name> <address>
 onchain config wallet set-default <name>
 ```
 
-## Global Options
+## 全局选项
 
-- `--json` - Output as JSON (agent-friendly)
-- `--plain` - Disable colors and emoji
-- `--timeout <ms>` - Request timeout
+- `--json` - 输出为 JSON（智能体友好）
+- `--plain` - 禁用颜色和 emoji
+- `--timeout <ms>` - 请求超时时间
 
-## Configuration
+## 配置
 
-Config file: `~/.config/onchain/config.json5`
+配置文件：`~/.config/onchain/config.json5`
 
-### Required API Keys
+### 必需的 API 密钥
 
-| Feature | API Key | Get Key |
+| 功能 | API 密钥 | 获取密钥 |
 |---------|---------|---------|
-| EVM wallets | `DEBANK_API_KEY` | [DeBank](https://cloud.debank.com/) |
-| Solana wallets | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
+| EVM 钱包 | `DEBANK_API_KEY` | [DeBank](https://cloud.debank.com/) |
+| Solana 钱包 | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
 | Coinbase CEX | `COINBASE_API_KEY` + `COINBASE_API_SECRET` | [Coinbase](https://www.coinbase.com/settings/api) |
 | Binance CEX | `BINANCE_API_KEY` + `BINANCE_API_SECRET` | [Binance](https://www.binance.com/en/my/settings/api-management) |
 
-### Optional API Keys
+### 可选的 API 密钥
 
-| Feature | API Key | Notes |
+| 功能 | API 密钥 | 备注 |
 |---------|---------|-------|
-| Market data | `COINGECKO_API_KEY` | Free tier works, Pro for higher limits |
-| Market fallback | `COINMARKETCAP_API_KEY` | Alternative market data source |
+| 市场数据 | `COINGECKO_API_KEY` | 免费层可用，更高限制需 Pro 版 |
+| 市场回退 | `COINMARKETCAP_API_KEY` | 替代市场数据源 |
 
-## Examples
+## 示例
 
-### Get Bitcoin price
+### 获取比特币价格
 ```bash
 onchain price btc
 ```
 
-### Check wallet balance
+### 检查钱包余额
 ```bash
 onchain balance 0x1234...5678
 ```
 
-### View portfolio with DeFi positions
+### 查看投资组合及 DeFi 持仓
 ```bash
-onchain portfolio main  # Uses saved wallet named "main"
+onchain main  # 使用保存的钱包，名称为 "main"
 ```
 
-### Get trending prediction markets
+### 获取热门预测市场
 ```bash
 onchain polymarket trending -n 5
 ```
 
-### JSON output for scripts
+### 用于脚本的 JSON 输出
 ```bash
 onchain --json price eth | jq '.priceUsd'
 ```
 
-## Supported Chains
+## 支持的链
 
-### EVM (via DeBank)
-Ethereum, BNB Chain, Polygon, Arbitrum, Optimism, Avalanche, Base, zkSync Era, Linea, Scroll, Blast, Mantle, Gnosis, Fantom, Celo, and more.
+### EVM（通过 DeBank）
+Ethereum、BNB Chain、Polygon、Arbitrum、Optimism、Avalanche、Base、zkSync Era、Linea、Scroll、Blast、Mantle、Gnosis、Fantom、Celo 等。
 
-### Solana (via Helius)
-Full Solana mainnet support including SPL tokens and NFTs.
+### Solana（通过 Helius）
+完全支持 Solana 主网，包括 SPL 代币和 NFT。
 
-## Agent Integration
+## 智能体集成
 
-This CLI is designed for agent use. Key patterns:
+此 CLI 专为智能体使用设计。关键模式：
 
-1. **Always use `--json`** for programmatic access
-2. **Check exit codes** - 0 for success, 1 for error
-3. **Use saved wallets** - Configure once with `onchain setup`, reference by name
-4. **Rate limiting** - APIs have rate limits, add delays between rapid calls
+1. **始终使用 `--json`** 以进行程序化访问
+2. **检查退出码** - 0 表示成功，1 表示错误
+3. **使用保存的钱包** - 使用 `onchain setup` 配置一次，按名称引用
+4. **速率限制** - API 有速率限制，快速调用之间添加延迟
 
-### Example Agent Usage
+### 示例智能体用法
 
 ```bash
-# Get portfolio value
+# 获取投资组合价值
 VALUE=$(onchain --json portfolio main | jq -r '.totalValueUsd')
 
-# Get price with change
+# 获取价格及变化
 onchain --json price btc | jq '{price: .priceUsd, change24h: .priceChange24h}'
 
-# Check if market is bullish
+# 检查市场是否看涨
 CHANGE=$(onchain --json markets | jq '.marketCapChange24h')
 ```

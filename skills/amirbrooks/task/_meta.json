@@ -1,11 +1,21 @@
 {
-  "owner": "amirbrooks",
-  "slug": "task",
-  "displayName": "Task",
-  "latest": {
-    "version": "0.1.0",
-    "publishedAt": 1769123617767,
-    "commit": "https://github.com/clawdbot/skills/commit/01904008a0526120e3e770e9c150ce691148f8fb"
+  "owner": "amirbrooks",                           // 技能所有者：amirbrooks（GitHub 用户名）
+  "slug": "task",                                 // 技能标识符：task（用于内部引用）
+  "displayName": "任务",                          // 显示名称：任务（在界面中显示的中文名称）
+  "latest": {                                     // 最新版本信息
+    "version": "0.1.0",                           // 当前版本号：0.1.0（语义化版本号）
+    "publishedAt": 1769123617767,                 // 发布时间：2026-01-26 03:00:17（Unix 时间戳，毫秒）
+    "commit": "https://github.com/clawdbot/skills/commit/01904008a0526120e3e770e9c150ce691148f8fb"  // 发布对应的 Git 提交
   },
-  "history": []
+  "history": []                                   // 版本历史记录：空数组（暂无历史版本）
 }
+
+// 配置说明：
+// 1. owner - 技能的所有者，用于归属和权限管理
+// 2. slug - 技能的简短标识符，用于命令行调用
+// 3. displayName - 在用户界面中显示的名称
+// 4. latest - 包含当前版本的详细信息
+//    - version: 遵循语义化版本规范 (主版本.次版本.补丁版本)
+//    - publishedAt: 发布时间戳，用于排序和显示
+//    - commit: 对应的 Git 提交链接，便于追踪变更
+// 5. history - 版本历史数组，用于支持多版本管理

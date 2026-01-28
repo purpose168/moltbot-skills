@@ -1,316 +1,315 @@
 ---
 name: geo-optimization
-description: "Generative Engine Optimization (GEO) for AI search visibility. Optimize content to appear in ChatGPT, Perplexity, Claude, and Google AI Overviews. Use when optimizing websites, pages, or content for LLM discoverability and citation."
+description: "生成式引擎优化（GEO），用于 AI 搜索可见性。优化内容以出现在 ChatGPT、Perplexity、Claude 和 Google AI Overviews 中。在优化网站、页面或内容以提高 LLM 可发现性和引用时使用。"
 metadata:
   version: 1.0.0
   tags: ["geo", "seo", "llm", "ai-search", "perplexity", "chatgpt", "content"]
 ---
 
-# GEO: Generative Engine Optimization
+# GEO: 生成式引擎优化
 
-Optimize content to appear in AI-powered search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). GEO is about being **parseable, quotable, and authoritative** — not keyword stuffing.
-
----
-
-## Quick Reference
-
-| Goal | Tactic |
-|------|--------|
-| Get cited in AI answers | Add specific statistics, quotable facts |
-| Appear in comparisons | Create definitive comparison tables |
-| Answer user questions | Comprehensive FAQ sections |
-| Establish entity | Clear first-paragraph definitions |
-| Build authority | Third-party mentions, backlinks, freshness signals |
+优化内容以出现在 AI 驱动的搜索引擎（ChatGPT、Perplexity、Claude、Google AI Overviews）中。GEO 的关键是**可解析、可引用、权威**——而不是关键词堆砌。
 
 ---
 
-## GEO vs SEO: Key Differences
+## 快速参考
 
-| Aspect | Traditional SEO | GEO |
-|--------|-----------------|-----|
-| Goal | Rank on SERPs | Get cited in AI responses |
-| Keywords | Exact match matters | Semantic understanding |
-| Content style | Can be promotional | Must be factual, neutral |
-| Structure | Headers for scanning | Headers + parseable data |
-| Links | Backlinks for authority | Citations + entity mentions |
-| Freshness | Helpful | Critical (LLMs prefer recent) |
-| Format | Long-form wins | Quotable chunks win |
+| 目标 | 策略 |
+|------|------|
+| 在 AI 回答中被引用 | 添加具体统计数据、可引用的事实 |
+| 出现在对比中 | 创建权威的对比表格 |
+| 回答用户问题 | 全面的常见问题解答部分 |
+| 建立实体 | 清晰的首段定义 |
+| 建立权威 | 第三方提及、反向链接、新鲜度信号 |
 
 ---
 
-## The GEO Audit Checklist
+## GEO 与 SEO：关键差异
 
-Score each page 0-2 points per item (0=missing, 1=partial, 2=excellent):
-
-### 1. Entity Clarity (Max 10 pts)
-- [ ] First paragraph clearly defines what/who the entity is
-- [ ] Entity name used consistently throughout
-- [ ] Clear category placement ("X is a [type of thing]")
-- [ ] Relationship to other known entities stated
-- [ ] Wikipedia-style objectivity in tone
-
-### 2. Quotable Facts (Max 10 pts)
-- [ ] Specific numbers present (not "many" or "fast")
-- [ ] Statistics are current and sourced
-- [ ] Claims are concrete and verifiable
-- [ ] Key facts in standalone sentences (easy to extract)
-- [ ] "By the numbers" or facts section exists
-
-### 3. FAQ Coverage (Max 10 pts)
-- [ ] FAQ section exists
-- [ ] Questions match how users prompt LLMs
-- [ ] Answers are direct and complete
-- [ ] FAQ schema markup implemented
-- [ ] Covers "what is", "how does", "why", "vs" questions
-
-### 4. Comparison Positioning (Max 10 pts)
-- [ ] Comparison tables exist
-- [ ] Competitors named explicitly
-- [ ] Factual differences highlighted (not just marketing)
-- [ ] "Alternative to X" content exists
-- [ ] Fair representation (not obviously biased)
-
-### 5. Structural Clarity (Max 10 pts)
-- [ ] Clear heading hierarchy (H1→H2→H3)
-- [ ] Bullet points for lists
-- [ ] Tables for comparisons
-- [ ] Short paragraphs (2-4 sentences)
-- [ ] Summary/TL;DR at top or bottom
-
-### 6. Authority Signals (Max 10 pts)
-- [ ] Author/company credentials stated
-- [ ] Customer names/logos (social proof)
-- [ ] Case studies with real numbers
-- [ ] Third-party mentions/citations
-- [ ] "Last updated" date present
-
-### 7. Freshness (Max 10 pts)
-- [ ] Page has recent update date
-- [ ] Content reflects current year
-- [ ] No outdated references
-- [ ] Regular content updates
-- [ ] News/changelog section exists
-
-**Scoring:**
-- 60-70: Excellent GEO readiness
-- 45-59: Good, needs some optimization
-- 30-44: Fair, significant gaps
-- <30: Poor, major overhaul needed
+| 方面 | 传统 SEO | GEO |
+|------|----------|-----|
+| 目标 | 在搜索结果页面排名 | 在 AI 响应中被引用 |
+| 关键词 | 精确匹配很重要 | 语义理解 |
+| 内容风格 | 可以是推广性的 | 必须是事实性的、中立的 |
+| 结构 | 标题便于扫描 | 标题 + 可解析的数据 |
+| 链接 | 反向链接建立权威 | 引用 + 实体提及 |
+| 新鲜度 | 有帮助 | 关键（LLM 偏好最近的）|
+| 格式 | 长篇胜出 | 可引用的片段胜出 |
 
 ---
 
-## Content Optimization Templates
+## GEO 审计检查清单
 
-### Template 1: Entity Definition Page
+每个项目评分 0-2 分（0=缺失，1=部分，2=优秀）：
+
+### 1. 实体清晰度（最高 10 分）
+- [ ] 首段明确定义了实体是什么/是谁
+- [ ] 实体名称在全文中一致使用
+- [ ] 清晰的类别定位（"X 是一种[类型的东西]"）
+- [ ] 与其他已知实体的关系已说明
+- [ ] 维基百科式的客观语调
+
+### 2. 可引用的事实（最高 10 分）
+- [ ] 存在具体数字（不是"很多"或"快"）
+- [ ] 统计数据是当前的且有来源
+- [ ] 主张是具体的和可验证的
+- [ ] 关键事实放在独立句子中（易于提取）
+- [ ] 存在"数字"或事实部分
+
+### 3. 常见问题解答覆盖（最高 10 分）
+- [ ] 存在常见问题解答部分
+- [ ] 问题匹配用户提示 LLM 的方式
+- [ ] 答案直接且完整
+- [ ] 已实施常见问题解答模式标记
+- [ ] 涵盖"是什么"、"如何"、"为什么"、"对比"问题
+
+### 4. 对比定位（最高 10 分）
+- [ ] 存在对比表格
+- [ ] 明确命名竞争对手
+- [ ] 突出事实差异（不仅仅是营销）
+- [ ] 存在"X 的替代品"内容
+- [ ] 公平 representation（不是明显有偏见）
+
+### 5. 结构清晰度（最高 10 分）
+- [ ] 清晰的标题层次结构（H1→H2→H3）
+- [ ] 列表使用项目符号
+- [ ] 对比使用表格
+- [ ] 短段落（2-4 句）
+- [ ] 顶部或底部有摘要/总结
+
+### 6. 权威信号（最高 10 分）
+- [ ] stated 作者/公司凭据
+- [ ] 客户名称/徽标（社会证明）
+- [ ] 有真实数字的案例研究
+- [ ] 第三方提及/引用
+- [ ] 存在"最后更新"日期
+
+### 7. 新鲜度（最高 10 分）
+- [ ] 页面有最近的更新日期
+- [ ] 内容反映当前年份
+- [ ] 没有过时的引用
+- [ ] 定期更新内容
+- [ ] 存在新闻/更新日志部分
+
+**评分：**
+- 60-70：优秀的 GEO 准备度
+- 45-59：良好，需要一些优化
+- 30-44：一般，存在显著差距
+- <30：较差，需要大修
+
+---
+
+## 内容优化模板
+
+### 模板 1：实体定义页面
 
 ```markdown
-# [Entity Name]
+# [实体名称]
 
-**[Entity Name]** is a [category] that [primary function]. 
-Unlike [alternative/competitor], [Entity Name] offers [key differentiator].
+**[实体名称]** 是一种[类别]，用于[主要功能]。
+与[替代品/竞争对手]不同，[实体名称]提供[关键差异点]。
 
-## [Entity Name] by the Numbers
+## [实体名称] 数据一览
 
-- [Specific stat 1]
-- [Specific stat 2]
-- [Specific stat 3]
-- [Specific stat 4]
+- [具体统计 1]
+- [具体统计 2]
+- [具体统计 3]
+- [具体统计 4]
 
-## How [Entity Name] Works
+## [实体名称] 的工作原理
 
-[2-3 paragraphs explaining core functionality]
+[2-3 段解释核心功能]
 
-## Who Uses [Entity Name]
+## 谁使用 [实体名称]
 
-[Named customers with context]
+[有上下文的命名客户]
 
-## Frequently Asked Questions
+## 常见问题解答
 
-### What is [Entity Name]?
-[Direct answer in 2-3 sentences]
+### 什么是 [实体名称]？
+[2-3 句话的直接回答]
 
-### How is [Entity Name] different from [Competitor]?
-[Factual comparison]
+### [实体名称] 与 [竞争对手] 有何不同？
+[事实对比]
 
-### How much does [Entity Name] cost?
-[Pricing info or guidance]
+### [实体名称] 的价格是多少？
+[定价信息或指导]
 
-*Last updated: [Date]*
+*最后更新: [日期]*
 ```
 
-### Template 2: Comparison Page (Alternative To)
+### 模板 2：对比页面（替代品）
 
 ```markdown
-# Best [Competitor] Alternative: [Your Product] (2026)
+# 最佳 [竞争对手] 替代品: [您的产品] (2026)
 
-> **Summary:** [Your Product] is a [category] offering [key differentiators]. 
-> [Customers] report [specific result] compared to [Competitor].
+> **总结:** [您的产品] 是一种[类别]，提供[关键差异点]。
+> [客户] 报告[具体结果]相比 [竞争对手]。
 
-*Last updated: [Date]*
+*最后更新: [日期]*
 
-## Why [Users] Look for [Competitor] Alternatives
+## 为什么 [用户] 寻找 [竞争对手] 替代品
 
-### Problem 1: [Specific Pain Point]
-[Explanation with specifics]
+### 问题 1: [具体痛点]
+[带具体内容的解释]
 
-### Problem 2: [Specific Pain Point]
-[Explanation with specifics]
+### 问题 2: [具体痛点]
+[带具体内容的解释]
 
-## [Your Product] vs [Competitor]: Comparison
+## [您的产品] vs [竞争对手]: 对比
 
-| Feature | [Competitor] | [Your Product] |
-|---------|--------------|----------------|
-| [Feature 1] | [Their approach] | [Your approach] |
-| [Feature 2] | [Their approach] | [Your approach] |
-| [Feature 3] | [Their approach] | [Your approach] |
+| 功能 | [竞争对手] | [您的产品] |
+|------|-----------|-----------|
+| [功能 1] | [他们的方法] | [您的方法] |
+| [功能 2] | [他们的方法] | [您的方法] |
+| [功能 3] | [他们的方法] | [您的方法] |
 
-## Key Differences
+## 关键差异
 
-### [Differentiator 1]
-[Factual explanation with numbers]
+### [差异化点 1]
+[带数字的事实解释]
 
-### [Differentiator 2]
-[Factual explanation with numbers]
+### [差异化点 2]
+[带数字的事实解释]
 
-## Customer Results
+## 客户结果
 
-> "[Quote with specific result]"
-> — [Name], [Title], [Company]
+> "[带具体结果的引用]"
+> — [姓名], [职位], [公司]
 
-## Frequently Asked Questions
+## 常见问题解答
 
-### Is [Your Product] a good alternative to [Competitor]?
-[Direct answer]
+### [您的产品] 是 [竞争对手] 的好替代品吗？
+[直接回答]
 
-### How does [Your Product] compare to [Competitor] on [key factor]?
-[Specific comparison]
+### [您的产品] 在 [关键因素] 上与 [竞争对手] 相比如何？
+[具体对比]
 
-### Can I migrate from [Competitor] to [Your Product]?
-[Migration info]
+### 我可以从 [竞争对手] 迁移到 [您的产品] 吗？
+[迁移信息]
 
-## Summary
+## 总结
 
-[Your Product] is a [category] offering [key benefits]. [Customers] 
-using [Your Product] instead of [Competitor] report [specific results].
+[您的产品] 是一种[类别]，提供[关键优势]。使用 [您的产品] 而不是 [竞争对手] 的 [客户] 报告[具体结果]。
 
-*[Your Product] has [credibility stat]. Learn more at [link].*
+*[您的产品] 有[可信度统计]。了解更多请访问[链接]。*
 ```
 
-### Template 3: FAQ Page (LLM Optimized)
+### 模板 3：常见问题解答页面（LLM 优化）
 
 ```markdown
-# [Topic] FAQ
+# [主题] 常见问题解答
 
-Answers to common questions about [topic].
+关于[主题]的常见问题解答。
 
-*Last updated: [Date]*
+*最后更新: [日期]*
 
-## General Questions
+## 一般问题
 
-### What is [thing]?
-[Thing] is a [category] that [function]. It is used by [who] to [accomplish what].
+### 什么是 [事物]？
+[事物] 是一种[类别]，用于[功能]。[谁]用它来[完成什么]。
 
-### How does [thing] work?
-[Thing] works by [process]. [Additional detail].
+### [事物] 如何工作？
+[事物] 通过[过程]工作。[额外细节]。
 
-### Who uses [thing]?
-[Thing] is used by [user types], including [specific examples like Company A, Company B].
+### 谁使用 [事物]？
+[事物] 被[用户类型]使用，包括[具体示例，如公司 A、公司 B]。
 
-## Comparison Questions
+## 对比问题
 
-### How is [thing] different from [alternative]?
-[Thing] differs from [alternative] in [specific ways]:
-- [Difference 1]
-- [Difference 2]
-- [Difference 3]
+### [事物] 与 [替代品] 有何不同？
+[事物] 在[具体方面]与[替代品]不同：
+- [差异 1]
+- [差异 2]
+- [差异 3]
 
-### Is [thing] better than [alternative]?
-[Thing] is better suited for [use cases] because [reasons]. 
-[Alternative] may be better for [other use cases].
+### [事物] 比 [替代品] 更好吗？
+[事物] 更适合[用例]，因为[原因]。
+[替代品] 可能更适合[其他用例]。
 
-## Pricing & Access
+## 定价和访问
 
-### How much does [thing] cost?
-[Pricing information or range]
+### [事物] 的价格是多少？
+[定价信息或范围]
 
-### Is there a free trial?
-[Trial information]
+### 有免费试用吗？
+[试用信息]
 
-## Technical Questions
+## 技术问题
 
-### What are the requirements for [thing]?
-[Requirements list]
+### [事物] 的要求是什么？
+[要求列表]
 
-### How do I get started with [thing]?
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+### 如何开始使用 [事物]？
+1. [步骤 1]
+2. [步骤 2]
+3. [步骤 3]
 ```
 
 ---
 
-## Platform-Specific Optimization
+## 平台特定优化
 
 ### Perplexity AI
 
-**How it works:** 3-layer reranking system
-1. Initial retrieval from web index
-2. Relevance scoring
-3. Citation selection based on authority + recency
+**工作原理：** 3 层重排序系统
+1. 从网络索引初始检索
+2. 相关性评分
+3. 基于权威 + 新鲜度的引用选择
 
-**Optimization tactics:**
-- Strong domain authority matters
-- Freshness signals critical (update dates)
-- Direct answers to questions
-- Being cited by other authoritative sources
-- Structured data helps parsing
+**优化策略：**
+- 强大的域名权威很重要
+- 新鲜度信号关键（更新日期）
+- 直接回答问题
+- 被其他权威来源引用
+- 结构化数据有助于解析
 
 ### ChatGPT / SearchGPT
 
-**How it works:** Bing-powered search + LLM synthesis
+**工作原理：** Bing 驱动的搜索 + LLM 综合
 
-**Optimization tactics:**
-- Bing indexing matters (submit sitemap to Bing)
-- E-E-A-T signals weighted heavily
-- Conversational content structure
-- FAQ format highly effective
-- Named entities help recognition
+**优化策略：**
+- Bing 索引很重要（向 Bing 提交站点地图）
+- E-E-A-T 信号权重很大
+- 会话内容结构
+- 常见问题解答格式非常有效
+- 命名实体有助于识别
 
 ### Google AI Overviews
 
-**How it works:** Google's index + Gemini synthesis
+**工作原理：** Google 索引 + Gemini 综合
 
-**Optimization tactics:**
-- Traditional SEO still matters (ranking helps)
-- Featured snippet optimization
-- Schema markup (FAQ, HowTo, Product)
-- Clear, authoritative content
-- Mobile-first indexing
+**优化策略：**
+- 传统 SEO 仍然重要（排名有帮助）
+- 精选摘要优化
+- 模式标记（常见问题解答、操作方法、产品）
+- 清晰、权威的内容
+- 移动优先索引
 
 ### Claude
 
-**How it works:** Training data + retrieval (when web-enabled)
+**工作原理：** 训练数据 + 检索（当启用网络时）
 
-**Optimization tactics:**
-- Quality content in training sources
-- Wikipedia mentions help entity recognition
-- Technical accuracy valued
-- Clear, well-structured prose
-- Being cited in authoritative sources
+**优化策略：**
+- 训练来源中的高质量内容
+- 维基百科提及有助于实体识别
+- 技术准确性受重视
+- 清晰、结构良好的散文
+- 在权威来源中被引用
 
 ---
 
-## Technical Implementation
+## 技术实现
 
-### Schema Markup for GEO
+### GEO 的模式标记
 
-**Organization Schema:**
+**组织模式：**
 ```json
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Company Name",
-  "description": "Clear description of what company does",
+  "name": "公司名称",
+  "description": "公司做什么的清晰描述",
   "url": "https://example.com",
   "foundingDate": "2017",
   "numberOfEmployees": "50-100",
@@ -321,30 +320,30 @@ Answers to common questions about [topic].
 }
 ```
 
-**FAQ Schema:**
+**常见问题解答模式：**
 ```json
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [{
     "@type": "Question",
-    "name": "What is [thing]?",
+    "name": "什么是 [事物]？",
     "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Direct answer here."
+      "text": "直接回答在这里。"
     }
   }]
 }
 ```
 
-**Product Schema:**
+**产品模式：**
 ```json
 {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": "Product Name",
-  "description": "Product description",
-  "brand": {"@type": "Brand", "name": "Brand"},
+  "name": "产品名称",
+  "description": "产品描述",
+  "brand": {"@type": "Brand", "name": "品牌"},
   "offers": {
     "@type": "Offer",
     "priceCurrency": "USD",
@@ -353,116 +352,116 @@ Answers to common questions about [topic].
 }
 ```
 
-### llms.txt Protocol
+### llms.txt 协议
 
-Create `/llms.txt` at your site root to help LLMs understand your site:
+在您的站点根目录创建 `/llms.txt` 以帮助 LLM 理解您的站点：
 
 ```
-# Site Name
+# 站点名称
 
-> Brief description of what this site/company is.
+> 关于此站点/公司的简要描述。
 
-## Main Sections
+## 主要部分
 
-- [Products](/products): Description of products section
-- [Documentation](/docs): Technical documentation
-- [Blog](/blog): Industry insights and updates
+- [产品](/products): 产品部分描述
+- [文档](/docs): 技术文档
+- [博客](/blog): 行业见解和更新
 
-## Key Facts
+## 关键事实
 
-- Founded: 2017
-- Customers: 500+ companies
-- Key metric: [specific number]
+- 成立时间: 2017
+- 客户: 500+ 公司
+- 关键指标: [具体数字]
 
-## Contact
+## 联系
 
-- Website: https://example.com
-- Email: hello@example.com
+- 网站: https://example.com
+- 电子邮件: hello@example.com
 ```
 
 ---
 
-## Monitoring GEO Performance
+## 监控 GEO 表现
 
-### Manual Testing
+### 手动测试
 
-Regularly search these prompts on each platform:
+定期在每个平台上搜索这些提示：
 
-**Perplexity:**
-- "What is [your company]?"
-- "Best [competitor] alternative"
-- "[Your category] comparison"
-- "How does [your product] work?"
+**Perplexity：**
+- "什么是 [您的公司]？"
+- "最佳 [竞争对手] 替代品"
+- "[您的类别] 对比"
+- "[您的产品] 如何工作？"
 
-**ChatGPT:**
-- Same queries with web browsing enabled
-- "Compare [your product] vs [competitor]"
+**ChatGPT：**
+- 启用网络搜索的相同查询
+- "对比 [您的产品] vs [竞争对手]"
 
-**Google (AI Overview):**
-- "[Your category] solutions"
-- "[Competitor] alternative"
+**Google (AI Overview)：**
+- "[您的类别] 解决方案"
+- "[竞争对手] 替代品"
 
-### Tracking Tools
+### 跟踪工具
 
-| Tool | What It Tracks | Price |
-|------|----------------|-------|
-| Otterly.AI | Multi-platform AI visibility | Free tier |
-| Ahrefs Brand Radar | AI search mentions | $129+/mo |
-| Profound | Enterprise benchmarking | Enterprise |
-| Manual tracking | DIY spreadsheet | Free |
+| 工具 | 跟踪内容 | 价格 |
+|------|----------|------|
+| Otterly.AI | 多平台 AI 可见性 | 免费层 |
+| Ahrefs Brand Radar | AI 搜索提及 | $129+/月 |
+| Profound | 企业基准测试 | 企业级 |
+| 手动跟踪 | DIY 电子表格 | 免费 |
 
-### Key Metrics
+### 关键指标
 
-- **Mention rate:** % of relevant queries where you appear
-- **Citation rate:** % of mentions that cite/link to you
-- **Sentiment:** Positive/neutral/negative portrayal
-- **Share of voice:** Your mentions vs competitors
-- **Position:** Where in the response you appear
-
----
-
-## GEO Content Principles
-
-### DO:
-- ✅ Use specific numbers ("0.5 seconds" not "fast")
-- ✅ Make claims quotable and standalone
-- ✅ Structure content with clear hierarchy
-- ✅ Include FAQ sections
-- ✅ Update content regularly with dates
-- ✅ Create comparison content
-- ✅ Use tables for data
-- ✅ Be factual and neutral in tone
-- ✅ Name real customers and results
-
-### DON'T:
-- ❌ Use vague superlatives ("best", "leading", "top")
-- ❌ Keyword stuff (LLMs see through it)
-- ❌ Write walls of text without structure
-- ❌ Hide information (be comprehensive)
-- ❌ Use outdated statistics
-- ❌ Ignore competitors (address them directly)
-- ❌ Be obviously promotional (neutral wins)
+- **提及率：** 您出现的相关查询的百分比
+- **引用率：** 提及您并引用/链接到您的百分比
+- **情感：** 正面/中性/负面的描述
+- **声音份额：** 您的提及与竞争对手
+- **位置：** 您在响应中出现的位置
 
 ---
 
-## Quick Start Checklist
+## GEO 内容原则
 
-For any page you want to optimize for GEO:
+### 应该做：
+- ✅ 使用具体数字（"0.5 秒"而不是"快"）
+- ✅ 使主张可引用且独立
+- ✅ 使用清晰的层次结构构建内容
+- ✅ 包含常见问题解答部分
+- ✅ 定期更新内容并注明日期
+- ✅ 创建对比内容
+- ✅ 使用表格展示数据
+- ✅ 保持事实性和中立的语调
+- ✅ 命名真实客户和结果
 
-1. [ ] Add clear entity definition in first paragraph
-2. [ ] Include 5+ specific, quotable statistics
-3. [ ] Add FAQ section with 5+ questions
-4. [ ] Create comparison table (if relevant)
-5. [ ] Add "last updated" date
-6. [ ] Implement FAQ schema markup
-7. [ ] Ensure H1→H2→H3 hierarchy
-8. [ ] Test on Perplexity: does your content appear?
+### 不应该做：
+- ❌ 使用模糊的超级词汇（"最佳"、"领先"、"顶级"）
+- ❌ 关键词堆砌（LLM 能看穿）
+- ❌ 写没有结构的文本墙
+- ❌ 隐藏信息（要全面）
+- ❌ 使用过时的统计数据
+- ❌ 忽略竞争对手（直接讨论它们）
+- ❌ 明显具有推广性（中立胜出）
 
 ---
 
-## Resources
+## 快速开始检查清单
+
+对于您想要优化 GEO 的任何页面：
+
+1. [ ] 在首段添加清晰的实体定义
+2. [ ] 包含 5+ 个具体的、可引用的统计数据
+3. [ ] 添加包含 5+ 个问题的常见问题解答部分
+4. [ ] 创建对比表格（如果相关）
+5. [ ] 添加"最后更新"日期
+6. [ ] 实施常见问题解答模式标记
+7. [ ] 确保 H1→H2→H3 层次结构
+8. [ ] 在 Perplexity 上测试：您的内容是否出现？
+
+---
+
+## 资源
 
 - [Awesome GEO GitHub](https://github.com/amplifying-ai/awesome-generative-engine-optimization)
-- [Princeton GEO Research Paper](https://arxiv.org/pdf/2311.09735)
-- [Google AI Search Guidance](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)
-- [Perplexity Ranking Factors](https://firstpagesage.com/seo-blog/perplexity-ai-optimization-ranking-factors-and-strategy/)
+- [Princeton GEO 研究论文](https://arxiv.org/pdf/2311.09735)
+- [Google AI 搜索指南](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)
+- [Perplexity 排名因素](https://firstpagesage.com/seo-blog/perplexity-ai-optimization-ranking-factors-and-strategy/)

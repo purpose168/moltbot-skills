@@ -1,27 +1,27 @@
-# Toobot
+# Tootbot
 
-Mastodon publisher skill for [Clawdbot](https://github.com/anthropics/clawdbot).
+用于 [Clawdbot](https://github.com/anthropics/clawdbot) 的 Mastodon 发布技能。
 
-## Installation
+## 安装
 
 ```bash
 npx clawdhub@latest install @nutthead/toobot
 ```
 
-## Configuration
+## 配置
 
-Set these environment variables:
+设置以下环境变量：
 
-- `URL` - Your Mastodon instance URL (e.g., `https://mastodon.social`)
-- `ACCESS_TOKEN` - Your Mastodon access token
+- `URL` - 您的 Mastodon 实例地址（例如：`https://mastodon.social`）
+- `ACCESS_TOKEN` - 您的 Mastodon 访问令牌
 
-## Usage
+## 使用方法
 
 ```bash
-toobot new-status --status "Hello, world!"
+toobot new-status --status "你好，世界！"
 ```
 
-## Links
+## 链接
 
-- [Clawdbot Documentation](https://github.com/anthropics/clawdbot)
+- [Clawdbot 文档](https://github.com/anthropics/clawdbot)
 - [ClawdHub](https://clawdhub.com)

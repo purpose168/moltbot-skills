@@ -1,10 +1,40 @@
 {
+  // 项目名称：用于标识此 npm 包
   "name": "openai-tts-script",
+  // 项目版本号：遵循语义化版本规范
   "version": "1.0.0",
-  "description": "Helper script for OpenAI TTS",
+  // 项目描述：简要说明此脚本的用途
+  "description": "用于 OpenAI 文本转语音的辅助脚本",
+  // 入口文件：指定程序的主入口点
   "main": "generate_speech.js",
+  // 依赖项列表：运行此脚本所需的 npm 包
   "dependencies": {
+    // OpenAI 官方 SDK：用于调用 OpenAI API
     "openai": "^4.0.0",
+    // commander：用于解析命令行参数
     "commander": "^11.0.0"
   }
 }
+
+// ==================== 依赖说明 ====================
+//
+// openai (^4.0.0)
+//   - OpenAI 官方提供的 Node.js SDK
+//   - 支持所有 OpenAI API，包括 TTS（文本转语音）
+//   - 版本 ^4.0.0 表示兼容 4.0.0 及以上但低于 5.0.0 的版本
+//
+// commander (^11.0.0)
+//   - 强大的命令行参数解析库
+//   - 用于处理脚本的必需参数和可选参数
+//   - 版本 ^11.0.0 表示兼容 11.0.0 及以上但低于 12.0.0 的版本
+//
+// 安装命令：
+//   npm install
+//
+// 使用方法：
+//   1. 设置环境变量：export OPENAI_API_KEY="your-api-key"
+//   2. 运行脚本：node generate_speech.js --text "你好" --output "hello.mp3"
+//
+// 注意事项：
+//   - 确保 Node.js 版本支持 ES 模块（import 语法）
+//   - 需要有效的 OpenAI API 密钥才能正常使用

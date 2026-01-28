@@ -1,43 +1,43 @@
 ---
-name: remotion-best-practices
-description: Best practices for Remotion - Video creation in React
+name: remotion
+description: Remotion 的最佳实践 - React 中的视频创作
 metadata:
   tags: remotion, video, react, animation, composition
 ---
 
-## When to use
+## 使用时机
 
-Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
+每当您处理 Remotion 代码时，使用此技能获取特定领域的知识。
 
-## How to use
+## 使用方法
 
-Read individual rule files for detailed explanations and code examples:
+阅读各个规则文件以获取详细解释和代码示例：
 
-- [rules/3d.md](rules/3d.md) - 3D content in Remotion using Three.js and React Three Fiber
-- [rules/animations.md](rules/animations.md) - Fundamental animation skills for Remotion
-- [rules/assets.md](rules/assets.md) - Importing images, videos, audio, and fonts into Remotion
-- [rules/audio.md](rules/audio.md) - Using audio and sound in Remotion - importing, trimming, volume, speed, pitch
-- [rules/calculate-metadata.md](rules/calculate-metadata.md) - Dynamically set composition duration, dimensions, and props
-- [rules/can-decode.md](rules/can-decode.md) - Check if a video can be decoded by the browser using Mediabunny
-- [rules/charts.md](rules/charts.md) - Chart and data visualization patterns for Remotion
-- [rules/compositions.md](rules/compositions.md) - Defining compositions, stills, folders, default props and dynamic metadata
-- [rules/display-captions.md](rules/display-captions.md) - Displaying captions in Remotion with TikTok-style pages and word highlighting
-- [rules/extract-frames.md](rules/extract-frames.md) - Extract frames from videos at specific timestamps using Mediabunny
-- [rules/fonts.md](rules/fonts.md) - Loading Google Fonts and local fonts in Remotion
-- [rules/get-audio-duration.md](rules/get-audio-duration.md) - Getting the duration of an audio file in seconds with Mediabunny
-- [rules/get-video-dimensions.md](rules/get-video-dimensions.md) - Getting the width and height of a video file with Mediabunny
-- [rules/get-video-duration.md](rules/get-video-duration.md) - Getting the duration of a video file in seconds with Mediabunny
-- [rules/gifs.md](rules/gifs.md) - Displaying GIFs synchronized with Remotion's timeline
-- [rules/images.md](rules/images.md) - Embedding images in Remotion using the Img component
-- [rules/import-srt-captions.md](rules/import-srt-captions.md) - Importing .srt subtitle files into Remotion using @remotion/captions
-- [rules/lottie.md](rules/lottie.md) - Embedding Lottie animations in Remotion
-- [rules/measuring-dom-nodes.md](rules/measuring-dom-nodes.md) - Measuring DOM element dimensions in Remotion
-- [rules/measuring-text.md](rules/measuring-text.md) - Measuring text dimensions, fitting text to containers, and checking overflow
-- [rules/sequencing.md](rules/sequencing.md) - Sequencing patterns for Remotion - delay, trim, limit duration of items
-- [rules/tailwind.md](rules/tailwind.md) - Using TailwindCSS in Remotion
-- [rules/text-animations.md](rules/text-animations.md) - Typography and text animation patterns for Remotion
-- [rules/timing.md](rules/timing.md) - Interpolation curves in Remotion - linear, easing, spring animations
-- [rules/transcribe-captions.md](rules/transcribe-captions.md) - Transcribing audio to generate captions in Remotion
-- [rules/transitions.md](rules/transitions.md) - Scene transition patterns for Remotion
-- [rules/trimming.md](rules/trimming.md) - Trimming patterns for Remotion - cut the beginning or end of animations
-- [rules/videos.md](rules/videos.md) - Embedding videos in Remotion - trimming, volume, speed, looping, pitch
+- [rules/3d.md](rules/3d.md) - 使用 Three.js 和 React Three Fiber 在 Remotion 中创建 3D 内容
+- [rules/animations.md](rules/animations.md) - Remotion 的基础动画技能
+- [rules/assets.md](rules/assets.md) - 将图片、视频、音频和字体导入 Remotion
+- [rules/audio.md](rules/audio.md) - 在 Remotion 中使用音频和声音 - 导入、修剪、音量、速度、音调
+- [rules/calculate-metadata.md](rules/calculate-metadata.md) - 动态设置合成的持续时间、尺寸和属性
+- [rules/can-decode.md](rules/can-decode.md) - 使用 Mediabunny 检查视频是否可以被浏览器解码
+- [rules/charts.md](rules/charts.md) - Remotion 的图表和数据可视化模式
+- [rules/compositions.md](rules/compositions.md) - 定义合成、静态帧、文件夹、默认属性和动态元数据
+- [rules/display-captions.md](rules/display-captions.md) - 在 Remotion 中显示字幕，带有 TikTok 风格的页面和单词高亮
+- [rules/extract-frames.md](rules/extract-frames.md) - 使用 Mediabunny 在特定时间戳从视频中提取帧
+- [rules/fonts.md](rules/fonts.md) - 在 Remotion 中加载 Google 字体和本地字体
+- [rules/get-audio-duration.md](rules/get-audio-duration.md) - 使用 Mediabunny 获取音频文件的持续时间（秒）
+- [rules/get-video-dimensions.md](rules/get-video-dimensions.md) - 使用 Mediabunny 获取视频文件的宽度和高度
+- [rules/get-video-duration.md](rules/get-video-duration.md) - 使用 Mediabunny 获取视频文件的持续时间（秒）
+- [rules/gifs.md](rules/gifs.md) - 显示与 Remotion 时间线同步的 GIF
+- [rules/images.md](rules/images.md) - 使用 Img 组件在 Remotion 中嵌入图片
+- [rules/import-srt-captions.md](rules/import-srt-captions.md) - 使用 @remotion/captions 将 .srt 字幕文件导入 Remotion
+- [rules/lottie.md](rules/lottie.md) - 在 Remotion 中嵌入 Lottie 动画
+- [rules/measuring-dom-nodes.md](rules/measuring-dom-nodes.md) - 测量 Remotion 中 DOM 元素的尺寸
+- [rules/measuring-text.md](rules/measuring-text.md) - 测量文本尺寸、将文本适应容器、检查溢出
+- [rules/sequencing.md](rules/sequencing.md) - Remotion 的排序模式 - 延迟、修剪、限制项目持续时间
+- [rules/tailwind.md](rules/tailwind.md) - 在 Remotion 中使用 TailwindCSS
+- [rules/text-animations.md](rules/text-animations.md) - Remotion 的排版和文本动画模式
+- [rules/timing.md](rules/timing.md) - Remotion 中的插值曲线 - 线性、缓动、弹簧动画
+- [rules/transcribe-captions.md](rules/transcribe-captions.md) - 转录音频以在 Remotion 中生成字幕
+- [rules/transitions.md](rules/transitions.md) - Remotion 的场景转换模式
+- [rules/trimming.md](rules/trimming.md) - Remotion 的修剪模式 - 剪掉动画的开头或结尾
+- [rules/videos.md](rules/videos.md) - 在 Remotion 中嵌入视频 - 修剪、音量、速度、循环、音调

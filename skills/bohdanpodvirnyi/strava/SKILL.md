@@ -1,45 +1,45 @@
 ---
 name: strava
-description: Load and analyze Strava activities, stats, and workouts using the Strava API
+description: 使用 Strava API 加载和分析 Strava 活动、统计数据和训练
 homepage: https://developers.strava.com/
 metadata: {"clawdbot":{"emoji":"🏃","requires":{"bins":["curl"],"env":["STRAVA_ACCESS_TOKEN"]},"primaryEnv":"STRAVA_ACCESS_TOKEN"}}
 ---
 
-# Strava Skill
+# Strava 技能
 
-Interact with Strava to load activities, analyze workouts, and track fitness data.
+与 Strava 交互，加载活动、分析训练并跟踪健身数据。
 
-## Setup
+## 设置
 
-### 1. Create a Strava API Application
+### 1. 创建 Strava API 应用
 
-1. Go to https://www.strava.com/settings/api
-2. Create an app (use `http://localhost` as callback for testing)
-3. Note your **Client ID** and **Client Secret**
+1. 访问 https://www.strava.com/settings/api
+2. 创建一个应用（测试时使用 `http://localhost` 作为回调）
+3. 记录您的 **客户端 ID** 和 **客户端密钥**
 
-### 2. Get Initial OAuth Tokens
+### 2. 获取初始 OAuth 令牌
 
-Visit this URL in your browser (replace CLIENT_ID):
+在浏览器中访问此 URL（替换 CLIENT_ID）：
 ```
 https://www.strava.com/oauth/authorize?client_id=CLIENT_ID&response_type=code&redirect_uri=http://localhost&approval_prompt=force&scope=activity:read_all
 ```
 
-After authorizing, you'll be redirected to `http://localhost/?code=AUTHORIZATION_CODE`
+授权后，您将被重定向到 `http://localhost/?code=AUTHORIZATION_CODE`
 
-Exchange the code for tokens:
+兑换令牌：
 ```bash
 curl -X POST https://www.strava.com/oauth/token \
-  -d client_id=YOUR_CLIENT_ID \
-  -d client_secret=YOUR_CLIENT_SECRET \
-  -d code=AUTHORIZATION_CODE \
+  -d client_id=您的客户端ID \
+  -d client_secret=您的客户端密钥 \
+  -d code=授权码 \
   -d grant_type=authorization_code
 ```
 
-This returns `access_token` and `refresh_token`.
+这将返回 `access_token` 和 `refresh_token`。
 
-### 3. Configure Credentials
+### 3. 配置凭据
 
-Add to `~/.clawdbot/clawdbot.json`:
+添加到 `~/.clawdbot/clawdbot.json`：
 ```json
 {
   "skills": {
@@ -47,10 +47,10 @@ Add to `~/.clawdbot/clawdbot.json`:
       "strava": {
         "enabled": true,
         "env": {
-          "STRAVA_ACCESS_TOKEN": "your-access-token",
-          "STRAVA_REFRESH_TOKEN": "your-refresh-token",
-          "STRAVA_CLIENT_ID": "your-client-id",
-          "STRAVA_CLIENT_SECRET": "your-client-secret"
+          "STRAVA_ACCESS_TOKEN": "您的访问令牌",
+          "STRAVA_REFRESH_TOKEN": "您的刷新令牌",
+          "STRAVA_CLIENT_ID": "您的客户端ID",
+          "STRAVA_CLIENT_SECRET": "您的客户端密钥"
         }
       }
     }
@@ -58,91 +58,91 @@ Add to `~/.clawdbot/clawdbot.json`:
 }
 ```
 
-Or use environment variables:
+或使用环境变量：
 ```bash
-export STRAVA_ACCESS_TOKEN="your-access-token"
-export STRAVA_REFRESH_TOKEN="your-refresh-token"
-export STRAVA_CLIENT_ID="your-client-id"
-export STRAVA_CLIENT_SECRET="your-client-secret"
+export STRAVA_ACCESS_TOKEN="您的访问令牌"
+export STRAVA_REFRESH_TOKEN="您的刷新令牌"
+export STRAVA_CLIENT_ID="您的客户端ID"
+export STRAVA_CLIENT_SECRET="您的客户端密钥"
 ```
 
-## Usage
+## 使用方法
 
-### List Recent Activities
+### 列出最近的活动
 
-Get the last 30 activities:
+获取最近的 30 个活动：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?per_page=30"
 ```
 
-Get the last 10 activities:
+获取最近的 10 个活动：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?per_page=10"
 ```
 
-### Filter Activities by Date
+### 按日期筛选活动
 
-Get activities after a specific date (Unix timestamp):
+获取特定日期之后（Unix 时间戳）的活动：
 ```bash
-# Activities after Jan 1, 2024
+# 2024年1月1日之后的活动
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?after=1704067200"
 ```
 
-Get activities in a date range:
+获取日期范围内的活动：
 ```bash
-# Activities between Jan 1 - Jan 31, 2024
+# 2024年1月1日至1月31日之间的活动
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?after=1704067200&before=1706745600"
 ```
 
-### Get Activity Details
+### 获取活动详情
 
-Get full details for a specific activity (replace ACTIVITY_ID):
+获取特定活动的完整详情（替换 ACTIVITY_ID）：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/activities/ACTIVITY_ID"
 ```
 
-### Get Athlete Profile
+### 获取运动员个人资料
 
-Get the authenticated athlete's profile:
+获取已认证运动员的个人资料：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete"
 ```
 
-### Get Athlete Stats
+### 获取运动员统计
 
-Get athlete statistics (replace ATHLETE_ID):
+获取运动员统计信息（替换 ATHLETE_ID）：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athletes/ATHLETE_ID/stats"
 ```
 
-### Pagination
+### 分页
 
-Navigate through pages:
+翻页浏览：
 ```bash
-# Page 1 (default)
+# 第1页（默认）
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=30"
 
-# Page 2
+# 第2页
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?page=2&per_page=30"
 ```
 
-## Token Refresh
+## 令牌刷新
 
-Access tokens expire every 6 hours. Refresh using the helper script:
+访问令牌每 6 小时过期。使用辅助脚本刷新：
 ```bash
 bash {baseDir}/scripts/refresh_token.sh
 ```
 
-Or manually:
+或手动刷新：
 ```bash
 curl -s -X POST https://www.strava.com/oauth/token \
   -d client_id="${STRAVA_CLIENT_ID}" \
@@ -151,45 +151,45 @@ curl -s -X POST https://www.strava.com/oauth/token \
   -d refresh_token="${STRAVA_REFRESH_TOKEN}"
 ```
 
-The response includes a new `access_token` and `refresh_token`. Update your configuration with both tokens.
+响应包含新的 `access_token` 和 `refresh_token`。使用这两个令牌更新您的配置。
 
-## Common Data Fields
+## 常见数据字段
 
-Activity objects include:
-- `name` — Activity title
-- `distance` — Distance in meters
-- `moving_time` — Moving time in seconds
-- `elapsed_time` — Total time in seconds
-- `total_elevation_gain` — Elevation gain in meters
-- `type` — Activity type (Run, Ride, Swim, etc.)
-- `sport_type` — Specific sport type
-- `start_date` — Start time (ISO 8601)
-- `average_speed` — Average speed in m/s
-- `max_speed` — Max speed in m/s
-- `average_heartrate` — Average heart rate (if available)
-- `max_heartrate` — Max heart rate (if available)
-- `kudos_count` — Number of kudos received
+活动对象包含以下字段：
+- `name` — 活动标题
+- `distance` — 距离（米）
+- `moving_time` — 移动时间（秒）
+- `elapsed_time` — 总时间（秒）
+- `total_elevation_gain` — 爬升增益（米）
+- `type` — 活动类型（跑步、骑行、游泳等）
+- `sport_type` — 具体运动类型
+- `start_date` — 开始时间（ISO 8601 格式）
+- `average_speed` — 平均速度（米/秒）
+- `max_speed` — 最大速度（米/秒）
+- `average_heartrate` — 平均心率（如果有）
+- `max_heartrate` — 最大心率（如果有）
+- `kudos_count` — 收到的赞数
 
-## Rate Limits
+## 速率限制
 
-- **200 requests** per 15 minutes
-- **2,000 requests** per day
+- **200 次请求**每 15 分钟
+- **2,000 次请求**每天
 
-If you hit rate limits, responses will include `X-RateLimit-*` headers.
+如果触发速率限制，响应将包含 `X-RateLimit-*` 头。
 
-## Tips
+## 技巧
 
-- Convert Unix timestamps: `date -d @TIMESTAMP` (Linux) or `date -r TIMESTAMP` (macOS)
-- Convert meters to km: divide by 1000
-- Convert meters to miles: divide by 1609.34
-- Convert m/s to km/h: multiply by 3.6
-- Convert m/s to mph: multiply by 2.237
-- Convert seconds to hours: divide by 3600
-- Parse JSON with `jq` if available, or use `grep`/`sed` for basic extraction
+- 转换 Unix 时间戳：`date -d @时间戳`（Linux）或 `date -r 时间戳`（macOS）
+- 米转公里：除以 1000
+- 米转英里：除以 1609.34
+- 米/秒转公里/小时：乘以 3.6
+- 米/秒转英里/小时：乘以 2.237
+- 秒转小时：除以 3600
+- 如果有 `jq`，使用它解析 JSON，或使用 `grep`/`sed` 进行基本提取
 
-## Examples
+## 示例
 
-Get running activities from last week with distances:
+获取上周的跑步活动及距离：
 ```bash
 LAST_WEEK=$(date -d '7 days ago' +%s 2>/dev/null || date -v-7d +%s)
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
@@ -197,15 +197,15 @@ curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   | grep -E '"name"|"distance"|"type"'
 ```
 
-Get total distance from recent activities:
+从最近活动中获取总距离：
 ```bash
 curl -s -H "Authorization: Bearer ${STRAVA_ACCESS_TOKEN}" \
   "https://www.strava.com/api/v3/athlete/activities?per_page=10" \
   | grep -o '"distance":[0-9.]*' | cut -d: -f2 | awk '{sum+=$1} END {print sum/1000 " km"}'
 ```
 
-## Error Handling
+## 错误处理
 
-If you get a 401 Unauthorized error, your access token has expired. Run the token refresh command.
+如果您收到 401 未授权错误，说明您的访问令牌已过期。运行令牌刷新命令。
 
-If you get rate limit errors, wait until the limit window resets (check `X-RateLimit-Usage` header).
+如果您收到速率限制错误，请等待限制窗口重置（检查 `X-RateLimit-Usage` 头）。

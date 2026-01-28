@@ -1,70 +1,124 @@
 ---
 name: rejseplanen
-description: Query Danish public transport departures, arrivals, and journey planning via Rejseplanen API
-metadata: {"clawdbot":{"emoji":"🚂","os":["linux","darwin","win32"],"requires":{"bins":["node"]}}}
+description: 丹麦国家旅行规划工具。提供实时列车、巴士、地铁和城际交通信息。使用 Rejseplanen API 进行路线规划、时刻表查询和车站搜索。
+author: Bjarke S <bjarkehs@gmail.com>
+metadata:
+  clawdbot:
+    emoji: "🚂"
+    requires:
+      bins: ["curl"]
 ---
 
-# Rejseplanen - Danish Public Transport
+# Rejseplanen - 丹麦旅行规划
 
-Query real-time train and bus departures, arrivals, and plan journeys via the Rejseplanen API.
+在丹麦规划公共交通旅行。提供实时列车、巴士、地铁和城际交通信息。
 
-## Commands
+## 快速参考
 
-### Search for stations
+| 操作 | 命令 |
+|------|------|
+| 规划路线 | `bash scripts/trip.sh "起点" "终点" [日期时间]` |
+| 查询时刻表 | `bash scripts/timetable.sh "车站名" [线路] [日期]` |
+| 搜索车站 | `bash scripts/stations.sh "搜索词"` |
 
-```bash
-node {baseDir}/dist/rejseplanen.js search "København"
+## 设置
+
+需要配置以下环境变量：
+
+- `REJSEPLANEN_PASSWORD` - Rejseplanen API 密码
+- `REJSEPLANEN_USERNAME` - Rejseplanen API 用户名
+
+在 Clawdbot 配置中设置：
+
+```json
+{
+  "skills": {
+    "entries": {
+      "rejseplanen": {
+        "env": {
+          "REJSEPLANEN_PASSWORD": "您的密码",
+          "REJSEPLANEN_USERNAME": "您的用户名"
+        }
+      }
+    }
+  }
+}
 ```
 
-### Departures
+## 使用方法
+
+### 规划路线
+
+查找从 A 到 B 的路线：
 
 ```bash
-node {baseDir}/dist/rejseplanen.js departures Odense
-node {baseDir}/dist/rejseplanen.js departures Odense --trains
-node {baseDir}/dist/rejseplanen.js departures Odense --trains --to Aalborg
+bash scripts/trip.sh "København H" "Aarhus H"
 ```
 
-### Arrivals
+带日期时间：
 
 ```bash
-node {baseDir}/dist/rejseplanen.js arrivals Aalborg
-node {baseDir}/dist/rejseplanen.js arrivals Aalborg --trains --from Odense
+bash scripts/trip.sh "København H" "Aarhus H" "14:00 25.12.2026"
 ```
 
-### Trip planning
+输出格式：JSON，包含所有详细信息（换乘、持续时间、价格）
+
+### 查询时刻表
+
+查看车站的时刻表：
 
 ```bash
-node {baseDir}/dist/rejseplanen.js trip Odense Aalborg
-node {baseDir}/dist/rejseplanen.js trip Odense "Aalborg Vestby" --time 07:00
+bash scripts/timetable.sh "København H"
 ```
 
-### Journey details
-
-Show all stops for a specific train:
+带线路过滤：
 
 ```bash
-node {baseDir}/dist/rejseplanen.js journey Odense 75
+bash scripts/timetable.sh "København H" "IC"
 ```
 
-## Options
-
-- `--trains` - Show only trains
-- `--buses` - Show only buses
-- `--to <station>` - Filter departures by destination
-- `--from <station>` - Filter arrivals by origin
-- `--time HH:MM` - Departures after specified time
-- `--output json|text` - Output format (default: text)
-- `--json` - Shorthand for `--output json`
-
-## JSON output
-
-For programmatic parsing, use `--json`:
+带日期：
 
 ```bash
-node {baseDir}/dist/rejseplanen.js departures Odense --json
+bash scripts/timetable.sh "København H" "" "25.12.2026"
 ```
 
-## Tips
+### 搜索车站
 
-- Use `search` to find station IDs, then store frequently used ones for faster lookups
-- Station IDs can be used directly instead of names (e.g., `008600512` for Odense)
+搜索车站名称：
+
+```bash
+bash scripts/stations.sh "København"
+```
+
+## 丹麦交通类型
+
+| 类型 | 描述 |
+|------|------|
+| **列车 (Train)** | 区域列车、城际列车、高铁 (IC, IC, Lyn) |
+| **巴士 (Bus)** | 区域和本地巴士 |
+| **地铁 (Metro)** | 哥本哈根地铁 (M1, M2, M3) |
+| **通勤铁路 (S-tog)** | 哥本哈根通勤铁路 |
+
+## 常见路线示例
+
+### 哥本哈根到奥登塞
+```bash
+bash scripts/trip.sh "København H" "Odense St."
+```
+
+### 哥本哈根到比隆（乐高乐园）
+```bash
+bash scripts/trip.sh "København H" "Billund Lufthavn"
+```
+
+### 查询机场交通
+```bash
+bash scripts/trip.sh "København H" "Københavns Lufthavn"
+```
+
+## 提示
+
+- 使用车站的官方名称（如 "København H" 而非 "Copenhagen"）
+- 丹麦铁路覆盖全国，包括到瑞典的路线
+- 实时数据在 API 中可用时包含

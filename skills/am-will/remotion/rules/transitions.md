@@ -1,122 +1,131 @@
 ---
 name: transitions
-description: Fullscreen scene transitions for Remotion.
+description: Remotion 的全屏场景转换
 metadata:
   tags: transitions, fade, slide, wipe, scenes
 ---
 
-## Fullscreen transitions
+## 全屏场景转换
 
-Using `<TransitionSeries>` to animate between multiple scenes or clips.  
-This will absolutely position the children.
+使用 `<TransitionSeries>` 在多个场景或片段之间进行动画过渡。
+这将使子元素绝对定位。
 
-## Prerequisites
+## 前置条件
 
-First, the @remotion/transitions package needs to be installed.  
-If it is not, use the following command:
+首先，需要安装 @remotion/transitions 包。
+如果尚未安装，请使用以下命令：
 
 ```bash
-npx remotion add @remotion/transitions # If project uses npm
-bunx remotion add @remotion/transitions # If project uses bun
-yarn remotion add @remotion/transitions # If project uses yarn
-pnpm exec remotion add @remotion/transitions # If project uses pnpm
+npx remotion add @remotion/transitions # 如果项目使用 npm
+bunx remotion add @remotion/transitions # 如果项目使用 bun
+yarn remotion add @remotion/transitions # 如果项目使用 yarn
+pnpm exec remotion add @remotion/transitions # 如果项目使用 pnpm
 ```
 
-## Example usage
+## 示例用法
 
 ```tsx
-import {TransitionSeries, linearTiming} from '@remotion/transitions';
-import {fade} from '@remotion/transitions/fade';
+import {TransitionSeries, linearTiming} from '@remotion/transitions'; // 导入转换系列组件和线性时序
+import {fade} from '@remotion/transitions/fade'; // 导入淡入淡出转换
 
+{/* 转换系列容器 */}
 <TransitionSeries>
+  {/* 第一个场景序列：持续 60 帧 */}
   <TransitionSeries.Sequence durationInFrames={60}>
-    <SceneA />
+    <SceneA /> {/* 场景 A 组件 */}
   </TransitionSeries.Sequence>
+  {/* 转换：淡入淡出效果，持续 15 帧 */}
   <TransitionSeries.Transition presentation={fade()} timing={linearTiming({durationInFrames: 15})} />
+  {/* 第二个场景序列：持续 60 帧 */}
   <TransitionSeries.Sequence durationInFrames={60}>
-    <SceneB />
+    <SceneB /> {/* 场景 B 组件 */}
   </TransitionSeries.Sequence>
 </TransitionSeries>;
 ```
 
-## Available Transition Types
+## 可用的转换类型
 
-Import transitions from their respective modules:
+从各自的模块导入转换：
 
 ```tsx
-import {fade} from '@remotion/transitions/fade';
-import {slide} from '@remotion/transitions/slide';
-import {wipe} from '@remotion/transitions/wipe';
-import {flip} from '@remotion/transitions/flip';
-import {clockWipe} from '@remotion/transitions/clock-wipe';
+import {fade} from '@remotion/transitions/fade'; // 淡入淡出
+import {slide} from '@remotion/transitions/slide'; // 滑动
+import {wipe} from '@remotion/transitions/wipe'; // 擦除
+import {flip} from '@remotion/transitions/flip'; // 翻转
+import {clockWipe} from '@remotion/transitions/clock-wipe'; // 时钟擦除
 ```
 
-## Slide Transition with Direction
+## 带方向的滑动转换
 
-Specify slide direction for enter/exit animations.
+为入场/出场动画指定滑动方向。
 
 ```tsx
-import {slide} from '@remotion/transitions/slide';
+import {slide} from '@remotion/transitions/slide'; // 导入滑动转换
 
+{/* 从左侧滑入，持续 20 帧 */}
 <TransitionSeries.Transition presentation={slide({direction: 'from-left'})} timing={linearTiming({durationInFrames: 20})} />;
 ```
 
-Directions: `"from-left"`, `"from-right"`, `"from-top"`, `"from-bottom"`
+方向可选值：`"from-left"`（从左）、`"from-right"`（从右）、`"from-top"`（从上）、`"from-bottom"`（从下）
 
-## Timing Options
+## 时序选项
 
 ```tsx
-import {linearTiming, springTiming} from '@remotion/transitions';
+import {linearTiming, springTiming} from '@remotion/transitions'; // 导入时序函数
 
-// Linear timing - constant speed
+// 线性时序 - 恒定速度
 linearTiming({durationInFrames: 20});
 
-// Spring timing - organic motion
+// 弹簧时序 - 有机运动
 springTiming({config: {damping: 200}, durationInFrames: 25});
 ```
 
-## Duration calculation
+## 持续时间计算
 
-Transitions overlap adjacent scenes, so the total composition length is **shorter** than the sum of all sequence durations.
+转换会与相邻场景重叠，因此合成的总长度**短于**所有序列持续时间的总和。
 
-For example, with two 60-frame sequences and a 15-frame transition:
+例如，使用两个 60 帧的序列和 15 帧的转换：
 
-- Without transitions: `60 + 60 = 120` frames
-- With transition: `60 + 60 - 15 = 105` frames
+- 无转换：`60 + 60 = 120` 帧
+- 有转换：`60 + 60 - 15 = 105` 帧
 
-The transition duration is subtracted because both scenes play simultaneously during the transition.
+转换持续时间会被减去，因为在转换期间两个场景同时播放。
 
-### Getting the duration of a transition
+### 获取转换的持续时间
 
-Use the `getDurationInFrames()` method on the timing object:
+对时序对象使用 `getDurationInFrames()` 方法：
 
 ```tsx
-import {linearTiming, springTiming} from '@remotion/transitions';
+import {linearTiming, springTiming} from '@remotion/transitions'; // 导入时序函数
 
+// 线性时序：返回 20
 const linearDuration = linearTiming({durationInFrames: 20}).getDurationInFrames({fps: 30});
-// Returns 20
 
+// 弹簧时序：根据弹簧物理计算返回持续时间
 const springDuration = springTiming({config: {damping: 200}}).getDurationInFrames({fps: 30});
-// Returns calculated duration based on spring physics
 ```
 
-For `springTiming` without an explicit `durationInFrames`, the duration depends on `fps` because it calculates when the spring animation settles.
+对于没有明确 `durationInFrames` 的 `springTiming`，持续时间取决于 `fps`，因为它会计算弹簧动画何时稳定。
 
-### Calculating total composition duration
+### 计算合成的总持续时间
 
 ```tsx
-import {linearTiming} from '@remotion/transitions';
+import {linearTiming} from '@remotion/transitions'; // 导入线性时序函数
 
+// 各场景持续时间
 const scene1Duration = 60;
 const scene2Duration = 60;
 const scene3Duration = 60;
 
+// 各转换的时序
 const timing1 = linearTiming({durationInFrames: 15});
 const timing2 = linearTiming({durationInFrames: 20});
 
+// 计算各转换的持续时间（帧数）
 const transition1Duration = timing1.getDurationInFrames({fps: 30});
 const transition2Duration = timing2.getDurationInFrames({fps: 30});
 
+// 计算总持续时间：场景总时长减去转换重叠时间
 const totalDuration = scene1Duration + scene2Duration + scene3Duration - transition1Duration - transition2Duration;
-// 60 + 60 + 60 - 15 - 20 = 145 frames
+// 60 + 60 + 60 - 15 - 20 = 145 帧
 ```

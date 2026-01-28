@@ -1,117 +1,233 @@
-# Agent Usage Patterns
+# 代理使用模式
 
-This document describes how AI coding agents (Claude Code, OpenCode, etc.) can execute PRDs autonomously. **This skill only edits PRDs — agents use this reference to execute them.**
+本文件记录了 PRD 技能中代理（agent）使用模式，这些模式是 Claude 代理在处理 PRD 任务时需要遵循的行为指南。
 
-## Unattended Agentic Loop
+## 核心原则
 
-### Claude Code
-```bash
-while :; do
-  claude --print --dangerously-skip-permissions \
-    "Read prd.json, find first story where passes=false, implement it, run checks, update passes=true if successful"
-done
-```
+### 1. 状态持久化模式
 
-### OpenCode
-```bash
-opencode run "Load prd.json, implement next incomplete story, verify, mark complete"
-```
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `prd.json` | Task list with completion status |
-| `prompt.md` | Instructions for each iteration |
-| `progress.txt` | Append-only learnings log |
-
-## Human-in-the-Loop
-
-### Manual Story-by-Story
-```bash
-claude "Implement US-001 from prd.json"
-# Review, approve, continue to US-002
-```
-
-### Git Worktree Strategy
-```bash
-# Create worktree for feature
-git worktree add ../myapp-feature ralph/feature-name
-
-# Run agent in worktree
-cd ../myapp-feature
-claude "Implement prd.json stories"
-
-# Review in main repo
-cd ../myapp && git diff main..ralph/feature-name
-```
-
-## Agent Prompt Template
+代理在执行 PRD 相关任务时，必须维护和更新状态。
 
 ```markdown
-# Agent Instructions
+## 状态维护
 
-You are an autonomous coding agent.
-
-## Your Task
-
-1. Read `prd.json`
-2. Read `progress.txt` (check Codebase Patterns first)
-3. Checkout/create branch from PRD `branchName`
-4. Pick highest priority story where `passes: false`
-5. Implement that single story
-6. Run quality checks (typecheck, lint, test)
-7. If checks pass, commit: `feat: [Story ID] - [Story Title]`
-8. Update prd.json: set `passes: true`
-9. Append progress to `progress.txt`
-
-## Quality Requirements
-
-- ALL commits must pass typecheck
-- Keep changes focused and minimal
-- Follow existing code patterns
-
-## Stop Condition
-
-When ALL stories have `passes: true`, output:
-<promise>COMPLETE</promise>
+- **读取状态**：从 `agents/prd.json` 加载当前状态
+- **更新状态**：完成故事后立即更新 `passes` 字段
+- **验证状态**：在继续下一个故事前验证前置条件
 ```
 
-## Progress Tracking
+### 2. 渐进式实现模式
 
-Append to `progress.txt` after each iteration (never replace):
+代理应遵循渐进式实现策略，从基础到复杂逐步构建。
 
 ```markdown
-## 2026-01-10 18:00 - US-001
-- Implemented: Added priority column to tasks table
-- Files changed: migrations/001_add_priority.sql, src/types.ts
-- **Learnings:** Use `IF NOT EXISTS` for migrations
----
+## 渐进式实现顺序
+
+1. **基础层**：数据库模式和数据迁移
+2. **逻辑层**：服务器操作和业务逻辑
+3. **表示层**：UI 组件和用户界面
+4. **集成层**：端到端测试和验证
 ```
 
-### Codebase Patterns (at top of progress.txt)
+### 3. 错误恢复模式
+
+当代理遇到错误时，应采用结构化的恢复策略。
 
 ```markdown
-## Codebase Patterns
-- Use `sql<number>` template for aggregations
-- Always use `IF NOT EXISTS` for migrations
-- Export types from actions.ts for UI components
+## 错误恢复策略
+
+### 检测到错误时：
+
+1. **记录错误**：在故事的 `notes` 字段中记录错误详情
+2. **分析原因**：确定是代码错误还是需求不明确
+3. **尝试恢复**：
+   - 如果是代码错误：修复并重新测试
+   - 如果是需求问题：请求澄清
+4. **更新状态**：除非完全解决，否则不要将 `passes` 设为 `true`
 ```
 
-## Checklist Before Running
+## 交互模式
 
-- [ ] Each story completable in one context window
-- [ ] Stories ordered by dependency (schema → backend → UI)
-- [ ] Every story has "Typecheck passes" criterion
-- [ ] Acceptance criteria are verifiable (not vague)
-- [ ] No story depends on a later story
+### 1. 任务委派模式
 
-## Tools & Resources
+代理应根据复杂度委派任务。
 
-### Official Tools
-- [Ralph by snarktank](https://github.com/snarktank/ralph) - Full Ralph implementation
-- [Claude Code](https://github.com/anthropics/claude-code) - Anthropic's CLI agent
-- [Amp Code](https://ampcode.com) - Another agent runner
+```markdown
+## 任务委派指南
 
-### Guides
-- [Tips for AI Coding with Ralph Wiggum](https://www.aihero.dev/tips-for-ai-coding-with-ralph-wiggum)
+### 简单任务（直接执行）
+- 单个文件编辑
+- 运行命令（如迁移）
+- 添加类型定义
+
+### 中等任务（规划后执行）
+- 多个相关更改
+- 跨多个文件的重构
+- 需要测试验证的更改
+
+### 复杂任务（分步执行）
+- 跨层功能实现（数据库 → API → UI）
+- 新功能模块开发
+- 需要多个验收标准的任务
+```
+
+### 2. 确认模式
+
+在执行关键操作前，代理应确认用户的意图。
+
+```markdown
+## 需要确认的操作
+
+- 删除或覆盖现有文件
+- 运行破坏性数据库迁移
+- 修改已标记为 `passes: true` 的故事
+- 添加新的用户故事
+```
+
+### 3. 进度报告模式
+
+代理应定期报告进度。
+
+```markdown
+## 进度报告格式
+
+**当前故事**：US-001
+**进度**：2/5 个故事已完成
+**状态**：进行中
+**下一步**：实现数据库迁移
+
+**已完成**：
+- [x] US-001：添加数据库列
+- [x] US-002：创建服务器操作
+
+**进行中**：
+- [ ] US-003：创建 UI 组件
+
+**待完成**：
+- [ ] US-004：添加筛选功能
+- [ ] US-005：实现仪表板视图
+```
+
+## 上下文管理
+
+### 1. PRD 上下文保持
+
+代理应始终保持对 PRD 上下文的理解。
+
+```markdown
+## 上下文检查点
+
+在开始每个故事之前：
+
+1. **加载 PRD**：读取 `agents/prd.json`
+2. **验证顺序**：确认这是下一个待完成的故事
+3. **检查依赖**：确保前置故事已完成（`passes: true`）
+4. **理解目标**：回顾项目描述和故事目标
+```
+
+### 2. 代码上下文保持
+
+代理应理解代码库的当前状态。
+
+```markdown
+## 代码上下文
+
+### 需要了解的信息
+
+- **项目结构**：源代码目录组织
+- **技术栈**：使用的框架和库
+- **现有模式**：代码库中的命名和结构约定
+- **测试覆盖**：现有测试的范围和位置
+
+### 获取上下文的方式
+
+1. 读取项目配置文件（package.json、tsconfig.json）
+2. 检查现有代码的结构和风格
+3. 查看测试文件了解测试模式
+```
+
+## 验证模式
+
+### 1. 多层验证
+
+代理应执行多层验证确保质量。
+
+```markdown
+## 验证层级
+
+### 语法验证
+- TypeScript 编译检查
+- ESLint 规则检查
+- JSON 格式验证
+
+### 功能验证
+- 单元测试通过
+- 集成测试通过
+- 手动测试步骤
+
+### 验收标准验证
+- 对照每个 AC 项目验证
+- 记录验证结果
+```
+
+### 2. 边界测试
+
+代理应考虑边界情况。
+
+```markdown
+## 边界情况
+
+### 数据边界
+- 空值处理
+- 边界值测试
+- 异常输入处理
+
+### 状态边界
+- 并发访问
+- 事务完整性
+- 回滚场景
+
+### UI 边界
+- 响应式布局
+- 加载状态
+- 错误状态
+```
+
+## 输出格式
+
+### 1. 结构化输出
+
+代理应使用一致的结构化输出格式。
+
+```markdown
+## 输出格式模板
+
+### 任务开始
+**开始时间**：[时间]
+**目标**：US-XXX - [故事标题]
+**预期输出**：[预期的完成标准]
+
+### 任务进行
+**进度**：[百分比或已完成步骤]
+**当前步骤**：[当前正在执行的步骤]
+**遇到的问题**：[如果有的话]
+
+### 任务完成
+**完成时间**：[时间]
+**验证结果**：[测试和检查的结果]
+**笔记**：[实现细节和决策]
+```
+
+### 2. 错误输出
+
+代理应提供有意义的错误信息。
+
+```markdown
+## 错误报告格式
+
+**错误类型**：[语法错误/运行时错误/逻辑错误]
+**位置**：[文件:行号]
+**描述**：[错误的详细描述]
+**建议解决方案**：[可能的修复方法]
+**依赖关系**：[是否有前置依赖未满足]
+```

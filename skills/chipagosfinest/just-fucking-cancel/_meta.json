@@ -1,7 +1,8 @@
 {
   "owner": "chipagosfinest",
   "slug": "just-fucking-cancel",
-  "displayName": "just-fucking-cancel",
+  "displayName": "订阅取消助手",
+  "description": "分析银行交易 CSV 文件，查找定期扣费，对订阅进行分类，并取消不需要的项目。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768618453174,

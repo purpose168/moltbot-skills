@@ -1,4 +1,4 @@
-"""Shared utilities for chart generation."""
+"""图表生成的共享工具。"""
 
 from datetime import datetime
 
@@ -10,18 +10,19 @@ def bucket_timeseries_data(
     bucket_minutes: int,
     buckets_per_day: int,
 ) -> list[float | None]:
-    """Bucket irregular time-series data into fixed-interval buckets.
+    """将不规则的时间序列数据放入固定间隔的桶中。
 
-    Args:
-        data: List of dicts with timestamp and value keys
-        timestamp_key: Key for timestamp field in data
-        value_key: Key for value field in data
-        bucket_minutes: Minutes per bucket
-        buckets_per_day: Total buckets in a 24-hour period
+    参数:
+        data: 包含时间戳和值键的字典列表
+        timestamp_key: 数据中时间戳字段的键
+        value_key: 数据中值字段的键
+        bucket_minutes: 每个桶的分钟数
+        buckets_per_day: 24小时期间的总桶数
 
-    Returns:
-        List of averaged values per bucket (None for missing data)
+    返回:
+        每个桶的平均值列表（缺失数据为None）
     """
+    # 初始化桶列表
     buckets: list[list[float]] = [[] for _ in range(buckets_per_day)]
 
     for reading in data:
@@ -30,15 +31,19 @@ def bucket_timeseries_data(
 
         if timestamp_str and value is not None:
             try:
+                # 解析时间戳
                 dt = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+                # 计算总分钟数
                 total_minutes = dt.hour * 60 + dt.minute
+                # 计算桶索引
                 bucket_idx = total_minutes // bucket_minutes
                 if 0 <= bucket_idx < buckets_per_day:
                     buckets[bucket_idx].append(float(value))
             except (ValueError, AttributeError):
+                # 跳过无效数据
                 continue
 
-    # Calculate averages
+    # 计算每个桶的平均值
     return [sum(bucket) / len(bucket) if bucket else None for bucket in buckets]
 
 
@@ -47,19 +52,20 @@ def bucket_regular_data(
     target_buckets: int,
     aggregation: str = "max",
 ) -> list[float]:
-    """Bucket regular data (e.g., minute-by-minute) into larger buckets.
+    """将常规数据（例如每分钟）放入更大的桶中。
 
-    Args:
-        data: List of values (e.g., 1440 items for minute resolution)
-        target_buckets: Number of buckets to create
-        aggregation: Aggregation method ('max' or 'avg')
+    参数:
+        data: 值列表（例如每分钟分辨率的1440个项目）
+        target_buckets: 要创建的桶数
+        aggregation: 聚合方法（'max'或'avg'）
 
-    Returns:
-        List of aggregated values per bucket
+    返回:
+        每个桶的聚合值列表
     """
     if not data:
         return []
 
+    # 计算桶大小
     bucket_size = len(data) // target_buckets
     if bucket_size == 0:
         bucket_size = 1
@@ -77,14 +83,14 @@ def bucket_regular_data(
 
 
 def create_hour_labels(num_buckets: int, buckets_per_hour: int) -> list[str]:
-    """Create hour labels for chart x-axis.
+    """为图表X轴创建小时标签。
 
-    Args:
-        num_buckets: Total number of buckets
-        buckets_per_hour: Number of buckets per hour (e.g., 12 for 5-min resolution)
+    参数:
+        num_buckets: 总桶数
+        buckets_per_hour: 每小时的桶数（例如5分钟分辨率为12）
 
-    Returns:
-        List of labels (hour markers and empty strings)
+    返回:
+        标签列表（小时标记和空字符串）
     """
     labels = []
     for i in range(num_buckets):

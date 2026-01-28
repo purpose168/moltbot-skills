@@ -1,7 +1,8 @@
 {
   "owner": "chris-clem",
   "slug": "dexcom",
-  "displayName": "Dexcom CGM",
+  "displayName": "Dexcom 血糖监测",
+  "description": "通过 Dexcom G7/G6 连续血糖监测仪（CGM）监控血糖",
   "latest": {
     "version": "1.0.4",
     "publishedAt": 1768731960533,

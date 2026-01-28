@@ -1,28 +1,28 @@
 ---
 name: youtube-summarizer
-description: Automatically fetch YouTube video transcripts, generate structured summaries, and send full transcripts to messaging platforms. Detects YouTube URLs and provides metadata, key insights, and downloadable transcripts.
+description: 自动获取YouTube视频字幕，生成结构化摘要，并将完整字幕发送到消息平台。检测YouTube URL并提供元数据、关键见解和可下载的字幕。
 version: 1.0.0
 author: abe238
 tags: [youtube, transcription, summarization, video, telegram]
 ---
 
-# YouTube Summarizer Skill
+# YouTube 摘要技能
 
-Automatically fetch transcripts from YouTube videos, generate structured summaries, and deliver full transcripts to messaging platforms.
+自动从YouTube视频获取字幕，生成结构化摘要，并将完整字幕传递到消息平台。
 
-## When to Use
+## 何时使用
 
-Activate this skill when:
-- User shares a YouTube URL (youtube.com/watch, youtu.be, youtube.com/shorts)
-- User asks to summarize or transcribe a YouTube video
-- User requests information about a YouTube video's content
+在以下情况激活此技能：
+- 用户分享YouTube URL（youtube.com/watch, youtu.be, youtube.com/shorts）
+- 用户要求总结或转录YouTube视频
+- 用户请求有关YouTube视频内容的信息
 
-## Dependencies
+## 依赖项
 
-**Required:** MCP YouTube Transcript server must be installed at:
+**必需：** MCP YouTube Transcript服务器必须安装在：
 `/root/clawd/mcp-server-youtube-transcript`
 
-If not present, install it:
+如果不存在，请安装：
 ```bash
 cd /root/clawd
 git clone https://github.com/kimtaeyoon83/mcp-server-youtube-transcript.git
@@ -30,17 +30,19 @@ cd mcp-server-youtube-transcript
 npm install && npm run build
 ```
 
-## Workflow
+## 工作流程
 
-### 1. Detect YouTube URL
-Extract video ID from these patterns:
+### 1. 检测 YouTube URL
+
+从这些模式中提取视频ID：
 - `https://www.youtube.com/watch?v=VIDEO_ID`
 - `https://youtu.be/VIDEO_ID`
 - `https://www.youtube.com/shorts/VIDEO_ID`
-- Direct video ID: `VIDEO_ID` (11 characters)
+- 直接视频ID：`VIDEO_ID`（11个字符）
 
-### 2. Fetch Transcript
-Run this command to get the transcript:
+### 2. 获取字幕
+
+运行此命令获取字幕：
 ```bash
 cd /root/clawd/mcp-server-youtube-transcript && node --input-type=module -e "
 import { getSubtitles } from './dist/youtube-fetcher.js';
@@ -49,113 +51,113 @@ console.log(JSON.stringify(result, null, 2));
 " > /tmp/yt-transcript.json
 ```
 
-Replace `VIDEO_ID` with the extracted ID. Read the output from `/tmp/yt-transcript.json`.
+将 `VIDEO_ID` 替换为提取的ID。从 `/tmp/yt-transcript.json` 读取输出。
 
-### 3. Process the Data
+### 3. 处理数据
 
-Parse the JSON to extract:
-- `result.metadata.title` - Video title
-- `result.metadata.author` - Channel name
-- `result.metadata.viewCount` - Formatted view count
-- `result.metadata.publishDate` - Publication date
-- `result.actualLang` - Language used
-- `result.lines` - Array of transcript segments
+解析JSON以提取：
+- `result.metadata.title` - 视频标题
+- `result.metadata.author` - 频道名称
+- `result.metadata.viewCount` - 格式化的观看次数
+- `result.metadata.publishDate` - 发布日期
+- `result.actualLang` - 使用的语言
+- `result.lines` - 字幕段数组
 
-Full text: `result.lines.map(l => l.text).join(' ')`
+完整文本：`result.lines.map(l => l.text).join(' ')`
 
-### 4. Generate Summary
+### 4. 生成摘要
 
-Create a structured summary using this template:
+使用此模板创建结构化摘要：
 
 ```markdown
-📹 **Video:** [title]
-👤 **Channel:** [author] | 👁️ **Views:** [views] | 📅 **Published:** [date]
+📹 **视频：** [title]
+👤 **频道：** [author] | 👁️ **观看：** [views] | 📅 **发布：** [date]
 
-**🎯 Main Thesis:**
-[1-2 sentence core argument/message]
+**🎯 核心论点：**
+[1-2句核心论点/信息]
 
-**💡 Key Insights:**
-- [insight 1]
-- [insight 2]
-- [insight 3]
-- [insight 4]
-- [insight 5]
+**💡 关键见解：**
+- [见解1]
+- [见解2]
+- [见解3]
+- [见解4]
+- [见解5]
 
-**📝 Notable Points:**
-- [additional point 1]
-- [additional point 2]
+**📝 值得注意的点：**
+- [附加点1]
+- [附加点2]
 
-**🔑 Takeaway:**
-[Practical application or conclusion]
+**🔑 要点：**
+[实际应用或结论]
 ```
 
-Aim for:
-- Main thesis: 1-2 sentences maximum
-- Key insights: 3-5 bullets, each 1-2 sentences
-- Notable points: 2-4 supporting details
-- Takeaway: Actionable conclusion
+目标：
+- 核心论点：最多1-2句
+- 关键见解：3-5个要点，每个1-2句
+- 值得注意的点：2-4个支持细节
+- 要点：可操作的结论
 
-### 5. Save Full Transcript
+### 5. 保存完整字幕
 
-Save the complete transcript to a timestamped file:
+将完整字幕保存到带时间戳的文件：
 ```
 /root/clawd/transcripts/YYYY-MM-DD_VIDEO_ID.txt
 ```
 
-Include in the file:
-- Video metadata header
-- Full transcript text
-- URL reference
+在文件中包含：
+- 视频元数据标题
+- 完整字幕文本
+- URL引用
 
-### 6. Platform-Specific Delivery
+### 6. 平台特定传递
 
-**If channel is Telegram:**
+**如果频道是Telegram：**
 ```bash
 message --action send --channel telegram --target CHAT_ID \
   --filePath /root/clawd/transcripts/YYYY-MM-DD_VIDEO_ID.txt \
-  --caption "📄 YouTube Transcript: [title]"
+  --caption "📄 YouTube 字幕：[title]"
 ```
 
-**If channel is other/webchat:**
-Just reply with the summary (no file attachment).
+**如果频道是其他/网络聊天：**
+只需回复摘要（无文件附件）。
 
-### 7. Reply with Summary
+### 7. 回复摘要
 
-Send the structured summary as your response to the user.
+将结构化摘要作为对用户的响应发送。
 
-## Error Handling
+## 错误处理
 
-**If transcript fetch fails:**
-- Check if video has captions enabled
-- Try with `lang: 'en'` fallback if requested language unavailable
-- Inform user that transcript is not available and suggest alternatives:
-  - Manual YouTube transcript feature
-  - Video may not have captions
-  - Try a different video
+**如果获取字幕失败：**
+- 检查视频是否启用了字幕
+- 如果请求的语言不可用，尝试使用 `lang: 'en'` 作为备选
+- 通知用户字幕不可用并建议替代方案：
+  - 手动YouTube字幕功能
+  - 视频可能没有字幕
+  - 尝试其他视频
 
-**If MCP server not installed:**
-- Provide installation instructions
-- Offer to install it automatically if in appropriate context
+**如果MCP服务器未安装：**
+- 提供安装说明
+- 如果在适当的上下文中，主动提供自动安装
 
-**If video ID extraction fails:**
-- Ask user to provide the full YouTube URL or video ID
+**如果视频ID提取失败：**
+- 请用户提供完整的YouTube URL或视频ID
 
-## Examples
+## 示例
 
-See `examples/` directory for sample outputs.
+请参阅 `examples/` 目录获取示例输出。
 
-## Quality Guidelines
+## 质量指南
 
-- **Be concise:** Summary should be scannable in 30 seconds
-- **Be accurate:** Don't add information not in the transcript
-- **Be structured:** Use consistent formatting for easy reading
-- **Be contextual:** Adjust detail level based on video length
-  - Short videos (<5 min): Brief summary
-  - Long videos (>30 min): More detailed breakdown
+- **简洁：** 摘要应在30秒内可浏览
+- **准确：** 不要添加字幕中不存在的信息
+- **结构化：** 使用一致的格式便于阅读
+- **上下文相关：** 根据视频长度调整详细程度
+  - 短视频（<5分钟）：简短摘要
+  - 长视频（>30分钟）：更详细的分解
 
-## Notes
+## 注意事项
 
-- MCP server uses Android client emulation to bypass YouTube's cloud IP blocking
-- Works reliably from VPS/cloud environments where yt-dlp often fails
-- Supports multiple languages with automatic fallback to English
-- Transcript quality depends on YouTube's auto-generated captions or manual captions
+- MCP服务器使用Android客户端模拟来绕过YouTube的云IP封锁
+- 在yt-dlp经常失败的VPS/云环境中可靠工作
+- 支持多种语言，自动回退到英语
+- 字幕质量取决于YouTube的自动生成字幕或手动字幕

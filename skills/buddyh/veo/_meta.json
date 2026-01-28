@@ -1,7 +1,8 @@
 {
   "owner": "buddyh",
   "slug": "veo",
-  "displayName": "Veo",
+  "displayName": "Veo（视频生成工具）",
+  "description": "使用 Google Veo API 生成视频（支持 Veo 3.1 / Veo 3.0 版本）",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1768443749359,

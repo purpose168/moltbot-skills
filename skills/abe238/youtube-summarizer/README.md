@@ -1,125 +1,125 @@
-# YouTube Summarizer
+# YouTube 摘要器
 
-Automatically fetch YouTube video transcripts, generate structured summaries, and deliver full transcripts to messaging platforms.
+自动获取YouTube视频字幕，生成结构化摘要，并将完整字幕传递到消息平台。
 
-## Features
+## 特性
 
-✅ **Automatic detection** - Recognizes YouTube URLs in messages  
-✅ **Cloud-friendly** - Works from VPS/cloud IPs where yt-dlp fails  
-✅ **Structured summaries** - Main thesis, key insights, and takeaways  
-✅ **Full transcripts** - Downloadable text file with complete video content  
-✅ **Platform-aware** - Auto-sends files to Telegram, text-only elsewhere  
-✅ **Multi-language** - Supports multiple languages with English fallback  
+✅ **自动检测** - 识别消息中的YouTube URL  
+✅ **云友好** - 在yt-dlp失败的VPS/云IP上工作  
+✅ **结构化摘要** - 核心论点、关键见解和要点  
+✅ **完整字幕** - 包含完整视频内容的可下载文本文件  
+✅ **平台感知** - 自动向Telegram发送文件，在其他地方仅发送文本  
+✅ **多语言** - 支持多种语言，以英语为备选  
 
-## Installation
+## 安装
 
-### Prerequisites
+### 先决条件
 
-1. **Node.js 18+** installed
-2. **Clawdbot** running
+1. **Node.js 18+** 已安装
+2. **Clawdbot** 正在运行
 
-### Install via ClawdHub
+### 通过 ClawdHub 安装
 
 ```bash
 clawdhub install youtube-summarizer
 ```
 
-### Manual Installation
+### 手动安装
 
 ```bash
-# 1. Clone the skill
+# 1. 克隆技能
 cd /root/clawd/skills
-git clone <this-repo-url> youtube-summarizer
+git clone <此仓库URL> youtube-summarizer
 
-# 2. Install MCP YouTube Transcript dependency
+# 2. 安装 MCP YouTube Transcript 依赖
 cd /root/clawd
 git clone https://github.com/kimtaeyoon83/mcp-server-youtube-transcript.git
 cd mcp-server-youtube-transcript
 npm install && npm run build
 ```
 
-## Usage
+## 使用方法
 
-Simply share a YouTube URL in chat:
+只需在聊天中分享YouTube URL：
 
 ```
-You: https://youtu.be/dQw4w9WgXcQ
+您: https://youtu.be/dQw4w9WgXcQ
 
-Agent: 📹 **Video:** Never Gonna Give You Up
-       👤 **Channel:** Rick Astley | 👁️ **Views:** 1.4B | 📅 **Published:** 2009-10-25
+智能体: 📹 **视频:** Never Gonna Give You Up
+       👤 **频道:** Rick Astley | 👁️ **观看:** 14亿 | 📅 **发布:** 2009-10-25
        
-       **🎯 Main Thesis:**
-       A declaration of unwavering commitment and loyalty in a relationship...
+       **🎯 核心论点:**
+       一段关于在关系中坚定不移的承诺和忠诚的宣言...
        
-       [structured summary follows]
+       [结构化摘要如下]
        
-       📄 Full transcript attached (Telegram) or saved to transcripts/
+       📄 完整字幕已附加（Telegram）或保存到 transcripts/
 ```
 
-## How It Works
+## 工作原理
 
-1. **Detects** YouTube URLs automatically
-2. **Fetches** transcript using MCP server (bypasses cloud IP blocks)
-3. **Generates** structured summary with metadata
-4. **Saves** full transcript to `transcripts/YYYY-MM-DD_VIDEO_ID.txt`
-5. **Sends** file to Telegram (if in Telegram context)
-6. **Replies** with formatted summary
+1. **检测** YouTube URL 自动
+2. **获取** 字幕使用 MCP 服务器（绕过云IP封锁）
+3. **生成** 带有元数据的结构化摘要
+4. **保存** 完整字幕到 `transcripts/YYYY-MM-DD_VIDEO_ID.txt`
+5. **发送** 文件到 Telegram（如果在Telegram上下文中）
+6. **回复** 格式化摘要
 
-## Supported URL Formats
+## 支持的 URL 格式
 
 - `https://www.youtube.com/watch?v=VIDEO_ID`
 - `https://youtu.be/VIDEO_ID`
 - `https://www.youtube.com/shorts/VIDEO_ID`
-- Direct video ID: `VIDEO_ID`
+- 直接视频ID: `VIDEO_ID`
 
-## Output Format
+## 输出格式
 
-### Summary Structure
+### 摘要结构
 
 ```markdown
-📹 **Video:** [Title]
-👤 **Channel:** [Author] | 👁️ **Views:** [Count] | 📅 **Published:** [Date]
+📹 **视频:** [标题]
+👤 **频道:** [作者] | 👁️ **观看:** [计数] | 📅 **发布:** [日期]
 
-**🎯 Main Thesis:**
-Core message in 1-2 sentences
+**🎯 核心论点:**
+核心信息，1-2句
 
-**💡 Key Insights:**
-- Insight 1
-- Insight 2
-- Insight 3
+**💡 关键见解:**
+- 见解1
+- 见解2
+- 见解3
 
-**📝 Notable Points:**
-- Supporting detail 1
-- Supporting detail 2
+**📝 值得注意的点:**
+- 支持细节1
+- 支持细节2
 
-**🔑 Takeaway:**
-Practical conclusion
+**🔑 要点:**
+实用结论
 ```
 
-### Transcript File
+### 字幕文件
 
-Saved to `/root/clawd/transcripts/YYYY-MM-DD_VIDEO_ID.txt` with:
-- Video metadata header
-- Full transcript text
-- URL reference
+保存到 `/root/clawd/transcripts/YYYY-MM-DD_VIDEO_ID.txt`，包含：
+- 视频元数据标题
+- 完整字幕文本
+- URL引用
 
-## Configuration
+## 配置
 
-No configuration needed! The skill automatically:
-- Detects your messaging platform
-- Chooses appropriate delivery method
-- Handles language fallback
-- Creates transcript directory if needed
+无需配置！该技能自动：
+- 检测您的消息平台
+- 选择适当的传递方法
+- 处理语言备选
+- 如有需要，创建字幕目录
 
-## Troubleshooting
+## 故障排除
 
-### "Transcript not available"
-- Video may not have captions enabled
-- Try a different video
-- Use YouTube's manual transcript feature
+### "字幕不可用"
+- 视频可能未启用字幕
+- 尝试其他视频
+- 使用YouTube的手动字幕功能
 
-### "MCP server not found"
-Install the dependency:
+### "MCP服务器未找到"
+安装依赖：
 ```bash
 cd /root/clawd
 git clone https://github.com/kimtaeyoon83/mcp-server-youtube-transcript.git
@@ -127,53 +127,53 @@ cd mcp-server-youtube-transcript
 npm install && npm run build
 ```
 
-### "Language not available"
-The skill automatically falls back to English if requested language isn't available.
+### "语言不可用"
+如果请求的语言不可用，该技能会自动回退到英语。
 
-## Why This Skill?
+## 为什么使用此技能？
 
-### Problem
-- yt-dlp blocked on cloud/VPS IPs
-- YouTube aggressive with bot detection
-- Manual transcript extraction tedious
-- Need structured summaries, not raw text
+### 问题
+- yt-dlp 在云/VPS IP上被封锁
+- YouTube 对机器人检测很严格
+- 手动提取字幕很繁琐
+- 需要结构化摘要，而非原始文本
 
-### Solution
-- Uses MCP server with Android client emulation
-- Bypasses cloud IP restrictions
-- Auto-generates structured summaries
-- Platform-aware file delivery
+### 解决方案
+- 使用带有Android客户端模拟的MCP服务器
+- 绕过云IP限制
+- 自动生成结构化摘要
+- 平台感知的文件传递
 
-## Dependencies
+## 依赖项
 
-- [MCP YouTube Transcript](https://github.com/kimtaeyoon83/mcp-server-youtube-transcript) - Fetches transcripts via Android client emulation
-- Node.js 18+ - Runtime environment
-- Clawdbot - AI agent framework
+- [MCP YouTube Transcript](https://github.com/kimtaeyoon83/mcp-server-youtube-transcript) - 通过Android客户端模拟获取字幕
+- Node.js 18+ - 运行环境
+- Clawdbot - AI智能体框架
 
-## Credits
+## 致谢
 
-- Built by **abe238**
-- Uses [mcp-server-youtube-transcript](https://github.com/kimtaeyoon83/mcp-server-youtube-transcript) by kimtaeyoon83
-- Inspired by the need for reliable YouTube transcription on cloud servers
+- 由 **abe238** 构建
+- 使用 kimtaeyoon83 的 [mcp-server-youtube-transcript](https://github.com/kimtaeyoon83/mcp-server-youtube-transcript)
+- 灵感来自于在云服务器上对可靠YouTube转录的需求
 
-## License
+## 许可证
 
 MIT
 
-## Contributing
+## 贡献
 
-Improvements welcome! Consider:
-- Additional summary templates
-- Multi-language summary generation
-- Timestamp-based chapter extraction
-- Video metadata enrichment
+欢迎改进！考虑：
+- 额外的摘要模板
+- 多语言摘要生成
+- 基于时间戳的章节提取
+- 视频元数据丰富
 
-## Changelog
+## 更新日志
 
 ### v1.0.0 (2026-01-26)
-- Initial release
-- Auto-detect YouTube URLs
-- Generate structured summaries
-- Save full transcripts
-- Telegram file delivery
-- Cloud IP bypass via MCP server
+- 初始发布
+- 自动检测YouTube URL
+- 生成结构化摘要
+- 保存完整字幕
+- Telegram文件传递
+- 通过MCP服务器绕过云IP

@@ -1,7 +1,8 @@
 {
   "owner": "cclank",
   "slug": "news-aggregator-skill",
-  "displayName": "News Aggregator Skill",
+  "displayName": "新闻聚合助手",
+  "description": "综合新闻聚合器，从 8 大主流平台获取、筛选和深度分析实时内容：Hacker News、GitHub Trending、Product Hunt、36Kr、腾讯新闻、华尔街见闻、V2EX 和微博。适用于'每日扫描'、'科技新闻简报'、'金融资讯'和热门话题的'深度解读'。",
   "latest": {
     "version": "0.1.0",
     "publishedAt": 1769420683107,

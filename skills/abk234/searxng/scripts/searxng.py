@@ -3,7 +3,12 @@
 # requires-python = ">=3.11"
 # dependencies = ["httpx", "rich"]
 # ///
-"""SearXNG CLI - Privacy-respecting metasearch via your local instance."""
+"""
+SearXNG 命令行工具 - 通过本地实例进行尊重隐私的元搜索。
+
+此脚本提供命令行界面，用于与本地 SearXNG 实例交互。
+支持多种搜索类别、时间范围过滤和格式化输出。
+"""
 
 import argparse
 import os
@@ -16,11 +21,15 @@ from rich.table import Table
 from rich import print as rprint
 from urllib.parse import urlencode
 
-# Suppress SSL warnings for local self-signed certificates
+# 抑制本地自签名证书的SSL警告
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')
 
+# 创建控制台对象用于富文本输出
 console = Console()
+
+# 从环境变量获取SearXNG实例URL，默认为本地地址
 SEARXNG_URL = os.getenv("SEARXNG_URL", "http://localhost:8080")
+
 
 def search_searxng(
     query: str,
@@ -31,73 +40,77 @@ def search_searxng(
     output_format: str = "table"
 ) -> dict:
     """
-    Search using SearXNG instance.
+    使用SearXNG实例进行搜索。
     
-    Args:
-        query: Search query string
-        limit: Number of results to return
-        category: Search category (general, images, news, videos, etc.)
-        language: Language code (auto, en, de, fr, etc.)
-        time_range: Time range filter (day, week, month, year)
-        output_format: Output format (table, json)
+    参数:
+        query: 搜索查询字符串
+        limit: 返回结果数量
+        category: 搜索类别（general、images、news、videos等）
+        language: 语言代码（auto、en、de、fr等）
+        time_range: 时间范围筛选（day、week、month、year）
+        output_format: 输出格式（table、json）
     
-    Returns:
-        Dict with search results
+    返回:
+        包含搜索结果的字典
     """
+    # 构建搜索参数
     params = {
         "q": query,
         "format": "json",
         "categories": category,
     }
     
+    # 如果指定了语言，添加到参数
     if language != "auto":
         params["language"] = language
     
+    # 如果指定了时间范围，添加到参数
     if time_range:
         params["time_range"] = time_range
     
     try:
-        # Disable SSL verification for local self-signed certs
+        # 禁用SSL验证以支持本地自签名证书
         response = httpx.get(
             f"{SEARXNG_URL}/search",
             params=params,
             timeout=30,
-            verify=False  # For local self-signed certs
+            verify=False  # 用于本地自签名证书
         )
         response.raise_for_status()
         
         data = response.json()
         
-        # Limit results
+        # 限制结果数量
         if "results" in data:
             data["results"] = data["results"][:limit]
         
         return data
         
     except httpx.HTTPError as e:
-        console.print(f"[red]Error connecting to SearXNG:[/red] {e}", file=sys.stderr)
+        console.print(f"[red]连接SearXNG出错:[/red] {e}", file=sys.stderr)
         return {"error": str(e), "results": []}
     except Exception as e:
-        console.print(f"[red]Unexpected error:[/red] {e}", file=sys.stderr)
+        console.print(f"[red]意外错误:[/red] {e}", file=sys.stderr)
         return {"error": str(e), "results": []}
 
 
 def display_results_table(data: dict, query: str):
-    """Display search results in a rich table."""
+    """在富表格中显示搜索结果。"""
     results = data.get("results", [])
     
     if not results:
-        rprint(f"[yellow]No results found for:[/yellow] {query}")
+        rprint(f"[yellow]未找到查询结果:[/yellow] {query}")
         return
     
-    table = Table(title=f"SearXNG Search: {query}", show_lines=False)
+    # 创建结果表格
+    table = Table(title=f"SearXNG 搜索: {query}", show_lines=False)
     table.add_column("#", style="dim", width=3)
-    table.add_column("Title", style="bold")
+    table.add_column("标题", style="bold")
     table.add_column("URL", style="blue", width=50)
-    table.add_column("Engines", style="green", width=20)
+    table.add_column("引擎", style="green", width=20)
     
     for i, result in enumerate(results, 1):
-        title = result.get("title", "No title")[:70]
+        title = result.get("title", "无标题")[:70]
         url = result.get("url", "")[:45] + "..."
         engines = ", ".join(result.get("engines", []))[:18]
         
@@ -110,14 +123,14 @@ def display_results_table(data: dict, query: str):
     
     console.print(table)
     
-    # Show additional info
+    # 显示额外信息
     if data.get("number_of_results"):
-        rprint(f"\n[dim]Total results available: {data['number_of_results']}[/dim]")
+        rprint(f"\n[dim]可用结果总数: {data['number_of_results']}[/dim]")
     
-    # Show content snippets for top 3
-    rprint("\n[bold]Top results:[/bold]")
+    # 显示前3个结果的内容片段
+    rprint("\n[bold]最佳结果:[/bold]")
     for i, result in enumerate(results[:3], 1):
-        title = result.get("title", "No title")
+        title = result.get("title", "无标题")
         url = result.get("url", "")
         content = result.get("content", "")[:200]
         
@@ -128,67 +141,72 @@ def display_results_table(data: dict, query: str):
 
 
 def display_results_json(data: dict):
-    """Display results in JSON format for programmatic use."""
+    """以JSON格式显示结果，用于程序化使用。"""
     print(json.dumps(data, indent=2))
 
 
 def main():
+    """主函数，解析命令行参数并执行搜索。"""
     parser = argparse.ArgumentParser(
-        description="SearXNG CLI - Search the web via your local SearXNG instance",
+        description="SearXNG CLI - 通过本地SearXNG实例搜索网络",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
-Examples:
-  %(prog)s search "python asyncio"
-  %(prog)s search "climate change" -n 20
-  %(prog)s search "cute cats" --category images
-  %(prog)s search "breaking news" --category news --time-range day
-  %(prog)s search "rust tutorial" --format json
+示例:
+  %(prog)s search "python 异步"
+  %(prog)s search "气候变化" -n 20
+  %(prog)s search "可爱猫咪" --category images
+  %(prog)s search "突发新闻" --category news --time-range day
+  %(prog)s search "rust 教程" --format json
 
-Environment:
-  SEARXNG_URL: SearXNG instance URL (default: {SEARXNG_URL})
+环境变量:
+  SEARXNG_URL: SearXNG实例URL（默认值: {SEARXNG_URL})
         """
     )
     
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    # 添加子命令解析器
+    subparsers = parser.add_subparsers(dest="command", help="命令")
     
-    # Search command
-    search_parser = subparsers.add_parser("search", help="Search the web")
-    search_parser.add_argument("query", nargs="+", help="Search query")
+    # 搜索命令
+    search_parser = subparsers.add_parser("search", help="搜索网络")
+    search_parser.add_argument("query", nargs="+", help="搜索查询")
     search_parser.add_argument(
         "-n", "--limit",
         type=int,
         default=10,
-        help="Number of results (default: 10)"
+        help="结果数量（默认值: 10）"
     )
     search_parser.add_argument(
         "-c", "--category",
         default="general",
         choices=["general", "images", "videos", "news", "map", "music", "files", "it", "science"],
-        help="Search category (default: general)"
+        help="搜索类别（默认值: general）"
     )
     search_parser.add_argument(
         "-l", "--language",
         default="auto",
-        help="Language code (auto, en, de, fr, etc.)"
+        help="语言代码（auto、en、de、fr等）"
     )
     search_parser.add_argument(
         "-t", "--time-range",
         choices=["day", "week", "month", "year"],
-        help="Time range filter"
+        help="时间范围筛选"
     )
     search_parser.add_argument(
         "-f", "--format",
         choices=["table", "json"],
         default="table",
-        help="Output format (default: table)"
+        help="输出格式（默认值: table）"
     )
     
+    # 解析命令行参数
     args = parser.parse_args()
     
+    # 如果没有指定命令，打印帮助信息
     if not args.command:
         parser.print_help()
         return
     
+    # 处理搜索命令
     if args.command == "search":
         query = " ".join(args.query)
         

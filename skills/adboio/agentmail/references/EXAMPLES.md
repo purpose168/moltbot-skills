@@ -1,10 +1,10 @@
-# AgentMail Usage Examples
+# AgentMail 使用示例
 
-Common patterns and use cases for AgentMail in AI agent workflows.
+AI 智能体工作流程中 AgentMail 的常见模式和用例。
 
-## Basic Agent Email Setup
+## 基本智能体电子邮件设置
 
-### 1. Create Agent Identity
+### 1. 创建智能体身份
 
 ```python
 from agentmail import AgentMail
@@ -12,59 +12,59 @@ import os
 
 client = AgentMail(api_key=os.getenv("AGENTMAIL_API_KEY"))
 
-# Create inbox for your agent
+# 为您的智能体创建收件箱
 agent_inbox = client.inboxes.create(
     username="spike-assistant",
-    display_name="Spike - AI Assistant",
-    client_id="spike-main-inbox"  # Prevents duplicates
+    display_name="Spike - AI 助手",
+    client_id="spike-main-inbox"  # 防止重复
 )
 
-print(f"Agent email: {agent_inbox.inbox_id}")
-# Output: spike-assistant@agentmail.to
+print(f"智能体电子邮件: {agent_inbox.inbox_id}")
+# 输出: spike-assistant@agentmail.to
 ```
 
-### 2. Send Status Updates
+### 2. 发送状态更新
 
 ```python
 def send_task_completion(task_name, details, recipient):
     client.inboxes.messages.send(
         inbox_id="spike-assistant@agentmail.to",
         to=recipient,
-        subject=f"Task Completed: {task_name}",
-        text=f"Hello! I've completed the task: {task_name}\n\nDetails:\n{details}\n\nBest regards,\nSpike 🦝",
+        subject=f"任务完成: {task_name}",
+        text=f"您好！我已完成任务: {task_name}\n\n详情:\n{details}\n\n最诚挚的问候,\nSpike 🦝",
         html=f"""
-        <p>Hello!</p>
-        <p>I've completed the task: <strong>{task_name}</strong></p>
-        <h3>Details:</h3>
+        <p>您好!</p>
+        <p>我已完成任务: <strong>{task_name}</strong></p>
+        <h3>详情:</h3>
         <p>{details.replace(chr(10), '<br>')}</p>
-        <p>Best regards,<br>Spike 🦝</p>
+        <p>最诚挚的问候,<br>Spike 🦝</p>
         """
     )
 
-# Usage
+# 使用示例
 send_task_completion(
-    "PDF Processing", 
-    "Rotated 5 pages, extracted text, and saved output to /tmp/processed.pdf",
+    "PDF 处理", 
+    "旋转了5页，提取了文本，并将输出保存到 /tmp/processed.pdf",
     "adam@example.com"
 )
 ```
 
-## Customer Support Automation
+## 客户支持自动化
 
-### Auto-Reply System
+### 自动回复系统
 
 ```python
 def setup_support_auto_reply():
-    """Set up webhook to auto-reply to support emails"""
+    """设置 webhook 以自动回复支持电子邮件"""
     
-    # Create support inbox
+    # 创建支持收件箱
     support_inbox = client.inboxes.create(
         username="support",
-        display_name="Customer Support",
+        display_name="客户支持",
         client_id="support-inbox"
     )
     
-    # Register webhook for auto-replies
+    # 注册用于自动回复的 webhook
     webhook = client.webhooks.create(
         url="https://your-app.com/webhook/support",
         event_types=["message.received"],
@@ -75,60 +75,60 @@ def setup_support_auto_reply():
     return support_inbox, webhook
 
 def handle_support_message(message):
-    """Process incoming support message and send auto-reply"""
+    """处理传入的支持消息并发送自动回复"""
     
     subject = message['subject'].lower()
     sender = message['from'][0]['email']
     
-    # Determine response based on subject keywords
+    # 根据主题关键词确定回复
     if 'billing' in subject or 'payment' in subject:
         response = """
-        Thank you for your billing inquiry. 
+        感谢您的账单咨询。
         
-        Our billing team will review your request and respond within 24 hours. 
-        For urgent billing issues, please call 1-800-SUPPORT.
+        我们的账单团队将审查您的请求并在24小时内回复。
+        如有紧急账单问题，请致电 1-800-SUPPORT。
         
-        Best regards,
-        Customer Support Team
+        最诚挚的问候，
+        客户支持团队
         """
     elif 'bug' in subject or 'error' in subject:
         response = """
-        Thank you for reporting this issue.
+        感谢您报告此问题。
         
-        Our technical team has been notified and will investigate. 
-        We'll update you within 48 hours with our findings.
+        我们的技术团队已收到通知并将进行调查。
+        我们将在48小时内为您提供调查结果。
         
-        If you have additional details, please reply to this email.
+        如果您有更多详情，请回复此电子邮件。
         
-        Best regards,
-        Technical Support
+        最诚挚的问候，
+        技术支持
         """
     else:
         response = """
-        Thank you for contacting us!
+        感谢您联系我们！
         
-        We've received your message and will respond within 24 hours.
-        For urgent issues, please call our support line.
+        我们已收到您的消息，将在未来24小时内回复。
+        如有紧急问题，请致电我们的支持热线。
         
-        Best regards,
-        Customer Support Team
+        最诚挚的问候，
+        客户支持团队
         """
     
-    # Send auto-reply
+    # 发送自动回复
     client.inboxes.messages.send(
         inbox_id=message['inbox_id'],
         to=sender,
-        subject=f"Re: {message['subject']}",
+        subject=f"回复: {message['subject']}",
         text=response
     )
     
-    # Log for human follow-up
-    print(f"Auto-replied to {sender} about: {message['subject']}")
+    # 记录以便人工跟进
+    print(f"自动回复给 {sender}，主题: {message['subject']}")
 ```
 
-## Document Processing Workflow
+## 文档处理工作流程
 
-### Email → Process → Reply
+### 电子邮件 → 处理 → 回复
 
 ```python
 import base64
@@ -136,25 +136,25 @@ import tempfile
 from pathlib import Path
 
 def process_pdf_attachment(message):
-    """Extract attachments, process PDFs, and reply with results"""
+    """提取附件，处理 PDF，并回复结果"""
     
     processed_files = []
     
     for attachment in message.get('attachments', []):
         if attachment['content_type'] == 'application/pdf':
-            # Decode attachment
+            # 解码附件
             pdf_data = base64.b64decode(attachment['content'])
             
-            # Save to temp file
+            # 保存到临时文件
             with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
                 tmp.write(pdf_data)
                 temp_path = tmp.name
             
             try:
-                # Process PDF (example: extract text)
+                # 处理 PDF（示例：提取文本）
                 extracted_text = extract_pdf_text(temp_path)
                 
-                # Save processed result
+                # 保存处理结果
                 output_path = f"/tmp/processed_{attachment['filename']}.txt"
                 with open(output_path, 'w') as f:
                     f.write(extracted_text)
@@ -166,16 +166,16 @@ def process_pdf_attachment(message):
                 })
                 
             finally:
-                Path(temp_path).unlink()  # Clean up temp file
+                Path(temp_path).unlink()  # 清理临时文件
     
     if processed_files:
-        # Send results back
+        # 发送结果回去
         results_text = "\n".join([
-            f"Processed {f['original']}:\n{f['preview']}\n"
+            f"已处理 {f['original']}:\n{f['preview']}\n"
             for f in processed_files
         ])
         
-        # Attach processed files
+        # 附加处理后的文件
         attachments = []
         for f in processed_files:
             with open(f['output'], 'r') as file:
@@ -189,15 +189,15 @@ def process_pdf_attachment(message):
         client.inboxes.messages.send(
             inbox_id=message['inbox_id'],
             to=message['from'][0]['email'],
-            subject=f"Re: {message['subject']} - Processed",
-            text=f"I've processed your PDF files:\n\n{results_text}",
+            subject=f"回复: {message['subject']} - 已处理",
+            text=f"我已处理您的 PDF 文件:\n\n{results_text}",
             attachments=attachments
         )
 
 def extract_pdf_text(pdf_path):
-    """Extract text from PDF file"""
-    # Implementation depends on your PDF library
-    # Example with pdfplumber:
+    """从 PDF 文件中提取文本"""
+    # 实现取决于您的 PDF 库
+    # 使用 pdfplumber 的示例：
     import pdfplumber
     text = ""
     with pdfplumber.open(pdf_path) as pdf:
@@ -206,21 +206,21 @@ def extract_pdf_text(pdf_path):
     return text
 ```
 
-## Task Assignment and Tracking
+## 任务分配和跟踪
 
-### Email-Based Task Management
+### 基于电子邮件的任务管理
 
 ```python
 def create_task_tracker_inbox():
-    """Set up inbox for task assignments via email"""
+    """设置通过电子邮件接收任务分配的收件箱"""
     
     inbox = client.inboxes.create(
         username="tasks",
-        display_name="Task Assignment Bot",
+        display_name="任务分配机器人",
         client_id="task-tracker"
     )
     
-    # Webhook for processing task emails
+    # 用于处理任务电子邮件的 webhook
     webhook = client.webhooks.create(
         url="https://your-app.com/webhook/tasks",
         event_types=["message.received"],
@@ -230,17 +230,17 @@ def create_task_tracker_inbox():
     return inbox
 
 def process_task_assignment(message):
-    """Parse email and create task from content"""
+    """解析电子邮件并从内容创建任务"""
     
     subject = message['subject']
     body = message.get('text', '')
     sender = message['from'][0]['email']
     
-    # Simple task parsing
+    # 简单的任务解析
     if subject.startswith('TASK:'):
         task_title = subject[5:].strip()
         
-        # Extract due date, priority, etc. from body
+        # 从正文中提取截止日期、优先级等
         lines = body.split('\n')
         due_date = None
         priority = 'normal'
@@ -252,7 +252,7 @@ def process_task_assignment(message):
             elif line.startswith('Priority:'):
                 priority = line[9:].strip().lower()
         
-        # Create task in your system
+        # 在您的系统中创建任务
         task_id = create_task_in_system({
             'title': task_title,
             'description': description,
@@ -261,102 +261,102 @@ def process_task_assignment(message):
             'assigned_by': sender
         })
         
-        # Confirm task creation
+        # 确认任务创建
         client.inboxes.messages.send(
             inbox_id=message['inbox_id'],
             to=sender,
-            subject=f"Task Created: {task_title} (#{task_id})",
+            subject=f"任务已创建: {task_title} (#{task_id})",
             text=f"""
-Task successfully created!
+任务创建成功！
 
 ID: #{task_id}
-Title: {task_title}
-Priority: {priority}
-Due: {due_date or 'Not specified'}
+标题: {task_title}
+优先级: {priority}
+截止日期: {due_date or '未指定'}
 
-I'll send updates as work progresses.
+工作进行时我会发送更新。
 
-Best regards,
-Task Bot
+最诚挚的问候，
+任务机器人
             """
         )
         
-        # Start processing task...
+        # 开始处理任务...
         process_task_async(task_id)
 
 def create_task_in_system(task_data):
-    """Create task in your task management system"""
-    # Implementation depends on your system
-    # Return task ID
+    """在您的任务管理系统中创建任务"""
+    # 实现取决于您的系统
+    # 返回任务 ID
     return "T-12345"
 
 def send_task_update(task_id, status, details, assignee_email):
-    """Send task progress update"""
+    """发送任务进度更新"""
     
     client.inboxes.messages.send(
         inbox_id="tasks@agentmail.to",
         to=assignee_email,
-        subject=f"Task Update: #{task_id} - {status}",
+        subject=f"任务更新: #{task_id} - {status}",
         text=f"""
-Task #{task_id} Status Update
+任务 #{task_id} 状态更新
 
-Status: {status}
-Details: {details}
+状态: {status}
+详情: {details}
 
-View full details: https://your-app.com/tasks/{task_id}
+查看完整详情: https://your-app.com/tasks/{task_id}
 
-Best regards,
-Task Bot
+最诚挚的问候，
+任务机器人
         """
     )
 ```
 
-## Integration with External Services
+## 与外部服务集成
 
-### GitHub Issue Creation from Email
+### 从电子邮件创建 GitHub Issue
 
 ```python
 def setup_github_integration():
-    """Create inbox for GitHub issue creation"""
+    """创建用于 GitHub Issue 创建的收件箱"""
     
     inbox = client.inboxes.create(
         username="github-issues",
-        display_name="GitHub Issue Creator",
+        display_name="GitHub Issue 创建器",
         client_id="github-integration"
     )
     
     return inbox
 
 def create_github_issue_from_email(message):
-    """Convert email to GitHub issue"""
+    """将电子邮件转换为 GitHub Issue"""
     
     import requests
     
-    # Extract issue details
+    # 提取 Issue 详情
     title = message['subject'].replace('BUG:', '').replace('FEATURE:', '').strip()
     body_content = message.get('text', '')
     sender = message['from'][0]['email']
     
-    # Determine issue type and labels
+    # 确定 Issue 类型和标签
     labels = ['email-created']
     if 'BUG:' in message['subject']:
         labels.append('bug')
     elif 'FEATURE:' in message['subject']:
         labels.append('enhancement')
     
-    # Create GitHub issue
+    # 创建 GitHub Issue
     github_token = os.getenv('GITHUB_TOKEN')
     repo = 'your-org/your-repo'
     
     issue_data = {
         'title': title,
         'body': f"""
-**Reported via email by:** {sender}
+**通过电子邮件报告人:** {sender}
 
-**Original message:**
+**原始消息:**
 {body_content}
 
-**Email Thread:** {message.get('thread_id')}
+**电子邮件会话:** {message.get('thread_id')}
         """,
         'labels': labels
     }
@@ -373,31 +373,31 @@ def create_github_issue_from_email(message):
     if response.status_code == 201:
         issue = response.json()
         
-        # Reply with GitHub issue link
+        # 回复 GitHub Issue 链接
         client.inboxes.messages.send(
             inbox_id=message['inbox_id'],
             to=sender,
-            subject=f"Re: {message['subject']} - GitHub Issue Created",
+            subject=f"回复: {message['subject']} - GitHub Issue 已创建",
             text=f"""
-Thank you for your report!
+感谢您的报告！
 
-I've created a GitHub issue for tracking:
+我已创建 GitHub Issue 进行跟踪：
 
 Issue #{issue['number']}: {issue['title']}
-Link: {issue['html_url']}
+链接: {issue['html_url']}
 
-You can track progress and add comments directly on GitHub.
+您可以直接在 GitHub 上跟踪进度并添加评论。
 
-Best regards,
-GitHub Bot
+最诚挚的问候，
+GitHub 机器人
             """
         )
         
-        print(f"Created GitHub issue #{issue['number']} from email")
+        print(f"从电子邮件创建了 GitHub Issue #{issue['number']}")
     else:
-        print(f"Failed to create GitHub issue: {response.text}")
+        print(f"创建 GitHub Issue 失败: {response.text}")
 
-# Usage in webhook handler
+# 在 webhook 处理程序中使用
 def handle_github_webhook(payload):
     if payload['event_type'] == 'message.received':
         message = payload['message']
@@ -405,24 +405,24 @@ def handle_github_webhook(payload):
             create_github_issue_from_email(message)
 ```
 
-## Notification and Alert System
+## 通知和警报系统
 
-### Multi-Channel Alerts
+### 多渠道警报
 
 ```python
 def setup_alert_system():
-    """Create alert inbox for system notifications"""
+    """创建用于系统通知的警报收件箱"""
     
     alerts_inbox = client.inboxes.create(
         username="alerts",
-        display_name="System Alerts",
+        display_name="系统警报",
         client_id="alert-system"
     )
     
     return alerts_inbox
 
 def send_system_alert(alert_type, message, severity='info', recipients=None):
-    """Send system alert via email"""
+    """通过电子邮件发送系统警报"""
     
     if recipients is None:
         recipients = ['admin@company.com', 'ops@company.com']
@@ -441,69 +441,69 @@ def send_system_alert(alert_type, message, severity='info', recipients=None):
         to=recipients,
         subject=f"{emoji} [{severity.upper()}] {alert_type}",
         text=f"""
-System Alert
+系统警报
 
-Type: {alert_type}
-Severity: {severity}
-Time: {datetime.now().isoformat()}
+类型: {alert_type}
+严重程度: {severity}
+时间: {datetime.now().isoformat()}
 
-Message:
+消息:
 {message}
 
-This is an automated alert from the monitoring system.
+这是来自监控系统的自动警报。
         """,
         html=f"""
-<h2>{emoji} System Alert</h2>
+<h2>{emoji} 系统警报</h2>
 <table>
-<tr><td><strong>Type:</strong></td><td>{alert_type}</td></tr>
-<tr><td><strong>Severity:</strong></td><td style="color: {'red' if severity == 'critical' else 'orange' if severity == 'warning' else 'blue'}">{severity}</td></tr>
-<tr><td><strong>Time:</strong></td><td>{datetime.now().isoformat()}</td></tr>
+<tr><td><strong>类型:</strong></td><td>{alert_type}</td></tr>
+<tr><td><strong>严重程度:</strong></td><td style="color: {'red' if severity == 'critical' else 'orange' if severity == 'warning' else 'blue'}">{severity}</td></tr>
+<tr><td><strong>时间:</strong></td><td>{datetime.now().isoformat()}</td></tr>
 </table>
 
-<h3>Message:</h3>
+<h3>消息:</h3>
 <p>{message.replace(chr(10), '<br>')}</p>
 
-<p><em>This is an automated alert from the monitoring system.</em></p>
+<p><em>这是来自监控系统的自动警报。</em></p>
         """
     )
 
-# Usage examples
-send_system_alert("Database Connection", "Unable to connect to primary database", "critical")
-send_system_alert("Backup Complete", "Daily backup completed successfully", "success")
-send_system_alert("High CPU Usage", "CPU usage above 80% for 5 minutes", "warning")
+# 使用示例
+send_system_alert("数据库连接", "无法连接到主数据库", "critical")
+send_system_alert("备份完成", "每日备份成功完成", "success")
+send_system_alert("CPU 使用率高", "CPU 使用率连续5分钟超过80%", "warning")
 ```
 
-## Testing and Development
+## 测试和开发
 
-### Local Development Setup
+### 本地开发设置
 
 ```python
 def setup_dev_environment():
-    """Set up AgentMail for local development"""
+    """为本地开发设置 AgentMail"""
     
-    # Create development inboxes
+    # 创建开发收件箱
     dev_inbox = client.inboxes.create(
         username="dev-test",
-        display_name="Development Testing",
+        display_name="开发测试",
         client_id="dev-testing"
     )
     
-    print(f"Development inbox: {dev_inbox.inbox_id}")
-    print("Use this for testing email workflows locally")
+    print(f"开发收件箱: {dev_inbox.inbox_id}")
+    print("在本地使用此收件箱测试电子邮件工作流程")
     
-    # Test email sending
+    # 测试电子邮件发送
     test_response = client.inboxes.messages.send(
         inbox_id=dev_inbox.inbox_id,
         to="your-personal-email@gmail.com",
-        subject="AgentMail Development Test",
-        text="This is a test email from your AgentMail development setup."
+        subject="AgentMail 开发测试",
+        text="这是来自您的 AgentMail 开发设置的测试电子邮件。"
     )
     
-    print(f"Test email sent: {test_response.message_id}")
+    print(f"测试电子邮件已发送: {test_response.message_id}")
     
     return dev_inbox
 
-# Run development setup
+# 运行开发设置
 if __name__ == "__main__":
     setup_dev_environment()
 ```

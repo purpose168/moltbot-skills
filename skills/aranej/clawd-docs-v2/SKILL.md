@@ -1,34 +1,34 @@
 ---
 name: clawd-docs-v2
-description: Smart ClawdBot documentation access with local search index, cached snippets, and on-demand fetch. Token-efficient and freshness-aware.
+description: 智能 ClawdBot 文档访问，支持本地搜索索引、缓存片段和按需获取。令牌高效且关注新鲜度。
 homepage: https://docs.clawd.bot/
 metadata: {"clawdbot":{"emoji":"📚"}}
 version: 2.2.0
 ---
 
-# Clawd-Docs v2.0 - Smart Documentation Access
+# Clawd-Docs v2.0 - 智能文档访问
 
-This skill provides **intelligent access** to ClawdBot documentation with:
-- **Local search index** - instant keyword lookup (0 tokens)
-- **Cached snippets** - pre-fetched common answers (~300-500 tokens)
-- **On-demand fetch** - full page when needed (~8-12k tokens)
-- **Freshness tracking** - TTL per page type
+此技能提供对 ClawdBot 文档的**智能访问**，包括：
+- **本地搜索索引** - 即时关键词查找（0 tokens）
+- **缓存片段** - 预获取的常见答案（~300-500 tokens）
+- **按需获取** - 需要时获取完整页面（~8-12k tokens）
+- **新鲜度跟踪** - 每种页面类型的 TTL
 
 ---
 
-## Quick Start
+## 快速开始
 
-### Step 1: Check Golden Snippets First
+### 步骤 1：首先检查黄金片段
 
-Before fetching anything, check if a **Golden Snippet** exists:
+在获取任何内容之前，检查**黄金片段**是否存在：
 
 ```bash
 ls ~/clawd/data/docs-snippets/
 ```
 
-**Available snippets (check cache first!):**
-| Snippet | Query matches |
-|---------|---------------|
+**可用的片段（先检查缓存！）：**
+| 片段 | 匹配查询 |
+|------|----------|
 | `telegram-setup.md` | "ako nastaviť telegram", "telegram setup" |
 | `telegram-allowfrom.md` | "allowFrom", "kto mi môže písať", "access control" |
 | `oauth-troubleshoot.md` | "token expired", "oauth error", "credentials" |
@@ -38,60 +38,60 @@ ls ~/clawd/data/docs-snippets/
 | `config-providers.md` | "pridať provider", "discord setup", "nový kanál" |
 | `memory-search.md` | "memory", "vector search", "pamäť", "embeddings" |
 
-**Read snippet:**
+**读取片段：**
 ```bash
 cat ~/clawd/data/docs-snippets/telegram-setup.md
 ```
 
-### Step 2: Search Index (if snippet doesn't exist)
+### 步骤 2：搜索索引（如果片段不存在）
 
-Check `~/clawd/data/docs-index.json` for page suggestions.
+检查 `~/clawd/data/docs-index.json` 获取页面建议。
 
-**Keyword matching:**
+**关键词匹配：**
 - "telegram" → channels/telegram
 - "oauth" → concepts/oauth, gateway/troubleshooting
 - "update" → install/updating
 - "config" → gateway/configuration
 
-### Step 3: Check Full Page Cache
+### 步骤 3：检查完整页面缓存
 
-**BEFORE fetching via brightdata**, check if the page is already cached:
+**在通过 brightdata 获取之前**，检查页面是否已缓存：
 
 ```bash
-# Convert path: concepts/memory → concepts_memory.md
+# 转换路径：concepts/memory → concepts_memory.md
 ls ~/clawd/data/docs-cache/ | grep "concepts_memory"
 ```
 
-**If exists, read locally (0 tokens!):**
+**如果存在，本地读取（0 tokens！）：**
 ```bash
 cat ~/clawd/data/docs-cache/concepts_memory.md
 ```
 
-### Step 4: Fetch Page (only if NOT in cache)
+### 步骤 4：获取页面（仅当不在缓存中时）
 
-Use native **web_fetch** tool (part of Clawdbot core - FREE and fast!):
+使用原生的 **web_fetch** 工具（Clawdbot 核心的一部分 - 免费且快速！）
 
 ```javascript
 web_fetch({ url: "https://docs.clawd.bot/{path}", extractMode: "markdown" })
 ```
 
-**Example:**
+**示例：**
 ```javascript
 web_fetch({ url: "https://docs.clawd.bot/tools/skills", extractMode: "markdown" })
 ```
 
-**web_fetch advantages:**
+**web_fetch 优势：**
 | | web_fetch | brightdata |
 |---|-----------|------------|
-| **Cost** | $0 (free!) | ~$0.003/call |
-| **Speed** | ~400ms | 2-5s |
-| **Quality** | Markdown ✅ | Markdown ✅ |
+| **成本** | $0（免费！） | ~$0.003/调用 |
+| **速度** | ~400ms | 2-5秒 |
+| **质量** | Markdown ✅ | Markdown ✅ |
 
 ---
 
-## Search Index Structure
+## 搜索索引结构
 
-**Location:** `~/clawd/data/docs-index.json`
+**位置：** `~/clawd/data/docs-index.json`
 
 ```json
 {
@@ -109,131 +109,131 @@ web_fetch({ url: "https://docs.clawd.bot/tools/skills", extractMode: "markdown" 
 }
 ```
 
-**Use synonyms** for fuzzy matching.
+**使用同义词**进行模糊匹配。
 
 ---
 
-## TTL Strategy (Freshness)
+## TTL 策略（新鲜度）
 
-| Page Category | TTL | Why |
-|---------------|-----|-----|
-| `install/updating` | 1 day | Always current! |
-| `gateway/*` | 7 days | Config changes |
-| `channels/*` | 7 days | Provider updates |
-| `tools/*` | 7 days | Features added |
-| `concepts/*` | 14 days | Rarely changes |
-| `reference/*` | 30 days | Stable templates |
+| 页面类别 | TTL | 原因 |
+|---------|-----|------|
+| `install/updating` | 1 天 | 总是最新的！ |
+| `gateway/*` | 7 天 | 配置更改 |
+| `channels/*` | 7 天 | 提供程序更新 |
+| `tools/*` | 7 天 | 添加的功能 |
+| `concepts/*` | 14 天 | 很少更改 |
+| `reference/*` | 30 天 | 稳定的模板 |
 
-**Check snippet expiry:**
+**检查片段过期：**
 ```bash
 head -10 ~/clawd/data/docs-snippets/telegram-setup.md | grep expires
 ```
 
 ---
 
-## Common Scenarios
+## 常见场景
 
-### "Ako nastaviť Telegram?"
-1. ✅ Read `~/clawd/data/docs-snippets/telegram-setup.md`
+### "Ako nastaviť Telegram？"
+1. ✅ 读取 `~/clawd/data/docs-snippets/telegram-setup.md`
 
 ### "allowFrom nefunguje"
-1. ✅ Read `~/clawd/data/docs-snippets/telegram-allowfrom.md`
+1. ✅ 读取 `~/clawd/data/docs-snippets/telegram-allowfrom.md`
 
 ### "Token expired / oauth error"
-1. ✅ Read `~/clawd/data/docs-snippets/oauth-troubleshoot.md`
+1. ✅ 读取 `~/clawd/data/docs-snippets/oauth-troubleshoot.md`
 
-### "Ako updatnúť ClawdBot?"
-1. ✅ Read `~/clawd/data/docs-snippets/update-procedure.md`
+### "Ako updatnúť ClawdBot？"
+1. ✅ 读取 `~/clawd/data/docs-snippets/update-procedure.md`
 
-### "Ako pridať nový skill?" (nie je snippet)
-1. Search index → tools/skills
-2. Fetch: `web_fetch({ url: "https://docs.clawd.bot/tools/skills", extractMode: "markdown" })`
+### "Ako pridať nový skill？"（不是片段）
+1. 搜索索引 → tools/skills
+2. 获取：`web_fetch({ url: "https://docs.clawd.bot/tools/skills", extractMode: "markdown" })`
 
 ### "Multi-agent routing"
-1. Search index → concepts/multi-agent
-2. Fetch: `web_fetch({ url: "https://docs.clawd.bot/concepts/multi-agent", extractMode: "markdown" })`
+1. 搜索索引 → concepts/multi-agent
+2. 获取：`web_fetch({ url: "https://docs.clawd.bot/concepts/multi-agent", extractMode: "markdown" })`
 
 ---
 
-## Fallback: Full Index Refresh
+## 回退：完整索引刷新
 
-If you can't find what you need:
+如果你找不到你需要的东西：
 
 ```javascript
 web_fetch({ url: "https://docs.clawd.bot/llms.txt", extractMode: "markdown" })
 ```
 
-Returns **complete list** of all documentation pages.
+返回所有文档页面的**完整列表**。
 
 ---
 
-## Token Efficiency Guide
+## 令牌效率指南
 
-| Method | Tokens | When to use |
-|--------|--------|-------------|
-| Golden Snippet | ~300-500 | ✅ Always first! |
-| Search Index | 0 | Keyword lookup |
-| Full Page Fetch | ~8-12k | Last resort |
-| Batch Fetch | ~20-30k | Multiple related topics |
+| 方法 | Tokens | 何时使用 |
+|------|--------|----------|
+| 黄金片段 | ~300-500 | ✅ 总是第一步！ |
+| 搜索索引 | 0 | 关键词查找 |
+| 完整页面获取 | ~8-12k | 最后手段 |
+| 批量获取 | ~20-30k | 多个相关主题 |
 
-**80-90% of queries** should be answered from snippets!
+**80-90% 的查询**应该从片段中回答！
 
 ---
 
-## Data Locations
+## 数据位置
 
 ```
 ~/clawd/data/
-├── docs-index.json       # Search index
-├── docs-stats.json       # Usage tracking
-├── docs-snippets/        # Cached Golden Snippets
+├── docs-index.json       # 搜索索引
+├── docs-stats.json       # 使用情况跟踪
+├── docs-snippets/        # 缓存的黄金片段
 │   ├── telegram-setup.md
 │   ├── telegram-allowfrom.md
 │   ├── oauth-troubleshoot.md
 │   ├── update-procedure.md
 │   ├── restart-gateway.md
 │   └── config-basics.md
-└── docs-cache/           # Full page cache (future)
+└── docs-cache/           # 完整页面缓存（未来）
 ```
 
 ---
 
-## Version Info
+## 版本信息
 
-| Item | Value |
+| 项目 | 值 |
 |------|-------|
-| **Skill version** | 2.1.0 |
-| **Created** | 2026-01-14 |
-| **Updated** | 2026-01-26 |
-| **Authors** | Claude Code + Clawd (collaborative) |
-| **Source** | https://docs.clawd.bot/ |
-| **Dependencies** | web_fetch (Clawdbot core tool) |
-| **Index pages** | ~50 core pages |
-| **Golden snippets** | 7 pre-cached |
+| **技能版本** | 2.1.0 |
+| **创建** | 2026-01-14 |
+| **更新** | 2026-01-26 |
+| **作者** | Claude Code + Clawd（协作） |
+| **来源** | https://docs.clawd.bot/ |
+| **依赖** | web_fetch（Clawdbot 核心工具） |
+| **索引页面** | ~50 个核心页面 |
+| **黄金片段** | 7 个预缓存 |
 
 ---
 
-## Changelog
+## 更新日志
 
 ### v2.2.0 (2026-01-26)
-- **Migration to web_fetch** - replaced brightdata MCP with native Clawdbot tool
-- Benefits: FREE ($0), faster (~400ms vs 2-5s)
-- No external dependencies (mcporter no longer required)
-- Collaborative work: Claude Code 🦞 implementation, Clawd 🐾 review
+- **迁移到 web_fetch** - 用原生 Clawdbot 工具替换 brightdata MCP
+- 好处：免费 ($0)，更快（~400ms vs 2-5s）
+- 无外部依赖（不再需要 mcporter）
+- 协作工作：Claude Code 🦞 实现，Clawd 🐾 审核
 
 ### v2.1.3 (2026-01-25) - ClawdHub
-- Documentation fix: check vs refresh clarification
+- 文档修复：检查 vs 刷新澄清
 
 ### v2.0.0 (2026-01-14)
-- 3-layer architecture: Search Index → Snippets → On-demand Fetch
-- Golden Snippets pre-cached for common queries
-- TTL-based freshness tracking
-- Synonym support for fuzzy matching
-- 80-90% token reduction for common queries
+- 3层架构：搜索索引 → 片段 → 按需获取
+- 常见查询的黄金片段预缓存
+- 基于 TTL 的新鲜度跟踪
+- 同义词支持模糊匹配
+- 常见查询减少 80-90% tokens
 
 ### v1.0.0 (2026-01-08)
-- Initial release with brightdata fetch only
+- 初始发布，仅使用 brightdata 获取
 
 ---
 
-*This skill provides smart documentation access - always cached snippets first, fetch only when necessary.*
+*此技能提供智能文档访问 - 总是先缓存片段，仅在必要时获取。*

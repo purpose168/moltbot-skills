@@ -13,7 +13,7 @@ import (
 
 var pagesCmd = &cobra.Command{
 	Use:   "pages",
-	Short: "List pages",
+	Short: "列出页面",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -34,7 +34,7 @@ var pagesCmd = &cobra.Command{
 		}
 
 		if len(resp.Pages) == 0 {
-			println("No pages found")
+			println("未找到页面")
 			return nil
 		}
 
@@ -47,7 +47,7 @@ var pagesCmd = &cobra.Command{
 
 var pageCmd = &cobra.Command{
 	Use:   "page <id|slug>",
-	Short: "Get a single page",
+	Short: "获取单个页面",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -67,12 +67,12 @@ var pageCmd = &cobra.Command{
 		}
 
 		printf("ID:      %s\n", page.ID)
-		printf("Title:   %s\n", page.Title)
-		printf("Slug:    %s\n", page.Slug)
-		printf("Status:  %s\n", page.Status)
-		printf("Created: %s\n", page.CreatedAt)
+		printf("标题:    %s\n", page.Title)
+		printf("别名:    %s\n", page.Slug)
+		printf("状态:    %s\n", page.Status)
+		printf("创建时间: %s\n", page.CreatedAt)
 		if page.PublishedAt != "" {
-			printf("Published: %s\n", page.PublishedAt)
+			printf("发布时间: %s\n", page.PublishedAt)
 		}
 		return nil
 	},
@@ -80,7 +80,7 @@ var pageCmd = &cobra.Command{
 
 var pageCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new page",
+	Short: "创建新页面",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -93,7 +93,7 @@ var pageCreateCmd = &cobra.Command{
 		stdinFormat, _ := cmd.Flags().GetString("stdin-format")
 
 		if title == "" {
-			return fmt.Errorf("--title is required")
+			return fmt.Errorf("--title 是必需的")
 		}
 
 		page := &libecto.Page{
@@ -101,12 +101,12 @@ var pageCreateCmd = &cobra.Command{
 			Status: status,
 		}
 
-		// Read content
+		// 读取内容
 		var content []byte
 		if mdFile != "" {
 			content, err = os.ReadFile(mdFile)
 			if err != nil {
-				return fmt.Errorf("reading markdown file: %w", err)
+				return fmt.Errorf("读取markdown文件: %w", err)
 			}
 		} else if stdinFormat == "markdown" {
 			scanner := bufio.NewScanner(os.Stdin)
@@ -126,14 +126,14 @@ var pageCreateCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Created page: %s (%s)\n", created.ID, created.Slug)
+		printf("已创建页面: %s (%s)\n", created.ID, created.Slug)
 		return nil
 	},
 }
 
 var pageEditCmd = &cobra.Command{
 	Use:   "edit <id|slug>",
-	Short: "Edit a page",
+	Short: "编辑页面",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -159,7 +159,7 @@ var pageEditCmd = &cobra.Command{
 		if mdFile, _ := cmd.Flags().GetString("markdown-file"); mdFile != "" {
 			content, err := os.ReadFile(mdFile)
 			if err != nil {
-				return fmt.Errorf("reading markdown file: %w", err)
+				return fmt.Errorf("读取markdown文件: %w", err)
 			}
 			update.HTML = libecto.MarkdownToHTML(content)
 		}
@@ -169,14 +169,14 @@ var pageEditCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Updated page: %s\n", updated.ID)
+		printf("已更新页面: %s\n", updated.ID)
 		return nil
 	},
 }
 
 var pageDeleteCmd = &cobra.Command{
 	Use:   "delete <id|slug>",
-	Short: "Delete a page",
+	Short: "删除页面",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -192,11 +192,11 @@ var pageDeleteCmd = &cobra.Command{
 		}
 
 		if !force {
-			printf("Delete page %q (%s)? [y/N]: ", page.Title, page.ID)
+			printf("删除页面 %q (%s)? [y/N]: ", page.Title, page.ID)
 			var answer string
 			fmt.Scanln(&answer)
 			if strings.ToLower(answer) != "y" {
-				println("Cancelled")
+				println("已取消")
 				return nil
 			}
 		}
@@ -205,14 +205,14 @@ var pageDeleteCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Deleted page: %s\n", page.ID)
+		printf("已删除页面: %s\n", page.ID)
 		return nil
 	},
 }
 
 var pagePublishCmd = &cobra.Command{
 	Use:   "publish <id|slug>",
-	Short: "Publish a page",
+	Short: "发布页面",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -225,28 +225,28 @@ var pagePublishCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Published page: %s\n", updated.ID)
+		printf("已发布页面: %s\n", updated.ID)
 		return nil
 	},
 }
 
 func init() {
-	pagesCmd.Flags().String("status", "", "Filter by status (draft|published|all)")
-	pagesCmd.Flags().Int("limit", 15, "Number of pages to return")
-	pagesCmd.Flags().Bool("json", false, "Output as JSON")
+	pagesCmd.Flags().String("status", "", "按状态过滤 (draft|published|all)")
+	pagesCmd.Flags().Int("limit", 15, "返回的页面数量")
+	pagesCmd.Flags().Bool("json", false, "以JSON格式输出")
 
-	pageCmd.Flags().Bool("json", false, "Output as JSON")
+	pageCmd.Flags().Bool("json", false, "以JSON格式输出")
 
-	pageCreateCmd.Flags().String("title", "", "Page title (required)")
-	pageCreateCmd.Flags().String("status", "draft", "Page status (draft|published)")
-	pageCreateCmd.Flags().String("markdown-file", "", "Path to markdown file for content")
-	pageCreateCmd.Flags().String("stdin-format", "", "Read content from stdin (markdown)")
+	pageCreateCmd.Flags().String("title", "", "页面标题 (必需)")
+	pageCreateCmd.Flags().String("status", "draft", "页面状态 (draft|published)")
+	pageCreateCmd.Flags().String("markdown-file", "", "内容的markdown文件路径")
+	pageCreateCmd.Flags().String("stdin-format", "", "从stdin读取内容 (markdown)")
 
-	pageEditCmd.Flags().String("title", "", "New title")
-	pageEditCmd.Flags().String("status", "", "New status")
-	pageEditCmd.Flags().String("markdown-file", "", "Path to markdown file for new content")
+	pageEditCmd.Flags().String("title", "", "新标题")
+	pageEditCmd.Flags().String("status", "", "新状态")
+	pageEditCmd.Flags().String("markdown-file", "", "新内容的markdown文件路径")
 
-	pageDeleteCmd.Flags().Bool("force", false, "Delete without confirmation")
+	pageDeleteCmd.Flags().Bool("force", false, "无需确认直接删除")
 
 	pageCmd.AddCommand(pageCreateCmd)
 	pageCmd.AddCommand(pageEditCmd)

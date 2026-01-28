@@ -1,102 +1,109 @@
 ---
 name: adversarial-prompting
-description: Applies rigorous adversarial analysis to generate, critique, fix, and consolidate solutions for any problem (technical or non-technical). Use when facing complex problems requiring thorough analysis, multiple solution approaches, and validation of proposed fixes before implementation.
+description: 应用严格的对抗性分析来生成、批评、修复和整合任何问题（技术或非技术）的解决方案。当面临需要深入分析、多种解决方案方法以及在实施前验证提议修复的复杂问题时使用。
 ---
 
-# Adversarial Prompting
+# 对抗性提示
 
-This skill applies a structured adversarial methodology to problem-solving by generating multiple solutions, rigorously critiquing each for weaknesses, developing fixes, validating those fixes, and consolidating into ranked recommendations. The approach forces deep analysis of failure modes, edge cases, and unintended consequences before committing to a solution.
+此技能通过生成多种解决方案、严格批评每种方案的弱点、开发修复方案、验证这些修复方案并整合为排名推荐，将结构化的对抗性方法应用于问题解决。这种方法在承诺解决方案之前，强制深入分析失败模式、边缘情况和意外后果。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when:
-- Facing complex technical problems requiring thorough analysis (architecture decisions, debugging, performance optimization)
-- Solving strategic or business problems with multiple viable approaches
-- Needing to identify weaknesses in proposed solutions before implementation
-- Requiring validated fixes that address root causes, not symptoms
-- Working on high-stakes decisions where failure modes must be understood
-- Seeking comprehensive analysis with detailed reasoning visible throughout
+在以下情况下使用此技能：
+- 面对需要深入分析的复杂技术问题（架构决策、调试、性能优化）
+- 解决具有多种可行方法的战略或业务问题
+- 需要在实施前识别提议解决方案中的弱点
+- 需要解决根本原因而非症状的经过验证的修复方案
+- 处理必须了解失败模式的高风险决策
+- 寻求全面分析，整个过程中可见详细推理
 
-Do not use this skill for:
-- Simple, straightforward problems with obvious solutions
-- Time-sensitive decisions requiring immediate action without analysis
-- Problems where exploration and iteration are more valuable than upfront analysis
+不要在此情况下使用此技能：
+- 具有明显解决方案的简单、直接问题
+- 需要立即行动而无需分析的时间敏感决策
+- 探索和迭代比前期分析更有价值的问题
 
-## How to Use This Skill
+## 如何使用此技能
 
-### Primary Workflow
+### 主要工作流程
 
-When invoked, apply the following 7-phase process to the user's problem:
+调用时，对用户的问题应用以下7阶段流程：
 
-#### Phase 1: Solution Generation
-Generate 3-7 distinct solution approaches. For each solution:
-- Explain the reasoning behind the approach
-- Describe the core strategy
-- Outline the key steps or components
+#### 阶段1：解决方案生成
 
-#### Phase 2: Adversarial Critique
-For each solution, rigorously identify critical weaknesses. Show thinking while examining:
-- Edge cases and failure modes
-- Security vulnerabilities or risks
-- Performance bottlenecks
-- Scalability limitations
-- Hidden assumptions that could break
-- Resource constraints (time, money, people)
-- Unintended consequences
-- Catastrophic failure scenarios
+生成3-7种不同的解决方案方法。对于每个解决方案：
+- 解释方法背后的推理
+- 描述核心策略
+- 概述关键步骤或组件
 
-Be creative and thorough in identifying what could go wrong.
+#### 阶段2：对抗性批评
 
-#### Phase 3: Fix Development
-For each identified weakness:
-- Propose a specific fix or mitigation strategy
-- Explain why this fix addresses the root cause
-- Describe how the fix integrates with the original solution
+对于每个解决方案，严格识别关键弱点。在检查时展示思考过程：
+- 边缘情况和失败模式
+- 安全漏洞或风险
+- 性能瓶颈
+- 可扩展性限制
+- 可能破裂的隐藏假设
+- 资源约束（时间、金钱、人员）
+- 意外后果
+- 灾难性失败场景
 
-#### Phase 4: Validation Check
-Review each fix to verify it actually solves the weakness:
-- Confirm the fix addresses the root cause
-- Check for new problems introduced by the fix
-- Flag any remaining concerns or trade-offs
+在识别可能出错的地方时要创造性和彻底。
 
-#### Phase 5: Consolidation
-Synthesize all solutions and validated fixes into comprehensive approaches:
-- Integrate complementary elements from different solutions
-- Eliminate redundancies
-- Show how solutions can be combined for stronger approaches
-- Present the final set of viable options
+#### 阶段3：修复开发
 
-#### Phase 6: Summary of Options
-Present all viable options in priority order, ranked by:
-- **Feasibility**: Can this actually be implemented with available resources?
-- **Impact**: How well does this solve the problem?
-- **Risk Level**: What could still go wrong?
-- **Resource Requirements**: Cost in time, money, and effort
+对于每个识别的弱点：
+- 提出具体的修复或缓解策略
+- 解释为什么此修复解决了根本原因
+- 描述修复如何与原始解决方案集成
 
-For each option, provide a one-paragraph summary highlighting key trade-offs.
+#### 阶段4：验证检查
 
-#### Phase 7: Final Recommendation
-State the top recommendation (single option or combination):
-- Clear rationale for why this is the best path
-- Concrete next steps for implementation
-- Key success metrics to track
-- Early warning signs to monitor for problems
+审查每个修复以验证它实际上解决了弱点：
+- 确认修复解决了根本原因
+- 检查修复引入的新问题
+- 标记任何剩余的问题或权衡
 
-### Output Format
+#### 阶段5：整合
 
-Present the complete analysis in three sections:
+将所有解决方案和经过验证的修复合成综合方法：
+- 整合来自不同解决方案的互补元素
+- 消除冗余
+- 展示如何组合解决方案以获得更强的方法
+- 呈现最终的可行选项集
 
-1. **Detailed Walkthrough**: Show all phases (1-5) with full reasoning visible
-2. **Summary of Options**: Ranked list of viable approaches (Phase 6)
-3. **Final Recommendation**: Top choice with implementation guidance (Phase 7)
+#### 阶段6：选项总结
 
-After presenting the analysis, automatically export the complete output to a markdown file using `scripts/export_analysis.py`.
+按优先级顺序呈现所有可行选项，按以下标准排序：
+- **可行性**：是否可以使用可用资源实际实施？
+- **影响**：这能多好地解决问题？
+- **风险级别**：还可能出错什么？
+- **资源需求**：时间、金钱和精力成本
 
-## Implementation Notes
+对于每个选项，提供一段摘要，突出关键权衡。
 
-- Show reasoning throughout the process for transparency
-- Be thorough in adversarial critique—surface uncomfortable truths
-- Validate fixes rigorously to avoid creating new problems
-- Consolidation should create stronger solutions, not just list options
-- Final recommendation should be actionable with clear next steps
-- Export results to markdown for future reference and sharing
+#### 阶段7：最终推荐
+
+陈述最佳推荐（单个选项或组合）：
+- 为什么这是最佳路径的明确理由
+- 实施的具体下一步
+- 要跟踪的关键成功指标
+- 要监控问题的早期预警信号
+
+### 输出格式
+
+在三个部分中呈现完整分析：
+
+1. **详细演练**：显示所有阶段（1-5），完整推理可见
+2. **选项总结**：可行方法的排名列表（阶段6）
+3. **最终推荐**：最佳选择，带有实施指导（阶段7）
+
+呈现分析后，使用 `scripts/export_analysis.py` 自动将完整输出导出到markdown文件。
+
+## 实施注意事项
+
+- 在整个过程中展示推理以提高透明度
+- 在对抗性批评中要彻底——揭示令人不舒服的真相
+- 严格验证修复以避免创建新问题
+- 整合应该创建更强的解决方案，而不仅仅是列出选项
+- 最终推荐应该是可操作的，具有明确的下一步
+- 将结果导出到markdown以便将来参考和分享

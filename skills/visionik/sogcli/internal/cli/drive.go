@@ -10,46 +10,49 @@ import (
 	"github.com/visionik/sogcli/internal/webdav"
 )
 
-// DriveCmd handles file operations.
+// DriveCmd 处理文件操作
 type DriveCmd struct {
-	Ls       DriveListCmd     `cmd:"" aliases:"list" help:"List files and folders"`
-	Get      DriveGetCmd      `cmd:"" aliases:"stat,info" help:"Get file/folder metadata"`
-	Download DriveDownloadCmd `cmd:"" help:"Download a file"`
-	Upload   DriveUploadCmd   `cmd:"" aliases:"put" help:"Upload a file"`
-	Mkdir    DriveMkdirCmd    `cmd:"" help:"Create a directory"`
-	Delete   DriveDeleteCmd   `cmd:"" aliases:"rm,del" help:"Delete a file or directory"`
-	Move     DriveMoveCmd     `cmd:"" aliases:"mv,rename" help:"Move or rename a file"`
-	Copy     DriveCopyCmd     `cmd:"" aliases:"cp" help:"Copy a file"`
-	Cat      DriveCatCmd      `cmd:"" help:"Output file contents to stdout"`
+	Ls       DriveListCmd     `cmd:"" aliases:"list" help:"列出文件和文件夹"`
+	Get      DriveGetCmd      `cmd:"" aliases:"stat,info" help:"获取文件/文件夹元数据"`
+	Download DriveDownloadCmd `cmd:"" help:"下载文件"`
+	Upload   DriveUploadCmd   `cmd:"" aliases:"put" help:"上传文件"`
+	Mkdir    DriveMkdirCmd    `cmd:"" help:"创建目录"`
+	Delete   DriveDeleteCmd   `cmd:"" aliases:"rm,del" help:"删除文件或目录"`
+	Move     DriveMoveCmd     `cmd:"" aliases:"mv,rename" help:"移动或重命名文件"`
+	Copy     DriveCopyCmd     `cmd:"" aliases:"cp" help:"复制文件"`
+	Cat      DriveCatCmd      `cmd:"" help:"将文件内容输出到标准输出"`
 }
 
-// DriveListCmd lists files.
+// DriveListCmd 列出文件
 type DriveListCmd struct {
-	Path string `arg:"" optional:"" default:"/" help:"Remote path to list"`
-	Long bool   `help:"Long format with details" short:"l"`
-	All  bool   `help:"Show hidden files"`
+	Path string `arg:"" optional:"" default:"/" help:"要列出的远程路径"`
+	Long bool   `help:"显示详细信息的长格式" short:"l"`
+	All  bool   `help:"显示隐藏文件"`
 }
 
-// Run executes the drive ls command.
+// Run 执行drive ls命令
 func (c *DriveListCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 列出指定路径的文件
 	ctx := context.Background()
 	files, err := client.List(ctx, c.Path)
 	if err != nil {
-		return fmt.Errorf("failed to list: %w", err)
+		return fmt.Errorf("列出失败: %w", err)
 	}
 
+	// 检查目录是否为空
 	if len(files) == 0 {
-		fmt.Println("Empty directory.")
+		fmt.Println("目录为空。")
 		return nil
 	}
 
-	// Filter hidden files
+	// 过滤隐藏文件
 	if !c.All {
 		var visible []webdav.FileInfo
 		for _, f := range files {
@@ -60,6 +63,7 @@ func (c *DriveListCmd) Run(root *Root) error {
 		files = visible
 	}
 
+	// 根据输出格式返回结果
 	if root.JSON {
 		return outputFilesJSON(files)
 	}
@@ -71,40 +75,44 @@ func (c *DriveListCmd) Run(root *Root) error {
 	return outputFilesShort(files)
 }
 
-// DriveGetCmd gets file metadata (like gog drive get).
+// DriveGetCmd 获取文件元数据
 type DriveGetCmd struct {
-	Path string `arg:"" help:"Path to inspect"`
+	Path string `arg:"" help:"要检查的路径"`
 }
 
-// Run executes the drive get command.
+// Run 执行drive get命令
 func (c *DriveGetCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 获取文件元数据
 	ctx := context.Background()
 	info, err := client.Stat(ctx, c.Path)
 	if err != nil {
-		return fmt.Errorf("failed to get info: %w", err)
+		return fmt.Errorf("获取信息失败: %w", err)
 	}
 
+	// 根据输出格式返回结果
 	if root.JSON {
 		return outputFilesJSON([]webdav.FileInfo{*info})
 	}
 
-	fmt.Printf("Path:     %s\n", info.Path)
-	fmt.Printf("Name:     %s\n", info.Name)
-	fmt.Printf("Type:     %s\n", fileType(info))
+	// 输出文件详细信息
+	fmt.Printf("路径:     %s\n", info.Path)
+	fmt.Printf("名称:     %s\n", info.Name)
+	fmt.Printf("类型:     %s\n", fileType(info))
 	if !info.IsDir {
-		fmt.Printf("Size:     %s (%d bytes)\n", webdav.FormatSize(info.Size), info.Size)
+		fmt.Printf("大小:     %s (%d 字节)\n", webdav.FormatSize(info.Size), info.Size)
 	}
 	if info.ContentType != "" {
 		fmt.Printf("MIME:     %s\n", info.ContentType)
 	}
 	if !info.Modified.IsZero() {
-		fmt.Printf("Modified: %s\n", info.Modified.Format("2006-01-02 15:04:05"))
+		fmt.Printf("修改时间: %s\n", info.Modified.Format("2006-01-02 15:04:05"))
 	}
 	if info.ETag != "" {
 		fmt.Printf("ETag:     %s\n", info.ETag)
@@ -112,223 +120,245 @@ func (c *DriveGetCmd) Run(root *Root) error {
 	return nil
 }
 
-// DriveDownloadCmd downloads a file.
+// DriveDownloadCmd 下载文件
 type DriveDownloadCmd struct {
-	Remote string `arg:"" help:"Remote file path"`
-	Local  string `arg:"" optional:"" help:"Local path (default: current dir with same name)"`
+	Remote string `arg:"" help:"远程文件路径"`
+	Local  string `arg:"" optional:"" help:"本地路径（默认：当前目录，使用相同名称）"`
 }
 
-// Run executes the drive download command.
+// Run 执行drive download命令
 func (c *DriveDownloadCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 确定本地路径
 	local := c.Local
 	if local == "" {
 		local = path.Base(c.Remote)
 	}
 
+	// 下载文件
 	ctx := context.Background()
 	if err := client.Download(ctx, c.Remote, local); err != nil {
-		return fmt.Errorf("failed to download: %w", err)
+		return fmt.Errorf("下载失败: %w", err)
 	}
 
-	fmt.Printf("Downloaded: %s -> %s\n", c.Remote, local)
+	fmt.Printf("下载成功: %s -> %s\n", c.Remote, local)
 	return nil
 }
 
-// DriveUploadCmd uploads a file.
+// DriveUploadCmd 上传文件
 type DriveUploadCmd struct {
-	Local  string `arg:"" help:"Local file path"`
-	Remote string `arg:"" optional:"" help:"Remote path (default: / with same name)"`
+	Local  string `arg:"" help:"本地文件路径"`
+	Remote string `arg:"" optional:"" help:"远程路径（默认：/，使用相同名称）"`
 }
 
-// Run executes the drive upload command.
+// Run 执行drive upload命令
 func (c *DriveUploadCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 确定远程路径
 	remote := c.Remote
 	if remote == "" {
 		remote = "/" + path.Base(c.Local)
 	}
 
+	// 上传文件
 	ctx := context.Background()
 	if err := client.Upload(ctx, c.Local, remote); err != nil {
-		return fmt.Errorf("failed to upload: %w", err)
+		return fmt.Errorf("上传失败: %w", err)
 	}
 
-	fmt.Printf("Uploaded: %s -> %s\n", c.Local, remote)
+	fmt.Printf("上传成功: %s -> %s\n", c.Local, remote)
 	return nil
 }
 
-// DriveMkdirCmd creates a directory.
+// DriveMkdirCmd 创建目录
 type DriveMkdirCmd struct {
-	Path string `arg:"" help:"Directory path to create"`
+	Path string `arg:"" help:"要创建的目录路径"`
 }
 
-// Run executes the drive mkdir command.
+// Run 执行drive mkdir命令
 func (c *DriveMkdirCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 创建目录
 	ctx := context.Background()
 	if err := client.Mkdir(ctx, c.Path); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
+		return fmt.Errorf("创建目录失败: %w", err)
 	}
 
-	fmt.Printf("Created: %s\n", c.Path)
+	fmt.Printf("创建成功: %s\n", c.Path)
 	return nil
 }
 
-// DriveDeleteCmd deletes a file or directory.
+// DriveDeleteCmd 删除文件或目录
 type DriveDeleteCmd struct {
-	Path string `arg:"" help:"Path to delete"`
+	Path string `arg:"" help:"要删除的路径"`
 }
 
-// Run executes the drive delete command.
+// Run 执行drive delete命令
 func (c *DriveDeleteCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 删除文件或目录
 	ctx := context.Background()
 	if err := client.Delete(ctx, c.Path); err != nil {
-		return fmt.Errorf("failed to delete: %w", err)
+		return fmt.Errorf("删除失败: %w", err)
 	}
 
-	fmt.Printf("Deleted: %s\n", c.Path)
+	fmt.Printf("删除成功: %s\n", c.Path)
 	return nil
 }
 
-// DriveMoveCmd moves/renames a file.
+// DriveMoveCmd 移动/重命名文件
 type DriveMoveCmd struct {
-	Src string `arg:"" help:"Source path"`
-	Dst string `arg:"" help:"Destination path"`
+	Src string `arg:"" help:"源路径"`
+	Dst string `arg:"" help:"目标路径"`
 }
 
-// Run executes the drive move command.
+// Run 执行drive move命令
 func (c *DriveMoveCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 移动或重命名文件
 	ctx := context.Background()
 	if err := client.Move(ctx, c.Src, c.Dst); err != nil {
-		return fmt.Errorf("failed to move: %w", err)
+		return fmt.Errorf("移动失败: %w", err)
 	}
 
-	fmt.Printf("Moved: %s -> %s\n", c.Src, c.Dst)
+	fmt.Printf("移动成功: %s -> %s\n", c.Src, c.Dst)
 	return nil
 }
 
-// DriveCopyCmd copies a file.
+// DriveCopyCmd 复制文件
 type DriveCopyCmd struct {
-	Src string `arg:"" help:"Source path"`
-	Dst string `arg:"" help:"Destination path"`
+	Src string `arg:"" help:"源路径"`
+	Dst string `arg:"" help:"目标路径"`
 }
 
-// Run executes the drive copy command.
+// Run 执行drive copy命令
 func (c *DriveCopyCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 复制文件
 	ctx := context.Background()
 	if err := client.Copy(ctx, c.Src, c.Dst); err != nil {
-		return fmt.Errorf("failed to copy: %w", err)
+		return fmt.Errorf("复制失败: %w", err)
 	}
 
-	fmt.Printf("Copied: %s -> %s\n", c.Src, c.Dst)
+	fmt.Printf("复制成功: %s -> %s\n", c.Src, c.Dst)
 	return nil
 }
 
-// DriveCatCmd outputs file contents.
+// DriveCatCmd 输出文件内容
 type DriveCatCmd struct {
-	Path string `arg:"" help:"File path"`
+	Path string `arg:"" help:"文件路径"`
 }
 
-// Run executes the drive cat command.
+// Run 执行drive cat命令
 func (c *DriveCatCmd) Run(root *Root) error {
+	// 获取WebDAV客户端
 	client, err := getWebDAVClient(root)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
+	// 将文件内容输出到标准输出
 	ctx := context.Background()
 	if err := client.DownloadToWriter(ctx, c.Path, os.Stdout); err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
+		return fmt.Errorf("读取文件失败: %w", err)
 	}
 
 	return nil
 }
 
-// getWebDAVClient creates a WebDAV client from config.
+// getWebDAVClient 从配置创建WebDAV客户端
 func getWebDAVClient(root *Root) (*webdav.Client, error) {
+	// 加载配置
 	cfg, err := config.Load()
 	if err != nil {
-		return nil, fmt.Errorf("failed to load config: %w", err)
+		return nil, fmt.Errorf("加载配置失败: %w", err)
 	}
 
+	// 获取账户信息
 	email := root.Account
 	if email == "" {
 		email = cfg.DefaultAccount
 	}
 	if email == "" {
-		return nil, fmt.Errorf("no account specified. Use --account or set a default")
+		return nil, fmt.Errorf("未指定账户。使用 --account 或设置默认账户")
 	}
 
+	// 获取账户配置
 	acct, err := cfg.GetAccount(email)
 	if err != nil {
 		return nil, err
 	}
 
+	// 检查WebDAV URL配置
 	if acct.WebDAV.URL == "" {
-		return nil, fmt.Errorf("no WebDAV URL configured for %s. Run: sog auth add %s --webdav-url <url>", email, email)
+		return nil, fmt.Errorf("%s 未配置WebDAV URL。运行: sog auth add %s --webdav-url <url>", email, email)
 	}
 
+	// 获取WebDAV密码
 	password, err := cfg.GetPasswordForProtocol(email, config.ProtocolWebDAV)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get password: %w", err)
+		return nil, fmt.Errorf("获取密码失败: %w", err)
 	}
 
+	// 连接WebDAV服务器
 	client, err := webdav.Connect(webdav.Config{
 		URL:      acct.WebDAV.URL,
 		Email:    email,
 		Password: password,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to WebDAV: %w", err)
+		return nil, fmt.Errorf("连接WebDAV失败: %w", err)
 	}
 
 	return client, nil
 }
 
-// fileType returns a string describing the file type.
+// fileType 返回描述文件类型的字符串
 func fileType(info *webdav.FileInfo) string {
 	if info.IsDir {
-		return "directory"
+		return "目录"
 	}
-	return "file"
+	return "文件"
 }
 
-// outputFilesJSON outputs files as JSON.
+// outputFilesJSON 以JSON格式输出文件
 func outputFilesJSON(files []webdav.FileInfo) error {
 	for _, f := range files {
 		ftype := "file"
@@ -341,7 +371,7 @@ func outputFilesJSON(files []webdav.FileInfo) error {
 	return nil
 }
 
-// outputFilesShort outputs files in short format.
+// outputFilesShort 以短格式输出文件
 func outputFilesShort(files []webdav.FileInfo) error {
 	for _, f := range files {
 		name := f.Name
@@ -353,7 +383,7 @@ func outputFilesShort(files []webdav.FileInfo) error {
 	return nil
 }
 
-// outputFilesLong outputs files in long format.
+// outputFilesLong 以长格式输出文件
 func outputFilesLong(files []webdav.FileInfo) error {
 	for _, f := range files {
 		ftype := "-"

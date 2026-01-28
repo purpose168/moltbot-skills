@@ -1,6 +1,6 @@
 ---
 name: shared-memory
-description: Share memories and state with other users. Use when user wants to share knowledge, create users/groups, grant permissions, set up family or team sharing, subscribe to memory changes, or manage access control on their memory knowledge base. This shared memory skill uses Ensue - a shared memory network for agents.
+description: 与其他用户共享记忆和状态。当用户想要共享知识、创建用户/组、授予权限、设置家庭或团队共享、订阅记忆更改或管理其记忆知识库的访问控制时使用。此共享内存技能使用 Ensue - 一个适用于代理的共享内存网络。
 metadata:
   clawdbot:
     emoji: "🤝"
@@ -11,81 +11,81 @@ metadata:
     homepage: https://ensue-network.ai
 ---
 
-# Shared Memory
+# 共享内存
 
-Share memories from your knowledge base with other users. Manage users, groups, and fine-grained permissions on namespaces.
+与您的知识库中的其他用户共享记忆。管理用户、组和命名空间的细粒度权限。
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Create user and group
+# 创建用户和组
 {baseDir}/scripts/shared-memory.sh create-user mark
 {baseDir}/scripts/shared-memory.sh create-group family
 {baseDir}/scripts/shared-memory.sh add-member family mark
 
-# Grant access
+# 授予访问权限
 {baseDir}/scripts/shared-memory.sh grant group family read christine/shared/
 {baseDir}/scripts/shared-memory.sh grant group family update christine/shared/
 ```
 
-## Namespace Organization
+## 命名空间组织
 
 ```
-<username>/
-├── private/    # Only this user
-├── shared/     # Shared with others
-└── public/     # Read-only to others
+<用户名>/
+├── private/    # 仅此用户可见
+├── shared/     # 与他人共享
+└── public/     # 对他人只读
 ```
 
-Grant access to `mark/shared/` → all shared content
-Grant access to `mark/shared/recipes/` → just recipes
+授予对 `mark/shared/` 的访问权限 → 所有共享内容
+授予对 `mark/shared/recipes/` 的访问权限 → 仅食谱
 
-## Commands
+## 命令
 
-### Users
-| Command | Description |
+### 用户管理
+| 命令 | 描述 |
 |---------|-------------|
-| `create-user <username>` | Create user |
-| `delete-user <username>` | Delete user |
+| `create-user <用户名>` | 创建用户 |
+| `delete-user <用户名>` | 删除用户 |
 
-### Groups
-| Command | Description |
+### 组管理
+| 命令 | 描述 |
 |---------|-------------|
-| `create-group <name>` | Create group |
-| `delete-group <name>` | Delete group |
-| `add-member <group> <user>` | Add user to group |
-| `remove-member <group> <user>` | Remove user |
+| `create-group <名称>` | 创建组 |
+| `delete-group <名称>` | 删除组 |
+| `add-member <组> <用户>` | 将用户添加到组 |
+| `remove-member <组> <用户>` | 移除用户 |
 
-### Permissions
-| Command | Description |
+### 权限管理
+| 命令 | 描述 |
 |---------|-------------|
-| `grant org <action> <pattern>` | Grant to org |
-| `grant user <name> <action> <pattern>` | Grant to user |
-| `grant group <name> <action> <pattern>` | Grant to group |
-| `revoke <grant_id>` | Revoke permission |
-| `list` | List all grants |
-| `list-permissions` | List effective permissions |
+| `grant org <操作> <模式>` | 授予整个组织 |
+| `grant user <名称> <操作> <模式>` | 授予特定用户 |
+| `grant group <名称> <操作> <模式>` | 授予组 |
+| `revoke <授权ID>` | 撤销权限 |
+| `list` | 列出所有授权 |
+| `list-permissions` | 列出有效权限 |
 
-**Actions**: `read`, `create`, `update`, `delete`
+**操作**: `read`、`create`、`update`、`delete`
 
-### Subscriptions
-| Command | Description |
+### 订阅管理
+| 命令 | 描述 |
 |---------|-------------|
-| `subscribe <key>` | Get notified on changes |
-| `unsubscribe <key>` | Stop notifications |
-| `list-subscriptions` | List subscriptions |
+| `subscribe <键>` | 更改时获得通知 |
+| `unsubscribe <键>` | 停止通知 |
+| `list-subscriptions` | 列出订阅 |
 
-## Example: Family Sharing
+## 示例：家庭共享
 
 ```bash
-# Create user for partner
+# 为伴侣创建用户
 {baseDir}/scripts/shared-memory.sh create-user mark
 
-# Create family group
+# 创建家庭组
 {baseDir}/scripts/shared-memory.sh create-group family
 {baseDir}/scripts/shared-memory.sh add-member family mark
 
-# Grant mutual access to shared/ namespaces
+# 授予对 shared/ 命名空间的相互访问权限
 {baseDir}/scripts/shared-memory.sh grant group family read christine/shared/
 {baseDir}/scripts/shared-memory.sh grant group family create christine/shared/
 {baseDir}/scripts/shared-memory.sh grant group family update christine/shared/
@@ -93,16 +93,16 @@ Grant access to `mark/shared/recipes/` → just recipes
 {baseDir}/scripts/shared-memory.sh grant group family update mark/shared/
 ```
 
-## Troubleshooting
+## 故障排除
 
-If commands fail, first check if an Ensue API key is configured:
+如果命令失败，首先检查是否配置了 Ensue API 密钥：
 
 ```bash
 echo $ENSUE_API_KEY
 grep -A2 'ensue-learning-memory' ~/.clawdbot/clawdbot.json
 ```
 
-If no API key found, tell user to get a free key at https://www.ensue-network.ai/login and configure in `~/.clawdbot/clawdbot.json`:
+如果找不到 API 密钥，告诉用户在 https://www.ensue-network.ai/login 获取免费密钥，并在 `~/.clawdbot/clawdbot.json` 中配置：
 
 ```json
 {
@@ -116,4 +116,4 @@ If no API key found, tell user to get a free key at https://www.ensue-network.ai
 }
 ```
 
-If key exists but commands fail, the key may be invalid - have user generate a new one.
+如果密钥存在但命令失败，密钥可能无效 - 让用户生成一个新的密钥。

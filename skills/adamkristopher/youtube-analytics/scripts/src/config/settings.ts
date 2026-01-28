@@ -1,35 +1,44 @@
 /**
- * Settings Module - Environment configuration for YouTube Data API v3
+ * 设置模块 - YouTube Data API v3 的环境配置
+ * 
+ * 此模块负责从环境变量加载配置
+ * 支持从 .env 文件加载配置，并提供验证功能
  */
 
 import { config } from 'dotenv';
 import { join } from 'path';
 
-// Load .env file from current working directory
+// 从当前工作目录加载 .env 文件
 config();
 
 /**
- * Settings interface for YouTube API configuration
+ * YouTube API 配置接口
  */
 export interface Settings {
-  /** YouTube Data API v3 key */
+  /** YouTube Data API v3 密钥 */
   apiKey: string;
-  /** Default max results for list queries */
+  /** 列表查询的默认最大结果数 */
   defaultMaxResults: number;
-  /** Directory path for storing results */
+  /** 存储结果的目录路径 */
   resultsDir: string;
 }
 
 /**
- * Validation result from validateSettings()
+ * validateSettings() 的验证结果接口
  */
 export interface ValidationResult {
+  /** 是否有效 */
   valid: boolean;
+  /** 错误列表 */
   errors: string[];
 }
 
 /**
- * Get current settings from environment variables
+ * 从环境变量获取当前设置
+ * 
+ * @returns Settings 对象，包含所有配置项
+ * 
+ * 从环境变量读取 YouTube API 配置
  */
 export function getSettings(): Settings {
   return {
@@ -40,14 +49,20 @@ export function getSettings(): Settings {
 }
 
 /**
- * Validate that all required settings are present
+ * 验证所有必需设置是否存在
+ * 
+ * @returns ValidationResult，包含验证结果和任何错误信息
+ * 
+ * 检查必需的环境变量是否已设置
+ * 如果缺少必需的设置，会返回详细的错误列表
  */
 export function validateSettings(): ValidationResult {
   const settings = getSettings();
   const errors: string[] = [];
 
+  // 验证 API 密钥
   if (!settings.apiKey) {
-    errors.push('YOUTUBE_API_KEY is required');
+    errors.push('YOUTUBE_API_KEY 是必需的');
   }
 
   return {

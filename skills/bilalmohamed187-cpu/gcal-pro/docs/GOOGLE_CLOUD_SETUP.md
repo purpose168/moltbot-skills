@@ -1,183 +1,183 @@
-# Google Cloud Project Setup Guide
+# Google Cloud 项目设置指南
 
-## Overview
-This guide walks you through creating a Google Cloud project, enabling the Calendar API, and configuring OAuth 2.0 to get your `client_secret.json` file.
+## 概述
+本指南将引导您完成创建 Google Cloud 项目、启用日历 API 以及配置 OAuth 2.0 以获取 `client_secret.json` 文件的整个过程。
 
-**Time required:** ~15 minutes  
-**Prerequisites:** Google account
-
----
-
-## Step 1: Create Google Cloud Project
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-
-2. Click the project dropdown (top-left, next to "Google Cloud")
-
-3. Click **"New Project"**
-
-4. Enter project details:
-   - **Project name:** `gcal-pro`
-   - **Organization:** Leave as default (or "No organization")
-   
-5. Click **"Create"**
-
-6. Wait ~30 seconds for project creation
-
-7. Make sure `gcal-pro` is selected in the project dropdown
+**预计所需时间：** 约 15 分钟  
+**前置条件：** Google 账户
 
 ---
 
-## Step 2: Enable Google Calendar API
+## 第一步：创建 Google Cloud 项目
 
-1. In the left sidebar, go to **APIs & Services → Library**
-   - Or direct link: https://console.cloud.google.com/apis/library
+1. 访问 [Google Cloud Console](https://console.cloud.google.com/)
 
-2. Search for **"Google Calendar API"**
+2. 点击项目下拉菜单（顶部左侧，"Google Cloud" 旁边）
 
-3. Click on **Google Calendar API**
+3. 点击 **"新建项目"**
 
-4. Click **"Enable"**
+4. 输入项目详情：
+   - **项目名称：** `gcal-pro`
+   - **组织：** 保持默认（或选择"无组织"）
 
-5. Wait for it to enable (~10 seconds)
+5. 点击 **"创建"**
 
----
+6. 等待约 30 秒完成项目创建
 
-## Step 3: Configure OAuth Consent Screen
-
-1. Go to **APIs & Services → OAuth consent screen**
-   - Or direct link: https://console.cloud.google.com/apis/credentials/consent
-
-2. Select **User Type:**
-   - Choose **"External"** (unless you have Google Workspace)
-   - Click **"Create"**
-
-3. Fill in **App Information:**
-   ```
-   App name: gcal-pro
-   User support email: [your email]
-   ```
-
-4. Skip the **App logo** (optional, add later)
-
-5. Fill in **App domain** (all optional for now, skip)
-
-6. Fill in **Developer contact information:**
-   ```
-   Email addresses: [your email]
-   ```
-
-7. Click **"Save and Continue"**
+7. 确保在下拉菜单中选择了 `gcal-pro`
 
 ---
 
-## Step 4: Configure Scopes
+## 第二步：启用 Google Calendar API
 
-1. Click **"Add or Remove Scopes"**
+1. 在左侧边栏中，转到 **API 和服务 → 库**
+   - 或直接访问：https://console.cloud.google.com/apis/library
 
-2. In the filter, search for and select these scopes:
-   ```
-   ✓ .../auth/calendar.readonly     (Free tier - read only)
-   ✓ .../auth/calendar.events       (Pro tier - read/write events)
-   ```
+2. 搜索 **"Google Calendar API"**
 
-3. Click **"Update"**
+3. 点击 **"Google Calendar API"**
 
-4. Click **"Save and Continue"**
+4. 点击 **"启用"**
 
----
-
-## Step 5: Add Test Users
-
-1. Click **"Add Users"**
-
-2. Enter your Gmail address (the one you'll test with)
-
-3. Click **"Add"**
-
-4. Click **"Save and Continue"**
-
-5. Review summary and click **"Back to Dashboard"**
+5. 等待启用完成（约 10 秒）
 
 ---
 
-## Step 6: Create OAuth 2.0 Credentials
+## 第三步：配置 OAuth 同意屏幕
 
-1. Go to **APIs & Services → Credentials**
-   - Or direct link: https://console.cloud.google.com/apis/credentials
+1. 转到 **API 和服务 → OAuth 同意屏幕**
+   - 或直接访问：https://console.cloud.google.com/apis/credentials/consent
 
-2. Click **"+ Create Credentials"** (top of page)
+2. 选择 **用户类型：**
+   - 选择 **"外部"**（除非您有 Google Workspace）
+   - 点击 **"创建"**
 
-3. Select **"OAuth client ID"**
-
-4. Configure the OAuth client:
+3. 填写 **应用信息：**
    ```
-   Application type: Desktop app
-   Name: gcal-pro-desktop
+   应用名称：gcal-pro
+   用户支持邮箱：[您的邮箱]
    ```
 
-5. Click **"Create"**
+4. 跳过 **应用 Logo**（可选，稍后可以添加）
 
-6. A popup appears with your credentials. Click **"Download JSON"**
+5. 填写 **应用域名**（目前全部可选，可跳过）
 
-7. **IMPORTANT:** Save the file as `client_secret.json`
+6. 填写 **开发者联系信息：**
+   ```
+   邮箱地址：[您的邮箱]
+   ```
+
+7. 点击 **"保存并继续"**
 
 ---
 
-## Step 7: Store Credentials Securely
+## 第四步：配置权限范围
 
-Move the downloaded file to the gcal-pro config directory:
+1. 点击 **"添加或删除权限范围"**
 
-**Windows (PowerShell):**
+2. 在筛选器中搜索并选择以下权限范围：
+   ```
+   ✓ .../auth/calendar.readonly     （免费层 - 只读）
+   ✓ .../auth/calendar.events       （专业层 - 读/写事件）
+   ```
+
+3. 点击 **"更新"**
+
+4. 点击 **"保存并继续"**
+
+---
+
+## 第五步：添加测试用户
+
+1. 点击 **"添加用户"**
+
+2. 输入您的 Gmail 地址（您将用于测试的邮箱）
+
+3. 点击 **"添加"**
+
+4. 点击 **"保存并继续"**
+
+5. 查看摘要并点击 **"返回仪表板"**
+
+---
+
+## 第六步：创建 OAuth 2.0 凭据
+
+1. 转到 **API 和服务 → 凭据**
+   - 或直接访问：https://console.cloud.google.com/apis/credentials
+
+2. 点击 **"+ 创建凭据"**（页面顶部）
+
+3. 选择 **"OAuth 客户端 ID"**
+
+4. 配置 OAuth 客户端：
+   ```
+   应用类型：桌面应用
+   名称：gcal-pro-desktop
+   ```
+
+5. 点击 **"创建"**
+
+6. 弹出窗口显示您的凭据。点击 **"下载 JSON"**
+
+7. **重要提示：** 将文件保存为 `client_secret.json`
+
+---
+
+## 第七步：安全存储凭据
+
+将下载的文件移动到 gcal-pro 配置目录：
+
+**Windows (PowerShell)：**
 ```powershell
-# Create config directory
+# 创建配置目录
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\gcal-pro"
 
-# Move the downloaded file (adjust source path as needed)
+# 移动下载的文件（根据需要调整源路径）
 Move-Item "$env:USERPROFILE\Downloads\client_secret*.json" "$env:USERPROFILE\.config\gcal-pro\client_secret.json"
 
-# Verify
+# 验证
 Get-Content "$env:USERPROFILE\.config\gcal-pro\client_secret.json" | Select-Object -First 3
 ```
 
-**macOS/Linux:**
+**macOS/Linux：**
 ```bash
-# Create config directory
+# 创建配置目录
 mkdir -p ~/.config/gcal-pro
 
-# Move the downloaded file
+# 移动下载的文件
 mv ~/Downloads/client_secret*.json ~/.config/gcal-pro/client_secret.json
 
-# Verify
+# 验证
 head -3 ~/.config/gcal-pro/client_secret.json
 ```
 
 ---
 
-## Step 8: Verify Setup
+## 第八步：验证设置
 
-Your config directory should now contain:
+您的配置目录现在应包含：
 ```
 ~/.config/gcal-pro/
-└── client_secret.json    ← OAuth credentials (DO NOT SHARE)
+└── client_secret.json    ← OAuth 凭据（请勿分享）
 ```
 
-After running the auth flow (next step), it will also contain:
+运行身份验证流程后（下一步），还将包含：
 ```
 ~/.config/gcal-pro/
-├── client_secret.json    ← OAuth credentials
-└── token.json            ← User's access/refresh tokens (auto-generated)
+├── client_secret.json    ← OAuth 凭据
+└── token.json            ← 用户的访问/刷新令牌（自动生成）
 ```
 
 ---
 
-## Security Notes
+## 安全注意事项
 
-⚠️ **NEVER commit these files to git:**
-- `client_secret.json` — Your app's credentials
-- `token.json` — User's access tokens
+⚠️ **切勿将这些文件提交到 git：**
+- `client_secret.json` — 您的应用凭据
+- `token.json` — 用户的访问令牌
 
-Add to `.gitignore`:
+添加到 `.gitignore`：
 ```
 client_secret.json
 token.json
@@ -186,22 +186,22 @@ token.json
 
 ---
 
-## Troubleshooting
+## 故障排除
 
-**"Access blocked: This app's request is invalid"**
-- Make sure you added your email as a test user (Step 5)
+**"访问被阻止：此应用的请求无效"**
+- 确保您已将邮箱添加为测试用户（第五步）
 
-**"Error 403: access_denied"**
-- App is in testing mode — only test users can authorize
-- Add the user's email to test users list
+**"错误 403：access_denied"**
+- 应用处于测试模式 — 只有测试用户可以授权
+- 将用户邮箱添加到测试用户列表
 
-**"This app isn't verified"**
-- Expected during development
-- Click "Advanced" → "Go to gcal-pro (unsafe)" to continue
-- We'll submit for verification before public launch
+**"此应用未经验证"**
+- 开发期间属于正常情况
+- 点击"高级"→"转到 gcal-pro（不安全）"以继续
+- 我们将在公开发布前提交验证
 
 ---
 
-## Next Step
+## 下一步
 
-Once you have `client_secret.json` saved, let me know and I'll build the OAuth authentication flow script.
+保存 `client_secret.json` 后，请告诉我，我将为您构建 OAuth 身份验证流程脚本。

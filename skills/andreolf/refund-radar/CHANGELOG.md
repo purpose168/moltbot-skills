@@ -1,30 +1,30 @@
-# Changelog
+# 更新日志
 
-All notable changes to refund-radar will be documented in this file.
+退款雷达的所有重大更改都将记录在此文件中。
 
 ## [1.0.0] - 2026-01-26
 
-### Added
+### 新增
 
-- Initial release
-- CSV parser with auto-detection of delimiter, date format, and amount format
-- Text parser for pasted transaction data
-- Recurring charge detection (frequency, amount similarity, cadence, subscription keywords)
-- Unexpected charge detection:
-  - New merchant (first time + amount > $30)
-  - Amount spike (> 1.8x baseline, delta > $25)
-  - Duplicate (same merchant + amount within 2 days)
-  - Fee-like (ATM, overdraft, service fees > $3)
-  - Currency anomaly (unusual currency or DCC indicator)
-  - Missing refund (disputed charge without reversal in 14 days)
-- Refund template generation (email, chat, bank dispute)
-- Three tone variants (concise, firm, friendly)
-- Interactive HTML report with:
-  - Dark/light mode toggle
-  - Privacy blur toggle
-  - Collapsible sections
-  - Copy-to-clipboard for templates
-  - Auto-hide empty sections
-- Persistent state storage (~/.refund_radar/state.json)
-- CLI commands: analyze, mark-expected, mark-recurring, expected, reset-state, export
-- Local-first, privacy-first: no network calls, no external APIs
+- 首次发布
+- CSV 解析器，自动检测分隔符、日期格式和金额格式
+- 粘贴交易数据的文本解析器
+- 定期收费检测（频率、金额相似度、周期、订阅关键词）
+- 意外收费检测：
+  - 新商户（首次出现 + 金额 > $30）
+  - 金额异常（> 1.8 倍基线，差值 > $25）
+  - 重复（同一商户 + 金额在 2 天内相同）
+  - 费用类（ATM、 overdraft、服务费 > $3）
+  - 货币异常（异常货币或 DCC 指示器）
+  - 缺失退款（争议收费后 14 天内无撤销）
+- 退款模板生成（电子邮件、聊天、银行争议）
+- 三种语气变体（简洁、坚定、友好）
+- 交互式 HTML 报告，包含：
+  - 深色/浅色模式切换
+  - 隐私模糊切换
+  - 可折叠部分
+  - 模板的复制到剪贴板功能
+  - 自动隐藏空部分
+- 持久状态存储（~/.refund_radar/state.json）
+- CLI 命令：analyze、mark-expected、mark-recurring、expected、reset-state、export
+- 本地优先、隐私优先：无网络调用，无外部 API

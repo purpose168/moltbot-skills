@@ -1,39 +1,41 @@
 ---
 name: pymupdf-pdf
-description: Fast local PDF parsing with PyMuPDF (fitz) for Markdown/JSON outputs and optional images/tables. Use when speed matters more than robustness, or as a fallback while heavier parsers are unavailable. Default to single-PDF parsing with per-document output folders.
+description: 使用 PyMuPDF (fitz) 进行快速本地 PDF 解析，支持 Markdown/JSON 输出和可选的图片/表格提取。当速度比稳健性更重要时使用，或作为重型解析器不可用时的后备。默认使用单 PDF 解析，每个文档输出到独立文件夹。
 ---
 
 # PyMuPDF PDF
 
-## Overview
-Parse PDFs locally using PyMuPDF for fast, lightweight extraction into Markdown by default, with optional JSON and image/table outputs in a per-document directory.
+## 概述
 
-## Prereqs / when to read references
-If you hit import errors (PyMuPDF not installed) or Nix `libstdc++` issues, read:
+使用 PyMuPDF 进行本地 PDF 解析，快速、轻量级地提取为 Markdown（默认），可选 JSON 和图片/表格输出到每个文档的独立目录中。
+
+## 前置条件 / 何时阅读参考文档
+
+如果遇到导入错误（未安装 PyMuPDF）或 Nix `libstdc++` 问题，请阅读：
 - `references/pymupdf-notes.md`
 
-## Quick start (single PDF)
+## 快速开始（单 PDF）
 ```bash
-# Run from the skill directory
+# 从技能目录运行
 ./scripts/pymupdf_parse.py /path/to/file.pdf \
   --format md \
   --outroot ./pymupdf-output
 ```
 
-## Options
-- `--format md|json|both` (default: `md`)
-- `--images` to extract images
-- `--tables` to extract a simple line-based table JSON (quick/rough)
-- `--outroot DIR` to change output root
-- `--lang` adds a language hint into JSON output metadata
+## 选项
+- `--format md|json|both`（默认：`md`）
+- `--images` 提取图片
+- `--tables` 提取简单的基于行的表格 JSON（快速/粗糙）
+- `--outroot DIR` 更改输出根目录
+- `--lang` 将语言提示添加到 JSON 输出元数据
 
-## Output conventions
-- Create `./pymupdf-output/<pdf-basename>/` by default.
-- Markdown output: `output.md`
-- JSON output: `output.json` (includes `lang`)
-- Images: `images/` subdir
-- Tables: `tables.json` (rough line-based)
+## 输出约定
+- 默认创建 `./pymupdf-output/<pdf-basename>/`
+- Markdown 输出：`output.md`
+- JSON 输出：`output.json`（包含 `lang`）
+- 图片：`images/` 子目录
+- 表格：`tables.json`（粗糙的基于行）
 
-## Notes
-- PyMuPDF is fast but less robust on complex PDFs.
-- For more robust parsing, use a heavy-duty OCR parser (e.g., MinerU) if installed.
+## 注意事项
+- PyMuPDF 很快，但在复杂 PDF 上不够稳健。
+- 如需更稳健的解析，如果安装了重型 OCR 解析器（如 MinerU），请使用它。

@@ -1,81 +1,81 @@
 ---
 name: pm2
-description: Manage Node.js applications with PM2 process manager. Use for deploying, monitoring, and auto-restarting Node apps in production. Covers starting apps, viewing logs, setting up auto-start on boot, and managing multiple processes.
+description: 使用 PM2 进程管理器管理 Node.js 应用程序。适用于在生产环境中部署、监控和自动重启 Node 应用程序。涵盖启动应用程序、查看日志、设置开机自启动以及管理多个进程。
 ---
 
-# PM2 Process Manager
+# PM2 进程管理器
 
-Production process manager for Node.js with built-in load balancer.
+适用于 Node.js 的生产级进程管理器，内置负载均衡器。
 
-## Install
+## 安装
 
 ```bash
 npm install -g pm2
 ```
 
-## Quick Start
+## 快速入门
 
 ```bash
-# Start an app
+# 启动应用程序
 pm2 start app.js
 pm2 start npm --name "my-app" -- start
 pm2 start "npm run start" --name my-app
 
-# With specific port/env
+# 指定端口/环境变量
 pm2 start npm --name "my-app" -- start -- --port 3000
 PORT=3000 pm2 start npm --name "my-app" -- start
 ```
 
-## Common Commands
+## 常用命令
 
 ```bash
-# List processes
+# 列出进程
 pm2 list
 pm2 ls
 
-# Logs
-pm2 logs              # All logs
-pm2 logs my-app       # Specific app
-pm2 logs --lines 100  # Last 100 lines
+# 查看日志
+pm2 logs              # 所有日志
+pm2 logs my-app       # 指定应用日志
+pm2 logs --lines 100  # 最近 100 行
 
-# Control
+# 控制
 pm2 restart my-app
 pm2 stop my-app
 pm2 delete my-app
-pm2 reload my-app     # Zero-downtime reload
+pm2 reload my-app     # 零停机重载
 
-# Info
+# 信息
 pm2 show my-app
-pm2 monit             # Real-time monitor
+pm2 monit             # 实时监控
 ```
 
-## Auto-Start on Boot
+## 开机自启动
 
 ```bash
-# Save current process list
+# 保存当前进程列表
 pm2 save
 
-# Generate startup script (run the output command with sudo)
+# 生成启动脚本（使用 sudo 运行输出命令）
 pm2 startup
 
-# Example output - run this:
+# 示例输出 - 运行此命令：
 # sudo env PATH=$PATH:/opt/homebrew/bin pm2 startup launchd -u username --hp /Users/username
 ```
 
-## Next.js / Production Builds
+## Next.js / 生产构建
 
 ```bash
-# Build first
+# 首先构建
 npm run build
 
-# Start production server
+# 启动生产服务器
 pm2 start npm --name "my-app" -- start
 
-# Or with ecosystem file
+# 或使用配置文件
 pm2 start ecosystem.config.js
 ```
 
-## Ecosystem File (ecosystem.config.js)
+## 配置文件（ecosystem.config.js）
 
 ```javascript
 module.exports = {
@@ -92,20 +92,20 @@ module.exports = {
 }
 ```
 
-## Useful Flags
+## 常用参数
 
-| Flag | Description |
+| 参数 | 说明 |
 |------|-------------|
-| `--name` | Process name |
-| `--watch` | Restart on file changes |
-| `-i max` | Cluster mode (all CPUs) |
-| `--max-memory-restart 200M` | Auto-restart on memory limit |
-| `--cron "0 * * * *"` | Scheduled restart |
+| `--name` | 进程名称 |
+| `--watch` | 文件变化时重启 |
+| `-i max` | 集群模式（使用所有 CPU） |
+| `--max-memory-restart 200M` | 内存限制时自动重启 |
+| `--cron "0 * * * *"` | 定时重启 |
 
-## Cleanup
+## 清理
 
 ```bash
-pm2 delete all        # Remove all processes
-pm2 kill              # Kill PM2 daemon
-pm2 unstartup         # Remove startup script
+pm2 delete all        # 移除所有进程
+pm2 kill              # 终止 PM2 守护进程
+pm2 unstartup         # 移除启动脚本
 ```

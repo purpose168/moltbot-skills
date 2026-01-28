@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
+# put.io 文件搜索脚本
 set -euo pipefail
 
+# 导入 kaput 工具函数
 source "$(dirname "$0")/_kaput.sh"
 
 QUERY="${1:-}"
 if [[ -z "$QUERY" ]]; then
-  echo "Usage: $0 <query>" >&2
+  echo "用法: $0 <查询词>" >&2
   exit 2
 fi
 

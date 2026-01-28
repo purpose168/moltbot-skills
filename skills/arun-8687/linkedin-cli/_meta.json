@@ -1,7 +1,7 @@
 {
   "owner": "arun-8687",
   "slug": "linkedin-cli",
-  "displayName": "LinkedIn CLI",
+  "displayName": "LinkedIn 命令行工具",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769246341480,

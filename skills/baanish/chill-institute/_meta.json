@@ -1,11 +1,11 @@
 {
   "owner": "baanish",
   "slug": "chill-institute",
-  "displayName": "chill.institute",
+  "displayName": "Chill Institute",
   "latest": {
     "version": "1.0.0",
-    "publishedAt": 1769239161210,
-    "commit": "https://github.com/clawdbot/skills/commit/bdc03a0612b739306128f6707730b728a1f9d013"
+    "publishedAt": 1769239262329,
+    "commit": "https://github.com/clawdbot/skills/commit/9d59fba3a3a8dbf2e93b8c0d2f1a68a4c7b4f3d6"
   },
   "history": []
 }

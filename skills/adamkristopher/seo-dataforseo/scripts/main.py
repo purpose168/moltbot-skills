@@ -1,29 +1,30 @@
 """
-DataForSEO API Toolkit - Main Entry Point
+DataForSEO API 工具包 - 主入口点
 
-Simple interface for keyword research across YouTube, landing pages, and site pages.
-All results are automatically saved to the /results directory with timestamps.
+用于关键词研究的简单接口，涵盖 YouTube、着陆页和网站页面。
+所有结果都会自动保存到 /results 目录，并带有时间戳。
 
-Usage:
+使用示例:
     from main import *
 
-    # Quick keyword research
-    result = keyword_research("python tutorial")
+    # 快速关键词研究
+    result = keyword_research("python 教程")
 
-    # YouTube-specific research
-    result = youtube_keyword_research("video editing tips")
+    # YouTube 特定研究
+    result = youtube_keyword_research("视频编辑技巧")
 
-    # Full analysis for content planning
-    result = full_keyword_analysis(["seo tools", "keyword research"])
+    # 用于内容规划的完整分析
+    result = full_keyword_analysis(["seo 工具", "关键词研究"])
 """
+
 import sys
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-# Add current directory to path for imports
+# 将当前目录添加到导入路径
 sys.path.insert(0, str(Path(__file__).parent))
 
-# Import all API modules
+# 导入所有 API 模块
 from api.keywords_data import (
     get_search_volume,
     get_keywords_for_site,
@@ -61,7 +62,7 @@ from core.storage import list_results, load_result, get_latest_result
 
 
 # ============================================================================
-# HIGH-LEVEL CONVENIENCE FUNCTIONS
+# 高层便捷函数
 # ============================================================================
 
 def keyword_research(
@@ -72,39 +73,39 @@ def keyword_research(
     include_difficulty: bool = True
 ) -> Dict[str, Any]:
     """
-    Comprehensive keyword research for a single keyword.
+    对单个关键词进行综合关键词研究。
 
-    Performs multiple API calls to gather:
-    - Keyword overview (search volume, CPC, competition, search intent)
-    - Keyword suggestions (optional)
-    - Related keywords (optional)
-    - Keyword difficulty (optional)
+    执行多个 API 调用来收集：
+    - 关键词概览（搜索量、CPC、竞争度、搜索意图）
+    - 关键词建议（可选）
+    - 相关关键词（可选）
+    - 关键词难度（可选）
 
-    Args:
-        keyword: The seed keyword to research
-        location_name: Target location (default: United States)
-        include_suggestions: Include keyword suggestions
-        include_related: Include related keywords
-        include_difficulty: Include difficulty score
+    参数:
+        keyword: 要研究的种子关键词
+        location_name: 目标位置（默认：美国）
+        include_suggestions: 包含关键词建议
+        include_related: 包含相关关键词
+        include_difficulty: 包含难度分数
 
-    Returns:
-        Dict with keys: overview, suggestions, related, difficulty
+    返回:
+        包含以下键的字典：overview, suggestions, related, difficulty
 
-    Example:
-        >>> result = keyword_research("python programming")
+    示例:
+        >>> result = keyword_research("python 编程")
     """
-    print(f"\n🔍 Researching keyword: {keyword}")
+    print(f"\n🔍 正在研究关键词: {keyword}")
     results = {}
 
-    # Always get overview
-    print("  → Getting keyword overview...")
+    # 始终获取概览
+    print("  → 获取关键词概览...")
     results["overview"] = get_keyword_overview(
         keywords=[keyword],
         location_name=location_name
     )
 
     if include_suggestions:
-        print("  → Getting keyword suggestions...")
+        print("  → 获取关键词建议...")
         results["suggestions"] = get_keyword_suggestions(
             keyword=keyword,
             location_name=location_name,
@@ -112,7 +113,7 @@ def keyword_research(
         )
 
     if include_related:
-        print("  → Getting related keywords...")
+        print("  → 获取相关关键词...")
         results["related"] = get_related_keywords(
             keyword=keyword,
             location_name=location_name,
@@ -121,13 +122,13 @@ def keyword_research(
         )
 
     if include_difficulty:
-        print("  → Getting keyword difficulty...")
+        print("  → 获取关键词难度...")
         results["difficulty"] = get_bulk_keyword_difficulty(
             keywords=[keyword],
             location_name=location_name
         )
 
-    print(f"✅ Research complete for: {keyword}\n")
+    print(f"✅ {keyword} 的研究完成\n")
     return results
 
 
@@ -138,39 +139,39 @@ def youtube_keyword_research(
     include_trends: bool = True
 ) -> Dict[str, Any]:
     """
-    YouTube-focused keyword research.
+    以 YouTube 为中心的关键词研究。
 
-    Gathers data specifically useful for YouTube content:
-    - Keyword overview with search intent
-    - YouTube SERP results (current rankings)
-    - YouTube trend data
-    - Keyword suggestions
+    收集对 YouTube 内容特别有用的数据：
+    - 带搜索意图的关键词概览
+    - YouTube SERP 结果（当前排名）
+    - YouTube 趋势数据
+    - 关键词建议
 
-    Args:
-        keyword: The keyword to research for YouTube
-        location_name: Target location
-        include_serp: Include current YouTube rankings
-        include_trends: Include YouTube trend data
+    参数:
+        keyword: 要为 YouTube 研究的关键词
+        location_name: 目标位置
+        include_serp: 包含当前 YouTube 排名
+        include_trends: 包含 YouTube 趋势数据
 
-    Returns:
-        Dict with keys: overview, serp, trends, suggestions
+    返回:
+        包含以下键的字典：overview, serp, trends, suggestions
 
-    Example:
-        >>> result = youtube_keyword_research("video editing tutorial")
+    示例:
+        >>> result = youtube_keyword_research("视频编辑教程")
     """
-    print(f"\n🎬 YouTube keyword research: {keyword}")
+    print(f"\n🎬 YouTube 关键词研究: {keyword}")
     results = {}
 
-    # Keyword overview
-    print("  → Getting keyword overview...")
+    # 关键词概览
+    print("  → 获取关键词概览...")
     results["overview"] = get_keyword_overview(
         keywords=[keyword],
         location_name=location_name,
         include_serp_info=True
     )
 
-    # Keyword suggestions
-    print("  → Getting keyword suggestions...")
+    # 关键词建议
+    print("  → 获取关键词建议...")
     results["suggestions"] = get_keyword_suggestions(
         keyword=keyword,
         location_name=location_name,
@@ -178,7 +179,7 @@ def youtube_keyword_research(
     )
 
     if include_serp:
-        print("  → Getting YouTube rankings...")
+        print("  → 获取 YouTube 排名...")
         results["youtube_serp"] = get_youtube_serp(
             keyword=keyword,
             location_name=location_name,
@@ -186,13 +187,13 @@ def youtube_keyword_research(
         )
 
     if include_trends:
-        print("  → Getting YouTube trends...")
+        print("  → 获取 YouTube 趋势...")
         results["youtube_trends"] = get_youtube_trends(
             keywords=[keyword],
             location_name=location_name
         )
 
-    print(f"✅ YouTube research complete for: {keyword}\n")
+    print(f"✅ {keyword} 的 YouTube 研究完成\n")
     return results
 
 
@@ -202,70 +203,70 @@ def landing_page_keyword_research(
     location_name: str = None
 ) -> Dict[str, Any]:
     """
-    Keyword research for landing page optimization.
+    用于着陆页优化的关键词研究。
 
-    Gathers data useful for landing page SEO:
-    - Keyword overview for target keywords
-    - Search intent classification
-    - Keyword difficulty
-    - Google SERP analysis
-    - Competitor keywords (if domain provided)
+    收集对着陆页 SEO 有用的数据：
+    - 目标关键词的关键词概览
+    - 搜索意图分类
+    - 关键词难度
+    - Google SERP 分析
+    - 竞争对手关键词（如果提供了域名）
 
-    Args:
-        keywords: Target keywords for the landing page
-        competitor_domain: Optional competitor domain to analyze
-        location_name: Target location
+    参数:
+        keywords: 着陆页的目标关键词
+        competitor_domain: 可选的竞争对手域名进行分析
+        location_name: 目标位置
 
-    Returns:
-        Dict with comprehensive landing page keyword data
+    返回:
+        包含着陆页关键词综合数据的字典
 
-    Example:
+    示例:
         >>> result = landing_page_keyword_research(
-        ...     ["best crm software", "crm for small business"],
+        ...     ["最佳 crm 软件", "小型企业 crm"],
         ...     competitor_domain="hubspot.com"
         ... )
     """
-    print(f"\n📄 Landing page keyword research: {keywords}")
+    print(f"\n📄 着陆页关键词研究: {keywords}")
     results = {}
 
-    # Keyword overview
-    print("  → Getting keyword overview...")
+    # 关键词概览
+    print("  → 获取关键词概览...")
     results["overview"] = get_keyword_overview(
         keywords=keywords,
         location_name=location_name,
         include_serp_info=True
     )
 
-    # Search intent
-    print("  → Getting search intent...")
+    # 搜索意图
+    print("  → 获取搜索意图...")
     results["search_intent"] = get_search_intent(
         keywords=keywords,
         location_name=location_name
     )
 
-    # Difficulty scores
-    print("  → Getting keyword difficulty...")
+    # 难度分数
+    print("  → 获取关键词难度...")
     results["difficulty"] = get_bulk_keyword_difficulty(
         keywords=keywords,
         location_name=location_name
     )
 
-    # SERP analysis for primary keyword
-    print("  → Getting SERP analysis...")
+    # 主关键词的 SERP 分析
+    print("  → 获取 SERP 分析...")
     results["serp"] = get_google_serp(
         keyword=keywords[0],
         location_name=location_name
     )
 
-    # Competitor analysis
+    # 竞争对手分析
     if competitor_domain:
-        print(f"  → Analyzing competitor: {competitor_domain}...")
+        print(f"  → 分析竞争对手: {competitor_domain}...")
         results["competitor_keywords"] = get_keywords_for_site(
             target_domain=competitor_domain,
             location_name=location_name
         )
 
-    print(f"✅ Landing page research complete\n")
+    print(f"✅ 着陆页研究完成\n")
     return results
 
 
@@ -276,51 +277,51 @@ def full_keyword_analysis(
     include_trends: bool = True
 ) -> Dict[str, Any]:
     """
-    Full keyword analysis for content strategy.
+    用于内容策略的完整关键词分析。
 
-    Comprehensive analysis including:
-    - Keyword overview
-    - Historical search volume trends
-    - Keyword difficulty
-    - Search intent
-    - Keyword ideas (expansion)
-    - Google Trends data
+    综合分析包括：
+    - 关键词概览
+    - 历史搜索量趋势
+    - 关键词难度
+    - 搜索意图
+    - 关键词创意（扩展）
+    - Google Trends 数据
 
-    Args:
-        keywords: Keywords to analyze
-        location_name: Target location
-        include_historical: Include historical search volume
-        include_trends: Include Google Trends data
+    参数:
+        keywords: 要分析的关键词
+        location_name: 目标位置
+        include_historical: 包含历史搜索量
+        include_trends: 包含 Google Trends 数据
 
-    Returns:
-        Dict with comprehensive keyword analysis
+    返回:
+        包含综合关键词分析的字典
 
-    Example:
-        >>> result = full_keyword_analysis(["ai writing tools", "chatgpt alternatives"])
+    示例:
+        >>> result = full_keyword_analysis(["ai 写作工具", "chatgpt 替代品"])
     """
-    print(f"\n📊 Full keyword analysis: {keywords}")
+    print(f"\n📊 完整关键词分析: {keywords}")
     results = {}
 
-    print("  → Getting keyword overview...")
+    print("  → 获取关键词概览...")
     results["overview"] = get_keyword_overview(
         keywords=keywords,
         location_name=location_name,
         include_serp_info=True
     )
 
-    print("  → Getting keyword difficulty...")
+    print("  → 获取关键词难度...")
     results["difficulty"] = get_bulk_keyword_difficulty(
         keywords=keywords,
         location_name=location_name
     )
 
-    print("  → Getting search intent...")
+    print("  → 获取搜索意图...")
     results["search_intent"] = get_search_intent(
         keywords=keywords,
         location_name=location_name
     )
 
-    print("  → Getting keyword ideas...")
+    print("  → 获取关键词创意...")
     results["keyword_ideas"] = get_keyword_ideas(
         keywords=keywords,
         location_name=location_name,
@@ -328,20 +329,20 @@ def full_keyword_analysis(
     )
 
     if include_historical:
-        print("  → Getting historical search volume...")
+        print("  → 获取历史搜索量...")
         results["historical"] = get_historical_search_volume(
             keywords=keywords,
             location_name=location_name
         )
 
     if include_trends:
-        print("  → Getting Google Trends data...")
+        print("  → 获取 Google Trends 数据...")
         results["trends"] = get_trends_explore(
             keywords=keywords[:5],
             location_name=location_name
         )
 
-    print(f"✅ Full analysis complete\n")
+    print(f"✅ 完整分析完成\n")
     return results
 
 
@@ -351,43 +352,43 @@ def competitor_analysis(
     location_name: str = None
 ) -> Dict[str, Any]:
     """
-    Analyze a competitor's keyword strategy.
+    分析竞争对手的关键词策略。
 
-    Args:
-        domain: Competitor domain to analyze
-        keywords: Optional keywords to find competitors for
-        location_name: Target location
+    参数:
+        domain: 要分析的竞争对手域名
+        keywords: 可选的用于查找竞争对手的关键词
+        location_name: 目标位置
 
-    Returns:
-        Dict with competitor analysis data
+    返回:
+        包含竞争对手分析数据的字典
 
-    Example:
-        >>> result = competitor_analysis("competitor.com")
+    示例:
+        >>> result = competitor_analysis("竞争对手.com")
     """
-    print(f"\n🎯 Competitor analysis: {domain}")
+    print(f"\n🎯 竞争对手分析: {domain}")
     results = {}
 
-    print("  → Getting domain keywords...")
+    print("  → 获取域名关键词...")
     results["domain_keywords"] = get_domain_keywords(
         target_domain=domain,
         location_name=location_name,
         limit=100
     )
 
-    print("  → Getting keywords from Google Ads data...")
+    print("  → 从 Google Ads 数据获取关键词...")
     results["ads_keywords"] = get_keywords_for_site(
         target_domain=domain,
         location_name=location_name
     )
 
     if keywords:
-        print("  → Finding other competitors...")
+        print("  → 查找其他竞争对手...")
         results["other_competitors"] = get_competitors(
             keywords=keywords,
             location_name=location_name
         )
 
-    print(f"✅ Competitor analysis complete\n")
+    print(f"✅ 竞争对手分析完成\n")
     return results
 
 
@@ -395,60 +396,60 @@ def trending_topics(
     location_name: str = None
 ) -> Dict[str, Any]:
     """
-    Get currently trending topics and searches.
+    获取当前热门话题和搜索。
 
-    Args:
-        location_name: Target location
+    参数:
+        location_name: 目标位置
 
-    Returns:
-        Dict with trending data
+    返回:
+        包含热门趋势数据的字典
 
-    Example:
+    示例:
         >>> result = trending_topics()
     """
-    print("\n📈 Getting trending topics...")
+    print("\n📈 获取热门话题...")
     result = get_trending_now(location_name=location_name)
-    print("✅ Trending topics retrieved\n")
+    print("✅ 热门话题已获取\n")
     return result
 
 
 # ============================================================================
-# UTILITY FUNCTIONS
+# 工具函数
 # ============================================================================
 
 def get_recent_results(category: str = None, limit: int = 10) -> List[Path]:
     """
-    Get recently saved results.
+    获取最近保存的结果。
 
-    Args:
-        category: Filter by category (keywords_data, labs, serp, trends)
-        limit: Maximum results to return
+    参数:
+        category: 按类别筛选（keywords_data, labs, serp, trends）
+        limit: 返回的最大结果数
 
-    Returns:
-        List of result file paths
+    返回:
+        结果文件路径列表
     """
     return list_results(category=category, limit=limit)
 
 
 def load_latest(category: str, operation: str = None) -> Optional[Dict]:
     """
-    Load the most recent result for a category/operation.
+    加载某个类别/操作的最新结果。
 
-    Args:
-        category: Result category
-        operation: Specific operation (optional)
+    参数:
+        category: 结果类别
+        operation: 特定操作（可选）
 
-    Returns:
-        The loaded result data or None
+    返回:
+        加载的结果数据或 None
     """
     return get_latest_result(category=category, operation=operation)
 
 
 # ============================================================================
-# QUICK ACCESS - Direct API function exports
+# 快速访问 - 直接 API 函数导出
 # ============================================================================
 
-# For direct access to individual API functions, import from respective modules:
+# 要直接访问各个 API 函数，请从相应模块导入：
 # from api.keywords_data import get_search_volume, get_keywords_for_site
 # from api.labs import get_keyword_suggestions, get_bulk_keyword_difficulty
 # from api.serp import get_google_serp, get_youtube_serp
@@ -457,20 +458,20 @@ def load_latest(category: str, operation: str = None) -> Optional[Dict]:
 
 if __name__ == "__main__":
     print("""
-DataForSEO API Toolkit
+DataForSEO API 工具包
 ======================
 
-High-level functions:
-  - keyword_research(keyword)
-  - youtube_keyword_research(keyword)
-  - landing_page_keyword_research(keywords, competitor_domain)
-  - full_keyword_analysis(keywords)
-  - competitor_analysis(domain)
-  - trending_topics()
+高层函数:
+  - keyword_research(keyword)                    # 关键词研究
+  - youtube_keyword_research(keyword)            # YouTube 关键词研究
+  - landing_page_keyword_research(keywords, competitor_domain)  # 着陆页研究
+  - full_keyword_analysis(keywords)              # 完整关键词分析
+  - competitor_analysis(domain)                  # 竞争对手分析
+  - trending_topics()                            # 热门话题
 
-Usage:
+使用说明:
   from main import *
-  result = keyword_research("your keyword here")
+  result = keyword_research("您的关键词")
 
-All results are automatically saved to /results directory.
+所有结果都会自动保存到 /results 目录。
 """)

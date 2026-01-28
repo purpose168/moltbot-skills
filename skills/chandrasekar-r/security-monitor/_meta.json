@@ -1,7 +1,8 @@
 {
   "owner": "chandrasekar-r",
   "slug": "security-monitor",
-  "displayName": "Security Monitor",
+  "displayName": "安全监控",
+  "description": "Clawdbot 实时安全监控。检测入侵、异常 API 调用、凭据使用模式，并在发生违规时发出警报。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769467400470,

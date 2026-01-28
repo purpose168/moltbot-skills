@@ -1,19 +1,19 @@
-# PyMuPDF Notes
+# PyMuPDF 注意事项
 
-- Fast local parsing via PyMuPDF (`fitz`).
-- Less robust than specialized PDF parsers; table extraction is minimal.
-- `page.get_text("markdown")` gives quick Markdown output.
-- `page.get_text("text")` provides plain text for JSON.
-- Image extraction uses `page.get_images(full=True)` and `Pixmap`.
+- 通过 PyMuPDF (`fitz`) 实现快速本地解析。
+- 不如专门的 PDF 解析器稳健；表格提取功能有限。
+- `page.get_text("markdown")` 提供快速的 Markdown 输出。
+- `page.get_text("text")` 提供用于 JSON 的纯文本。
+- 图片提取使用 `page.get_images(full=True)` 和 `Pixmap`。
 
-Install:
+安装：
 ```bash
 pip install pymupdf
 ```
 
-Nix note (if import fails with libstdc++ missing):
+NixOS 说明（如果导入时出现 libstdc++ 缺失错误）：
 ```bash
-# Find a gcc lib path and export it:
+# 找到 gcc 库路径并导出：
 ls /nix/store/*gcc*/lib/libstdc++.so.6 2>/dev/null | head -1
-export LD_LIBRARY_PATH=/nix/store/<your-gcc-lib-hash>-gcc-<version>-lib/lib
+export LD_LIBRARY_PATH=/nix/store/<您的 gcc 库哈希值>-gcc-<版本>-lib/lib
 ```

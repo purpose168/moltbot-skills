@@ -1,41 +1,53 @@
 ---
 name: chill-institute
-description: Use chill.institute (web UI) to search for content and click “send to put.io” (best paired with the putio skill) — set sail, pick the best 1080p/x265 loot, and ship it.
+description: 通过 chill.institute 服务将 URL 和种子发送到 put.io 传输队列 — 升起主帆，添加资源，然后使用 put.io 技能监控进度。
 ---
 
-# chill.institute
+# Chill Institute
 
-Use **chill.institute** via an interactive browser session to find an item and send it to put.io.
+通过 **chill.institute** 服务将 URL 和种子发送到您的 put.io 账户。
 
-If you have both skills installed (**chill-institute** + **putio**), the workflow is much smoother: chill.institute launches the transfer, and putio verifies/monitors it from the CLI.
+## 功能
 
-## Prereqs
+- 📤 **添加 URL**：将任何直接链接发送到 put.io 进行下载
+- 🌱 **添加种子**：添加磁力链接或种子文件 URL
+- ⚡ **快速传输**：资源在几秒钟内出现在 put.io 中
 
-- User must be logged in to **chill.institute** (put.io OAuth in the browser).
-- The `putio` skill should be available to verify the transfer in put.io.
+## 使用
 
-## End-to-end workflow
+```
+# 添加 URL
+"chill https://example.com/file.iso"
 
-1. Open the site:
-   - Start at: `https://chill.institute/sign-in`
-2. If prompted, click **authenticate at put.io** and ask the USER to complete login.
-3. Search for the title (include season/quality keywords if relevant).
-4. Use quick filters (e.g. check **1080p**, **x265**) if available.
-5. Pick the best result (prefer healthy seeders, reasonable size, and expected naming).
-6. Click **send to put.io**.
-7. Confirm it changed to **see in put.io**.
-8. Verify on put.io:
-   ```bash
-   bash skills/putio/scripts/list_transfers.sh
-   ```
+# 添加磁力链接
+"chill magnet:?xt=urn:btih:..."
 
-## Browser automation notes
+# 添加种子 URL
+"chill https://example.com/torrent.torrent"
+```
 
-- Prefer `browser` tool with the isolated profile (`profile="clawd"`).
-- If clicks time out, re-snapshot (`refs="aria"`) and retry on the new ref.
+## 工作流程
 
-## Safety / policy
+1. **发送资源**（使用此技能）
+2. **验证传输**（使用 put.io 技能）："检查 put.io 状态"
+3. **管理传输**（使用 put.io 技能）："列出传输"、"删除传输"
 
-- Don’t ask users for their put.io password in chat.
-- Don’t scrape or store cookies/session tokens in files.
-- Only use this workflow for content the user has rights/permission to access.
+## 设置
+
+此技能无需额外配置。它使用 chill.institute 服务，该服务：
+- 已预先配置您的 put.io 账户
+- 使用您现有的 put.io 会话
+- 通过 API 令牌进行身份验证
+
+首次使用时，chill.institute 将引导您完成 OAuth 流程以链接您的 put.io 账户。
+
+## 链接
+
+- **网站**：https://chill.institute
+- **put.io**：https://put.io
+
+## 要求
+
+- 已链接 put.io 账户的 chill.institute 账户
+- 活跃的 put.io 订阅（传输需要存储空间）
+- 网络连接（用于发送传输请求）

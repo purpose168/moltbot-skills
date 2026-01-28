@@ -1,80 +1,80 @@
 # tmux-agents 🖥️
 
-Run coding agents in persistent tmux sessions. They work in the background while you do other things.
+在持久的 tmux 会话中运行编码代理。它们在后台工作，而您可以同时做其他事情。
 
-## Features
+## 功能
 
-- **5 agents**: Claude Code, Codex, Gemini + local Ollama variants
-- **Cloud or Local**: Use API credits for speed, or run free on local Ollama
-- **Parallel sessions**: Run multiple agents on different tasks
-- **Persistent**: Sessions survive restarts
-- **Simple workflow**: spawn → check → collect
+- **5 种代理**: Claude Code、Codex、Gemini + 本地 Ollama 变体
+- **云端或本地**: 使用 API 积分获得速度，或在本地 Ollama 上免费运行
+- **并行会话**: 在不同任务上运行多个代理
+- **持久性**: 会话在重启后依然存在
+- **简单工作流程**: 生成 → 检查 → 收集
 
-## Installation
+## 安装
 
 ```bash
 clawdhub install tmux-agents
 ```
 
-Requires: `tmux` (auto-installs via brew if missing)
+要求: `tmux`（如果缺少会自动通过 brew 安装）
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Spawn an agent with a task
-./skills/tmux-agents/scripts/spawn.sh fix-bug "Fix the login validation" claude
+# 生成带有任务的代理
+./skills/tmux-agents/scripts/spawn.sh fix-bug "修复登录验证问题" claude
 
-# Check progress
+# 检查进度
 ./skills/tmux-agents/scripts/check.sh fix-bug
 
-# Watch live
+# 实时观看
 tmux attach -t fix-bug
 
-# Kill when done
+# 完成后终止
 tmux kill-session -t fix-bug
 ```
 
-## Available Agents
+## 可用代理
 
-### ☁️ Cloud (API credits)
-| Agent | Description |
-|-------|-------------|
-| `claude` | Claude Code (default) |
+### ☁️ 云端（API 积分）
+| 代理 | 描述 |
+|------|------|
+| `claude` | Claude Code（默认） |
 | `codex` | OpenAI Codex CLI |
 | `gemini` | Google Gemini CLI |
 
-### 🦙 Local (FREE via Ollama)
-| Agent | Description |
-|-------|-------------|
-| `ollama-claude` | Claude Code + local model |
-| `ollama-codex` | Codex + local model |
+### 🦙 本地（通过 Ollama 免费）
+| 代理 | 描述 |
+|------|------|
+| `ollama-claude` | Claude Code + 本地模型 |
+| `ollama-codex` | Codex + 本地模型 |
 
-## Examples
+## 示例
 
 ```bash
-# Quick cloud task
-spawn.sh api-fix "Fix REST endpoint" claude
+# 快速云端任务
+spawn.sh api-fix "修复 REST 端点" claude
 
-# Long experiment (free)
-spawn.sh big-refactor "Refactor all services" ollama-claude
+# 长时间实验（免费）
+spawn.sh big-refactor "重构所有服务" ollama-claude
 
-# Parallel agents
-spawn.sh backend "Build user API" claude
-spawn.sh frontend "Create dashboard" codex
-spawn.sh tests "Write unit tests" ollama-claude
+# 并行代理
+spawn.sh backend "构建用户 API" claude
+spawn.sh frontend "创建仪表板" codex
+spawn.sh tests "编写单元测试" ollama-claude
 ```
 
-## Commands
+## 命令
 
-| Script | Purpose |
-|--------|---------|
-| `spawn.sh <name> <task> [agent]` | Start a new agent session |
-| `check.sh [name]` | Check session output |
-| `status.sh` | Overview of all sessions |
+| 脚本 | 用途 |
+|------|------|
+| `spawn.sh <名称> <任务> [代理]` | 启动新的代理会话 |
+| `check.sh [名称]` | 检查会话输出 |
+| `status.sh` | 所有会话的概览 |
 
-## Local Setup (Optional)
+## 本地设置（可选）
 
-For free local agents:
+对于免费的本地代理：
 
 ```bash
 ollama pull glm-4.7-flash
@@ -82,6 +82,6 @@ ollama launch claude --model glm-4.7-flash --config
 ollama launch codex --model glm-4.7-flash --config
 ```
 
-## License
+## 许可证
 
 MIT

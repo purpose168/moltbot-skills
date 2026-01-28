@@ -1,75 +1,75 @@
 ---
 name: security-monitor
-description: Real-time security monitoring for Clawdbot. Detects intrusions, unusual API calls, credential usage patterns, and alerts on breaches.
+description: Clawdbot 实时安全监控。检测入侵、异常 API 调用、凭据使用模式，并在发生违规时发出警报。
 ---
 
-# Security Monitor Skill
+# 安全监控技能 (Security Monitor Skill)
 
-## When to use
+## 使用场景
 
-Run continuous security monitoring to detect breaches, intrusions, and unusual activity on your Clawdbot deployment.
+运行持续的安全监控，以检测 Clawdbot 部署上的违规行为、入侵和异常活动。
 
-## Setup
+## 初始设置
 
-No external dependencies required. Runs as a background process.
+无需外部依赖。作为后台进程运行。
 
-## How to
+## 使用方法
 
-### Start real-time monitoring
+### 启动实时监控
 
 ```bash
 node skills/security-monitor/scripts/monitor.cjs --interval 60
 ```
 
-### Run in daemon mode (background)
+### 在守护进程模式下运行（后台）
 
 ```bash
 node skills/security-monitor/scripts/monitor.cjs --daemon --interval 60
 ```
 
-### Monitor for specific threats
+### 监控特定威胁
 
 ```bash
 node skills/security-monitor/scripts/monitor.cjs --threats=credentials,ports,api-calls
 ```
 
-## What It Monitors
+## 监控内容
 
-| Threat | Detection | Response |
-|--------|-----------|----------|
-| **Brute force attacks** | Failed login detection | Alert + IP tracking |
-| **Port scanning** | Rapid connection attempts | Alert |
-| **Process anomalies** | Unexpected processes | Alert |
-| **File changes** | Unauthorized modifications | Alert |
-| **Container health** | Docker issues | Alert |
+| 威胁 | 检测方式 | 响应措施 |
+|------|----------|----------|
+| **暴力破解攻击** | 失败登录检测 | 警报 + IP 追踪 |
+| **端口扫描** | 快速连接尝试 | 警报 |
+| **进程异常** | 意外进程 | 警报 |
+| **文件变更** | 未授权修改 | 警报 |
+| **容器健康** | Docker 问题 | 警报 |
 
-## Output
+## 输出方式
 
-- Console output (stdout)
-- JSON logs at `/root/clawd/clawdbot-security/logs/alerts.log`
-- Telegram alerts (configurable)
+- 控制台输出（stdout）
+- JSON 日志位于 `/root/clawd/clawdbot-security/logs/alerts.log`
+- Telegram 警报（可配置）
 
-## Daemon Mode
+## 守护进程模式
 
-Use systemd or PM2 to keep monitoring active:
+使用 systemd 或 PM2 保持监控活跃：
 
 ```bash
-# With PM2
+# 使用 PM2
 pm2 start monitor.cjs --name "clawdbot-security" -- --daemon --interval 60
 ```
 
-## Combined with Security Audit
+## 与安全审计配合使用
 
-Run audit first, then monitor continuously:
+先运行审计，然后持续监控：
 
 ```bash
-# One-time audit
+# 一次性审计
 node skills/security-audit/scripts/audit.cjs --full
 
-# Continuous monitoring
+# 持续监控
 node skills/security-monitor/scripts/monitor.cjs --daemon
 ```
 
-## Related skills
+## 相关技能
 
-- `security-audit` - One-time security scan (install separately)
+- `security-audit` - 一次性安全扫描（单独安装）

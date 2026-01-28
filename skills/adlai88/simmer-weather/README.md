@@ -1,128 +1,128 @@
-# Simmer Weather Trading Skill
+# Simmer 天气交易技能
 
-Trade Polymarket weather markets using NOAA forecasts. Inspired by [gopfan2's $2M+ weather trading strategy](https://twitter.com/gopfan2).
+使用 NOAA 天气预报交易 Polymarket 天气市场。灵感来自 [gopfan2 的 200 万美元天气交易策略](https://twitter.com/gopfan2)。
 
-## How It Works
+## 工作原理
 
-1. Fetches active weather markets from Simmer (tagged with "weather")
-2. Gets NOAA forecasts for the relevant dates
-3. Finds markets where the forecast matches a low-priced bucket
-4. Buys when price < 15¢ (gopfan2's threshold)
+1. 从 Simmer 获取活跃的天气市场（标记为 "weather"）
+2. 获取相关日期的 NOAA 天气预报
+3. 查找天气预报与低价区间匹配的市场
+4. 当价格 < 15¢ 时买入（gopfan2 的阈值）
 
-## Setup
+## 设置
 
-### 1. Install Clawdbot
+### 1. 安装 Clawdbot
 
-Follow the [Clawdbot installation guide](https://docs.clawd.bot/getting-started).
+按照 [Clawdbot 安装指南](https://docs.clawd.bot/getting-started) 进行操作。
 
-### 2. Get Your Simmer API Key
+### 2. 获取您的 Simmer API 密钥
 
-1. Go to [simmer.markets/dashboard](https://simmer.markets/dashboard)
-2. Click the **SDK** tab
-3. Create an API key
-4. Copy the key (starts with `sk_`)
+1. 访问 [simmer.markets/dashboard](https://simmer.markets/dashboard)
+2. 点击 **SDK** 选项卡
+3. 创建 API 密钥
+4. 复制密钥（以 `sk_` 开头）
 
-### 3. Install This Skill
+### 3. 安装此技能
 
-Copy this folder to your Clawdbot skills directory:
+将此文件夹复制到您的 Clawdbot 技能目录：
 
 ```bash
 cp -r simmer-weather ~/.clawdbot/skills/
 ```
 
-### 4. Set Your API Key
+### 4. 设置您的 API 密钥
 
-Add to your environment (e.g., `~/.bashrc` or `~/.zshrc`):
+添加到您的环境变量（例如 `~/.bashrc` 或 `~/.zshrc`）：
 
 ```bash
 export SIMMER_API_KEY="sk_your_key_here"
 ```
 
-Or tell Clawdbot to set it via chat.
+或者通过聊天告诉 Clawdbot 设置它。
 
-## Usage
+## 使用方法
 
-### Via Clawdbot Chat
+### 通过 Clawdbot 聊天
 
 ```
-You: Run my weather skill
-Clawd: 🌤️ Running weather scan...
-       [Results]
+你：运行我的天气技能
+Clawd：🌤️ 正在运行天气扫描...
+       [结果]
 
-You: Check my weather positions
-Clawd: [Shows current positions]
+你：检查我的天气持仓
+Clawd：[显示当前持仓]
 ```
 
-### Manual CLI
+### 手动 CLI
 
 ```bash
-# Run trading scan
+# 运行交易扫描
 python ~/.clawdbot/skills/simmer-weather/weather_trader.py
 
-# Dry run (show opportunities without trading)
+# 模拟运行（显示机会但不交易）
 python ~/.clawdbot/skills/simmer-weather/weather_trader.py --dry-run
 
-# Show positions only
+# 仅显示持仓
 python ~/.clawdbot/skills/simmer-weather/weather_trader.py --positions
 ```
 
-### Cron Schedule
+### Cron 定时任务
 
-The skill runs every 2 hours by default when configured in Clawdbot.
+在 Clawdbot 中配置后，此技能默认每 2 小时运行一次。
 
-To set up manually:
+手动设置：
 ```bash
-# Add to crontab (crontab -e)
+# 添加到 crontab（crontab -e）
 0 */2 * * * SIMMER_API_KEY="sk_your_key" python ~/.clawdbot/skills/simmer-weather/weather_trader.py >> ~/.clawdbot/logs/weather.log 2>&1
 ```
 
-## Configuration
+## 配置
 
-Edit `weather_trader.py` to customize:
+编辑 `weather_trader.py` 进行自定义：
 
 ```python
-# Strategy parameters
-ENTRY_THRESHOLD = 0.15  # Buy when price < 15¢
-EXIT_THRESHOLD = 0.45   # Sell when price > 45¢
-MAX_POSITION_USD = 2.00 # Max $2 per trade
+# 策略参数
+ENTRY_THRESHOLD = 0.15  # 当价格 < 15¢ 时买入
+EXIT_THRESHOLD = 0.45   # 当价格 > 45¢ 时卖出
+MAX_POSITION_USD = 2.00 # 每次交易最多 $2
 
-# Locations to trade (minimal version)
-ACTIVE_LOCATIONS = ["NYC"]  # Add "Chicago", "Miami", etc.
+# 交易位置（最小版本）
+ACTIVE_LOCATIONS = ["NYC"]  # 添加 "Chicago", "Miami" 等
 ```
 
-## Strategy Details
+## 策略详情
 
-Based on gopfan2's approach:
+基于 gopfan2 的方法：
 
-- **Entry**: Buy YES when price < 15¢ AND NOAA forecast matches the bucket
-- **Exit**: Sell when price > 45¢
-- **Risk**: Max $2 per position to limit exposure
+- **入场**：当价格 < 15¢ 且 NOAA 预报匹配区间时买入 YES
+- **出场**：当价格 > 45¢ 时卖出
+- **风险**：每笔持仓最多 $2 以限制敞口
 
-Weather markets on Polymarket resolve using official airport temperature readings (LaGuardia for NYC, O'Hare for Chicago, etc.). NOAA forecasts are generally accurate 1-3 days out.
+Polymarket 上的天气市场使用官方机场温度数据解析（纽约使用拉瓜迪亚机场，芝加哥使用奥黑尔机场等）。NOAA 预报在 1-3 天内通常比较准确。
 
-## Troubleshooting
+## 故障排除
 
-### "No weather markets found"
-Weather markets are seasonal. Check [simmer.markets](https://simmer.markets) to see if any are active.
+### "未找到天气市场"
+天气市场具有季节性。访问 [simmer.markets](https://simmer.markets) 查看是否有活跃的市场。
 
-### "API key invalid"
-Make sure `SIMMER_API_KEY` is set in your environment:
+### "API 密钥无效"
+确保 `SIMMER_API_KEY` 已设置在您的环境中：
 ```bash
 echo $SIMMER_API_KEY
 ```
 
-### "NOAA request failed"
-The NOAA API occasionally rate-limits or has outages. Wait a few minutes and try again.
+### "NOAA 请求失败"
+NOAA API 偶尔会限速或出现故障。等待几分钟后再试。
 
-### "Trade failed: Real trading not enabled"
-You need to enable real trading in your Simmer dashboard:
-1. Go to simmer.markets/dashboard → SDK tab
-2. Enable "Real Trading"
-3. Create and fund a Polymarket wallet
+### "交易失败：未启用真实交易"
+您需要在 Simmer 仪表板中启用真实交易：
+1. 访问 simmer.markets/dashboard → SDK 选项卡
+2. 启用"真实交易"
+3. 创建并资助 Polymarket 钱包
 
-## Links
+## 链接
 
 - [Simmer Markets](https://simmer.markets)
 - [Clawdbot](https://clawd.bot)
-- [gopfan2's Strategy](https://twitter.com/gopfan2)
-- [NOAA Weather API](https://www.weather.gov/documentation/services-web-api)
+- [gopfan2 的策略](https://twitter.com/gopfan2)
+- [NOAA 天气 API](https://www.weather.gov/documentation/services-web-api)

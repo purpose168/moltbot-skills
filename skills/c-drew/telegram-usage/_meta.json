@@ -1,7 +1,8 @@
 {
   "owner": "c-drew",
   "slug": "telegram-usage",
-  "displayName": "Telegram Usage Stats",
+  "displayName": "Telegram 使用统计",
+  "description": "在 Telegram 中显示会话使用统计信息（配额、会话时间、令牌、上下文窗口）",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1769306847924,

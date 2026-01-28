@@ -1,7 +1,8 @@
 {
   "owner": "christinetyip",
   "slug": "second-brain",
-  "displayName": "Second Brain: Turn conversations into lasting knowledge",
+  "displayName": "第二大脑",
+  "description": "基于 Ensue 的个人知识库，用于捕获和检索理解。将对话转化为持久知识。",
   "latest": {
     "version": "0.1.0",
     "publishedAt": 1768239999250,

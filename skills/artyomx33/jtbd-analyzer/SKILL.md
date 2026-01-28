@@ -1,62 +1,62 @@
 ---
 name: jtbd-analyzer
-description: Uncover the real "job" customers hire your product to do. Goes beyond features to understand functional, emotional, and social motivations. Use when user says "jobs to be done", "jtbd", "why do customers", "what job", "customer motivation", "what problem", "user needs", "why do people buy".
+description: 揭示客户雇用你的产品要完成的真正"工作"。超越功能，理解功能、情感和社会动机。当用户说"jobs to be done"、"jtbd"、"客户为什么"、"什么工作"、"客户动机"、"什么问题"、"用户需求"、"人们为什么买"时使用。
 ---
 
-# Jobs-To-Be-Done Analyzer
+# 待完成工作分析器
 
-## The Core Concept
+## 核心概念
 
-Customers don't buy products. They HIRE products to do a job.
+客户不买产品。他们**雇用**产品来完成工作。
 
-"People don't want a quarter-inch drill. They want a quarter-inch hole."
-Actually: They want a shelf → to display photos → to feel proud of family.
+"人们不想要四分之一英寸的钻头。他们想要四分之一英寸的洞。"
+实际上：他们想要架子 → 展示照片 → 为家庭感到骄傲。
 
-## The Three Job Dimensions
+## 三个工作维度
 
-| Dimension | Question | Format |
-|-----------|----------|--------|
-| **Functional** | What task needs doing? | "Help me [verb] [object]" |
-| **Emotional** | How do I want to feel? | "Make me feel [emotion]" |
-| **Social** | How do I want to be seen? | "Help me be seen as [quality]" |
+| 维度 | 问题 | 格式 |
+|------|------|------|
+| **功能** | 什么任务需要做？ | "帮助我[动词][对象]" |
+| **情感** | 我想如何感觉？ | "让我感觉[情绪]" |
+| **社会** | 我希望如何被看待？ | "帮助我被视为[品质]" |
 
-## The Process
+## 工作流程
 
-1. **Job Statement:** "When [situation], I want to [motivation], so I can [outcome]"
-2. **Map all 3 dimensions** for each user type
-3. **Find real competition:** What ELSE could do this job?
-4. **Prioritize:** Which jobs are most critical and underserved?
+1. **工作陈述：** "当[情况]，我想要[动机]，所以我可以[结果]"
+2. **映射所有3个维度** 每个用户类型
+3. **找到真正的竞争：** 什么** else** 可以做这个工作？
+4. **优先：** 哪些工作最关键且最未被满足？
 
-## Output Format
+## 输出格式
 
 ```
-PRODUCT: [What you're analyzing]
+产品：[你在分析什么]
 
-For [User Type]:
-JOB: "When [situation], I want [motivation], so I can [outcome]"
+对于 [用户类型]：
+工作："当[情况]，我想要[动机]，所以我可以[结果]"
 
-📋 FUNCTIONAL: [Task to accomplish]
-💜 EMOTIONAL: [Feeling desired]
-👥 SOCIAL: [Perception desired]
+📋 功能：[要完成的任务]
+💜 情感：[想要的感受]
+👥 社会：[想要的感知]
 
-ALTERNATIVES: [What else could do this job?]
-UNDERSERVED: [What part isn't done well?]
-PRIORITY: Critical / Important / Nice-to-have
+替代方案：[什么 else 可以做这个工作？]
+未被满足：[什么部分做得不好？]
+优先级：关键 / 重要 / 锦上添花
 ```
 
-## Key Questions
+## 关键问题
 
-1. "What were you trying to accomplish when you [action]?"
-2. "Walk me through the last time you needed to [job]"
-3. "What would you do if [product] didn't exist?"
-4. "What's frustrating about how you currently [job]?"
+1. "当你[行动]时，你试图完成什么？"
+2. "上次你需要[工作]时，带我走过整个过程。"
+3. "如果[产品]不存在，你会做什么？"
+4. "你对目前如何[工作]感到沮丧的是什么？"
 
-## Integration
+## 组合使用
 
-Compounds with:
-- **first-principles-decomposer** → Decompose job to atomic need
-- **cross-pollination-engine** → Find how others solve similar jobs
-- **app-planning-skill** → Use JTBD to inform features
+与以下技能协同增效：
+- **first-principles-decomposer** - 将工作分解为原子需求
+- **cross-pollination-engine** - 找到其他人如何解决类似工作
+- **app-planning-skill** - 使用 JTBD 通知功能
 
 ---
-See references/examples.md for Artem-specific JTBD analyses
+查看 references/examples.md 获取 Artem 特定的 JTBD 分析

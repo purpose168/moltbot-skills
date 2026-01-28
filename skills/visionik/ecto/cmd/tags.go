@@ -11,7 +11,7 @@ import (
 
 var tagsCmd = &cobra.Command{
 	Use:   "tags",
-	Short: "List tags",
+	Short: "列出标签",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -31,7 +31,7 @@ var tagsCmd = &cobra.Command{
 		}
 
 		if len(resp.Tags) == 0 {
-			println("No tags found")
+			println("未找到标签")
 			return nil
 		}
 
@@ -44,7 +44,7 @@ var tagsCmd = &cobra.Command{
 
 var tagCmd = &cobra.Command{
 	Use:   "tag <id|slug>",
-	Short: "Get or manage a tag",
+	Short: "获取或管理标签",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -64,16 +64,16 @@ var tagCmd = &cobra.Command{
 		}
 
 		printf("ID:          %s\n", tag.ID)
-		printf("Name:        %s\n", tag.Name)
-		printf("Slug:        %s\n", tag.Slug)
-		printf("Description: %s\n", tag.Description)
+		printf("名称:        %s\n", tag.Name)
+		printf("别名:        %s\n", tag.Slug)
+		printf("描述:        %s\n", tag.Description)
 		return nil
 	},
 }
 
 var tagCreateCmd = &cobra.Command{
 	Use:   "create <name>",
-	Short: "Create a new tag",
+	Short: "创建新标签",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -95,14 +95,14 @@ var tagCreateCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Created tag: %s (%s)\n", created.ID, created.Slug)
+		printf("已创建标签: %s (%s)\n", created.ID, created.Slug)
 		return nil
 	},
 }
 
 var tagEditCmd = &cobra.Command{
 	Use:   "edit <id|slug>",
-	Short: "Edit a tag",
+	Short: "编辑标签",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -129,14 +129,14 @@ var tagEditCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Updated tag: %s\n", updated.ID)
+		printf("已更新标签: %s\n", updated.ID)
 		return nil
 	},
 }
 
 var tagDeleteCmd = &cobra.Command{
 	Use:   "delete <id|slug>",
-	Short: "Delete a tag",
+	Short: "删除标签",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -152,11 +152,11 @@ var tagDeleteCmd = &cobra.Command{
 		}
 
 		if !force {
-			printf("Delete tag %q (%s)? [y/N]: ", tag.Name, tag.ID)
+			printf("删除标签 %q (%s)? [y/N]: ", tag.Name, tag.ID)
 			var answer string
 			fmt.Scanln(&answer)
 			if strings.ToLower(answer) != "y" {
-				println("Cancelled")
+				println("已取消")
 				return nil
 			}
 		}
@@ -165,24 +165,24 @@ var tagDeleteCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Deleted tag: %s\n", tag.ID)
+		printf("已删除标签: %s\n", tag.ID)
 		return nil
 	},
 }
 
 func init() {
-	tagsCmd.Flags().Int("limit", 15, "Number of tags to return")
-	tagsCmd.Flags().Bool("json", false, "Output as JSON")
+	tagsCmd.Flags().Int("limit", 15, "返回的标签数量")
+	tagsCmd.Flags().Bool("json", false, "以JSON格式输出")
 
-	tagCmd.Flags().Bool("json", false, "Output as JSON")
+	tagCmd.Flags().Bool("json", false, "以JSON格式输出")
 
-	tagCreateCmd.Flags().String("slug", "", "Tag slug")
-	tagCreateCmd.Flags().String("description", "", "Tag description")
+	tagCreateCmd.Flags().String("slug", "", "标签别名")
+	tagCreateCmd.Flags().String("description", "", "标签描述")
 
-	tagEditCmd.Flags().String("name", "", "New name")
-	tagEditCmd.Flags().String("description", "", "New description")
+	tagEditCmd.Flags().String("name", "", "新名称")
+	tagEditCmd.Flags().String("description", "", "新描述")
 
-	tagDeleteCmd.Flags().Bool("force", false, "Delete without confirmation")
+	tagDeleteCmd.Flags().Bool("force", false, "无需确认直接删除")
 
 	tagCmd.AddCommand(tagCreateCmd)
 	tagCmd.AddCommand(tagEditCmd)

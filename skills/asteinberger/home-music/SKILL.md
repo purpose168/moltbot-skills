@@ -1,8 +1,8 @@
 ---
 name: home-music
-description: Control whole-house music scenes combining Spotify playback with Airfoil speaker routing. Quick presets for morning, party, chill modes.
+description: 控制全屋音乐场景，结合 Spotify 播放和 Airfoil 扬声器路由。提供早晨、派对、放松模式的快速预设。
 homepage: local
-metadata: {"clawdbot":{"emoji":"🏠","os":["darwin"]}}
+metadata: {"clawdbot":{"os":["darwin"]}}
 triggers:
   - music scene
   - morning music
@@ -15,232 +15,232 @@ triggers:
 ```
     ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫
     
-    🏠  H O M E   M U S I C  🎵
+    H O M E   M U S I C
     
     ╔══════════════════════════════════════════╗
-    ║   Whole-House Music Scenes               ║
-    ║   One command. All speakers. Perfect.    ║
+    ║   全屋音乐场景                            ║
+    ║   一个命令。所有扬声器。完美。            ║
     ╚══════════════════════════════════════════╝
     
     ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫ ♪ ♫
 ```
 
-> *"Why click 17 times when one command does the job?"* – Owen 🐸
+> *"为什么要点击 17 次，一个命令就能搞定？"* – Owen
 
 ---
 
-## 🎯 What Does This Skill Do?
+## 此技能功能介绍
 
-**Home Music** combines Spotify + Airfoil into magical music scenes. One command – and the right playlist plays on the right speakers at the perfect volume.
+**Home Music** 将 Spotify + Airfoil 组合成神奇的音乐场景。一个命令 – 正确的播放列表在正确的扬声器上以完美的音量播放。
 
-**Imagine:**
-- You wake up → `home-music morning` → Gentle tunes in the bathroom
-- Friends arrive → `home-music party` → All speakers blasting rock
-- Time to relax → `home-music chill` → Lounge vibes everywhere
-- Done for the day → `home-music off` → Silence. Peace. Serenity.
+**想象一下：**
+- 你醒来 -> `home-music morning` -> 浴室里播放轻柔的音乐
+- 朋友到来 -> `home-music party` -> 所有扬声器播放摇滚
+- 该放松了 -> `home-music chill` -> 到处是休闲氛围
+- 一天结束 -> `home-music off` -> 安静、平和、宁静
 
 ---
 
-## 📋 Dependencies
+## 依赖项
 
-| What | Why | Link |
+| 所需项 | 用途 | 链接 |
 |------|-----|------|
-| 🍏 **macOS** | This skill uses AppleScript | — |
-| 🟢 **Spotify Desktop App** | The music source! Must be running. | [spotify.com](https://spotify.com) |
-| 📡 **Airfoil** | Routes audio to AirPlay speakers | [rogueamoeba.com](https://rogueamoeba.com/airfoil/) |
-| 🎵 **spotify-applescript** | Clawdbot skill for Spotify control | `skills/spotify-applescript/` |
+| **macOS** | 此技能使用 AppleScript | — |
+| **Spotify 桌面应用** | 音乐来源！必须运行。 | [spotify.com](https://spotify.com) |
+| **Airfoil** | 将音频路由到 AirPlay 扬声器 | [rogueamoeba.com](https://rogueamoeba.com/airfoil/) |
+| **spotify-applescript** | Clawdbot Spotify 控制技能 | `skills/spotify-applescript/` |
 
-> ⚠️ **Important:** Both Spotify and Airfoil must be running before you start any scenes!
+> **重要提示：** 在启动任何场景之前，Spotify 和 Airfoil 必须正在运行！
 
 ---
 
-## 🎬 Scenes
+## 场景
 
-### 🌅 Morning
-*A gentle start to your day*
+### 早晨
+*一天的温柔开始*
 
 ```bash
 home-music morning
 ```
-- **Speaker:** Sonos Move
-- **Volume:** 40%
-- **Playlist:** Morning Playlist
-- **Vibe:** ☕ Coffee + good vibes
+- **扬声器：** Sonos Move
+- **音量：** 40%
+- **播放列表：** Morning Playlist
+- **氛围：** 咖啡 + 好心情
 
 ---
 
-### 🎉 Party
-*Time to celebrate!*
+### 派对
+*是时候庆祝了！*
 
 ```bash
 home-music party
 ```
-- **Speaker:** ALL (Computer, MacBook, Sonos Move, Living Room TV)
-- **Volume:** 70%
-- **Playlist:** Rock Party Mix
-- **Vibe:** 🤘 Neighbors hate this one trick
+- **扬声器：** 全部（计算机、MacBook、Sonos Move、客厅电视）
+- **音量：** 70%
+- **播放列表：** Rock Party Mix
+- **氛围：** 邻居们讨厌这个
 
 ---
 
-### 😌 Chill
-*Pure relaxation*
+### 放松
+*纯粹放松*
 
 ```bash
 home-music chill
 ```
-- **Speaker:** Sonos Move
-- **Volume:** 30%
-- **Playlist:** Chill Lounge
-- **Vibe:** 🧘 Om...
+- **扬声器：** Sonos Move
+- **音量：** 30%
+- **播放列表：** Chill Lounge
+- **氛围：** 嗯...
 
 ---
 
-### 🔇 Off
-*Silence*
+### 关闭
+*安静*
 
 ```bash
 home-music off
 ```
-- Pauses Spotify
-- Disconnects all speakers
-- **Vibe:** 🤫 Finally, peace and quiet
+- 暂停 Spotify
+- 断开所有扬声器连接
+- **氛围：** 终于，平静与安宁
 
 ---
 
-### 📊 Status
-*What's playing right now?*
+### 状态
+*现在正在播放什么？*
 
 ```bash
 home-music status
 ```
 
-Shows:
-- Current Spotify track
-- Connected speakers
+显示：
+- 当前 Spotify 曲目
+- 已连接的扬声器
 
 ---
 
-## 🔧 Installation
+## 安装
 
 ```bash
-# Make the script executable
+# 使脚本可执行
 chmod +x ~/clawd/skills/home-music/home-music.sh
 
-# Symlink for global access
+# 创建全局访问符号链接
 sudo ln -sf ~/clawd/skills/home-music/home-music.sh /usr/local/bin/home-music
 ```
 
-Now `home-music` works from anywhere in your terminal! 🎉
+现在 `home-music` 可以在终端的任何地方使用！
 
 ---
 
-## 🎨 Custom Playlists & Scenes
+## 自定义播放列表和场景
 
-### Changing Playlists
+### 更改播放列表
 
-Open `home-music.sh` and find the playlist configuration:
+打开 `home-music.sh` 并找到播放列表配置：
 
 ```bash
-# === PLAYLIST CONFIGURATION ===
+# === 播放列表配置 ===
 PLAYLIST_MORNING="spotify:playlist:19n65kQ5NEKgkvSAla5IF6"
 PLAYLIST_PARTY="spotify:playlist:37i9dQZF1DXaXB8fQg7xif"
 PLAYLIST_CHILL="spotify:playlist:37i9dQZF1DWTwnEm1IYyoj"
 ```
 
-**How to find Playlist URIs:**
-1. Right-click on a playlist in Spotify
-2. "Share" → "Copy Spotify URI"
-3. Or copy the URL and extract the `/playlist/` part
+**如何查找播放列表 URI：**
+1. 在 Spotify 中右键点击播放列表
+2. "分享" -> "复制 Spotify URI"
+3. 或复制 URL 并提取 `/playlist/` 部分
 
-### Adding a New Scene
+### 添加新场景
 
-Add a new case in the `main` block:
+在 `main` 代码块中添加新的 case：
 
 ```bash
-# In home-music.sh after the "scene_chill" function:
+# 在 home-music.sh 中的 "scene_chill" 函数之后：
 
 scene_workout() {
-    echo "💪 Starting Workout scene..."
+    echo "启动运动场景..."
     airfoil_set_source_spotify
     airfoil_connect "Sonos Move"
     sleep 0.5
     airfoil_volume "Sonos Move" 0.8
     "$SPOTIFY_CMD" play "spotify:playlist:YOUR_WORKOUT_PLAYLIST"
     "$SPOTIFY_CMD" volume 100
-    echo "✅ Workout: Sonos Move @ 80%, Pump it up!"
+    echo "运动：Sonos Move @ 80%，锻炼起来！"
 }
 
-# And in the case block:
+# 在 case 代码块中：
     workout)
         scene_workout
         ;;
 ```
 
-### Available Speakers
+### 可用扬声器
 
 ```bash
 ALL_SPEAKERS=("Computer" "Andy's M5 Macbook" "Sonos Move" "Living Room TV")
 ```
 
-You can add any AirPlay speaker – they just need to be visible in Airfoil.
+你可以添加任何 AirPlay 扬声器 – 只要它们在 Airfoil 中可见即可。
 
 ---
 
-## 🐛 Troubleshooting
+## 故障排除
 
-### ❌ "Speaker won't connect"
+### "扬声器无法连接"
 
-**Check 1:** Is Airfoil running?
+**检查 1：** Airfoil 是否在运行？
 ```bash
-pgrep -x Airfoil || echo "Airfoil is not running!"
+pgrep -x Airfoil || echo "Airfoil 未运行！"
 ```
 
-**Check 2:** Is the speaker on the network?
-- Open the Airfoil app
-- Check if the speaker appears in the list
-- Try connecting manually
+**检查 2：** 扬声器是否在网络上？
+- 打开 Airfoil 应用
+- 检查扬声器是否出现在列表中
+- 尝试手动连接
 
-**Check 3:** Is the name exactly correct?
-- Speaker names are case-sensitive!
-- Open Airfoil and copy the exact name
+**检查 3：** 名称是否完全正确？
+- 扬声器名称区分大小写！
+- 打开 Airfoil 并复制精确名称
 
 ---
 
-### ❌ "No sound"
+### "没有声音"
 
-**Check 1:** Is Spotify playing?
+**检查 1：** Spotify 是否正在播放？
 ```bash
 ~/clawd/skills/spotify-applescript/spotify.sh status
 ```
 
-**Check 2:** Is the Airfoil source correct?
-- Open Airfoil
-- Check if "Spotify" is selected as the audio source
-- If not: Click "Source" → Select Spotify
+**检查 2：** Airfoil 音频源是否正确？
+- 打开 Airfoil
+- 检查是否选择了 "Spotify" 作为音频源
+- 如果没有：点击"源" -> 选择 Spotify
 
-**Check 3:** Speaker volume?
+**检查 3：** 扬声器音量？
 ```bash
-# Manually check volume
+# 手动检查音量
 osascript -e 'tell application "Airfoil" to get volume of (first speaker whose name is "Sonos Move")'
 ```
 
 ---
 
-### ❌ "Spotify won't start"
+### "Spotify 无法启动"
 
-**Is Spotify open?**
+**Spotify 是否打开？**
 ```bash
 pgrep -x Spotify || open -a Spotify
 ```
 
-**Is spotify-applescript installed?**
+**spotify-applescript 是否已安装？**
 ```bash
 ls ~/clawd/skills/spotify-applescript/spotify.sh
 ```
 
 ---
 
-### ❌ "Permission denied"
+### "权限被拒绝"
 
 ```bash
 chmod +x ~/clawd/skills/home-music/home-music.sh
@@ -248,24 +248,24 @@ chmod +x ~/clawd/skills/home-music/home-music.sh
 
 ---
 
-## 🔊 Direct Airfoil Commands
+## 直接 Airfoil 命令
 
-If you want to control Airfoil manually:
+如果你想手动控制 Airfoil：
 
 ```bash
-# Connect a speaker
+# 连接扬声器
 osascript -e 'tell application "Airfoil" to connect to (first speaker whose name is "Sonos Move")'
 
-# Set speaker volume (0.0 - 1.0)
+# 设置扬声器音量（0.0 - 1.0）
 osascript -e 'tell application "Airfoil" to set (volume of (first speaker whose name is "Sonos Move")) to 0.5'
 
-# Disconnect a speaker
+# 断开扬声器
 osascript -e 'tell application "Airfoil" to disconnect from (first speaker whose name is "Sonos Move")'
 
-# List connected speakers
+# 列出已连接的扬声器
 osascript -e 'tell application "Airfoil" to get name of every speaker whose connected is true'
 
-# Set audio source
+# 设置音频源
 osascript -e 'tell application "Airfoil"
     set theSource to (first application source whose name contains "Spotify")
     set current audio source to theSource
@@ -274,19 +274,19 @@ end tell'
 
 ---
 
-## 📁 Files
+## 文件结构
 
 ```
 skills/home-music/
-├── SKILL.md        # This documentation
-└── home-music.sh   # The main script
+├── SKILL.md        # 此文档
+└── home-music.sh   # 主脚本
 ```
 
 ---
 
-## 💡 Pro Tips
+## 专业提示
 
-1. **Set aliases** for even faster access:
+1. **设置别名**以更快地访问：
    ```bash
    alias mm="home-music morning"
    alias mp="home-music party"
@@ -294,32 +294,32 @@ skills/home-music/
    alias mo="home-music off"
    ```
 
-2. **Use with Clawdbot:**
-   > "Hey, start party mode"
-   > "Put on some chill music"
-   > "Stop the music"
+2. **与 Clawdbot 结合使用：**
+   > "嘿，启动派对模式"
+   > "播放一些放松的音乐"
+   > "停止音乐"
 
-3. **Combine scenes:** Create a `dinner` scene with a jazz playlist at 25% – perfect for guests!
+3. **组合场景：** 创建带有爵士乐播放列表的 `dinner` 场景，音量 25% – 非常适合客人！
 
 ---
 
-## 🐸 Credits
+## 致谢
 
 ```
 ╭─────────────────────────────────────────────╮
 │                                             │
-│   Crafted with 💚 by Owen the Frog 🐸      │
+│   用 由 Owen the Frog 精心制作              │
 │                                             │
-│   "Ribbit. Music makes everything better."  │
+│   "Ribbit。音乐让一切变得更好。"             │
 │                                             │
 ╰─────────────────────────────────────────────╯
 ```
 
-**Author:** Andy Steinberger (with help from his Clawdbot Owen the Frog 🐸)  
-**Version:** 1.0.0  
-**License:** MIT  
-**Pond:** The one with the water lilies 🪷
+**作者：** Andy Steinberger（由他的 Clawdbot 青蛙助手 Owen 协助）  
+**版本：** 1.0.0  
+**许可证：** MIT  
+**池塘：** 那个有睡莲的水塘
 
 ---
 
-*Did this skill improve your life? Owen appreciates flies. 🪰*
+*这个技能改善了你的生活吗？Owen 感谢苍蝇。*

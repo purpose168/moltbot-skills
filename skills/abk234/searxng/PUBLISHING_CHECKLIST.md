@@ -1,111 +1,111 @@
-# ClawdHub Publishing Checklist
+# ClawdHub 发布清单
 
-## ✅ Pre-Publication Checklist
+## ✅ 发布前清单
 
-### Required Files
-- [x] `SKILL.md` - Skill definition with metadata
-- [x] `README.md` - Comprehensive documentation
-- [x] `LICENSE` - MIT License
-- [x] `CHANGELOG.md` - Version history
-- [x] `scripts/searxng.py` - Main implementation
-- [x] `.clawdhub/metadata.json` - ClawdHub metadata
+### 必需文件
+- [x] `SKILL.md` - 带元数据的技能定义
+- [x] `README.md` - 全面的文档
+- [x] `LICENSE` - MIT许可证
+- [x] `CHANGELOG.md` - 版本历史
+- [x] `scripts/searxng.py` - 主要实现
+- [x] `.clawdhub/metadata.json` - ClawdHub元数据
 
-### SKILL.md Requirements
-- [x] `name` field
-- [x] `description` field
-- [x] `author` field
-- [x] `version` field
-- [x] `homepage` field
-- [x] `triggers` keywords (optional but recommended)
-- [x] `metadata` with emoji and requirements
+### SKILL.md 要求
+- [x] `name` 字段
+- [x] `description` 字段
+- [x] `author` 字段
+- [x] `version` 字段
+- [x] `homepage` 字段
+- [x] `triggers` 关键词（可选但推荐）
+- [x] `metadata` 带emoji和要求
 
-### Code Quality
-- [x] Script executes successfully
-- [x] Error handling implemented
-- [x] Dependencies documented (inline PEP 723)
-- [x] Help text / usage instructions
-- [x] Clean, readable code
+### 代码质量
+- [x] 脚本成功执行
+- [x] 已实现错误处理
+- [x] 依赖项已记录（内联PEP 723）
+- [x] 帮助文本/使用说明
+- [x] 简洁、可读的代码
 
-### Documentation
-- [x] Clear description of what it does
-- [x] Prerequisites listed
-- [x] Installation instructions
-- [x] Usage examples (CLI + conversational)
-- [x] Configuration options
-- [x] Troubleshooting section
-- [x] Feature list
+### 文档
+- [x] 清晰的功能描述
+- [x] 列出了先决条件
+- [x] 安装说明
+- [x] 使用示例（CLI + 对话式）
+- [x] 配置选项
+- [x] 故障排除部分
+- [x] 特性列表
 
-### Testing
-- [x] Tested with target system (SearXNG)
-- [x] Basic search works
-- [x] Category search works
-- [x] JSON output works
-- [x] Error cases handled gracefully
-- [ ] Tested on different SearXNG instances (optional)
-- [ ] Tested with authenticated SearXNG (optional)
+### 测试
+- [x] 在目标系统（SearXNG）上测试
+- [x] 基本搜索工作
+- [x] 类别搜索工作
+- [x] JSON输出工作
+- [x] 错误情况优雅处理
+- [ ] 在不同SearXNG实例上测试（可选）
+- [x] 测试经过身份验证的SearXNG（可选）
 
-### Metadata
-- [x] Version number follows semver
-- [x] Author attribution
-- [x] License specified
-- [x] Tags/keywords for discovery
-- [x] Prerequisites documented
+### 元数据
+- [x] 版本号遵循语义化版本控制
+- [x] 作者署名
+- [x] 指定许可证
+- [x] 用于发现的标签/关键词
+- [x] 记录的先决条件
 
-## ⚠️ Optional Improvements
+## ⚠️ 可选改进
 
-### Nice to Have (not blocking)
-- [ ] CI/CD for automated testing
-- [ ] Multiple example configurations
-- [ ] Screenshot/demo GIF
-- [ ] Video demonstration
-- [ ] Integration tests
-- [ ] Authentication support (for private instances)
-- [ ] Config file support (beyond env vars)
-- [ ] Auto-discovery of local SearXNG instances
+### 有则更好（不阻塞发布）
+- [ ] CI/CD用于自动化测试
+- [ ] 多种示例配置
+- [ ] 截图/演示GIF
+- [ ] 视频演示
+- [ ] 集成测试
+- [ ] 身份验证支持（用于私有实例）
+- [ ] 配置文件支持（超出环境变量）
+- [ ] 自动发现本地SearXNG实例
 
-### Future Enhancements
-- [ ] Result caching
-- [ ] Search history
-- [ ] Favorite searches
-- [ ] Custom result templates
-- [ ] Export results to various formats
-- [ ] Integration with other Clawdbot skills
+### 未来增强
+- [ ] 结果缓存
+- [ ] 搜索历史
+- [ ] 收藏搜索
+- [ ] 自定义结果模板
+- [ ] 导出结果为各种格式
+- [ ] 与其他Clawdbot技能集成
 
-## 🚀 Publishing Steps
+## 🚀 发布步骤
 
-1. **Review all files** - Make sure everything is polished
-2. **Test one more time** - Fresh installation test
-3. **Version bump if needed** - Update SKILL.md, metadata.json, CHANGELOG.md
-4. **Git commit** - Clean commit message
-5. **Submit to ClawdHub** - Follow ClawdHub submission process
-6. **Monitor feedback** - Be ready to address issues
+1. **审查所有文件** - 确保一切完善
+2. **再测试一次** - 全新安装测试
+3. **如有需要则版本升级** - 更新SKILL.md、metadata.json、CHANGELOG.md
+4. **Git提交** - 清晰的提交消息
+5. **提交到ClawdHub** - 遵循ClawdHub提交流程
+6. **监控反馈** - 准备好解决问题
 
-## 📝 Current Status
+## 📝 当前状态
 
-**Ready for publication:** ✅ YES
+**准备好发布：** ✅ 是
 
-**Confidence level:** High
+**置信度：** 高
 
-**Known limitations:**
-- Requires a running SearXNG instance (clearly documented)
-- SSL verification disabled for self-signed certs (by design)
-- No authentication support yet (acceptable for v1.0.0)
+**已知限制：**
+- 需要正在运行的SearXNG实例（已明确记录）
+- SSL验证禁用自签名证书（按设计）
+- 尚不支持身份验证（v1.0.0可接受）
 
-**Recommended for:** Users who:
-- Value privacy
-- Run their own SearXNG instance
-- Want to avoid commercial search APIs
-- Need local/offline search capability
+**推荐用于：** 用户：
+- 重视隐私
+- 运行自己的SearXNG实例
+- 想要避免商业搜索API
+- 需要本地/离线搜索功能
 
-## 🎯 Next Steps
+## 🎯 下一步
 
-1. **Publish to ClawdHub** - Skill is ready!
-2. **Gather user feedback** - Real-world usage
-3. **Plan v1.1.0** - Authentication support, more features
-4. **Community contributions** - Accept PRs for improvements
+1. **发布到ClawdHub** - 技能已就绪！
+2. **收集用户反馈** - 真实使用情况
+3. **计划v1.1.0** - 身份验证支持、更多功能
+4. **社区贡献** - 接受PR以进行改进
 
 ---
 
-**Assessment:** This skill is publication-ready! 🎉
+**评估：** 此技能已准备好发布！🎉
 
-All critical requirements are met, documentation is excellent, and the code works reliably.
+所有关键要求都已满足，文档非常优秀，代码可靠运行。

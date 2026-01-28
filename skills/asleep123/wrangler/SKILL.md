@@ -1,175 +1,175 @@
 ---
 name: cloudflare
-description: Manage Cloudflare Workers, KV, D1, R2, and secrets using the Wrangler CLI. Use when deploying workers, managing databases, storing objects, or configuring Cloudflare resources. Covers worker deployment, KV namespaces, D1 SQL databases, R2 object storage, secrets management, and tailing logs.
+description: 使用 Wrangler CLI 管理 Cloudflare Workers、KV、D1、R2 和密钥。使用场景包括：部署 Worker、管理数据库、存储对象或配置 Cloudflare 资源。涵盖 Worker 部署、KV 命名空间、D1 SQL 数据库、R2 对象存储、密钥管理和日志实时查看。
 ---
 
 # Cloudflare (Wrangler CLI)
 
-Manage Cloudflare Workers and associated services via the `wrangler` CLI.
+通过 `wrangler` CLI 管理 Cloudflare Workers 及相关服务。
 
-## Prerequisites
+## 前置条件
 
-- Node.js v20+ required
-- Install: `npm install -g wrangler` or use project-local `npx wrangler`
-- Auth: `wrangler login` (opens browser for OAuth)
-- Verify: `wrangler whoami`
+- 需要 Node.js v20+
+- 安装方式：`npm install -g wrangler` 或使用项目本地版本 `npx wrangler`
+- 身份验证：`wrangler login`（打开浏览器进行 OAuth 认证）
+- 验证：`wrangler whoami`
 
-## Quick Reference
+## 快速参考
 
 ### Workers
 
 ```bash
-# Initialize new worker
-wrangler init <name>
+# 初始化新的 Worker
+wrangler init <名称>
 
-# Local development
-wrangler dev [script]
+# 本地开发
+wrangler dev [脚本]
 
-# Deploy
-wrangler deploy [script]
+# 部署
+wrangler deploy [脚本]
 
-# List deployments
+# 列出部署记录
 wrangler deployments list
 
-# View deployment
-wrangler deployments view [deployment-id]
+# 查看部署详情
+wrangler deployments view [部署ID]
 
-# Rollback
-wrangler rollback [version-id]
+# 回滚
+wrangler rollback [版本ID]
 
-# Delete worker
-wrangler delete [name]
+# 删除 Worker
+wrangler delete [名称]
 
-# Tail logs (live)
-wrangler tail [worker]
+# 实时查看日志
+wrangler tail [Worker名称]
 ```
 
-### Secrets
+### 密钥管理
 
 ```bash
-# Add/update secret (interactive)
-wrangler secret put <key>
+# 添加/更新密钥（交互式）
+wrangler secret put <密钥名>
 
-# Add secret from stdin
-echo "value" | wrangler secret put <key>
+# 从标准输入添加密钥
+echo "值" | wrangler secret put <密钥名>
 
-# List secrets
+# 列出所有密钥
 wrangler secret list
 
-# Delete secret
-wrangler secret delete <key>
+# 删除密钥
+wrangler secret delete <密钥名>
 
-# Bulk upload from JSON file
+# 从 JSON 文件批量上传密钥
 wrangler secret bulk secrets.json
 ```
 
-### KV (Key-Value Store)
+### KV（键值存储）
 
 ```bash
-# Create namespace
-wrangler kv namespace create <name>
+# 创建命名空间
+wrangler kv namespace create <名称>
 
-# List namespaces
+# 列出命名空间
 wrangler kv namespace list
 
-# Delete namespace
-wrangler kv namespace delete --namespace-id <id>
+# 删除命名空间
+wrangler kv namespace delete --namespace-id <ID>
 
-# Put key
-wrangler kv key put <key> <value> --namespace-id <id>
+# 写入键值
+wrangler kv key put <键> <值> --namespace-id <ID>
 
-# Get key
-wrangler kv key get <key> --namespace-id <id>
+# 读取键值
+wrangler kv key get <键> --namespace-id <ID>
 
-# Delete key
-wrangler kv key delete <key> --namespace-id <id>
+# 删除键值
+wrangler kv key delete <键> --namespace-id <ID>
 
-# List keys
-wrangler kv key list --namespace-id <id>
+# 列出所有键
+wrangler kv key list --namespace-id <ID>
 
-# Bulk operations (JSON file)
-wrangler kv bulk put <file> --namespace-id <id>
-wrangler kv bulk delete <file> --namespace-id <id>
+# 批量操作（JSON 文件）
+wrangler kv bulk put <文件> --namespace-id <ID>
+wrangler kv bulk delete <文件> --namespace-id <ID>
 ```
 
-### D1 (SQL Database)
+### D1（SQL 数据库）
 
 ```bash
-# Create database
-wrangler d1 create <name>
+# 创建数据库
+wrangler d1 create <名称>
 
-# List databases
+# 列出数据库
 wrangler d1 list
 
-# Database info
-wrangler d1 info <name>
+# 数据库信息
+wrangler d1 info <名称>
 
-# Execute SQL
-wrangler d1 execute <database> --command "SELECT * FROM users"
+# 执行 SQL
+wrangler d1 execute <数据库> --command "SELECT * FROM users"
 
-# Execute SQL file
-wrangler d1 execute <database> --file schema.sql
+# 执行 SQL 文件
+wrangler d1 execute <数据库> --file schema.sql
 
-# Local execution (for dev)
-wrangler d1 execute <database> --local --command "..."
+# 本地执行（用于开发）
+wrangler d1 execute <数据库> --local --command "..."
 
-# Export database
-wrangler d1 export <name> --output backup.sql
+# 导出数据库
+wrangler d1 export <名称> --output backup.sql
 
-# Delete database
-wrangler d1 delete <name>
+# 删除数据库
+wrangler d1 delete <名称>
 
-# Migrations
-wrangler d1 migrations create <database> <name>
-wrangler d1 migrations apply <database>
-wrangler d1 migrations list <database>
+# 迁移管理
+wrangler d1 migrations create <数据库> <名称>
+wrangler d1 migrations apply <数据库>
+wrangler d1 migrations list <数据库>
 ```
 
-### R2 (Object Storage)
+### R2（对象存储）
 
 ```bash
-# Create bucket
-wrangler r2 bucket create <name>
+# 创建存储桶
+wrangler r2 bucket create <名称>
 
-# List buckets
+# 列出存储桶
 wrangler r2 bucket list
 
-# Delete bucket
-wrangler r2 bucket delete <name>
+# 删除存储桶
+wrangler r2 bucket delete <名称>
 
-# Upload object
-wrangler r2 object put <bucket>/<key> --file <path>
+# 上传对象
+wrangler r2 object put <存储桶>/<键> --file <路径>
 
-# Download object
-wrangler r2 object get <bucket>/<key> --file <path>
+# 下载对象
+wrangler r2 object get <存储桶>/<键> --file <路径>
 
-# Delete object
-wrangler r2 object delete <bucket>/<key>
+# 删除对象
+wrangler r2 object delete <存储桶>/<键>
 ```
 
-### Queues
+### 队列
 
 ```bash
-# Create queue
-wrangler queues create <name>
+# 创建队列
+wrangler queues create <名称>
 
-# List queues
+# 列出队列
 wrangler queues list
 
-# Delete queue
-wrangler queues delete <name>
+# 删除队列
+wrangler queues delete <名称>
 ```
 
-## Configuration Files
+## 配置文件
 
-Wrangler supports both TOML and JSON/JSONC config formats:
+Wrangler 支持 TOML 和 JSON/JSONC 两种配置格式：
 
-- `wrangler.toml` — traditional format
-- `wrangler.json` or `wrangler.jsonc` — newer, with JSON schema support
+- `wrangler.toml` — 传统格式
+- `wrangler.json` 或 `wrangler.jsonc` — 新格式，支持 JSON Schema 补全
 
-**⚠️ Important:** If both exist, JSON takes precedence. Pick one format to avoid confusion where edits to TOML are ignored.
+**⚠️ 重要提示：** 如果两种文件都存在，JSON 格式优先。请选择一种格式以避免混淆（编辑 TOML 被忽略的情况）。
 
-### JSONC format (with schema autocomplete)
+### JSONC 格式（带 Schema 自动补全）
 
 ```jsonc
 {
@@ -180,7 +180,7 @@ Wrangler supports both TOML and JSON/JSONC config formats:
 }
 ```
 
-### TOML format
+### TOML 格式
 
 ```toml
 name = "my-worker"
@@ -188,38 +188,38 @@ main = "src/index.ts"
 compatibility_date = "2024-12-30"
 ```
 
-With bindings:
+带绑定配置：
 
 ```toml
 name = "my-worker"
 main = "src/index.ts"
 compatibility_date = "2024-12-30"
 
-# KV binding
+# KV 绑定
 [[kv_namespaces]]
 binding = "MY_KV"
 id = "xxx"
 
-# D1 binding
+# D1 绑定
 [[d1_databases]]
 binding = "DB"
 database_name = "my-db"
 database_id = "xxx"
 
-# R2 binding
+# R2 绑定
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "my-bucket"
 
-# Environment variables
+# 环境变量
 [vars]
 API_URL = "https://api.example.com"
 
-# Secrets (set via `wrangler secret put`)
-# Referenced as env.SECRET_NAME in worker code
+# 密钥（通过 `wrangler secret put` 设置）
+# 在 Worker 代码中通过 env.SECRET_NAME 引用
 ```
 
-Static assets (for frameworks like Next.js):
+静态资源（适用于 Next.js 等框架）：
 
 ```toml
 name = "my-site"
@@ -232,56 +232,56 @@ directory = ".open-next/assets"
 binding = "ASSETS"
 ```
 
-## Common Patterns
+## 常见模式
 
-### Deploy with environment
+### 按环境部署
 
 ```bash
 wrangler deploy -e production
 wrangler deploy -e staging
 ```
 
-### Custom domain (via dashboard or API)
+### 自定义域名（通过仪表板或 API）
 
-Custom domains must be configured in the Cloudflare dashboard under Worker Settings > Domains & Routes, or via the Cloudflare API. Wrangler doesn't directly manage custom domains.
+自定义域名必须在 Cloudflare 仪表板的 Worker 设置 > 域名和路由中配置，或通过 Cloudflare API 配置。Wrangler 不直接管理自定义域名。
 
-### Local development with bindings
+### 带绑定的本地开发
 
 ```bash
-# Creates local D1/KV/R2 for dev
+# 为开发创建本地 D1/KV/R2
 wrangler dev --local
 ```
 
-### Checking deployment status
+### 检查部署状态
 
 ```bash
 wrangler deployments list
 wrangler deployments view
 ```
 
-## What Wrangler Does NOT Do
+## Wrangler 不能做什么
 
-- **DNS management** — Use the Cloudflare dashboard or API for DNS records
-- **Custom domains** — Configure via dashboard (Worker Settings > Domains & Routes) or API
-- **SSL certificates** — Managed automatically by Cloudflare when custom domains are added
-- **Firewall/WAF rules** — Use dashboard or API
+- **DNS 管理** — 使用 Cloudflare 仪表板或 API 管理 DNS 记录
+- **自定义域名** — 通过仪表板（Worker 设置 > 域名和路由）或 API 配置
+- **SSL 证书** — 添加自定义域名时由 Cloudflare 自动管理
+- **防火墙/WAF 规则** — 使用仪表板或 API
 
-For DNS/domain management, see the `cloudflare` skill (uses Cloudflare API directly).
+如需 DNS/域名管理，请使用 `cloudflare` 技能（直接使用 Cloudflare API）。
 
-## Troubleshooting
+## 故障排除
 
-| Issue | Solution |
+| 问题 | 解决方案 |
 |-------|----------|
-| "Not authenticated" | Run `wrangler login` |
-| Node version error | Requires Node.js v20+ |
-| "No config found" | Ensure config file exists (`wrangler.toml` or `wrangler.jsonc`) or use `-c path/to/config` |
-| Config changes ignored | Check for `wrangler.json`/`wrangler.jsonc` — JSON takes precedence over TOML |
-| Binding not found | Check `wrangler.toml` bindings match code references |
+| "未认证" | 运行 `wrangler login` |
+| Node 版本错误 | 需要 Node.js v20+ |
+| "未找到配置" | 确保配置文件存在（`wrangler.toml` 或 `wrangler.jsonc`），或使用 `-c path/to/config` |
+| 配置更改被忽略 | 检查是否存在 `wrangler.json`/`wrangler.jsonc` — JSON 优先于 TOML |
+| 未找到绑定 | 检查 `wrangler.toml` 中的绑定是否与代码引用匹配 |
 
-## Resources
+## 资源链接
 
-- [Wrangler Docs](https://developers.cloudflare.com/workers/wrangler/)
-- [Workers Docs](https://developers.cloudflare.com/workers/)
-- [D1 Docs](https://developers.cloudflare.com/d1/)
-- [R2 Docs](https://developers.cloudflare.com/r2/)
-- [KV Docs](https://developers.cloudflare.com/kv/)
+- [Wrangler 文档](https://developers.cloudflare.com/workers/wrangler/)
+- [Workers 文档](https://developers.cloudflare.com/workers/)
+- [D1 文档](https://developers.cloudflare.com/d1/)
+- [R2 文档](https://developers.cloudflare.com/r2/)
+- [KV 文档](https://developers.cloudflare.com/kv/)

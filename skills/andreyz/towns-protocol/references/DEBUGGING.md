@@ -1,19 +1,19 @@
-# Debugging
+# 调试
 
-## Handler Not Triggering
+## 处理程序不触发
 
-Most common issue. Check in order:
+最常见的问题。按顺序检查：
 
-### 1. Webhook URL Correct?
+### 1. Webhook URL 正确吗？
 
 ```bash
-# Your bot should log incoming requests
+# 您的机器人应记录传入的请求
 curl -X POST https://your-webhook-url/webhook \
   -H "Content-Type: application/json" \
   -d '{"test": true}'
 ```
 
-### 2. Tunnel Running? (local dev)
+### 2. 隧道正在运行吗？（本地开发）
 
 ```bash
 # Tailscale
@@ -23,31 +23,31 @@ tailscale funnel status
 curl http://127.0.0.1:4040/api/tunnels
 ```
 
-### 3. Bot Added to Channel?
+### 3. 机器人已添加到频道吗？
 
-Bot must be:
-- Installed in the Space (Settings → Integrations)
-- Added to the specific channel (Channel Settings → Integrations)
+机器人必须：
+- 在 Space 中安装（设置 → 集成）
+- 添加到特定频道（频道设置 → 集成）
 
-### 4. Message Forwarding Mode?
+### 4. 消息转发模式？
 
-In Developer Portal:
-- "Mentions Only" = only `@bot` messages
-- "All Messages" = everything (required for `onTip`)
+在开发者门户中：
+- "仅提及" = 仅 `@bot` 消息
+- "所有消息" = 所有内容（`onTip` 需要）
 
-### 5. Slash Command Registered?
+### 5. 斜杠命令已注册吗？
 
-Must be in `commands` array passed to `makeTownsBot`:
+必须位于传递给 `makeTownsBot` 的 `commands` 数组中：
 
 ```typescript
 const commands = [
-  { name: 'mycommand', description: 'Does something' }
+  { name: 'mycommand', description: '执行某操作' }
 ] as const satisfies BotCommand[]
 
 const bot = await makeTownsBot(creds, secret, { commands })
 ```
 
-## Add Request Logging
+## 添加请求日志
 
 ```typescript
 const bot = await makeTownsBot(
@@ -56,7 +56,7 @@ const bot = await makeTownsBot(
   { commands }
 )
 
-// Log all incoming events
+// 记录所有传入的事件
 bot.onMessage(async (handler, event) => {
   console.log('[onMessage]', {
     userId: event.userId,
@@ -64,7 +64,7 @@ bot.onMessage(async (handler, event) => {
     message: event.message.slice(0, 100),
     isMentioned: event.isMentioned
   })
-  // ... rest of handler
+  // ... 处理程序的其余部分
 })
 
 bot.onSlashCommand('*', async (handler, event) => {
@@ -76,17 +76,17 @@ bot.onSlashCommand('*', async (handler, event) => {
 })
 ```
 
-## Common Error Messages
+## 常见错误消息
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `JWT verification failed` | Wrong JWT_SECRET | Match secret in Developer Portal |
-| `insufficient funds for gas` | Empty gas wallet | Fund `bot.viem.account.address` |
-| `Invalid APP_PRIVATE_DATA` | Malformed credentials | Re-copy from Developer Portal |
-| `ECONNREFUSED` on RPC | Bad RPC URL or rate limited | Use dedicated RPC (Alchemy/Infura) |
-| `nonce too low` | Concurrent transactions | Add transaction queue or retry logic |
+| 错误 | 原因 | 修复方法 |
+|------|------|----------|
+| `JWT verification failed` | 错误的 JWT_SECRET | 匹配开发者门户中的密钥 |
+| `insufficient funds for gas` | Gas 钱包为空 | 为 `bot.viem.account.address` 充值 |
+| `Invalid APP_PRIVATE_DATA` | 凭证格式错误 | 从开发者门户重新复制 |
+| `ECONNREFUSED` RPC | RPC URL 错误或速率限制 | 使用专用 RPC（Alchemy/Infura）|
+| `nonce too low` | 并发交易 | 添加交易队列或重试逻辑 |
 
-## Verify Webhook Connectivity
+## 验证 Webhook 连接
 
 ```typescript
 import { Hono } from 'hono'
@@ -99,37 +99,37 @@ app.get('/health', (c) => c.json({
   gasWallet: bot.viem.account.address
 }))
 
-// Test from outside:
+// 从外部测试:
 // curl https://your-webhook-url/health
 ```
 
-## Debug Transaction Failures
+## 调试交易失败
 
 ```typescript
 import { waitForTransactionReceipt } from 'viem/actions'
 
 try {
   const hash = await execute(bot.viem, { /* ... */ })
-  console.log('TX submitted:', hash)
+  console.log('交易已提交:', hash)
 
   const receipt = await waitForTransactionReceipt(bot.viem, { hash })
-  console.log('TX result:', {
+  console.log('交易结果:', {
     status: receipt.status,
     gasUsed: receipt.gasUsed.toString(),
     blockNumber: receipt.blockNumber
   })
 
   if (receipt.status !== 'success') {
-    console.error('TX reverted. Check on basescan:',
+    console.error('交易回滚。在 basescan 检查:',
       'https://basescan.org/tx/' + hash)
   }
 } catch (err) {
-  console.error('TX failed:', err.message)
-  // Common: insufficient funds, nonce issues, contract revert
+  console.error('交易失败:', err.message)
+  // 常见问题：余额不足、nonce 问题、合约回退
 }
 ```
 
-## Check Gas Wallet Balance
+## 检查 Gas 钱包余额
 
 ```typescript
 import { formatEther } from 'viem'
@@ -138,10 +138,10 @@ const balance = await bot.viem.getBalance({
   address: bot.viem.account.address
 })
 
-console.log('Gas wallet balance:', formatEther(balance), 'ETH')
+console.log('Gas 钱包余额:', formatEther(balance), 'ETH')
 
 if (balance === 0n) {
-  console.error('WARNING: Gas wallet is empty!')
-  console.error('Fund this address:', bot.viem.account.address)
+  console.error('警告: Gas 钱包为空！')
+  console.error('为这个地址充值:', bot.viem.account.address)
 }
 ```

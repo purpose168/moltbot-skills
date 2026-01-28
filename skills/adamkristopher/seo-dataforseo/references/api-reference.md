@@ -1,384 +1,384 @@
-# API Reference
+# API 参考
 
-Complete function reference for all DataForSEO API modules.
+DataForSEO API 模块的所有函数的完整参考。
 
-## Table of Contents
+## 目录
 
-- [Keywords Data API](#keywords-data-api) (4 functions)
-- [Labs API](#labs-api) (9 functions)
-- [SERP API](#serp-api) (6 functions)
-- [Trends API](#trends-api) (6 functions)
+- [关键词数据 API](#关键词数据-api)（4个函数）
+- [实验室 API](#实验室-api)（9个函数）
+- [SERP API](#serp-api)（6个函数）
+- [趋势 API](#趋势-api)（6个函数）
 
 ---
 
-## Keywords Data API
+## 关键词数据 API
 
-Import: `from api.keywords_data import ...`
+导入：`from api.keywords_data import ...`
 
 ### `get_search_volume(keywords, location_name, language_name, save)`
 
-Get search volume, CPC, and competition data for keywords.
+获取关键词的搜索量、CPC 和竞争数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to analyze (max 700) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分析的关键词（最多700个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with search volume, CPC, and competition for each keyword.
+**返回：** 包含每个关键词的搜索量、CPC 和竞争的字典。
 
 ### `get_keywords_for_site(target_domain, location_name, language_name, save)`
 
-Get keywords associated with a specific domain.
+获取与特定域名相关的关键词。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `target_domain` | `str` | required | Domain to analyze (e.g., "example.com") |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `target_domain` | `str` | 必需 | 要分析的域名（例如 "example.com"） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with keywords relevant to the domain.
+**返回：** 包含与域名相关的关键词的字典。
 
 ### `get_ad_traffic_by_keywords(keywords, location_name, language_name, bid, save)`
 
-Estimate advertising traffic potential for keywords at a given CPC bid.
+在给定 CPC 出价下估算关键词的广告流量潜力。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to analyze |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `bid` | `float` | `2.0` | Maximum CPC bid for estimation |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分析的关键词 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `bid` | `float` | `2.0` | 用于估算的最大 CPC 出价 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with traffic estimates for the given bid.
+**返回：** 包含给定出价下流量估算的字典。
 
 ### `get_keywords_for_keywords(keywords, location_name, language_name, save)`
 
-Get keyword expansion ideas from Google Ads Keyword Planner.
+从 Google Ads 关键词规划师获取关键词扩展创意。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Seed keywords (max 20) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 种子关键词（最多20个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with expanded keyword ideas.
+**返回：** 包含扩展关键词创意的字典。
 
 ---
 
-## Labs API
+## 实验室 API
 
-Import: `from api.labs import ...`
+导入：`from api.labs import ...`
 
 ### `get_keyword_overview(keywords, location_name, language_name, include_serp_info, save)`
 
-Comprehensive keyword data: search volume, CPC, competition, and search intent.
+综合关键词数据：搜索量、CPC、竞争和搜索意图。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to analyze (max 700) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `include_serp_info` | `bool` | `False` | Include SERP features data |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分析的关键词（最多700个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `include_serp_info` | `bool` | `False` | 包含 SERP 功能数据 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with comprehensive keyword metrics.
+**返回：** 包含综合关键词指标的字典。
 
 ### `get_keyword_suggestions(keyword, location_name, language_name, include_seed_keyword, include_serp_info, limit, save)`
 
-Get long-tail keyword suggestions based on a seed keyword.
+基于种子关键词获取长尾关键词建议。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Seed keyword (min 3 characters) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `include_seed_keyword` | `bool` | `True` | Include seed keyword metrics |
-| `include_serp_info` | `bool` | `False` | Include SERP data per keyword |
-| `limit` | `int` | `100` | Max results (max 1000) |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 种子关键词（最少3个字符） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `include_seed_keyword` | `bool` | `True` | 包含种子关键词指标 |
+| `include_serp_info` | `bool` | `False` | 包含每个关键词的 SERP 数据 |
+| `limit` | `int` | `100` | 最大结果数（最多1000个） |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with keyword suggestions and metrics.
+**返回：** 包含关键词建议和指标的字典。
 
 ### `get_keyword_ideas(keywords, location_name, language_name, include_serp_info, closely_variants, limit, save)`
 
-Get keyword ideas from the same category as seed keywords. Goes beyond semantic similarity.
+从与种子关键词相同类别中获取关键词创意。超越语义相似性。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Seed keywords (max 200) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `include_serp_info` | `bool` | `False` | Include SERP data |
-| `closely_variants` | `bool` | `False` | Phrase-match (True) vs broad-match (False) |
-| `limit` | `int` | `700` | Max results (max 1000) |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 种子关键词（最多200个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `include_serp_info` | `bool` | `False` | 包含 SERP 数据 |
+| `closely_variants` | `bool` | `False` | 短语匹配（True） vs 广泛匹配（False） |
+| `limit` | `int` | `700` | 最大结果数（最多1000个） |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with keyword ideas and metrics.
+**返回：** 包含关键词创意和指标的字典。
 
 ### `get_related_keywords(keyword, location_name, language_name, depth, include_seed_keyword, include_serp_info, limit, save)`
 
-Get keywords from Google's "searches related to" feature using depth-first search.
+使用深度优先搜索从 Google 的"相关搜索"功能获取关键词。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Seed keyword |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `2` | Search depth 0-4 (4 = max ~4680 results) |
-| `include_seed_keyword` | `bool` | `True` | Include seed keyword metrics |
-| `include_serp_info` | `bool` | `False` | Include SERP data |
-| `limit` | `int` | `100` | Max results (max 1000) |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 种子关键词 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `2` | 搜索深度 0-4（4 = 最多约4680个结果） |
+| `include_seed_keyword` | `bool` | `True` | 包含种子关键词指标 |
+| `include_serp_info` | `bool` | `False` | 包含 SERP 数据 |
+| `limit` | `int` | `100` | 最大结果数（最多1000个） |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with related keywords and metrics.
+**返回：** 包含相关关键词和指标的字典。
 
 ### `get_bulk_keyword_difficulty(keywords, location_name, language_name, save)`
 
-Get keyword difficulty scores (0-100) indicating how hard it is to rank in the top 10.
+获取关键词难度分数（0-100），表示在排名前10位有多困难。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to analyze (max 1000) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分析的关键词（最多1000个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with difficulty scores for each keyword.
+**返回：** 包含每个关键词难度分数的字典。
 
 ### `get_historical_search_volume(keywords, location_name, language_name, include_serp_info, save)`
 
-Get monthly search volume data since 2019.
+获取自2019年以来的每月搜索量数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to analyze (max 700) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `include_serp_info` | `bool` | `False` | Include SERP features |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分析的关键词（最多700个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `include_serp_info` | `bool` | `False` | 包含 SERP 功能 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with historical search volume and monthly breakdowns.
+**返回：** 包含历史搜索量和每月细分的字典。
 
 ### `get_search_intent(keywords, location_name, language_name, save)`
 
-Classify keywords as informational, navigational, transactional, or commercial.
+将关键词分类为信息性、导航性、交易性或商业性。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to classify (max 1000) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要分类的关键词（最多1000个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with intent classifications for each keyword.
+**返回：** 包含每个关键词意图分类的字典。
 
 ### `get_domain_keywords(target_domain, location_name, language_name, limit, save)`
 
-Get keywords that a domain ranks for in organic search.
+获取域名在自然搜索中排名的关键词。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `target_domain` | `str` | required | Domain to analyze (e.g., "example.com") |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `limit` | `int` | `100` | Max results |
-| `save` | `bool` | `True` | Save results to JSON |
+| `target_domain` | `str` | 必需 | 要分析的域名（例如 "example.com"） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `limit` | `int` | `100` | 最大结果数 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with keywords the domain ranks for.
+**返回：** 包含域名排名的关键词的字典。
 
 ### `get_competitors(keywords, location_name, language_name, limit, save)`
 
-Find domains that compete for the same keywords.
+查找为相同关键词竞争的域名。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to find competitors for |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `limit` | `int` | `20` | Max competitors to return |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要查找竞争对手的关键词 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `limit` | `int` | `20` | 返回的最大竞争对手数 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with competitor domains and their metrics.
+**返回：** 包含竞争对手域名及其指标的字典。
 
 ---
 
 ## SERP API
 
-Import: `from api.serp import ...`
+导入：`from api.serp import ...`
 
 ### `get_google_serp(keyword, location_name, language_name, depth, device, save)`
 
-Get Google organic search results for a keyword.
+获取关键词的 Google 自然搜索结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `100` | Number of results (max 700) |
-| `device` | `str` | `"desktop"` | `"desktop"` or `"mobile"` |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `100` | 结果数量（最多700个） |
+| `device` | `str` | `"desktop"` | `"desktop"` 或 `"mobile"` |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with SERP data including rankings, URLs, titles, and SERP features.
+**返回：** 包含 SERP 数据的字典，包括排名、URL、标题和 SERP 功能。
 
 ### `get_youtube_serp(keyword, location_name, language_name, depth, device, save)`
 
-Get YouTube organic search results for a keyword.
+获取关键词的 YouTube 自然搜索结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query (max 700 chars) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `20` | Number of results (max 700, billed per 20) |
-| `device` | `str` | `"desktop"` | `"desktop"` or `"mobile"` |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询（最多700个字符） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `20` | 结果数量（最多700个，按每20个计费） |
+| `device` | `str` | `"desktop"` | `"desktop"` 或 `"mobile"` |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with YouTube video rankings, titles, channels, views.
+**返回：** 包含 YouTube 视频排名、标题、频道、浏览量的字典。
 
 ### `get_google_maps_serp(keyword, location_name, language_name, depth, save)`
 
-Get Google Maps/Local search results.
+获取 Google 地图/本地搜索结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query (e.g., "restaurants near me") |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `20` | Number of results |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询（例如 "附近的餐厅"） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `20` | 结果数量 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with local business listings.
+**返回：** 包含本地商家列表的字典。
 
 ### `get_google_news_serp(keyword, location_name, language_name, depth, save)`
 
-Get Google News search results.
+获取 Google 新闻搜索结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `100` | Number of results |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `100` | 结果数量 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with news articles and rankings.
+**返回：** 包含新闻文章和排名的字典。
 
 ### `get_google_images_serp(keyword, location_name, language_name, depth, save)`
 
-Get Google Images search results.
+获取 Google 图片搜索结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `depth` | `int` | `100` | Number of results |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询 |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `depth` | `int` | `100` | 结果数量 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with image results including URLs, titles, sources.
+**返回：** 包含图片结果的字典，包括 URL、标题、来源。
 
 ### `get_featured_snippet(keyword, location_name, language_name, save)`
 
-Get Google SERP focused on featured snippets and SERP features. Returns top 10 results on desktop.
+专注于精选摘要和 SERP 功能的 Google SERP。返回桌面端前10个结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keyword` | `str` | required | Search query (ideally a question) |
-| `location_name` | `str` | "United States" | Target location |
-| `language_name` | `str` | "English" | Target language |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keyword` | `str` | 必需 | 搜索查询（最好是问题） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `language_name` | `str` | "English" | 目标语言 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with SERP data including featured snippet details.
+**返回：** 包含 SERP 数据的字典，包括精选摘要详情。
 
 ---
 
-## Trends API
+## 趋势 API
 
-Import: `from api.trends import ...`
+导入：`from api.trends import ...`
 
 ### `get_trends_explore(keywords, location_name, search_type, time_range, date_from, date_to, category_code, save)`
 
-Get Google Trends data for keywords.
+获取关键词的 Google 趋势数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to compare (max 5) |
-| `location_name` | `str` | "United States" | Target location |
-| `search_type` | `str` | `"web"` | `"web"`, `"news"`, `"youtube"`, `"images"`, `"froogle"` (shopping) |
-| `time_range` | `str` | `"past_12_months"` | `"past_hour"`, `"past_4_hours"`, `"past_day"`, `"past_7_days"`, `"past_month"`, `"past_3_months"`, `"past_12_months"`, `"past_5_years"` |
-| `date_from` | `str` | `None` | Custom start date (yyyy-mm-dd), overrides time_range |
-| `date_to` | `str` | `None` | Custom end date (yyyy-mm-dd) |
-| `category_code` | `int` | `None` | Google Trends category filter |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要比较的关键词（最多5个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `search_type` | `str` | `"web"` | `"web"`、`"news"`、`"youtube"`、`"images"`、`"froogle"`（购物） |
+| `time_range` | `str` | `"past_12_months"` | `"past_hour"`、`"past_4_hours"`、`"past_day"`、`"past_7_days"`、`"past_month"`、`"past_3_months"`、`"past_12_months"`、`"past_5_years"` |
+| `date_from` | `str` | `None` | 自定义开始日期（yyyy-mm-dd），覆盖 time_range |
+| `date_to` | `str` | `None` | 自定义结束日期（yyyy-mm-dd） |
+| `category_code` | `int` | `None` | Google 趋势类别过滤器 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with trend graphs, regional interest, related topics and queries.
+**返回：** 包含趋势图表、区域兴趣、相关主题和查询的字典。
 
 ### `get_youtube_trends(keywords, location_name, time_range, save)`
 
-YouTube-specific trend data. Convenience wrapper for `get_trends_explore` with `search_type="youtube"`.
+YouTube 特定的趋势数据。`get_trends_explore` 的便捷包装器，`search_type="youtube"`。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to compare (max 5) |
-| `location_name` | `str` | "United States" | Target location |
-| `time_range` | `str` | `"past_12_months"` | Time range |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要比较的关键词（最多5个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `time_range` | `str` | `"past_12_months"` | 时间范围 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with YouTube trend data.
+**返回：** 包含 YouTube 趋势数据的字典。
 
 ### `get_news_trends(keywords, location_name, time_range, save)`
 
-Google News trend data. Convenience wrapper for `get_trends_explore` with `search_type="news"`.
+Google 新闻趋势数据。`get_trends_explore` 的便捷包装器，`search_type="news"`。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to compare (max 5) |
-| `location_name` | `str` | "United States" | Target location |
-| `time_range` | `str` | `"past_12_months"` | Time range |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要比较的关键词（最多5个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `time_range` | `str` | `"past_12_months"` | 时间范围 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with news trend data.
+**返回：** 包含新闻趋势数据的字典。
 
 ### `get_shopping_trends(keywords, location_name, time_range, save)`
 
-Google Shopping trend data. Convenience wrapper for `get_trends_explore` with `search_type="froogle"`.
+Google 购物趋势数据。`get_trends_explore` 的便捷包装器，`search_type="froogle"`。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to compare (max 5) |
-| `location_name` | `str` | "United States" | Target location |
-| `time_range` | `str` | `"past_12_months"` | Time range |
-| `save` | `bool` | `True` | Save results to JSON |
+| `keywords` | `List[str]` | 必需 | 要比较的关键词（最多5个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `time_range` | `str` | `"past_12_months"` | 时间范围 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with shopping/e-commerce trend data.
+**返回：** 包含购物/电商趋势数据的字典。
 
 ### `compare_keyword_trends(keywords, location_name, search_types, time_range, save)`
 
-Compare keyword trends across multiple search platforms.
+跨多个搜索平台比较关键词趋势。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `keywords` | `List[str]` | required | Keywords to compare (max 5) |
-| `location_name` | `str` | "United States" | Target location |
-| `search_types` | `List[str]` | `["web", "youtube"]` | Platforms to compare |
-| `time_range` | `str` | `"past_12_months"` | Time range |
-| `save` | `bool` | `True` | Save individual results |
+| `keywords` | `List[str]` | 必需 | 要比较的关键词（最多5个） |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `search_types` | `List[str]` | `["web", "youtube"]` | 要比较的平台 |
+| `time_range` | `str` | `"past_12_months"` | 时间范围 |
+| `save` | `bool` | `True` | 保存单个结果 |
 
-**Returns:** Dict with search_type keys and trend data values.
+**返回：** 包含 search_type 键和趋势数据值的字典。
 
 ### `get_trending_now(location_name, save)`
 
-Get currently trending searches in real-time.
+获取当前实时热门搜索。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `location_name` | `str` | "United States" | Target location |
-| `save` | `bool` | `True` | Save results to JSON |
+| `location_name` | `str` | "United States" | 目标位置 |
+| `save` | `bool` | `True` | 将结果保存为 JSON |
 
-**Returns:** Dict with currently trending searches.
+**返回：** 包含当前热门搜索的字典。

@@ -1,88 +1,88 @@
 ---
 name: attio
-description: Attio CRM integration for managing companies, people, deals, notes, tasks, and custom objects. Use when working with Attio CRM data, searching contacts, managing sales pipelines, adding notes to records, creating tasks, or syncing prospect information.
+description: Attio CRM 集成，用于管理公司、人员、交易、笔记、任务和自定义对象。在处理 Attio CRM 数据、搜索联系人、管理销售管道、向记录添加笔记、创建任务或同步潜在客户信息时使用。
 ---
 
 # Attio CRM
 
-Manage Attio CRM via REST API. Supports companies, people, deals, lists (pipelines), notes, and tasks.
+通过 REST API 管理 Attio CRM。支持公司、人员、交易、列表（管道）、笔记和任务。
 
-## Setup
+## 设置
 
-Set `ATTIO_API_KEY` in environment or `~/.env`:
+在环境变量或 `~/.env` 中设置 `ATTIO_API_KEY`：
 ```bash
 echo "ATTIO_API_KEY=your_api_key" >> ~/.env
 ```
 
-Get your API key: Attio → Workspace Settings → Developers → New Access Token
+获取您的 API 密钥：Attio → 工作区设置 → 开发者 → 新建访问令牌
 
-## Quick Reference
+## 快速参考
 
-### Objects (Records)
+### 对象（记录）
 
 ```bash
-# List/search records
-attio objects list                     # List available objects
-attio records list <object>            # List records (companies, people, deals, etc.)
-attio records search <object> <query>  # Search by text
-attio records get <object> <id>        # Get single record
-attio records create <object> <json>   # Create record
-attio records update <object> <id> <json>  # Update record
+# 列出/搜索记录
+attio objects list                     # 列出可用的对象
+attio records list <object>            # 列出记录（公司、人员、交易等）
+attio records search <object> <query>  # 按文本搜索
+attio records get <object> <id>        # 获取单个记录
+attio records create <object> <json>   # 创建记录
+attio records update <object> <id> <json>  # 更新记录
 ```
 
-### Lists (Pipelines)
+### 列表（管道）
 
 ```bash
-attio lists list                       # Show all pipelines/lists
-attio entries list <list_slug>         # List entries in a pipeline
-attio entries add <list_slug> <object> <record_id>  # Add record to pipeline
+attio lists list                       # 显示所有管道/列表
+attio entries list <list_slug>         # 列出管道中的条目
+attio entries add <list_slug> <object> <record_id>  # 将记录添加到管道
 ```
 
-### Notes
+### 笔记
 
 ```bash
-attio notes list <object> <record_id>  # Notes on a record
+attio notes list <object> <record_id>  # 记录上的笔记
 attio notes create <object> <record_id> <title> <content>
 ```
 
-### Tasks
+### 任务
 
 ```bash
-attio tasks list                       # All tasks
-attio tasks create <content> [deadline]  # Create task (deadline: YYYY-MM-DD)
-attio tasks complete <task_id>         # Mark complete
+attio tasks list                       # 所有任务
+attio tasks create <content> [deadline]  # 创建任务（截止日期: YYYY-MM-DD）
+attio tasks complete <task_id>         # 标记完成
 ```
 
-## Examples
+## 示例
 
-### Find a company and add a note
+### 查找公司并添加笔记
 ```bash
-# Search for company
+# 搜索公司
 attio records search companies "Acme"
 
-# Add note to the company (using record_id from search)
-attio notes create companies abc123-uuid "Call Notes" "Discussed Q1 roadmap..."
+# 向公司添加笔记（使用搜索结果中的 record_id）
+attio notes create companies abc123-uuid "通话笔记" "讨论 Q1 路线图..."
 ```
 
-### Work with pipeline
+### 使用管道
 ```bash
-# List pipeline stages
+# 列出管道阶段
 attio entries list sales_pipeline
 
-# Add a company to pipeline
+# 将公司添加到管道
 attio entries add sales_pipeline companies abc123-uuid
 ```
 
-### Create a follow-up task
+### 创建后续任务
 ```bash
-attio tasks create "Follow up with John at Acme" "2024-02-15"
+attio tasks create "跟进 Acme 的 John" "2024-02-15"
 ```
 
-## API Limits
+## API 限制
 
-- Rate limit: ~100 requests/minute
-- Pagination: Use `limit` and `offset` params for large datasets
+- 速率限制：约 100 次请求/分钟
+- 分页：对于大型数据集使用 `limit` 和 `offset` 参数
 
-## Full API Docs
+## 完整 API 文档
 
 https://docs.attio.com/

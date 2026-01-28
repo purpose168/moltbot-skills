@@ -1,7 +1,8 @@
 {
   "owner": "cutzenfriend",
   "slug": "bring-shopping",
-  "displayName": "Bring! Shopping List App (Unofficial)",
+  "displayName": "Bring! 购物清单（非官方）",
+  "description": "通过 bring-shopping npm 库管理 Bring! 购物列表。支持列出列表、读取、添加、删除、选中和取消选中购物项目。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768405688116,

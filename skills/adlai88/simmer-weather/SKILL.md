@@ -1,189 +1,189 @@
 ---
 name: simmer-weather
-description: Trade Polymarket weather markets using NOAA forecasts via Simmer API. Inspired by gopfan2's $2M+ strategy.
+description: 通过 Simmer API 使用 NOAA 天气预报交易 Polymarket 天气市场。灵感来自 gopfan2 的 200 万美元策略。
 metadata: {"clawdbot":{"emoji":"🌡️","requires":{"env":["SIMMER_API_KEY"]},"cron":"0 */2 * * *"}}
 authors:
   - Simmer (@simmer_markets)
-attribution: "Strategy inspired by gopfan2"
+attribution: "策略灵感来自 gopfan2"
 ---
 
-# Simmer Weather Trading
+# Simmer 天气交易
 
-Trade temperature markets on Polymarket using NOAA forecast data.
+使用 NOAA 预报数据在 Polymarket 上交易温度市场。
 
-## When to Use This Skill
+## 何时使用此技能
 
-Use this skill when the user wants to:
-- Trade weather markets automatically
-- Set up gopfan2-style temperature trading
-- Buy low on weather predictions
-- Check their weather trading positions
-- Configure trading thresholds or locations
+当用户想要以下操作时使用此技能：
+- 自动交易天气市场
+- 设置 gopfan2 风格的温度交易
+- 低买天气预测
+- 检查天气交易持仓
+- 配置交易阈值或位置
 
-## Setup Flow
+## 设置流程
 
-When user asks to install or configure this skill:
+当用户要求安装或配置此技能时：
 
-1. **Ask for Simmer API key**
-   - They can get it from simmer.markets/dashboard → SDK tab
-   - Store in environment as `SIMMER_API_KEY`
+1. **询问 Simmer API 密钥**
+   - 他们可以从 simmer.markets/dashboard → SDK 选项卡获取
+   - 存储在环境变量中为 `SIMMER_API_KEY`
 
-2. **Ask about settings** (or confirm defaults)
-   - Entry threshold: When to buy (default 15¢)
-   - Exit threshold: When to sell (default 45¢)
-   - Max position: Amount per trade (default $2.00)
-   - Locations: Which cities to trade (default NYC)
+2. **询问设置（或确认默认值）**
+   - 入场阈值：何时买入（默认 15¢）
+   - 出场阈值：何时卖出（默认 45¢）
+   - 最大仓位：每笔交易金额（默认 $2.00）
+   - 位置：交易哪些城市（默认 NYC）
 
-3. **Save settings to environment variables**
-   - `SIMMER_WEATHER_ENTRY` - entry threshold (e.g., "0.15" for 15¢)
-   - `SIMMER_WEATHER_EXIT` - exit threshold (e.g., "0.45" for 45¢)
-   - `SIMMER_WEATHER_MAX_POSITION` - max per trade (e.g., "2.00")
-   - `SIMMER_WEATHER_LOCATIONS` - comma-separated cities (e.g., "NYC,Chicago")
+3. **保存设置到环境变量**
+   - `SIMMER_WEATHER_ENTRY` - 入场阈值（例如 "0.15" 表示 15¢）
+   - `SIMMER_WEATHER_EXIT` - 出场阈值（例如 "0.45" 表示 45¢）
+   - `SIMMER_WEATHER_MAX_POSITION` - 每笔最大金额（例如 "2.00"）
+   - `SIMMER_WEATHER_LOCATIONS` - 逗号分隔的城市（例如 "NYC,Chicago"）
 
-4. **Set up cron**
-   - Runs every 2 hours by default
-   - User can request different frequency
+4. **设置 cron 定时任务**
+   - 默认每 2 小时运行一次
+   - 用户可以请求不同频率
 
-## Configuration
+## 配置
 
-All settings can be customized via environment variables:
+所有设置都可以通过环境变量自定义：
 
-| Setting | Environment Variable | Default | Description |
+| 设置 | 环境变量 | 默认值 | 描述 |
 |---------|---------------------|---------|-------------|
-| Entry threshold | `SIMMER_WEATHER_ENTRY` | 0.15 | Buy when price below this (0.15 = 15¢) |
-| Exit threshold | `SIMMER_WEATHER_EXIT` | 0.45 | Sell when price above this (0.45 = 45¢) |
-| Max position | `SIMMER_WEATHER_MAX_POSITION` | 2.00 | Maximum USD per trade |
-| Locations | `SIMMER_WEATHER_LOCATIONS` | NYC | Comma-separated: NYC,Chicago,Miami,Seattle,Dallas,Atlanta |
+| 入场阈值 | `SIMMER_WEATHER_ENTRY` | 0.15 | 当价格低于此值时买入（0.15 = 15¢） |
+| 出场阈值 | `SIMMER_WEATHER_EXIT` | 0.45 | 当价格高于此值时卖出（0.45 = 45¢） |
+| 最大仓位 | `SIMMER_WEATHER_MAX_POSITION` | 2.00 | 每笔交易最大美元金额 |
+| 位置 | `SIMMER_WEATHER_LOCATIONS` | NYC | 逗号分隔：NYC,Chicago,Miami,Seattle,Dallas,Atlanta |
 
-**Supported locations:**
-- NYC (New York - LaGuardia)
-- Chicago (O'Hare)
-- Seattle (Sea-Tac)
-- Atlanta (Hartsfield)
-- Dallas (DFW)
-- Miami (MIA)
+**支持的位置：**
+- NYC（纽约 - 拉瓜迪亚机场）
+- Chicago（芝加哥 - 奥黑尔机场）
+- Seattle（西雅图 - 塔科马机场）
+- Atlanta（亚特兰大 - 哈茨菲尔德机场）
+- Dallas（达拉斯 - 沃斯堡机场）
+- Miami（迈阿密 - 国际机场）
 
-To view current config, run:
+查看当前配置，运行：
 ```bash
 python weather_trader.py --config
 ```
 
-## How It Works
+## 工作原理
 
-Each cycle the script:
-1. Fetches active weather markets from Simmer API (tagged with "weather")
-2. Groups markets by event (each temperature day is one event with multiple buckets)
-3. Parses event names to get location and date
-4. Fetches NOAA forecast for that location/date
-5. Finds the temperature bucket that matches the forecast
-6. **Entry:** If bucket price < entry threshold → executes BUY via Simmer SDK
-7. **Exit:** Checks open positions, sells if price > exit threshold
-8. Reports results back to user
+每个周期脚本执行以下步骤：
+1. 从 Simmer API 获取活跃的天气市场（标记为 "weather"）
+2. 按事件分组市场（每个温度日是一个事件，包含多个区间）
+3. 解析事件名称以获取位置和日期
+4. 获取该位置/日期的 NOAA 预报
+5. 找到与预报匹配的温度区间
+6. **入场：** 如果区间价格 < 入场阈值 → 通过 Simmer SDK 执行买入
+7. **出场：** 检查未平仓持仓，如果价格 > 出场阈值则卖出
+8. 向用户报告结果
 
-## Running the Skill
+## 运行技能
 
-**Run a scan:**
+**运行扫描：**
 ```bash
 python weather_trader.py
 ```
 
-**Dry run (no actual trades):**
+**模拟运行（无实际交易）：**
 ```bash
 python weather_trader.py --dry-run
 ```
 
-**Check positions only:**
+**仅检查持仓：**
 ```bash
 python weather_trader.py --positions
 ```
 
-**View current config:**
+**查看当前配置：**
 ```bash
 python weather_trader.py --config
 ```
 
-## Reporting Results
+## 报告结果
 
-After each run, message the user with:
-- Current configuration
-- Number of weather markets found
-- NOAA forecast for each location
-- Entry opportunities (and trades executed)
-- Exit opportunities (and sells executed)
-- Current positions
+每次运行后，向用户发送消息，包含：
+- 当前配置
+- 找到的天气市场数量
+- 每个位置的 NOAA 预报
+- 入场机会（以及执行的交易）
+- 出场机会（以及执行的卖出）
+- 当前持仓
 
-Example output to share:
+要分享的示例输出：
 ```
-🌤️ Weather Trading Scan Complete
+🌤️ 天气交易扫描完成
 
-Configuration: Entry <15¢, Exit >45¢, Max $2.00, Locations: NYC
+配置：入场 <15¢，出场 >45¢，最大 $2.00，位置：NYC
 
-Found 12 active weather markets across 4 events
+找到 12 个活跃天气市场，分布在 4 个事件中
 
-NYC Jan 28: NOAA forecasts 34°F (high)
-→ Bucket "34-35°F" trading at $0.12
-→ Below 15¢ threshold - BUY opportunity!
-→ Executed: Bought 16.6 shares @ $0.12 ($2.00)
+NYC 1 月 28 日：NOAA 预报 34°F（最高温度）
+→ 区间 "34-35°F" 交易价格 $0.12
+→ 低于 15¢ 阈值 - 买入机会！
+→ 已执行：以 $0.12 买入 16.6 股（$2.00）
 
-Checked 2 open positions:
-→ NYC Jan 27 "32-33°F" @ $0.52 - SELL opportunity!
-→ Executed: Sold 15.0 shares @ $0.52
+检查 2 个未平仓持仓：
+→ NYC 1 月 27 日 "32-33°F" @ $0.52 - 卖出机会！
+→ 已执行：以 $0.52 卖出 15.0 股
 
-Summary: 1 buy, 1 sell executed
-Next scan in 2 hours.
+汇总：执行 1 次买入，1 次卖出
+下次扫描在 2 小时后。
 ```
 
-## Example Conversations
+## 示例对话
 
-**User: "Set up weather trading"**
-→ Walk through setup flow:
-1. Ask for API key
-2. Ask for entry threshold (suggest 15¢ as default)
-3. Ask for exit threshold (suggest 45¢ as default)
-4. Ask for max position size (suggest $2)
-5. Ask which locations (NYC default, can add more)
-6. Save settings and set up cron
+**用户："设置天气交易"**
+→ 引导设置流程：
+1. 询问 API 密钥
+2. 询问入场阈值（建议默认 15¢）
+3. 询问出场阈值（建议默认 45¢）
+4. 询问最大仓位（建议 $2）
+5. 询问哪些位置（默认 NYC，可以添加更多）
+6. 保存设置并设置 cron
 
-**User: "Run my weather skill"**
-→ Execute the script immediately and report results
+**用户："运行我的天气技能"**
+→ 立即执行脚本并报告结果
 
-**User: "How are my weather trades doing?"**
-→ Run script with --positions flag and summarize
+**用户："我的天气交易情况如何？"**
+→ 使用 --positions 标志运行脚本并总结
 
-**User: "Make it more aggressive"**
-→ Explain current thresholds and offer options:
-- Increase entry threshold to 20¢ (more opportunities)
-- Increase max position to $5 (bigger trades)
-→ Update the relevant environment variable
+**用户："让它更激进"**
+→ 解释当前阈值并提供选项：
+- 将入场阈值提高到 20¢（更多机会）
+- 将最大仓位提高到 $5（更大交易）
+→ 更新相关的环境变量
 
-**User: "Add Chicago to my weather trading"**
-→ Update SIMMER_WEATHER_LOCATIONS to include Chicago
-→ Example: "NYC,Chicago"
+**用户："将芝加哥添加到我的天气交易"**
+→ 更新 SIMMER_WEATHER_LOCATIONS 以包含芝加哥
+→ 示例："NYC,Chicago"
 
-**User: "What are my current settings?"**
-→ Run script with --config flag and show settings
+**用户："我当前的设置是什么？"**
+→ 使用 --config 标志运行脚本并显示设置
 
-**User: "Change my exit threshold to 50 cents"**
-→ Update SIMMER_WEATHER_EXIT to "0.50"
+**用户："将我的出场阈值改为 50 美分"**
+→ 将 SIMMER_WEATHER_EXIT 更新为 "0.50"
 
-## Troubleshooting
+## 故障排除
 
-**"No weather markets found"**
-- Weather markets may not be active (seasonal)
-- Check simmer.markets to see if weather markets exist
+**"未找到天气市场"**
+- 天气市场可能未激活（季节性）
+- 检查 simmer.markets 看是否存在天气市场
 
-**"API key invalid"**
-- Verify SIMMER_API_KEY environment variable is set
-- Get a new key from simmer.markets/dashboard → SDK tab
+**"API 密钥无效"**
+- 验证 SIMMER_API_KEY 环境变量已设置
+- 从 simmer.markets/dashboard → SDK 选项卡获取新密钥
 
-**"NOAA request failed"**
-- NOAA API may be rate-limited, wait a few minutes
-- Check if weather.gov is accessible
+**"NOAA 请求失败"**
+- NOAA API 可能被限速，等待几分钟
+- 检查 weather.gov 是否可访问
 
-**"Max position too small for 5 shares"**
-- Polymarket requires minimum 5 shares per order
-- Increase SIMMER_WEATHER_MAX_POSITION or wait for lower prices
+**"最大仓位太小，无法买 5 股"**
+- Polymarket 要求每笔订单最少 5 股
+- 增加 SIMMER_WEATHER_MAX_POSITION 或等待更低价格
 
-**"Price below min tick"**
-- Market is at an extreme (near 0% or 100%)
-- These are skipped automatically to avoid issues
+**"价格低于最小单位"**
+- 市场处于极端（接近 0% 或 100%）
+- 这些会自动跳过以避免问题

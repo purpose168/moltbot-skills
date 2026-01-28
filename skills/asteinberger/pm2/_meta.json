@@ -1,7 +1,7 @@
 {
   "owner": "asteinberger",
   "slug": "pm2",
-  "displayName": "PM2 Process Manager",
+  "displayName": "PM2 进程管理",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769378517632,

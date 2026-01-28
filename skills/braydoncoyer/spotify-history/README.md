@@ -1,48 +1,48 @@
-# Spotify History & Recommendations
+# Spotify 播放历史与推荐
 
-Access your Spotify listening history, top artists/tracks, and get personalized recommendations via the Spotify Web API.
+通过 Spotify Web API 访问您的播放历史、热门艺术家/歌曲，并获取个性化推荐。
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Run setup wizard
+# 运行设置向导
 bash skills/spotify-history/scripts/setup.sh
 
-# Test it
+# 测试功能
 python3 scripts/spotify-api.py recent
 python3 scripts/spotify-api.py top-artists
 python3 scripts/spotify-api.py recommend
 ```
 
-## What It Does
+## 功能说明
 
-- **Listening History**: See what you've been playing recently
-- **Top Artists/Tracks**: Your most-played artists and tracks (4 weeks, 6 months, or all time)
-- **Recommendations**: Get personalized music recommendations based on your taste
-- **Auto-Refresh**: Tokens refresh automatically - set up once, works forever
+- **播放历史**：查看您最近播放的歌曲
+- **热门艺术家/歌曲**：您播放最多的艺术家和歌曲（4 周、6 个月或所有时间）
+- **音乐推荐**：基于您的音乐品味获取个性化推荐
+- **自动刷新**：令牌自动刷新 - 只需设置一次，永不过期
 
-## Requirements
+## 环境要求
 
 - Python 3.6+
-- Spotify account (free or premium)
-- One-time setup: Spotify Developer App (free, takes 2 minutes)
+- Spotify 账户（免费或 Premium）
+- 一次性设置：Spotify 开发者应用（免费，约 2 分钟）
 
-## Agent Integration
+## 代理集成
 
-When you ask your agent about music:
-- "What have I been listening to?"
-- "Who are my top artists?"
-- "Recommend new music"
+当您向代理询问音乐相关问题时：
+- "我最近在听什么？"
+- "我的热门艺术家是谁？"
+- "推荐一些新音乐"
 
-The agent will:
-1. Fetch your Spotify data
-2. Analyze your taste
-3. Combine API data with music knowledge for personalized recommendations
+代理将：
+1. 获取您的 Spotify 数据
+2. 分析您的音乐品味
+3. 结合 API 数据和音乐知识，提供个性化推荐
 
-## Documentation
+## 文档说明
 
-See [SKILL.md](./SKILL.md) for full documentation, troubleshooting, and advanced usage.
+完整文档、故障排除和高级用法请参见 [SKILL.md](./SKILL.md)。
 
-## License
+## 许可证
 
 MIT

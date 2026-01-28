@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Export adversarial prompting analysis to markdown file.
+将对抗性提示分析导出到markdown文件。
 """
 
 import sys
@@ -10,28 +10,28 @@ from pathlib import Path
 
 def export_analysis(content: str, problem_summary: str = "analysis") -> str:
     """
-    Export analysis content to a markdown file.
+    将分析内容导出到markdown文件。
     
-    Args:
-        content: The full analysis content to export
-        problem_summary: Brief description for filename (default: "analysis")
+    参数:
+        content: 要导出的完整分析内容
+        problem_summary: 文件名的简短描述（默认: "analysis"）
     
-    Returns:
-        Path to the created file
+    返回:
+        创建的文件路径
     """
-    # Create filename with timestamp
+    # 创建带时间戳的文件名
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # Sanitize problem_summary for filename
+    # 清理problem_summary以用于文件名
     safe_summary = "".join(c for c in problem_summary if c.isalnum() or c in (' ', '-', '_')).strip()
-    safe_summary = safe_summary.replace(' ', '_')[:50]  # Limit length
+    safe_summary = safe_summary.replace(' ', '_')[:50]  # 限制长度
     
     filename = f"adversarial_analysis_{safe_summary}_{timestamp}.md"
     filepath = Path.home() / filename
     
-    # Write content to file
+    # 将内容写入文件
     with open(filepath, 'w', encoding='utf-8') as f:
-        f.write(f"# Adversarial Analysis: {problem_summary}\n\n")
-        f.write(f"*Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n")
+        f.write(f"# 对抗性分析: {problem_summary}\n\n")
+        f.write(f"*生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n")
         f.write("---\n\n")
         f.write(content)
     
@@ -40,11 +40,11 @@ def export_analysis(content: str, problem_summary: str = "analysis") -> str:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python export_analysis.py <content> [problem_summary]")
+        print("用法: python export_analysis.py <content> [problem_summary]")
         sys.exit(1)
     
     content = sys.argv[1]
     problem_summary = sys.argv[2] if len(sys.argv) > 2 else "analysis"
     
     filepath = export_analysis(content, problem_summary)
-    print(f"✅ Analysis exported to: {filepath}")
+    print(f"✅ 分析已导出到: {filepath}")

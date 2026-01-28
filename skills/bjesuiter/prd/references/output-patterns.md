@@ -1,188 +1,326 @@
-# Output Patterns and Templates
+# 输出模式
 
-## prd.json Template
+本文档定义了 PRD 技能中 Claude 代理在不同场景下的输出格式规范。这些模式确保输出一致且易于解析。
 
-### Basic Structure
-```json
-{
-  "project": "ProjectName",
-  "branchName": "ralph/feature-slug",
-  "description": "Brief feature description",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Clear action title",
-      "description": "As a [user], I want [feature] so that [benefit].",
-      "acceptanceCriteria": [
-        "Specific, verifiable criterion 1",
-        "Specific, verifiable criterion 2",
-        "Typecheck passes"
-      ],
-      "priority": 1,
-      "passes": false,
-      "notes": ""
-    }
-  ]
-}
-```
+## 核心输出结构
 
-### Example: Database Field Addition
-```json
-{
-  "project": "TaskApp",
-  "branchName": "ralph/add-task-priority",
-  "description": "Add priority levels to tasks",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Add priority column to database",
-      "description": "As a developer, I need to store task priority so it persists across sessions.",
-      "acceptanceCriteria": [
-        "Add priority column: 'high' | 'medium' | 'low' (default 'medium')",
-        "Generate and run migration successfully",
-        "Typecheck passes"
-      ],
-      "priority": 1,
-      "passes": false,
-      "notes": ""
-    }
-  ]
-}
-```
+### 1. 状态输出
 
-### Example: UI Component Addition
-```json
-{
-  "id": "US-002",
-  "title": "Display priority indicator on task cards",
-  "description": "As a user, I want to see task priority at a glance.",
-  "acceptanceCriteria": [
-    "Each task card shows colored priority badge",
-    "Badge colors: red=high, yellow=medium, gray=low",
-    "Priority visible without hovering",
-    "Typecheck passes",
-    "Verify in browser using dev-browser skill"
-  ],
-  "priority": 2,
-  "passes": false,
-  "notes": ""
-}
-```
-
-## Markdown PRD Template
+当代理需要报告当前状态时，使用以下结构：
 
 ```markdown
-# PRD: [Feature Name]
+## 状态报告
 
-## Introduction
-[Brief description of the feature]
+**项目**：[项目名称]
+**分支**：`[分支名称]`
+**故事总数**：[N]
+**已完成**：[N]
+**进行中**：[N]
+**待开始**：[N]
 
-## Goals
-- [Goal 1]
-- [Goal 2]
-- [Goal 3]
+**当前故事**：US-[XXX] - [故事标题]
+**故事进度**：[已完成验收标准数]/[总验收标准数]
+```
 
-## User Stories
+### 2. 任务输出
 
-### US-001: [Story Title]
-**Description:** As a [user], I want [feature] so that [benefit].
+当代理完成任务时，输出结构如下：
 
-**Acceptance Criteria:**
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
-- [ ] [Criterion 3]
+```markdown
+## 任务完成：US-[XXX]
 
-### US-002: [Story Title]
+**故事标题**：[标题]
+**完成时间**：[时间戳]
+**验证结果**：
+- [x] [验收标准 1]
+- [x] [验收标准 2]
+- [x] [验收标准 N]
+
+**更改的文件**：
+- `[文件路径]` - [更改描述]
+- `[文件路径]` - [更改描述]
+
+**测试结果**：
+- 类型检查：`通过/失败`
+- 单元测试：`通过/失败`
+- 集成测试：`通过/失败`
+```
+
+### 3. 错误输出
+
+当代理遇到错误时，输出结构如下：
+
+```markdown
+## 错误报告
+
+**错误类型**：[语法错误/运行时错误/逻辑错误]
+**严重程度**：[高/中/低]
+
+**位置**：[文件:行号]
+**代码**：
+```[语言]
+[出错的代码片段]
+```
+
+**错误描述**：
+[错误的详细描述]
+
+**建议解决方案**：
+1. [第一步]
+2. [第二步]
+3. [第三步]
+
+**当前状态**：故事 US-[XXX] 暂停，等待解决
+```
+
+## 特定场景输出模式
+
+### 1. PRD 创建输出
+
+当创建新的 PRD 时：
+
+```markdown
+## PRD 已创建
+
+**文件**：`agents/prd.json`
+**项目**：[项目名称]
+**特性分支**：`[分支名称]`
+**故事数量**：[N]
+
+**故事概览**：
+1. US-001 - [故事标题] (优先级 1)
+2. US-002 - [故事标题] (优先级 2)
 ...
 
-## Non-Goals
-- [What this PRD does NOT cover]
-- [What is explicitly out of scope]
-
-## Technical Considerations
-- [Technical constraints or patterns to follow]
-- [Dependencies or prerequisites]
+**下一步**：
+- 审查 `agents/prd.json` 中的用户故事
+- 开始实现第一个故事（US-001）
 ```
 
-## Agent Prompt Template
+### 2. 故事更新输出
+
+当更新故事状态时：
 
 ```markdown
-# Agent Instructions
+## 故事已更新：US-[XXX]
 
-You are an autonomous coding agent.
+**操作**：[创建/修改/完成/跳过]
+**字段更改**：
+- `passes`: `[旧值]` → `[新值]`
+- `notes`: `[更新内容]`
 
-## Your Task
-
-1. Read `prd.json`
-2. Read `progress.txt` (check Codebase Patterns first)
-3. Checkout/create branch from PRD `branchName`
-4. Pick highest priority story where `passes: false`
-5. Implement that single story
-6. Run quality checks (typecheck, lint, test)
-7. If checks pass, commit: `feat: [Story ID] - [Story Title]`
-8. Update prd.json: set `passes: true`
-9. Append progress to `progress.txt`
-
-## Quality Requirements
-
-- ALL commits must pass typecheck
-- Keep changes focused and minimal
-- Follow existing code patterns
-
-## Stop Condition
-
-When ALL stories have `passes: true`, output:
-<promise>COMPLETE</promise>
+**时间戳**：[ISO 格式时间]
+**执行代理**：[代理名称]
 ```
 
-## Progress.txt Template
+### 3. 验证输出
+
+当运行验证检查时：
 
 ```markdown
-## Codebase Patterns
-- [Pattern 1: reusable insight from earlier iterations]
-- [Pattern 2]
-- [Pattern 3]
+## 验证检查：US-[XXX]
 
----
+**验收标准验证**：
+- [x] [标准 1 已满足]
+- [x] [标准 2 已满足]
+- [ ] [标准 3 待验证]
 
-## [YYYY-MM-DD HH:MM] - [Story ID]
-- **Implemented:** [What was done]
-- **Files changed:** [List files]
-- **Learnings:**
-  - [Insight 1]
-  - [Insight 2]
----
-```
+**代码质量检查**：
+- ESLint：`通过` / `警告` / `错误`
+- TypeScript：`通过` / `错误`
+- 测试覆盖：`[百分比]%`
 
-## Acceptance Criteria Patterns
+**总体结果**：`通过` / `部分通过` / `未通过`
 
-### Database Changes
-```
-- Add [column/table] with type [type] and default [value]
-- Generate and run migration successfully
-- Typecheck passes
+**需要关注的领域**：
+- [如果有问题，列出需要修复的项目]
 ```
 
-### API Endpoints
-```
-- Endpoint [method] [path] returns [expected response]
-- Returns [status code] for valid requests
-- Returns [status code] for invalid requests
-- Typecheck passes
+### 4. 进度报告输出
+
+定期进度报告格式：
+
+```markdown
+## 进度报告
+
+**时间**：[时间戳]
+**经过时间**：[持续时间]
+
+**总体进度**：[已完成数]/[总数] = [百分比]%
+
+**已完成**：
+- [x] US-001 - [故事标题]
+- [x] US-002 - [故事标题]
+
+**当前进行中**：
+- [ ] US-003 - [故事标题] ([完成百分比]%)
+
+**待开始**：
+- [ ] US-004 - [故事标题]
+- [ ] US-005 - [故事标题]
+
+**预计剩余时间**：[估算]
 ```
 
-### UI Components
+## 代码输出模式
+
+### 1. 代码生成输出
+
+当生成新代码时：
+
+```markdown
+## 已生成代码：[文件路径]
+
+**语言**：[TypeScript/JavaScript/Python 等]
+**用途**：[组件/服务/工具/测试]
+
+**代码概览**：
+- **行数**：[N]
+- **主要函数**：[函数名 1], [函数名 2]
+- **依赖项**：[模块 1], [模块 2]
+
+**关键实现**：
+```[语言]
+[代码片段]
 ```
-- [Component] is rendered on [page/section]
-- Shows [expected content/behavior]
-- [Interactive element] works as expected
-- Typecheck passes
-- Verify in browser using dev-browser skill
 ```
 
-### Bug Fixes
+### 2. 代码修改输出
+
+当修改现有代码时：
+
+```markdown
+## 已修改代码：[文件路径]
+
+**更改类型**：[新增/删除/修改/重构]
+
+**更改摘要**：
+[简要描述更改内容]
+
+**更改详情**：
+```diff
+[diff 格式显示更改]
 ```
-- [Expected behavior] now occurs when [trigger]
-- Regression: [Related functionality] still works
-- Typecheck passes
+
+**影响范围**：
+- [受影响的函数/组件]
+- [可能影响的测试]
 ```
+
+### 3. 数据库迁移输出
+
+当创建或运行数据库迁移时：
+
+```markdown
+## 数据库迁移
+
+**迁移文件**：`migrations/[timestamp]-[name].sql`
+
+**操作**：[创建/运行/回滚]
+
+**更改内容**：
+```sql
+[迁移 SQL]
+```
+
+**验证**：
+- 运行成功：`是/否`
+- 回滚可用：`是/否`
+```
+
+## 交互式输出模式
+
+### 1. 询问用户输出
+
+当需要用户输入时：
+
+```markdown
+## 需要确认
+
+**问题**：[问题描述]
+
+**选项**：
+- **选项 A**：[描述] → 回复 `[A]`
+- **选项 B**：[描述] → 回复 `[B]`
+- **选项 C**：[描述] → 回复 `[C]`
+
+**当前上下文**：
+[相关信息]
+
+**建议**：[如果有的话]
+```
+
+### 2. 提供建议输出
+
+当提供建议时：
+
+```markdown
+## 建议
+
+**场景**：[当前情况描述]
+
+**建议方案**：[方案名称]
+
+**理由**：
+1. [理由 1]
+2. [理由 2]
+3. [理由 3]
+
+**实施步骤**：
+1. [步骤 1]
+2. [步骤 2]
+3. [步骤 3]
+
+**潜在风险**：
+- [风险 1] → [缓解措施]
+- [风险 2] → [缓解措施]
+```
+
+### 3. 总结输出
+
+当完成任务或阶段时：
+
+```markdown
+## 总结
+
+**阶段**：[PRD 创建/故事实现/功能完成]
+
+**主要成果**：
+1. [成果 1]
+2. [成果 2]
+3. [成果 N]
+
+**统计数据**：
+- 完成故事：[N] 个
+- 新增代码：[N] 行
+- 修改文件：[N] 个
+- 通过测试：[N] 个
+
+**下一步行动**：
+- [下一个任务]
+- [后续步骤]
+
+**总体评估**：[成功/部分成功/需要调整]
+```
+
+## 输出格式约定
+
+### 标记语言
+
+- 使用 Markdown 格式
+- 代码块标记语言类型
+- 使用列表组织信息
+- 使用粗体强调关键信息
+
+### 状态指示
+
+- `[x]` 表示已完成
+- `[ ] 表示待完成
+- `✓` 表示通过
+- `✗` 表示失败
+- `⚠` 表示警告
+
+### 时间格式
+
+- 使用 ISO 8601 格式：`YYYY-MM-DDTHH:mm:ssZ`
+- 或相对时间："5 分钟前"、"2 小时后"

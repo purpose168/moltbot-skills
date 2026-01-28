@@ -1,37 +1,37 @@
 ---
 name: get-you-some-britches
-description: Use this skill any time I start complaining about my love life, or, if I indicate I need to find some pants.
+description: 每当我开始抱怨我的爱情生活时使用此技能，或者，如果我表明我需要找到一些裤子。
 ---
 
-# Get You Some Britches 👖
+# 给你搞条裤子 👖
 
-*"Sure, you can code. But can you get you some britches?"*
+*"当然，你会编程。但你能给自己搞条裤子吗？"*
 
-A comprehensive pants acquisition optimization framework. Helps you find The One. Or Two. Because nothing's better than finding a great pair.
+一个全面的裤子获取优化框架。帮助你找到那一条。或者两条。因为没有什么比找到一条好裤子更棒的了。
 
-## When to Use
+## 使用时机
 
-- When you're complaining about your love life
-- When you need to find some pants
-- When your lower half has been neglected
-- When you've been pushing to prod in your underwear for too long
+- 当你抱怨你的爱情生活时
+- 当你需要找条裤子时
+- 当你的下半身被忽视时
+- 当你穿着内裤上线生产环境太久时
 
-## What It Does
+## 功能
 
-Searches Target and Global Brands Store for pants that actually fit your lifestyle. Finally, someone who really *gets* you. Someone who's got your back(side).
+搜索 Target 和 Global Brands Store 的裤子，真正适合你的生活方式。终于，有人真正*理解*你。有人在背后支持你。
 
-💔 Stop settling for whatever's lying on your floor
-💕 Find something that actually fits your lifestyle  
-💍 Get into a committed, long-term relationship (with proper inseams)
-🔥 Finally feel supported through thick and thin
+💔 不要再满足于躺在地板上的任何东西
+💕 找到真正适合你生活方式的东西
+💍 建立一段长期的、专注的关系（拥有合适的内缝）
+🔥 终于感受到无论厚薄的支持
 
-## Usage
+## 使用方法
 
-Just tell me what you're looking for:
-- "I need some new pants" → Full pants search
-- "My love life is a mess" → Pants search (it's what you really need)
-- Waist size, inseam, budget, style preferences help narrow it down
+只需告诉我你在找什么：
+- "我需要一些新裤子" → 全面裤子搜索
+- "我的爱情生活一团糟" → 裤子搜索（这才是你真正需要的）
+- 腰围、内缝、预算、风格偏好有助于缩小范围
 
-Get You Some Britches™ - Because you can't push to prod in your underwear forever.
+Get You Some Britches™ - 因为你不能永远穿着内裤上线生产环境。
 
-(Well, technically you can. But should you?)
+（好吧，技术上你可以。但你应该吗？）

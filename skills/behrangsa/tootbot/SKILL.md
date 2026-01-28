@@ -1,67 +1,67 @@
 ---
 name: mastodon-publisher
-description: Publish content to Mastodon. Use when you need to share updates, posts, or media.
+description: 向 Mastodon 发布内容。当需要分享更新、帖子或媒体文件时使用。
 author: Behrang Saeedzadeh
 version: 1.0.0
 triggers:
-  - "post to mastodon"
+  - "发布到 mastodon"
 metadata: { "clawdbot": { "emoji": "🐘" }, "requires": { "bins": ["node"] } }
 ---
 
-# Mastodon Publisher
+# Mastodon 发布器
 
-Publish content to Mastodon. Use when you need to share updates, posts, or media.
+向 Mastodon 发布内容。当需要分享更新、帖子或媒体文件时使用。
 
-## Usage
+## 使用方法
 
-### Post a new status to Mastodon
+### 向 Mastodon 发布新状态
 
-Post a new status to Mastodon with Bun:
+使用 Bun 向 Mastodon 发布新状态：
 
 ```bash
 node {baseDir}/scripts/toobot.js new-status \
-  --status "some status text" \
+  --status "状态文本" \
   --visibility "public | private | unlisted | direct" \
-  --language "ISO-639-1-code" --scheduled-at "RFC3339-date-time" \
+  --language "ISO-639-1 代码" --scheduled-at "RFC3339 日期时间" \
   --quote-approval-policy "public | followers | nobody"
 ```
 
-Parameters
+参数说明
 
-| Name                      | Description                              | Type                                            | Example                    | Required | Default  |
-| ------------------------- | ---------------------------------------- | ----------------------------------------------- | -------------------------- | -------- | -------- |
-| `--status`                | The text content of the status           | string                                          | "Hello, World"             | yes^1    | N/A      |
-| `--visibility`            | Sets the visibility of the posted status | `public` or `private` or `unlisted` or `direct` | "private"                  | no       | "public" |
-| `--language`              | ISO 639-1 language code for this status  | ISO-639-1 Language Code                         | "en"                       | no       |          |
-| `-scheduled-at`           | Datetime at which to schedule a status   | RFC3339 date time                               | "2029-02-03T15:30:45.000Z" | no       |          |
-| `--quote-approval-policy` | Sets who is allowed to quote the status  | `public` or `followrs` or `nobody`              | "nobody"                   | no       |          |
-| `--media-path`            | Media to be attached to the status       | path                                            | /path/to/foo.mpg           | no^2     |          |
+| 名称                      | 描述                              | 类型                                              | 示例                      | 必填 | 默认值    |
+| ------------------------- | -------------------------------- | ------------------------------------------------ | ------------------------ | ---- | -------- |
+| `--status`                | 状态的文本内容                     | string                                          | "你好，世界"              | 是^1 | N/A      |
+| `--visibility`            | 设置发布状态的可见性               | `public` 或 `private` 或 `unlisted` 或 `direct`   | "private"                | 否   | "public" |
+| `--language`              | 此状态的 ISO 639-1 语言代码        | ISO-639-1 语言代码                               | "zh"                     | 否   |          |
+| `--scheduled-at`          | 计划发布状态的日期时间             | RFC3339 日期时间                                 | "2029-02-03T15:30:45.000Z" | 否   |          |
+| `--quote-approval-policy` | 设置谁可以引用此状态               | `public` 或 `followrs` 或 `nobody`                | "nobody"                 | 否   |          |
+| `--media-path`            | 附加到状态的媒体文件               | 文件路径                                          | /path/to/foo.mpg         | 否^2 |          |
 
-- ^1 `--status` can be ommitted when one or `--media-path` parameters are present
-- ^2 one or `--media-path` parameters must be present if `--status` is ommitted
+- ^1 当存在一个或多个 `--media-path` 参数时，可以省略 `--status`
+- ^2 如果省略 `--status`，则必须存在一个或多个 `--media-path` 参数
 
-## Examples
+## 示例
 
-- **Post a new status**
+- **发布新状态**
 
   ```bash
-  node {baseDir}/scripts/toobot.js new-status --status "Hello, world!"
+  node {baseDir}/scripts/toobot.js new-status --status "你好，世界！"
   ```
 
-  Read the output and summarize it for the user.
+  读取输出并为用户总结。
 
-- **Post a scheduled status**
+- **发布定时状态**
 
   ```bash
-  node {baseDir}/scripts/toobot.js new-status --status "Hello, world!" --scheduled-at 2030-01-02T14:15:16.000Z
+  node {baseDir}/scripts/toobot.js new-status --status "你好，世界！" --scheduled-at 2030-01-02T14:15:16.000Z
   ```
 
-  Read the output and summarize it for the user.
+  读取输出并为用户总结。
 
-- **Post a scheduled status with visibility, language, quote approval policy, and a single media attachment**
+- **发布定时状态，包含可见性、语言、引用批准策略和单个媒体附件**
 
   ```bash
-  node {baseDir}/scripts/toobot.js new-status --status "Hello, world!" \
+  node {baseDir}/scripts/toobot.js new-status --status "你好，世界！" \
     --scheduled-at 2030-01-02T14:15:16.000Z \
     --visibility private \
     --quote-approval-policy nobody \
@@ -69,20 +69,20 @@ Parameters
     --media-path /path/to/foo.jpg
   ```
 
-  Read the output and summarize it for the user.
+  读取输出并为用户总结。
 
-- **Post a new status with media multiple attachments**
+- **发布带有多个媒体附件的新状态**
 
   ```bash
-  node {baseDir}/scripts/toobot.js new-status --status "Hello, world!" --media-path /path/to/foo.jpg --media-path /path/to/bar.jpg
+  node {baseDir}/scripts/toobot.js new-status --status "你好，世界！" --media-path /path/to/foo.jpg --media-path /path/to/bar.jpg
   ```
 
-- **Post a new status with media attachments and no status text**
+- **发布带有媒体附件但没有状态文本的新状态**
 
   ```bash
   bun {baseDir}/scripts/toobot.js new-status --media-path /path/to/media.jpg
   ```
 
-## Notes
+## 注意事项
 
-- Requires `node` to be installed and available in the PATH.
+- 需要安装 `node` 并在 PATH 中可用。

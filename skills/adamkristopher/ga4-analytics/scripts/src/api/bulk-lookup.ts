@@ -1,8 +1,8 @@
 /**
- * Bulk URL Lookup - Get GA4 metrics for specific page paths
- *
- * This module provides a convenient way to look up analytics data
- * for a list of specific URLs, similar to a bulk URL lookup field.
+ * 批量 URL 查找 - 获取特定页面的 GA4 指标
+ * 
+ * 此模块提供了一种便捷的方式来查找特定 URL 列表的分析数据
+ * 类似于批量 URL 查找字段的功能
  */
 
 import { getClient, getPropertyId } from '../core/client.js';
@@ -11,37 +11,45 @@ import { getSettings } from '../config/settings.js';
 import type { ReportResponse, DateRange } from './reports.js';
 
 /**
- * Options for bulk URL lookup
+ * 批量 URL 查找选项
  */
 export interface BulkLookupOptions {
-  /** Date range (e.g., "7d", "30d") or explicit dates */
+  /** 日期范围（例如 "7d"、"30d"）或显式日期 */
   dateRange?: string | DateRange;
-  /** Custom metrics to retrieve (defaults to standard page metrics) */
+  /** 要检索的自定义指标（默认为标准页面指标） */
   metrics?: string[];
-  /** Whether to save results to file (default: true) */
+  /** 是否将结果保存到文件（默认: true） */
   save?: boolean;
 }
 
 /**
- * Dimension filter expression for GA4 API
+ * GA4 API 的维度过滤器表达式
  */
 export interface DimensionFilterExpression {
   filter: {
+    /** 字段名称 */
     fieldName: string;
+    /** 列表过滤器 */
     inListFilter?: {
+      /** 值列表 */
       values: string[];
+      /** 是否区分大小写 */
       caseSensitive?: boolean;
     };
+    /** 字符串过滤器 */
     stringFilter?: {
+      /** 匹配类型 */
       matchType: string;
+      /** 匹配值 */
       value: string;
+      /** 是否区分大小写 */
       caseSensitive?: boolean;
     };
   };
 }
 
 /**
- * Default metrics for bulk URL lookup
+ * 批量 URL 查找的默认指标
  */
 const DEFAULT_METRICS = [
   'screenPageViews',
@@ -52,21 +60,21 @@ const DEFAULT_METRICS = [
 ];
 
 /**
- * Normalize URLs to ensure consistent format
- *
- * - Trims whitespace
- * - Adds leading slash if missing
- * - Preserves trailing slashes
- *
- * @param urls - Array of URLs to normalize
- * @returns Normalized URL array
+ * 规范化 URL 以确保格式一致
+ * 
+ * - 修剪空白
+ * - 如果缺少则添加前导斜杠
+ * - 保留尾随斜杠
+ * 
+ * @param urls 要规范化的 URL 数组
+ * @returns 规范化后的 URL 数组
  */
 export function normalizeUrls(urls: string[]): string[] {
   return urls.map(url => {
-    // Trim whitespace
+    // 修剪空白
     let normalized = url.trim();
 
-    // Add leading slash if missing
+    // 如果缺少前导斜杠，添加一个
     if (!normalized.startsWith('/')) {
       normalized = '/' + normalized;
     }
@@ -76,12 +84,13 @@ export function normalizeUrls(urls: string[]): string[] {
 }
 
 /**
- * Build a dimension filter expression for the given URLs
- *
- * @param urls - Array of page paths to filter by
- * @returns Filter expression or null if no URLs provided
+ * 为给定的 URL 构建维度过滤器表达式
+ * 
+ * @param urls 要按其过滤的页面路径数组
+ * @returns 过滤器表达式，如果没有提供 URL 则返回 null
  */
 export function buildUrlFilter(urls: string[]): DimensionFilterExpression | null {
+  // 如果没有 URL，返回 null
   if (urls.length === 0) {
     return null;
   }
@@ -98,19 +107,24 @@ export function buildUrlFilter(urls: string[]): DimensionFilterExpression | null
 }
 
 /**
- * Parse shorthand date range (e.g., "7d", "30d") to GA4 date range format
+ * 解析简写日期范围（如 "7d"、"30d"）为 GA4 日期范围格式
+ * 
+ * @param range 简写日期范围或日期对象
+ * @returns GA4 格式的日期范围对象
  */
 function parseDateRange(range: string | DateRange | undefined): DateRange {
+  // 如果未提供范围，使用默认设置
   if (!range) {
     const settings = getSettings();
     range = settings.defaultDateRange;
   }
 
+  // 如果已经是对象，直接返回
   if (typeof range === 'object') {
     return range;
   }
 
-  // Parse shorthand like "7d", "30d", "90d"
+  // 解析简写格式，如 "7d"、"30d"
   const match = range.match(/^(\d+)d$/);
   if (match) {
     const days = parseInt(match[1], 10);
@@ -120,7 +134,7 @@ function parseDateRange(range: string | DateRange | undefined): DateRange {
     };
   }
 
-  // Default to 30 days
+  // 默认返回 30 天
   return {
     startDate: '30daysAgo',
     endDate: 'today',
@@ -128,18 +142,18 @@ function parseDateRange(range: string | DateRange | undefined): DateRange {
 }
 
 /**
- * Get GA4 metrics for specific page paths (bulk URL lookup)
- *
- * @param urls - Array of page paths to look up (e.g., ['/pricing', '/about'])
- * @param options - Optional configuration
- * @returns Report response with metrics for the specified URLs
- *
- * @example
+ * 获取特定页面的 GA4 指标（批量 URL 查找）
+ * 
+ * @param urls 要查找的页面路径数组（例如 ['/pricing', '/about']）
+ * @param 可选配置
+ * @returns 包含指定 URL 指标的报告响应
+ * 
+ * @示例
  * ```typescript
- * // Get metrics for specific pages
+ * // 获取特定页面的指标
  * const result = await getMetricsForUrls(['/pricing', '/about', '/blog']);
- *
- * // With custom date range and metrics
+ * 
+ * // 使用自定义日期范围和指标
  * const result = await getMetricsForUrls(['/pricing'], {
  *   dateRange: '7d',
  *   metrics: ['sessions', 'bounceRate'],
@@ -152,10 +166,10 @@ export async function getMetricsForUrls(
 ): Promise<ReportResponse> {
   const { dateRange, metrics = DEFAULT_METRICS, save = true } = options;
 
-  // Normalize URLs
+  // 规范化 URL
   const normalizedUrls = normalizeUrls(urls);
 
-  // Handle empty URL array
+  // 处理空 URL 数组
   if (normalizedUrls.length === 0) {
     return {
       rows: [],
@@ -163,15 +177,15 @@ export async function getMetricsForUrls(
     };
   }
 
-  // Build filter
+  // 构建过滤器
   const dimensionFilter = buildUrlFilter(normalizedUrls);
 
-  // Get client and property
+  // 获取客户端和属性
   const client = getClient();
   const property = getPropertyId();
   const parsedDateRange = parseDateRange(dateRange);
 
-  // Build and execute request
+  // 构建并执行请求
   const request = {
     property,
     dateRanges: [parsedDateRange],
@@ -182,7 +196,7 @@ export async function getMetricsForUrls(
 
   const [response] = await client.runReport(request);
 
-  // Save results if requested
+  // 如果请求保存，则保存结果
   if (save) {
     const dateStr = typeof dateRange === 'string' ? dateRange : 'custom';
     saveResult(response, 'reports', 'bulk_url_lookup', dateStr);

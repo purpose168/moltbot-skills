@@ -1,13 +1,13 @@
-# AgentMail Webhooks Guide
+# AgentMail Webhook 指南
 
-Webhooks enable real-time, event-driven email processing. When events occur (like receiving a message), AgentMail immediately sends a POST request to your registered endpoint.
+Webhook 支持实时、事件驱动的电子邮件处理。当事件发生时（如收到消息），AgentMail 会立即向您注册的端点发送 POST 请求。
 
-## Event Types
+## 事件类型
 
 ### message.received
-Triggered when a new email arrives. Contains full message and thread data.
+当新电子邮件到达时触发。包含完整的消息和会话数据。
 
-**Use case:** Auto-reply to support emails, process attachments, route messages
+**用例：** 自动回复支持电子邮件、处理附件、路由消息
 
 ```json
 {
@@ -20,15 +20,15 @@ Triggered when a new email arrives. Contains full message and thread data.
     "message_id": "msg_123abc",
     "from": [{"name": "Jane Doe", "email": "jane@example.com"}],
     "to": [{"name": "Support", "email": "support@agentmail.to"}],
-    "subject": "Question about my account",
-    "text": "I need help with...",
-    "html": "<p>I need help with...</p>",
+    "subject": "关于我的账户的问题",
+    "text": "我需要帮助...",
+    "html": "<p>我需要帮助...</p>",
     "timestamp": "2023-10-27T10:00:00Z",
     "labels": ["received"]
   },
   "thread": {
     "thread_id": "thd_789ghi",
-    "subject": "Question about my account",
+    "subject": "关于我的账户的问题",
     "participants": ["jane@example.com", "support@agentmail.to"],
     "message_count": 1
   }
@@ -36,7 +36,7 @@ Triggered when a new email arrives. Contains full message and thread data.
 ```
 
 ### message.sent
-Triggered when you successfully send a message.
+当您成功发送消息时触发。
 
 ```json
 {
@@ -54,10 +54,10 @@ Triggered when you successfully send a message.
 ```
 
 ### message.delivered
-Triggered when your message reaches the recipient's mail server.
+当您的消息到达收件人的邮件服务器时触发。
 
 ### message.bounced
-Triggered when a message fails to deliver.
+当消息传递失败时触发。
 
 ```json
 {
@@ -72,25 +72,25 @@ Triggered when a message fails to deliver.
 ```
 
 ### message.complained
-Triggered when recipients mark your message as spam.
+当收件人将您的消息标记为垃圾邮件时触发。
 
-## Local Development Setup
+## 本地开发设置
 
-### Step 1: Install Dependencies
+### 第1步：安装依赖项
 
 ```bash
 pip install agentmail flask ngrok python-dotenv
 ```
 
-### Step 2: Set up ngrok
+### 第2步：设置 ngrok
 
-1. Create account at [ngrok.com](https://ngrok.com/)
-2. Install: `brew install ngrok` (macOS) or download from website
-3. Authenticate: `ngrok config add-authtoken YOUR_AUTHTOKEN`
+1. 在 [ngrok.com](https://ngrok.com/) 创建账户
+2. 安装：`brew install ngrok`（macOS）或从网站下载
+3. 验证身份：`ngrok config add-authtoken YOUR_AUTHTOKEN`
 
-### Step 3: Create Webhook Receiver
+### 第3步：创建 Webhook 接收器
 
-Create `webhook_receiver.py`:
+创建 `webhook_receiver.py`：
 
 ```python
 from flask import Flask, request, Response
@@ -108,17 +108,17 @@ def handle_webhook():
     if payload['event_type'] == 'message.received':
         message = payload['message']
         
-        # Auto-reply example
-        response_text = f"Thanks for your email about '{message['subject']}'. We'll get back to you soon!"
+        # 自动回复示例
+        response_text = f"感谢您关于 '{message['subject']}' 的电子邮件。我们会尽快回复您！"
         
         client.inboxes.messages.send(
             inbox_id=message['inbox_id'],
             to=message['from'][0]['email'],
-            subject=f"Re: {message['subject']}",
+            subject=f"回复: {message['subject']}",
             text=response_text
         )
         
-        print(f"Auto-replied to {message['from'][0]['email']}")
+        print(f"自动回复给 {message['from'][0]['email']}")
     
     return Response(status=200)
 
@@ -126,21 +126,21 @@ if __name__ == '__main__':
     app.run(port=3000)
 ```
 
-### Step 4: Start Services
+### 第4步：启动服务
 
-Terminal 1 - Start ngrok:
+终端1 - 启动 ngrok：
 ```bash
 ngrok http 3000
 ```
 
-Copy the forwarding URL (e.g., `https://abc123.ngrok-free.app`)
+复制转发 URL（例如 `https://abc123.ngrok-free.app`）
 
-Terminal 2 - Start webhook receiver:
+终端2 - 启动 webhook 接收器：
 ```bash
 python webhook_receiver.py
 ```
 
-### Step 5: Register Webhook
+### 第5步：注册 Webhook
 
 ```python
 from agentmail import AgentMail
@@ -153,15 +153,15 @@ webhook = client.webhooks.create(
 )
 ```
 
-### Step 6: Test
+### 第6步：测试
 
-Send an email to your AgentMail inbox and watch the console output.
+向您的 AgentMail 收件箱发送电子邮件并查看控制台输出。
 
-## Production Deployment
+## 生产部署
 
-### Webhook Verification
+### Webhook 验证
 
-Verify incoming webhooks are from AgentMail:
+验证传入的 webhook 来自 AgentMail：
 
 ```python
 import hmac
@@ -182,12 +182,12 @@ def handle_webhook():
     if not verify_webhook(request.data.decode(), signature, webhook_secret):
         return Response(status=401)
     
-    # Process webhook...
+    # 处理 webhook...
 ```
 
-### Error Handling
+### 错误处理
 
-Return 200 status quickly, process in background:
+快速返回 200 状态，在后台处理：
 
 ```python
 from threading import Thread
@@ -195,25 +195,25 @@ import time
 
 def process_webhook_async(payload):
     try:
-        # Heavy processing here
-        time.sleep(5)  # Simulate work
+        # 这里的重处理
+        time.sleep(5)  # 模拟工作
         handle_message(payload)
     except Exception as e:
-        print(f"Webhook processing error: {e}")
-        # Log to error tracking service
+        print(f"Webhook 处理错误: {e}")
+        # 记录到错误跟踪服务
 
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
     payload = request.json
     
-    # Return 200 immediately
+    # 立即返回 200
     Thread(target=process_webhook_async, args=(payload,)).start()
     return Response(status=200)
 ```
 
-### Retry Logic
+### 重试逻辑
 
-AgentMail retries failed webhooks with exponential backoff. Handle idempotency:
+AgentMail 使用指数退避重试失败的 webhook。处理幂等性：
 
 ```python
 processed_events = set()
@@ -223,37 +223,37 @@ def handle_webhook():
     event_id = request.json['event_id']
     
     if event_id in processed_events:
-        return Response(status=200)  # Already processed
+        return Response(status=200)  # 已处理
     
-    # Process event...
+    # 处理事件...
     processed_events.add(event_id)
     return Response(status=200)
 ```
 
-## Common Patterns
+## 常见模式
 
-### Auto-Reply Bot
+### 自动回复机器人
 
 ```python
 def handle_message_received(message):
     if 'support' in message['to'][0]['email']:
-        # Support auto-reply
-        reply_text = "Thanks for contacting support! We'll respond within 24 hours."
+        # 支持自动回复
+        reply_text = "感谢您联系支持！我们将在24小时内回复。"
     elif 'sales' in message['to'][0]['email']:
-        # Sales auto-reply
-        reply_text = "Thanks for your interest! A sales rep will contact you soon."
+        # 销售自动回复
+        reply_text = "感谢您的关注！销售代表将很快联系您。"
     else:
         return
     
     client.inboxes.messages.send(
         inbox_id=message['inbox_id'],
         to=message['from'][0]['email'],
-        subject=f"Re: {message['subject']}",
+        subject=f"回复: {message['subject']}",
         text=reply_text
     )
 ```
 
-### Message Routing
+### 消息路由
 
 ```python
 def route_message(message):
@@ -267,29 +267,29 @@ def route_message(message):
         add_to_feature_requests(message)
 ```
 
-### Attachment Processing
+### 附件处理
 
 ```python
 def process_attachments(message):
     for attachment in message.get('attachments', []):
         if attachment['content_type'] == 'application/pdf':
-            # Process PDF
+            # 处理 PDF
             pdf_content = base64.b64decode(attachment['content'])
             text = extract_pdf_text(pdf_content)
             
-            # Reply with extracted text
+            # 回复提取的文本
             client.inboxes.messages.send(
                 inbox_id=message['inbox_id'],
                 to=message['from'][0]['email'],
-                subject=f"Re: {message['subject']} - PDF processed",
-                text=f"I extracted this text from your PDF:\n\n{text}"
+                subject=f"回复: {message['subject']} - PDF 已处理",
+                text=f"我从您的 PDF 中提取了以下文本:\n\n{text}"
             )
 ```
 
-## Webhook Security
+## Webhook 安全性
 
-- **Always verify signatures** in production
-- **Use HTTPS endpoints** only
-- **Validate payload structure** before processing
-- **Implement rate limiting** to prevent abuse
-- **Return 200 quickly** to avoid retries
+- **始终在生产环境中验证签名**
+- **仅使用 HTTPS 端点**
+- **在处理前验证负载结构**
+- **实施速率限制以防止滥用**
+- **快速返回 200 以避免重试**

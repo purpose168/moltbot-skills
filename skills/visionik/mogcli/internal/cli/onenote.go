@@ -9,23 +9,23 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// OneNoteCmd handles OneNote operations.
+// OneNoteCmd 处理OneNote操作。
 type OneNoteCmd struct {
-	Notebooks      OneNoteNotebooksCmd      `cmd:"" help:"List notebooks"`
-	Sections       OneNoteSectionsCmd       `cmd:"" help:"List sections in a notebook"`
-	Pages          OneNotePagesCmd          `cmd:"" help:"List pages in a section"`
-	Get            OneNoteGetCmd            `cmd:"" help:"Get page content"`
-	Search         OneNoteSearchCmd         `cmd:"" help:"Search OneNote"`
-	CreateNotebook OneNoteCreateNotebookCmd `cmd:"" name:"create-notebook" help:"Create a new notebook"`
-	CreateSection  OneNoteCreateSectionCmd  `cmd:"" name:"create-section" help:"Create a new section"`
-	CreatePage     OneNoteCreatePageCmd     `cmd:"" name:"create-page" help:"Create a new page"`
-	Delete         OneNoteDeleteCmd         `cmd:"" help:"Delete a page"`
+	Notebooks      OneNoteNotebooksCmd      `cmd:"" help:"列出笔记本"`
+	Sections       OneNoteSectionsCmd       `cmd:"" help:"列出笔记本中的分区"`
+	Pages          OneNotePagesCmd          `cmd:"" help:"列出分区中的页面"`
+	Get            OneNoteGetCmd            `cmd:"" help:"获取页面内容"`
+	Search         OneNoteSearchCmd         `cmd:"" help:"搜索OneNote"`
+	CreateNotebook OneNoteCreateNotebookCmd `cmd:"" name:"create-notebook" help:"创建新笔记本"`
+	CreateSection  OneNoteCreateSectionCmd  `cmd:"" name:"create-section" help:"创建新分区"`
+	CreatePage     OneNoteCreatePageCmd     `cmd:"" name:"create-page" help:"创建新页面"`
+	Delete         OneNoteDeleteCmd         `cmd:"" help:"删除页面"`
 }
 
-// OneNoteNotebooksCmd lists notebooks.
+// OneNoteNotebooksCmd 列出笔记本。
 type OneNoteNotebooksCmd struct{}
 
-// Run executes onenote notebooks.
+// Run 执行onenote notebooks命令。
 func (c *OneNoteNotebooksCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -55,12 +55,12 @@ func (c *OneNoteNotebooksCmd) Run(root *Root) error {
 	return nil
 }
 
-// OneNoteSectionsCmd lists sections.
+// OneNoteSectionsCmd 列出分区。
 type OneNoteSectionsCmd struct {
-	NotebookID string `arg:"" help:"Notebook ID"`
+	NotebookID string `arg:"" help:"笔记本ID"`
 }
 
-// Run executes onenote sections.
+// Run 执行onenote sections命令。
 func (c *OneNoteSectionsCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -92,12 +92,12 @@ func (c *OneNoteSectionsCmd) Run(root *Root) error {
 	return nil
 }
 
-// OneNotePagesCmd lists pages.
+// OneNotePagesCmd 列出页面。
 type OneNotePagesCmd struct {
-	SectionID string `arg:"" help:"Section ID"`
+	SectionID string `arg:"" help:"分区ID"`
 }
 
-// Run executes onenote pages.
+// Run 执行onenote pages命令。
 func (c *OneNotePagesCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -129,13 +129,13 @@ func (c *OneNotePagesCmd) Run(root *Root) error {
 	return nil
 }
 
-// OneNoteGetCmd gets page content.
+// OneNoteGetCmd 获取页面内容。
 type OneNoteGetCmd struct {
-	PageID string `arg:"" help:"Page ID"`
-	HTML   bool   `help:"Output raw HTML"`
+	PageID string `arg:"" help:"页面ID"`
+	HTML   bool   `help:"输出原始HTML"`
 }
 
-// Run executes onenote get.
+// Run 执行onenote get命令。
 func (c *OneNoteGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -155,17 +155,17 @@ func (c *OneNoteGetCmd) Run(root *Root) error {
 		return nil
 	}
 
-	// Strip HTML for text output
+	// 剥离HTML以输出文本
 	fmt.Println(stripHTML(string(data)))
 	return nil
 }
 
-// OneNoteSearchCmd searches OneNote.
+// OneNoteSearchCmd 搜索OneNote。
 type OneNoteSearchCmd struct {
-	Query string `arg:"" help:"Search query"`
+	Query string `arg:"" help:"搜索查询"`
 }
 
-// Run executes onenote search.
+// Run 执行onenote search命令。
 func (c *OneNoteSearchCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -174,7 +174,7 @@ func (c *OneNoteSearchCmd) Run(root *Root) error {
 
 	ctx := context.Background()
 
-	// Search pages
+	// 搜索页面
 	data, err := client.Get(ctx, "/me/onenote/pages", nil)
 	if err != nil {
 		return err
@@ -191,38 +191,38 @@ func (c *OneNoteSearchCmd) Run(root *Root) error {
 		return outputJSON(resp.Value)
 	}
 
-	fmt.Println("Note: Full-text search requires Graph beta API")
-	fmt.Println("Listing all pages instead:")
+	fmt.Println("注意: 全文搜索需要Graph beta API")
+	fmt.Println("改为列出所有页面:")
 	for _, p := range resp.Value {
 		fmt.Printf("%-40s %s\n", p.Title, graph.FormatID(p.ID))
 	}
 	return nil
 }
 
-// Notebook represents a OneNote notebook.
+// Notebook 表示OneNote笔记本。
 type Notebook struct {
 	ID          string `json:"id"`
 	DisplayName string `json:"displayName"`
 }
 
-// Section represents a OneNote section.
+// Section 表示OneNote分区。
 type Section struct {
 	ID          string `json:"id"`
 	DisplayName string `json:"displayName"`
 }
 
-// Page represents a OneNote page.
+// Page 表示OneNote页面。
 type Page struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
 }
 
-// OneNoteCreateNotebookCmd creates a notebook.
+// OneNoteCreateNotebookCmd 创建笔记本。
 type OneNoteCreateNotebookCmd struct {
-	Name string `arg:"" help:"Notebook name"`
+	Name string `arg:"" help:"笔记本名称"`
 }
 
-// Run executes onenote create-notebook.
+// Run 执行onenote create-notebook命令。
 func (c *OneNoteCreateNotebookCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -248,19 +248,19 @@ func (c *OneNoteCreateNotebookCmd) Run(root *Root) error {
 		return outputJSON(nb)
 	}
 
-	fmt.Println("✓ Notebook created")
-	fmt.Printf("  Name: %s\n", nb.DisplayName)
+	fmt.Println("✓ 笔记本创建成功")
+	fmt.Printf("  名称: %s\n", nb.DisplayName)
 	fmt.Printf("  ID: %s\n", graph.FormatID(nb.ID))
 	return nil
 }
 
-// OneNoteCreateSectionCmd creates a section.
+// OneNoteCreateSectionCmd 创建分区。
 type OneNoteCreateSectionCmd struct {
-	NotebookID string `arg:"" help:"Notebook ID"`
-	Name       string `arg:"" help:"Section name"`
+	NotebookID string `arg:"" help:"笔记本ID"`
+	Name       string `arg:"" help:"分区名称"`
 }
 
-// Run executes onenote create-section.
+// Run 执行onenote create-section命令。
 func (c *OneNoteCreateSectionCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -288,27 +288,27 @@ func (c *OneNoteCreateSectionCmd) Run(root *Root) error {
 		return outputJSON(section)
 	}
 
-	fmt.Println("✓ Section created")
-	fmt.Printf("  Name: %s\n", section.DisplayName)
+	fmt.Println("✓ 分区创建成功")
+	fmt.Printf("  名称: %s\n", section.DisplayName)
 	fmt.Printf("  ID: %s\n", graph.FormatID(section.ID))
 	return nil
 }
 
-// OneNoteCreatePageCmd creates a page.
+// OneNoteCreatePageCmd 创建页面。
 type OneNoteCreatePageCmd struct {
-	SectionID string `arg:"" help:"Section ID"`
-	Title     string `arg:"" help:"Page title"`
-	Content   string `arg:"" optional:"" help:"Page content (optional)"`
+	SectionID string `arg:"" help:"分区ID"`
+	Title     string `arg:"" help:"页面标题"`
+	Content   string `arg:"" optional:"" help:"页面内容（可选）"`
 }
 
-// Run executes onenote create-page.
+// Run 执行onenote create-page命令。
 func (c *OneNoteCreatePageCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
 		return err
 	}
 
-	// OneNote requires HTML presentation format
+	// OneNote需要HTML表示格式
 	htmlContent := fmt.Sprintf(`<!DOCTYPE html>
 <html>
   <head>
@@ -336,18 +336,18 @@ func (c *OneNoteCreatePageCmd) Run(root *Root) error {
 		return outputJSON(page)
 	}
 
-	fmt.Println("✓ Page created")
-	fmt.Printf("  Title: %s\n", page.Title)
+	fmt.Println("✓ 页面创建成功")
+	fmt.Printf("  标题: %s\n", page.Title)
 	fmt.Printf("  ID: %s\n", graph.FormatID(page.ID))
 	return nil
 }
 
-// OneNoteDeleteCmd deletes a page.
+// OneNoteDeleteCmd 删除页面。
 type OneNoteDeleteCmd struct {
-	PageID string `arg:"" help:"Page ID"`
+	PageID string `arg:"" help:"页面ID"`
 }
 
-// Run executes onenote delete.
+// Run 执行onenote delete命令。
 func (c *OneNoteDeleteCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -365,11 +365,11 @@ func (c *OneNoteDeleteCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "deleted": c.PageID})
 	}
 
-	fmt.Println("✓ Page deleted")
+	fmt.Println("✓ 页面删除成功")
 	return nil
 }
 
-// escapeHTML escapes HTML special characters.
+// escapeHTML 转义HTML特殊字符。
 func escapeHTML(text string) string {
 	if text == "" {
 		return ""

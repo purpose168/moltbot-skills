@@ -1,8 +1,8 @@
-# Publishing SearXNG Skill to ClawdHub
+# 将 SearXNG 技能发布到 ClawdHub
 
-## ✅ Pre-Publication Verification
+## 发布前验证
 
-All files present:
+所有文件存在：
 - [x] SKILL.md (v1.0.1)
 - [x] README.md
 - [x] LICENSE (MIT)
@@ -10,138 +10,61 @@ All files present:
 - [x] scripts/searxng.py
 - [x] .clawdhub/metadata.json
 
-Security:
-- [x] No hardcoded private URLs
-- [x] Generic default (http://localhost:8080)
-- [x] Fully configurable via SEARXNG_URL
+安全性：
+- [x] 无硬编码的私有URL
+- [x] 通用默认值（http://localhost:8080）
+- [x] 完全可通过SEARXNG_URL配置
 
-Author:
-- [x] Updated to: Avinash Venkatswamy
+## 发布步骤
 
-## 📤 Publishing Steps
-
-### Step 1: Login to ClawdHub
+### 步骤1：登录 ClawdHub
 
 ```bash
 clawdhub login
 ```
 
-This will open your browser. Complete the authentication flow.
-
-### Step 2: Verify Authentication
+### 步骤2：验证身份
 
 ```bash
 clawdhub whoami
 ```
 
-Should return your user info if logged in successfully.
-
-### Step 3: Publish the Skill
-
-From the workspace root:
+### 步骤3：发布技能
 
 ```bash
-cd ~/clawd
 clawdhub publish skills/searxng
 ```
 
-Or from the skill directory:
+### 步骤4：验证发布
 
-```bash
-cd ~/clawd/skills/searxng
-clawdhub publish .
-```
-
-### Step 4: Verify Publication
-
-After publishing, you can:
-
-**Search for your skill:**
 ```bash
 clawdhub search searxng
 ```
 
-**View on ClawdHub:**
-Visit https://clawdhub.com/skills/searxng
+## 发布内容
 
-## 📋 What Gets Published
-
-The CLI will upload:
+CLI将上传：
 - SKILL.md
 - README.md
 - LICENSE
 - CHANGELOG.md
-- scripts/ directory
+- scripts/ 目录
 - .clawdhub/metadata.json
 
-It will NOT upload:
-- PUBLISH.md (this file)
+不会上传：
+- PUBLISH.md
 - PUBLISHING_CHECKLIST.md
-- Any .git files
-- Any node_modules or temporary files
+- .git文件
+- node_modules
 
-## 🔧 If Publishing Fails
+## 发布后
 
-### Common Issues
-
-1. **Not logged in:**
-   ```bash
-   clawdhub login
-   ```
-
-2. **Invalid skill structure:**
-   - Verify SKILL.md has all required fields
-   - Check .clawdhub/metadata.json is valid JSON
-
-3. **Duplicate slug:**
-   - If "searxng" is taken, you'll need a different name
-   - Update `name` in SKILL.md and metadata.json
-
-4. **Network issues:**
-   - Check your internet connection
-   - Try again: `clawdhub publish skills/searxng`
-
-### Get Help
-
+更新版本后运行：
 ```bash
-clawdhub publish --help
+clawdhub publish skills/searxng
 ```
 
-## 📊 After Publishing
-
-### Update Notifications
-
-If you make changes later:
-
-1. Update version in SKILL.md and metadata.json
-2. Add entry to CHANGELOG.md
-3. Run: `clawdhub publish skills/searxng`
-
-### Manage Your Skill
-
-**Delete (soft-delete):**
-```bash
-clawdhub delete searxng
-```
-
-**Undelete:**
-```bash
-clawdhub undelete searxng
-```
-
-## 🎉 Success!
-
-Once published, users can install with:
-
+用户可以使用以下命令安装：
 ```bash
 clawdhub install searxng
 ```
-
-Your skill will appear:
-- On ClawdHub website: https://clawdhub.com
-- In search results: `clawdhub search privacy`
-- In explore: `clawdhub explore`
-
----
-
-**Ready to publish?** Run `clawdhub login` and then `clawdhub publish skills/searxng`!

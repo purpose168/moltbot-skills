@@ -1,7 +1,8 @@
 {
   "owner": "buddyh",
   "slug": "todoist-cli",
-  "displayName": "Todoist CLI",
+  "displayName": "Todoist CLI（命令行工具）",
+  "description": "通过 todoist 命令行工具管理 Todoist 任务、项目、标签和板块",
   "latest": {
     "version": "0.2.0",
     "publishedAt": 1767626758699,

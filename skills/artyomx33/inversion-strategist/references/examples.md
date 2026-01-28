@@ -1,156 +1,156 @@
-# Inversion Examples - Artem's World
+# 反转案例 - Artem 的实践
 
-## Example 1: TISA Eindhoven Launch
+## 案例一：TISA 埃因霍温启动
 
-### Goal
-Successfully open TISA Eindhoven with 50 students in Year 1
+### 目标
+成功开设 TISA 埃因霍温，第一年有50名学生
 
-### Inverted Question
-"How would I GUARANTEE Eindhoven fails?"
+### 反转问题
+"我如何保证埃因霍温失败？"
 
-### Failure Paths
+### 失败路径
 
-🔴 **FATAL:**
-1. **Open without regulatory approval** → Forced to close
-   - AVOID: Legal review 6 months before, permit in hand before any marketing
+🔴 **致命：**
+1. **未获监管批准就开放** → 被迫关闭
+   - 避免：法律审查提前6个月，拿到许可证再营销
 
-2. **Run out of cash before breakeven** → Project dies
-   - AVOID: 18-month runway minimum, milestone-based spending
+2. **在达到收支平衡前耗尽现金** → 项目死亡
+   - 避免：至少18个月的跑道，基于里程碑的支出
 
-3. **No qualified teachers available** → Can't open
-   - AVOID: Start recruiting 9 months early, backup candidates
+3. **没有合格教师可用** → 无法开放
+   - 避免：提前9个月开始招聘，备选候选人
 
-🟡 **DAMAGING:**
-4. **Copy-paste Leiden without local adaptation** → Doesn't resonate
-   - AVOID: Local advisory board, community research first
+🟡 **损害：**
+4. **照搬莱顿不做本地适应** → 不引起共鸣
+   - 避免：本地顾问委员会，首先进行社区研究
 
-5. **Artem stretched too thin** → Both schools suffer
-   - AVOID: Hire Eindhoven director first, delegate fully
+5. **Artem 过度分散** → 两所学校都受影响
+   - 避免：先雇佣埃因霍温校长，完全授权
 
-6. **No local partnerships** → Unknown brand, slow enrollment
-   - AVOID: ASML/tech company partnerships before launch
+6. **没有本地合作伙伴** → 未知品牌，注册缓慢
+   - 避免：在启动前与ASML/科技公司建立合作伙伴关系
 
-🟢 **ANNOYING:**
-7. **Facility not ready in time** → Delayed opening
-   - AVOID: 3-month buffer on facility timeline
+🟢 **烦恼：**
+7. **设施未及时准备** → 延迟开放
+   - 避免：设施时间线预留3个月缓冲
 
-### Anti-Checklist
-□ Never announce opening date before permits secured
-□ Never hire teachers less than 6 months before start
-□ Never open without local director in place
-□ Never use Leiden marketing materials without adaptation
-□ Never commit to facility without exit clause
-
----
-
-## Example 2: TeddySnaps Launch at New TeddyKids Location
-
-### Goal
-Successfully deploy TeddySnaps at new location
-
-### Inverted Question
-"How would I guarantee staff hates TeddySnaps and parents never use it?"
-
-### Failure Paths
-
-🔴 **FATAL:**
-1. **Staff sees it as surveillance** → Active resistance
-   - AVOID: Frame as "parent communication tool", not "monitoring"
-
-2. **Parents don't download app** → No engagement
-   - AVOID: Include in enrollment, demo at first meeting
-
-🟡 **DAMAGING:**
-3. **Photos are bad quality** → Parents unimpressed
-   - AVOID: Photo quality training for staff, good lighting
-
-4. **Face recognition fails often** → Trust breaks
-   - AVOID: Enroll all faces properly, test before launch
-
-5. **Staff forgets to take photos** → Empty feeds
-   - AVOID: Gamification, daily minimums, visible leaderboard
-
-🟢 **ANNOYING:**
-6. **App crashes occasionally** → Frustration
-   - AVOID: Thorough testing, quick bug response
-
-### Anti-Checklist
-□ Never launch without staff buy-in session
-□ Never go live without all children's faces enrolled
-□ Never expect photos without clear daily targets
-□ Never skip the parent onboarding demo
+### 反检查清单
+□ 从不在没有拿到许可证的情况下宣布开放日期
+□ 从不提前少于6个月雇佣教师
+□ 从不没有本地校长就开放
+□ 从不未经适应就使用莱顿营销材料
+□ 从不没有退出条款就承诺设施
 
 ---
 
-## Example 3: GolfTab Sales to First Golf Course
+## 案例二：在新 TeddyKids 位置推出 TeddySnaps
 
-### Goal
-Sign first paying customer within 60 days
+### 目标
+成功在新位置部署 TeddySnaps
 
-### Inverted Question
-"How would I guarantee every golf course says no?"
+### 反转问题
+"我如何保证员工讨厌 TeddySnaps，家长永远不使用它？"
 
-### Failure Paths
+### 失败路径
 
-🔴 **FATAL:**
-1. **Can't demonstrate ROI** → No business case
-   - AVOID: Build ROI calculator, case study from pilot
+🔴 **致命：**
+1. **员工将其视为监控** → 主动抵制
+   - 避免：框定为"家长沟通工具"，而非"监控"
 
-2. **Decision maker unavailable** → Never get meeting
-   - AVOID: Multi-channel outreach, warm intros via network
+2. **家长不下载应用** → 无参与度
+   - 避免：包含在注册中，在首次会议上演示
 
-3. **System isn't ready for demo** → Looks amateur
-   - AVOID: Demo environment polished, rehearsed presentation
+🟡 **损害：**
+3. **照片质量差** → 家长不印象深刻
+   - 避免：员工照片质量培训，好光线
 
-🟡 **DAMAGING:**
-4. **Price too high** → Immediate rejection
-   - AVOID: Competitive analysis, risk-free trial structure
+4. **人脸识别经常失败** → 信任破裂
+   - 避免：正确注册所有面孔，启动前测试
 
-5. **Seems too complicated** → "We don't have time"
-   - AVOID: Emphasize simplicity, 1-day implementation
+5. **员工忘记拍照** → 动态空荡
+   - 避免：游戏化、每日最低要求、可见排行榜
 
-6. **No urgency** → "Call back next season"
-   - AVOID: Limited-time launch pricing, seasonal urgency
+🟢 **烦恼：**
+6. **应用偶尔崩溃** → 沮丧
+   - 避免：彻底测试，快速bug响应
 
-### Anti-Checklist
-□ Never pitch without knowing their current pain
-□ Never demo without tested, working system
-□ Never quote price before establishing value
-□ Never leave meeting without next step scheduled
+### 反检查清单
+□ 从不没有员工买入会议就启动
+□ 从不没有注册所有孩子的面孔就上线
+□ 从不没有明确每日目标就期望照片
+□ 从不跳过家长入职演示
 
 ---
 
-## Quick Inversion Template
+## 案例三：向第一个高尔夫球场销售 GolfTab
+
+### 目标
+在60天内签署第一个付费客户
+
+### 反转问题
+"我如何保证每个高尔夫球场都说no？"
+
+### 失败路径
+
+🔴 **致命：**
+1. **无法展示ROI** → 无商业案例
+   - 避免：构建ROI计算器，试点案例研究
+
+2. **决策者不可用** → 从未获得会议
+   - 避免：多渠道 outreach，通过网络温暖介绍
+
+3. **系统未准备好演示** → 看起来业余
+   - 避免：演示环境打磨、彩排演示
+
+🟡 **损害：**
+4. **价格太高** → 立即拒绝
+   - 避免：竞争分析、无风险试用结构
+
+5. **看起来太复杂** → "我们没时间"
+   - 避免：强调简单，1天实施
+
+6. **没有紧迫感** => "下个赛季再回电"
+   - 避免：限时启动定价、季节性紧迫感
+
+### 反检查清单
+□ 从不没有了解他们当前痛点就推销
+□ 从不没有测试、工作的系统就演示
+□ 从不在建立价值之前报价
+□ 从不离开会议没有安排下一步
+
+---
+
+## 快速反转模板
 
 ```
-GOAL: [What you want to achieve]
+目标：[你想实现什么]
 
-INVERTED: "How would I guarantee failure at [goal]?"
+反转："我如何在[目标]上肯定失败？"
 
-FATAL FAILURES:
-1. [Would kill it] → AVOID: 
-2. [Would kill it] → AVOID:
+致命失败：
+1. [会毁掉它] → 避免：
+2. [会毁掉它] → 避免：
 
-DAMAGING FAILURES:
-3. [Would hurt] → AVOID:
-4. [Would hurt] → AVOID:
+损害失败：
+3. [会伤害] → 避免：
+4. [会伤害] → 避免：
 
-ANTI-CHECKLIST:
-□ Never...
-□ Never...
-□ Never...
+反检查清单：
+□ 从不...
+□ 从不...
+□ 从不...
 ```
 
 ---
 
-## Artem's Personal Anti-Checklist
+## Artem 的个人反检查清单
 
-Based on pattern recognition across your businesses:
+基于跨业务的模式识别：
 
-□ Never start building before validating demand
-□ Never launch without a clear owner responsible
-□ Never assume staff will adopt without training
-□ Never skip the parent communication angle
-□ Never expand without documenting what works first
-□ Never promise timeline without buffer
-□ Never make decisions when tired/rushed
+□ 从不在验证需求之前开始构建
+□ 从不没有明确负责人就启动
+□ 从不期望没有培训员工就会采用
+□ 从不跳过家长沟通角度
+□ 从不没有先记录什么有效就扩展
+□ 从不没有缓冲就承诺时间表
+□ 从不疲惫/匆忙时做决定

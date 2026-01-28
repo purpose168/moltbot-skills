@@ -1,55 +1,55 @@
-# Tavily API Reference
+# Tavily API 参考
 
-## Overview
+## 概述
 
-Tavily is a search engine optimized for Large Language Models (LLMs) and AI applications. It provides:
+Tavily 是一个专为大型语言模型（LLMs）和 AI 应用优化的搜索引擎。它提供：
 
-- **AI-optimized results**: Results specifically formatted for LLM consumption
-- **Answer generation**: Optional AI-generated summaries from search results
-- **Raw content extraction**: Clean, parsed HTML content from sources
-- **Domain filtering**: Include or exclude specific domains
-- **Image search**: Relevant images for visual context
-- **Topic specialization**: General or news-focused search
+- **AI 优化的结果**：专门为 LLM 消费格式化的结果
+- **答案生成**：从搜索结果中可选的 AI 生成摘要
+- **来自来源的干净原始内容提取**：、解析后的 HTML 内容
+- **域名过滤**：包含或排除特定域名
+- **图片搜索**：用于视觉上下文的相关图片
+- **主题专业化**：综合或新闻焦点搜索
 
-## API Key Setup
+## API 密钥设置
 
-1. Visit https://tavily.com and sign up
-2. Generate an API key from your dashboard
-3. Store the key securely:
-   - **Recommended**: Add to Clawdbot config under `skills.entries.tavily.apiKey`
-   - **Alternative**: Set `TAVILY_API_KEY` environment variable
+1. 访问 https://tavily.com 并注册
+2. 从您的仪表板生成 API 密钥
+3. 安全存储密钥：
+   - **推荐**：添加到 Clawdbot 配置中的 `skills.entries.tavily.apiKey`
+   - **替代方案**：设置 `TAVILY_API_KEY` 环境变量
 
-## Search Parameters
+## 搜索参数
 
-### Required
+### 必需参数
 
-- `query` (string): The search query
+- `query` (string): 搜索查询字符串
 
-### Optional
+### 可选参数
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `search_depth` | string | `"basic"` | `"basic"` (fast, ~1-2s) or `"advanced"` (comprehensive, ~5-10s) |
-| `topic` | string | `"general"` | `"general"` or `"news"` (current events, last 7 days) |
-| `max_results` | int | 5 | Number of results (1-10) |
-| `include_answer` | bool | true | Include AI-generated answer summary |
-| `include_raw_content` | bool | false | Include cleaned HTML content of sources |
-| `include_images` | bool | false | Include relevant images |
-| `include_domains` | list[str] | null | Only search these domains |
-| `exclude_domains` | list[str] | null | Exclude these domains |
+| `search_depth` | string | `"basic"` | `"basic"`（快速，约1-2秒）或 `"advanced"`（综合，约5-10秒） |
+| `topic` | string | `"general"` | `"general"` 或 `"news"`（当前事件，最近7天） |
+| `max_results` | int | 5 | 结果数量（1-10） |
+| `include_answer` | bool | true | 包含 AI 生成的答案摘要 |
+| `include_raw_content` | bool | false | 包含来源的清理后的 HTML 内容 |
+| `include_images` | bool | false | 包含相关图片 |
+| `include_domains` | list[str] | null | 仅搜索这些域名 |
+| `exclude_domains` | list[str] | null | 排除这些域名 |
 
-## Response Format
+## 响应格式
 
 ```json
 {
   "success": true,
-  "query": "What is quantum computing?",
-  "answer": "Quantum computing is a type of computing that uses...",
+  "query": "什么是量子计算？",
+  "answer": "量子计算是一种使用...",
   "results": [
     {
-      "title": "Quantum Computing Explained",
+      "title": "量子计算解释",
       "url": "https://example.com/quantum",
-      "content": "Quantum computing leverages...",
+      "content": "量子计算利用...",
       "score": 0.95,
       "raw_content": null
     }
@@ -62,126 +62,126 @@ Tavily is a search engine optimized for Large Language Models (LLMs) and AI appl
 }
 ```
 
-## Use Cases & Best Practices
+## 使用场景与最佳实践
 
-### When to Use Tavily
+### 何时使用 Tavily
 
-1. **Research tasks**: Comprehensive information gathering
-2. **Current events**: News-focused queries with `topic="news"`
-3. **Domain-specific search**: Use `include_domains` for trusted sources
-4. **Visual content**: Enable `include_images` for visual context
-5. **LLM consumption**: Results are pre-formatted for AI processing
+1. **研究任务**：综合信息收集
+2. **当前事件**：使用 `topic="news"` 进行新闻焦点查询
+3. **特定领域搜索**：使用 `include_domains` 获得可信来源
+4. **视觉内容**：启用 `include_images` 获得视觉上下文
+5. **LLM 消费**：结果预先格式化用于 AI 处理
 
-### Search Depth Comparison
+### 搜索深度比较
 
-| Depth | Speed | Results Quality | Use Case |
+| 深度 | 速度 | 结果质量 | 使用场景 |
 |-------|-------|-----------------|----------|
-| `basic` | 1-2s | Good | Quick lookups, simple facts |
-| `advanced` | 5-10s | Excellent | Research, complex topics, comprehensive analysis |
+| `basic` | 1-2秒 | 良好 | 快速查找、简单事实 |
+| `advanced` | 5-10秒 | 优秀 | 研究、复杂主题、综合分析 |
 
-**Recommendation**: Start with `basic`, use `advanced` for research tasks.
+**建议**：从 `basic` 开始，对研究任务使用 `advanced`。
 
-### Domain Filtering
+### 域名过滤
 
-**Include domains** (allowlist):
+**包含域名**（允许列表）：
 ```python
 include_domains=["python.org", "github.com", "stackoverflow.com"]
 ```
-Only search these specific domains - useful for trusted sources.
+仅搜索这些特定域名 - 对可信来源有用。
 
-**Exclude domains** (denylist):
+**排除域名**（拒绝列表）：
 ```python
 exclude_domains=["pinterest.com", "quora.com"]
 ```
-Remove unwanted or low-quality sources.
+移除不需要或低质量的来源。
 
-### Topic Selection
+### 主题选择
 
-**General** (`topic="general"`):
-- Default mode
-- Broader web search
-- Historical and evergreen content
-- Best for most queries
+**综合** (`topic="general"`)：
+- 默认模式
+- 更广泛的网络搜索
+- 历史和永恒内容
+- 适合大多数查询
 
-**News** (`topic="news"`):
-- Last 7 days only
-- News-focused sources
-- Current events and developments
-- Best for "latest", "recent", "current" queries
+**新闻** (`topic="news"`)：
+- 仅最近7天
+- 新闻焦点来源
+- 当前事件和发展
+- 适合"最新"、"最近"、"当前"查询
 
-## Cost & Rate Limits
+## 成本与速率限制
 
-- **Credits**: Each search consumes credits (1 credit for basic search)
-- **Free tier**: Check https://tavily.com/pricing for current limits
-- **Rate limits**: Varies by plan tier
+- **积分**：每次搜索消耗积分（基本搜索消耗1积分）
+- **免费层**：查看 https://tavily.com/pricing 了解当前限制
+- **速率限制**：根据套餐层级而异
 
-## Error Handling
+## 错误处理
 
-Common errors:
+常见错误：
 
-1. **Missing API key**
+1. **缺少 API 密钥**
    ```json
    {
-     "error": "Tavily API key required",
-     "setup_instructions": "Set TAVILY_API_KEY environment variable"
+     "error": "需要 Tavily API 密钥",
+     "setup_instructions": "设置 TAVILY_API_KEY 环境变量"
    }
    ```
 
-2. **Package not installed**
+2. **未安装软件包**
    ```json
    {
-     "error": "tavily-python package not installed",
+     "error": "未安装 tavily-python 软件包",
      "install_command": "pip install tavily-python"
    }
    ```
 
-3. **Invalid API key**
+3. **无效 API 密钥**
    ```json
    {
-     "error": "Invalid API key"
+     "error": "无效的 API 密钥"
    }
    ```
 
-4. **Rate limit exceeded**
+4. **超出速率限制**
    ```json
    {
-     "error": "Rate limit exceeded"
+     "error": "超出速率限制"
    }
    ```
 
 ## Python SDK
 
-The skill uses the official `tavily-python` package:
+该技能使用官方的 `tavily-python` 软件包：
 
 ```python
 from tavily import TavilyClient
 
 client = TavilyClient(api_key="tvly-...")
 response = client.search(
-    query="What is AI?",
+    query="什么是 AI？",
     search_depth="advanced",
     max_results=10
 )
 ```
 
-Install: `pip install tavily-python`
+安装：`pip install tavily-python`
 
-## Comparison with Other Search APIs
+## 与其他搜索 API 的比较
 
-| Feature | Tavily | Brave Search | Perplexity |
+| 功能 | Tavily | Brave Search | Perplexity |
 |---------|--------|--------------|------------|
-| AI Answer | ✅ Yes | ❌ No | ✅ Yes |
-| Raw Content | ✅ Yes | ❌ No | ❌ No |
-| Domain Filtering | ✅ Yes | Limited | ❌ No |
-| Image Search | ✅ Yes | ✅ Yes | ❌ No |
-| News Mode | ✅ Yes | ✅ Yes | ✅ Yes |
-| LLM Optimized | ✅ Yes | ❌ No | ✅ Yes |
-| Speed | Medium | Fast | Medium |
-| Free Tier | ✅ Yes | ✅ Yes | Limited |
+| AI 答案 | ✅ 是 | ❌ 否 | ✅ 是 |
+| 原始内容 | ✅ 是 | ❌ 否 | ❌ 否 |
+| 域名过滤 | ✅ 是 | 有限 | ❌ 否 |
+| 图片搜索 | ✅ 是 | ✅ 是 | ❌ 否 |
+| 新闻模式 | ✅ 是 | ✅ 是 | ✅ 是 |
+| LLM 优化 | ✅ 是 | ❌ 否 | ✅ 是 |
+| 速度 | 中等 | 快速 | 中等 |
+| 免费层 | ✅ 是 | ✅ 是 | 有限 |
 
-## Additional Resources
+## 额外资源
 
-- Official Docs: https://docs.tavily.com
-- Python SDK: https://github.com/tavily-ai/tavily-python
-- API Reference: https://docs.tavily.com/documentation/api-reference
-- Pricing: https://tavily.com/pricing
+- 官方文档：https://docs.tavily.com
+- Python SDK：https://github.com/tavily-ai/tavily-python
+- API 参考：https://docs.tavily.com/documentation/api-reference
+- 定价：https://tavily.com/pricing

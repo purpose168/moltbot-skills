@@ -11,21 +11,21 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// WordCmd handles Word document operations.
+// WordCmd 处理Word文档操作。
 type WordCmd struct {
-	List   WordListCmd   `cmd:"" help:"List Word documents"`
-	Get    WordGetCmd    `cmd:"" help:"Get document metadata"`
-	Export WordExportCmd `cmd:"" help:"Export a document"`
-	Copy   WordCopyCmd   `cmd:"" help:"Copy a document"`
-	Create WordCreateCmd `cmd:"" help:"Create a new document"`
+	List   WordListCmd   `cmd:"" help:"列出Word文档"`
+	Get    WordGetCmd    `cmd:"" help:"获取文档元数据"`
+	Export WordExportCmd `cmd:"" help:"导出文档"`
+	Copy   WordCopyCmd   `cmd:"" help:"复制文档"`
+	Create WordCreateCmd `cmd:"" help:"创建新文档"`
 }
 
-// WordListCmd lists documents.
+// WordListCmd 列出文档。
 type WordListCmd struct {
-	Max int `help:"Maximum results" default:"50"`
+	Max int `help:"最大结果数" default:"50"`
 }
 
-// Run executes word list.
+// Run 执行word list命令。
 func (c *WordListCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -49,7 +49,7 @@ func (c *WordListCmd) Run(root *Root) error {
 		return err
 	}
 
-	// Filter to only .docx files
+	// 过滤出仅.docx文件
 	var docs []DriveItem
 	for _, item := range resp.Value {
 		if strings.HasSuffix(strings.ToLower(item.Name), ".docx") {
@@ -62,11 +62,11 @@ func (c *WordListCmd) Run(root *Root) error {
 	}
 
 	if len(docs) == 0 {
-		fmt.Println("No Word documents found")
+		fmt.Println("未找到Word文档")
 		return nil
 	}
 
-	fmt.Println("Word Documents")
+	fmt.Println("Word文档")
 	fmt.Println()
 	for _, doc := range docs {
 		fmt.Printf("📝 %s  %s  %s\n", doc.Name, formatSize(doc.Size), doc.LastModifiedDateTime[:10])
@@ -75,16 +75,16 @@ func (c *WordListCmd) Run(root *Root) error {
 			fmt.Printf("   URL: %s\n", doc.WebURL)
 		}
 	}
-	fmt.Printf("\n%d document(s)\n", len(docs))
+	fmt.Printf("\n%d 个文档\n", len(docs))
 	return nil
 }
 
-// WordGetCmd gets document metadata.
+// WordGetCmd 获取文档元数据。
 type WordGetCmd struct {
-	ID string `arg:"" help:"Document ID"`
+	ID string `arg:"" help:"文档ID"`
 }
 
-// Run executes word get.
+// Run 执行word get命令。
 func (c *WordGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -109,24 +109,24 @@ func (c *WordGetCmd) Run(root *Root) error {
 	}
 
 	fmt.Printf("ID:       %s\n", graph.FormatID(item.ID))
-	fmt.Printf("Name:     %s\n", item.Name)
-	fmt.Printf("Size:     %s\n", formatSize(item.Size))
-	fmt.Printf("Created:  %s\n", item.CreatedDateTime)
-	fmt.Printf("Modified: %s\n", item.LastModifiedDateTime)
+	fmt.Printf("名称:     %s\n", item.Name)
+	fmt.Printf("大小:     %s\n", formatSize(item.Size))
+	fmt.Printf("创建时间: %s\n", item.CreatedDateTime)
+	fmt.Printf("修改时间: %s\n", item.LastModifiedDateTime)
 	if item.WebURL != "" {
 		fmt.Printf("URL:      %s\n", item.WebURL)
 	}
 	return nil
 }
 
-// WordExportCmd exports a document.
+// WordExportCmd 导出文档。
 type WordExportCmd struct {
-	ID     string `arg:"" help:"Document ID"`
-	Out    string `help:"Output path" required:""`
-	Format string `help:"Export format (docx, pdf)" default:"docx"`
+	ID     string `arg:"" help:"文档ID"`
+	Out    string `help:"输出路径" required:""`
+	Format string `help:"导出格式（docx, pdf）" default:"docx"`
 }
 
-// Run executes word export.
+// Run 执行word export命令。
 func (c *WordExportCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -158,20 +158,20 @@ func (c *WordExportCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "path": c.Out, "format": format})
 	}
 
-	fmt.Println("✓ Exported")
-	fmt.Printf("  Format: %s\n", strings.ToUpper(format))
-	fmt.Printf("  Saved to: %s\n", c.Out)
+	fmt.Println("✓ 导出成功")
+	fmt.Printf("  格式: %s\n", strings.ToUpper(format))
+	fmt.Printf("  保存到: %s\n", c.Out)
 	return nil
 }
 
-// WordCopyCmd copies a document.
+// WordCopyCmd 复制文档。
 type WordCopyCmd struct {
-	ID     string `arg:"" help:"Document ID"`
-	Name   string `arg:"" help:"New name"`
-	Folder string `help:"Destination folder ID"`
+	ID     string `arg:"" help:"文档ID"`
+	Name   string `arg:"" help:"新名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes word copy.
+// Run 执行word copy命令。
 func (c *WordCopyCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -199,25 +199,25 @@ func (c *WordCopyCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "name": c.Name})
 	}
 
-	fmt.Println("✓ Copy initiated")
-	fmt.Printf("  Name: %s\n", c.Name)
+	fmt.Println("✓ 复制已启动")
+	fmt.Printf("  名称: %s\n", c.Name)
 	return nil
 }
 
-// WordCreateCmd creates a document.
+// WordCreateCmd 创建文档。
 type WordCreateCmd struct {
-	Name   string `arg:"" help:"Document name"`
-	Folder string `help:"Destination folder ID"`
+	Name   string `arg:"" help:"文档名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes word create.
+// Run 执行word create命令。
 func (c *WordCreateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
 		return err
 	}
 
-	// Ensure .docx extension
+	// 确保.docx扩展名
 	name := c.Name
 	if !strings.HasSuffix(strings.ToLower(name), ".docx") {
 		name += ".docx"
@@ -231,7 +231,7 @@ func (c *WordCreateCmd) Run(root *Root) error {
 		path = fmt.Sprintf("/me/drive/root:/%s:/content", name)
 	}
 
-	// Create empty docx
+	// 创建空的docx
 	data, err := client.Put(ctx, path, []byte{}, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 	if err != nil {
 		return err
@@ -246,8 +246,8 @@ func (c *WordCreateCmd) Run(root *Root) error {
 		return outputJSON(item)
 	}
 
-	fmt.Println("✓ Document created")
-	fmt.Printf("  Name: %s\n", item.Name)
+	fmt.Println("✓ 文档创建成功")
+	fmt.Printf("  名称: %s\n", item.Name)
 	fmt.Printf("  ID: %s\n", graph.FormatID(item.ID))
 	return nil
 }

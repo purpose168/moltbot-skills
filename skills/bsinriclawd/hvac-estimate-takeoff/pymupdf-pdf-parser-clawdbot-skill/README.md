@@ -1,57 +1,57 @@
-# PyMuPDF PDF Parser - Clawdbot Skill
+# PyMuPDF PDF 解析器 - Clawdbot 技能
 
-A [Clawdbot](https://github.com/clawdbot/clawdbot) skill for fast, lightweight PDF parsing using [PyMuPDF](https://pymupdf.readthedocs.io/) (fitz). Ideal for quick text extraction when speed matters.
+一个使用 [PyMuPDF](https://pymupdf.readthedocs.io/) (fitz) 进行快速、轻量级 PDF 解析的 [Clawdbot](https://github.com/clawdbot/clawdbot) 技能。适用于需要快速提取文本的场景。
 
-## Features
+## 功能特性
 
-- **Fast processing** — Parses PDFs in ~1 second per page
-- **Lightweight** — Single pip dependency, no heavy models
-- **Markdown output** — Clean text extraction with page markers
-- **JSON output** — Simple structured text per page
-- **Image extraction** — Optional embedded image extraction
-- **NixOS compatible** — Includes notes for libstdc++ issues
+- **快速处理** — 每页解析 PDF 约需 1 秒
+- **轻量级** — 只需一个 pip 依赖，无需重型模型
+- **Markdown 输出** — 带页面标记的清晰文本提取
+- **JSON 输出** — 每页简单结构化文本
+- **图片提取** — 可选的内嵌图片提取
+- **NixOS 兼容** — 包含 libstdc++ 问题说明
 
-## Installation
+## 安装
 
-### Prerequisites
+### 前置条件
 
 1. **Python 3.8+**
-2. **PyMuPDF**: `pip install pymupdf`
-3. **Clawdbot** installed
+2. **PyMuPDF**：`pip install pymupdf`
+3. **Clawdbot** 已安装
 
-### Install the skill
+### 安装技能
 
 ```bash
-# Clone the repo
+# 克隆仓库
 git clone https://github.com/kesslerio/PyMuPDF-PDF-Parser-Clawdbot-Skill.git
 
-# Or copy the pymupdf-pdf/ folder to your Clawdbot skills directory
+# 或将 pymupdf-pdf/ 文件夹复制到 Clawdbot 技能目录
 cp -r PyMuPDF-PDF-Parser-Clawdbot-Skill/pymupdf-pdf ~/.clawdbot/skills/
 
-# Install dependency
+# 安装依赖
 pip install pymupdf
 ```
 
-### NixOS users
+### NixOS 用户
 
-If you hit `libstdc++` import errors:
+如果遇到 `libstdc++` 导入错误：
 
 ```bash
-export LD_LIBRARY_PATH=/nix/store/<your-gcc-lib-path>/lib
+export LD_LIBRARY_PATH=/nix/store/<您的 gcc 库路径>/lib
 ```
 
-See `pymupdf-pdf/references/pymupdf-notes.md` for details.
+详情请参阅 `pymupdf-pdf/references/pymupdf-notes.md`。
 
-## Usage
+## 使用方法
 
-### Quick start
+### 快速开始
 
 ```bash
-# Run from the skill directory
+# 从技能目录运行
 ./scripts/pymupdf_parse.py /path/to/document.pdf
 ```
 
-### Options
+### 选项
 
 ```bash
 ./scripts/pymupdf_parse.py /path/to/document.pdf --format json
@@ -59,59 +59,59 @@ See `pymupdf-pdf/references/pymupdf-notes.md` for details.
 ./scripts/pymupdf_parse.py /path/to/document.pdf --outroot ./my-output
 ```
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--format` | `md` | Output format: `md`, `json`, or `both` |
-| `--outroot` | `./pymupdf-output` | Output root directory |
-| `--images` | off | Extract embedded images |
-| `--tables` | off | Extract line-based table approximation |
-| `--lang` | `en` | Language hint (stored in JSON metadata) |
+| 选项 | 默认值 | 描述 |
+|------|--------|------|
+| `--format` | `md` | 输出格式：`md`、`json` 或 `both` |
+| `--outroot` | `./pymupdf-output` | 输出根目录 |
+| `--images` | 关闭 | 提取内嵌图片 |
+| `--tables` | 关闭 | 提取基于行的表格近似 |
+| `--lang` | `en` | 语言提示（存储在 JSON 元数据中） |
 
-## Output
+## 输出
 
-Creates a per-document folder under the output root:
+在输出根目录下为每个文档创建文件夹：
 
 ```
 ./pymupdf-output/
 └── document-name/
-    ├── output.md      # Markdown with page markers
-    ├── output.json    # Simple JSON (~1KB, text per page)
-    ├── images/        # Extracted images (if --images)
-    └── tables.json    # Line-based tables (if --tables)
+    ├── output.md      # 带页面标记的 Markdown
+    ├── output.json    # 简单 JSON（约 1KB，每页文本）
+    ├── images/        # 提取的图片（如果使用 --images）
+    └── tables.json    # 基于行的表格（如果使用 --tables）
 ```
 
-### Output quality
+### 输出质量
 
-PyMuPDF produces **fast, minimal output**:
-- Plain text extraction (no layout preservation)
-- Simple JSON with text per page
-- Optional image extraction
+PyMuPDF 产生**快速、最小化的输出**：
+- 纯文本提取（不保留布局）
+- 简单 JSON，每页文本
+- 可选图片提取
 
-**Best for:** Quick text extraction, batch processing, or when speed matters.
+**适用于：** 快速文本提取、批处理或速度重要的场景。
 
-## Comparison with MinerU
+## 与 MinerU 的比较
 
-| Aspect | PyMuPDF | MinerU |
-|--------|---------|--------|
-| Speed | Fast (~1s/page) | Slower (~15-30s/page) |
-| JSON output | Minimal (~1KB, text only) | Rich (~50KB+, layout data) |
-| Image extraction | Optional | Automatic |
-| Layout preservation | Basic | Excellent |
-| Dependencies | Light (pip install) | Heavy (~20GB models) |
+| 方面 | PyMuPDF | MinerU |
+|------|---------|--------|
+| 速度 | 快（约 1 秒/页） | 较慢（约 15-30 秒/页） |
+| JSON 输出 | 最小（约 1KB，仅文本） | 丰富（约 50KB+，布局数据） |
+| 图片提取 | 可选 | 自动 |
+| 布局保留 | 基础 | 优秀 |
+| 依赖 | 轻量（pip 安装） | 重型（约 20GB 模型） |
 
-**Use PyMuPDF when:** Speed matters or for simple text extraction.  
-**Use MinerU when:** Quality and structure matter more than speed.
+**当速度重要时使用 PyMuPDF。**  
+**当质量和结构比速度更重要时使用 MinerU。**
 
-## License
+## 许可证
 
 Apache 2.0
 
-## Contributing
+## 贡献
 
-Issues and PRs welcome. Please test changes with various PDF types before submitting.
+欢迎提交问题和建议。提交前请用各种 PDF 类型测试更改。
 
-## Related
+## 相关链接
 
-- [MinerU PDF Parser Skill](https://github.com/kesslerio/MinerU-PDF-Parser-Clawdbot-Skill) — Rich, layout-aware alternative
-- [PyMuPDF](https://pymupdf.readthedocs.io/) — The underlying PDF library
-- [Clawdbot](https://github.com/clawdbot/clawdbot) — The AI agent framework
+- [MinerU PDF 解析器技能](https://github.com/kesslerio/MinerU-PDF-Parser-Clawdbot-Skill) — 丰富的、布局感知的替代方案
+- [PyMuPDF](https://pymupdf.readthedocs.io/) — 底层 PDF 库
+- [Clawdbot](https://github.com/clawdbot/clawdbot) — AI 代理框架

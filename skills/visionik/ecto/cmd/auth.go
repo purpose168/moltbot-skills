@@ -9,12 +9,12 @@ import (
 
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "Manage site authentication",
+	Short: "管理站点认证",
 }
 
 var authAddCmd = &cobra.Command{
 	Use:   "add <name>",
-	Short: "Add a new site configuration",
+	Short: "添加新站点配置",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name := args[0]
@@ -22,7 +22,7 @@ var authAddCmd = &cobra.Command{
 		key, _ := cmd.Flags().GetString("key")
 
 		if url == "" || key == "" {
-			return fmt.Errorf("--url and --key are required")
+			return fmt.Errorf("--url 和 --key 是必需的")
 		}
 
 		cfg, err := config.Load()
@@ -34,9 +34,9 @@ var authAddCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Added site %q\n", name)
+		printf("已添加站点 %q\n", name)
 		if cfg.DefaultSite == name {
-			println("Set as default site")
+			println("已设置为默认站点")
 		}
 		return nil
 	},
@@ -44,7 +44,7 @@ var authAddCmd = &cobra.Command{
 
 var authListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List configured sites",
+	Short: "列出已配置的站点",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
 		if err != nil {
@@ -52,7 +52,7 @@ var authListCmd = &cobra.Command{
 		}
 
 		if len(cfg.Sites) == 0 {
-			println("No sites configured. Use 'ecto auth add' to add one.")
+			println("未配置站点。使用 'ecto auth add' 添加一个。")
 			return nil
 		}
 
@@ -69,7 +69,7 @@ var authListCmd = &cobra.Command{
 
 var authDefaultCmd = &cobra.Command{
 	Use:   "default <name>",
-	Short: "Set the default site",
+	Short: "设置默认站点",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name := args[0]
@@ -83,14 +83,14 @@ var authDefaultCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Default site set to %q\n", name)
+		printf("默认站点已设置为 %q\n", name)
 		return nil
 	},
 }
 
 var authRemoveCmd = &cobra.Command{
 	Use:   "remove <name>",
-	Short: "Remove a site configuration",
+	Short: "删除站点配置",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name := args[0]
@@ -101,21 +101,21 @@ var authRemoveCmd = &cobra.Command{
 		}
 
 		if _, ok := cfg.Sites[name]; !ok {
-			return fmt.Errorf("site %q not found", name)
+			return fmt.Errorf("站点 %q 未找到", name)
 		}
 
 		if err := cfg.RemoveSite(name); err != nil {
 			return err
 		}
 
-		printf("Removed site %q\n", name)
+		printf("已删除站点 %q\n", name)
 		return nil
 	},
 }
 
 func init() {
-	authAddCmd.Flags().String("url", "", "Ghost site URL")
-	authAddCmd.Flags().String("key", "", "Admin API key")
+	authAddCmd.Flags().String("url", "", "Ghost 站点 URL")
+	authAddCmd.Flags().String("key", "", "管理 API 密钥")
 
 	authCmd.AddCommand(authAddCmd)
 	authCmd.AddCommand(authListCmd)

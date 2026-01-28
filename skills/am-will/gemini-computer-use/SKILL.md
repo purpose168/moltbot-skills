@@ -1,13 +1,13 @@
 ---
 name: gemini-computer-use
-description: Build and run Gemini 2.5 Computer Use browser-control agents with Playwright. Use when a user wants to automate web browser tasks via the Gemini Computer Use model, needs an agent loop (screenshot → function_call → action → function_response), or asks to integrate safety confirmation for risky UI actions.
+description: 使用 Playwright 构建和运行 Gemini 2.5 计算机使用浏览器控制智能体。当用户想要通过 Gemini 计算机使用模型自动化网页浏览器任务、需要智能体循环（截图 → function_call → action → function_response），或要求集成风险 UI 操作的安全确认时使用。
 ---
 
-# Gemini Computer Use
+# Gemini 计算机使用
 
-## Quick start
+## 快速开始
 
-1. Source the env file and set your API key:
+1. 来源环境文件并设置您的 API 密钥：
 
    ```bash
    cp env.example env.sh
@@ -15,7 +15,7 @@ description: Build and run Gemini 2.5 Computer Use browser-control agents with P
    source env.sh
    ```
 
-2. Create a virtual environment and install dependencies:
+2. 创建虚拟环境并安装依赖：
 
    ```bash
    python -m venv .venv
@@ -24,7 +24,7 @@ description: Build and run Gemini 2.5 Computer Use browser-control agents with P
    playwright install chromium
    ```
 
-3. Run the agent script with a prompt:
+3. 使用提示运行智能体脚本：
 
    ```bash
    python scripts/computer_use_agent.py \
@@ -33,31 +33,31 @@ description: Build and run Gemini 2.5 Computer Use browser-control agents with P
      --turn-limit 6
    ```
 
-## Browser selection
+## 浏览器选择
 
-- Default: Playwright's bundled Chromium (no env vars required).
-- Choose a channel (Chrome/Edge) with `COMPUTER_USE_BROWSER_CHANNEL`.
-- Use a custom Chromium-based executable (e.g., Brave) with `COMPUTER_USE_BROWSER_EXECUTABLE`.
+- 默认：Playwright 捆绑的 Chromium（无需环境变量）。
+- 使用 `COMPUTER_USE_BROWSER_CHANNEL` 选择频道（Chrome/Edge）。
+- 使用 `COMPUTER_USE_BROWSER_EXECUTABLE` 使用自定义基于 Chromium 的可执行文件（例如 Brave）。
 
-If both are set, `COMPUTER_USE_BROWSER_EXECUTABLE` takes precedence.
+如果两者都设置，`COMPUTER_USE_BROWSER_EXECUTABLE` 优先。
 
-## Core workflow (agent loop)
+## 核心工作流程（智能体循环）
 
-1. Capture a screenshot and send the user goal + screenshot to the model.
-2. Parse `function_call` actions in the response.
-3. Execute each action in Playwright.
-4. If a `safety_decision` is `require_confirmation`, prompt the user before executing.
-5. Send `function_response` objects containing the latest URL + screenshot.
-6. Repeat until the model returns only text (no actions) or you hit the turn limit.
+1. 捕获截图并将用户目标 + 截图发送给模型。
+2. 解析响应中的 `function_call` 操作。
+3. 在 Playwright 中执行每个操作。
+4. 如果 `safety_decision` 是 `require_confirmation`，在执行前提示用户。
+5. 发送包含最新 URL + 截图的 `function_response` 对象。
+6. 重复直到模型只返回文本（无操作）或达到轮次限制。
 
-## Operational guidance
+## 操作指南
 
-- Run in a sandboxed browser profile or container.
-- Use `--exclude` to block risky actions you do not want the model to take.
-- Keep the viewport at 1440x900 unless you have a reason to change it.
+- 在沙盒浏览器配置文件或容器中运行。
+- 使用 `--exclude` 阻止您不希望模型执行的风险操作。
+- 保持视口为 1440x900，除非您有理由更改它。
 
-## Resources
+## 资源
 
-- Script: `scripts/computer_use_agent.py`
-- Reference notes: `references/google-computer-use.md`
-- Env template: `env.example`
+- 脚本：`scripts/computer_use_agent.py`
+- 参考笔记：`references/google-computer-use.md`
+- 环境模板：`env.example`

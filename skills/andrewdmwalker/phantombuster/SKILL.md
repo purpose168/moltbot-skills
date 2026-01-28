@@ -1,94 +1,94 @@
 ---
 name: phantombuster
-description: Control PhantomBuster automation agents via API. List agents, launch automations, get output/results, check status, and abort running agents. Use when the user needs to run LinkedIn scraping, Twitter automation, lead generation phantoms, or any PhantomBuster workflow.
+description: 通过 API 控制 PhantomBuster 自动化智能体。列出智能体、启动自动化、获取输出/结果、检查状态以及中止正在运行的智能体。当用户需要运行 LinkedIn 抓取、Twitter 自动化、潜在客户生成 phantom 或任何 PhantomBuster 工作流程时使用。
 version: 1.0.0
 author: captmarbles
 ---
 
-# PhantomBuster Skill
+# PhantomBuster 技能
 
-Control your [PhantomBuster](https://phantombuster.com) automation agents from the command line.
+从命令行控制您的 [PhantomBuster](https://phantombuster.com) 自动化智能体。
 
-## Setup
+## 设置
 
-1. Get your API key from [Workspace Settings](https://phantombuster.com/workspace-settings)
-2. Set the environment variable:
+1. 从 [工作区设置](https://phantombuster.com/workspace-settings) 获取您的 API 密钥
+2. 设置环境变量：
    ```bash
    export PHANTOMBUSTER_API_KEY=your-api-key-here
    ```
 
-## Usage
+## 使用方法
 
-All commands use the bundled `pb.py` script in this skill's directory.
+所有命令都使用此技能目录中捆绑的 `pb.py` 脚本。
 
-### List Agents
+### 列出智能体
 
-See all your configured PhantomBuster agents.
+查看您配置的所有 PhantomBuster 智能体。
 
 ```bash
 python3 pb.py list
-python3 pb.py list --json  # JSON output
+python3 pb.py list --json  # JSON 输出
 ```
 
-### Launch an Agent
+### 启动智能体
 
-Start a phantom by ID or name.
+按 ID 或名称启动 phantom。
 
 ```bash
 python3 pb.py launch <agent-id>
 python3 pb.py launch <agent-id> --argument '{"search": "CEO fintech"}'
 ```
 
-### Get Agent Output
+### 获取智能体输出
 
-Fetch the results/output from the most recent run.
+获取最近一次运行的結果/输出。
 
 ```bash
 python3 pb.py output <agent-id>
-python3 pb.py output <agent-id> --json  # Raw JSON
+python3 pb.py output <agent-id> --json  # 原始 JSON
 ```
 
-### Check Agent Status
+### 检查智能体状态
 
-See if an agent is running, finished, or errored.
+查看智能体是否正在运行、已完成或出错。
 
 ```bash
 python3 pb.py status <agent-id>
 ```
 
-### Abort Running Agent
+### 中止正在运行的智能体
 
-Stop an agent that's currently running.
+停止当前正在运行的智能体。
 
 ```bash
 python3 pb.py abort <agent-id>
 ```
 
-### Get Agent Details
+### 获取智能体详情
 
-Full details about a specific agent.
+获取特定智能体的完整详情。
 
 ```bash
 python3 pb.py get <agent-id>
 ```
 
-## Example Prompts
+## 示例提示
 
-- *"List my PhantomBuster agents"*
-- *"Launch my LinkedIn Sales Navigator scraper"*
-- *"Get the output from agent 12345"*
-- *"Check if my Twitter follower phantom is still running"*
-- *"Abort the currently running agent"*
+- *"列出我的 PhantomBuster 智能体"*
+- *"启动我的 LinkedIn Sales Navigator 抓取器"*
+- *"获取智能体 12345 的输出"*
+- *"检查我的 Twitter 关注者 phantom 是否仍在运行"*
+- *"中止当前正在运行的智能体"*
 
-## Common Phantoms
+## 常见的 Phantom
 
-PhantomBuster offers many pre-built automations:
-- **LinkedIn Sales Navigator Search** — Extract leads from searches
-- **LinkedIn Profile Scraper** — Get profile data
-- **Twitter Follower Collector** — Scrape followers
-- **Instagram Profile Scraper** — Get IG profile data
-- **Google Maps Search Export** — Extract business listings
+PhantomBuster 提供许多预构建的自动化：
+- **LinkedIn Sales Navigator 搜索** — 从搜索中提取潜在客户
+- **LinkedIn 个人资料抓取器** — 获取个人资料数据
+- **Twitter 关注者收集器** — 抓取关注者
+- **Instagram 个人资料抓取器** — 获取 IG 个人资料数据
+- **Google Maps 搜索导出** — 提取商家列表
 
-## Rate Limits
+## 速率限制
 
-PhantomBuster has execution time limits based on your plan. The API itself is not heavily rate-limited, but agent execution consumes your plan's minutes.
+PhantomBuster 根据您的套餐有执行时间限制。API 本身没有严格的速率限制，但智能体执行会消耗您套餐的分钟数。

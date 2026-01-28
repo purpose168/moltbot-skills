@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Session Reader for Telegram Usage Command
- * Reads actual session data from Clawdbot's session store
+ * Telegram 使用统计命令的会话读取器
+ * 从 Clawdbot 的会话存储中读取实际的会话数据
  */
 
 const fs = require('fs');
 const path = require('path');
 
 /**
- * Get the session store path for the current agent
- * @param {string} agentId - Agent ID (default: 'main')
- * @returns {string} Path to sessions.json
+ * 获取当前代理的会话存储路径
+ * @param {string} agentId - 代理 ID（默认为 'main'）
+ * @returns {string} sessions.json 的路径
  */
 function getSessionStorePath(agentId = 'main') {
   const homeDir = process.env.HOME || process.env.USERPROFILE;
@@ -19,16 +19,16 @@ function getSessionStorePath(agentId = 'main') {
 }
 
 /**
- * Get the session reset time from config
- * @param {number} atHour - Hour to reset (0-23)
- * @returns {Date} Next reset time
+ * 从配置中获取会话重置时间
+ * @param {number} atHour - 重置小时（0-23）
+ * @returns {Date} 下次重置时间
  */
 function getNextResetTime(atHour = 4) {
   const now = new Date();
   const reset = new Date();
   reset.setHours(atHour, 0, 0, 0);
   
-  // If reset time has passed today, use tomorrow
+  // 如果今天的重置时间已过，使用明天
   if (reset <= now) {
     reset.setDate(reset.getDate() + 1);
   }
@@ -37,9 +37,9 @@ function getNextResetTime(atHour = 4) {
 }
 
 /**
- * Calculate time remaining until reset
- * @param {number} atHour - Hour to reset
- * @returns {number} Milliseconds until reset
+ * 计算距离重置的剩余时间
+ * @param {number} atHour - 重置小时
+ * @returns {number} 距离重置的毫秒数
  */
 function getTimeUntilReset(atHour = 4) {
   const nextReset = getNextResetTime(atHour);
@@ -47,9 +47,9 @@ function getTimeUntilReset(atHour = 4) {
 }
 
 /**
- * Format duration in milliseconds
- * @param {number} ms - Milliseconds
- * @returns {string} Formatted duration
+ * 将毫秒格式化为持续时间
+ * @param {number} ms - 毫秒数
+ * @returns {string} 格式化的持续时间
  */
 function formatDuration(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -57,22 +57,22 @@ function formatDuration(ms) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return `${hours}小时 ${minutes}分钟`;
   }
-  return `${minutes}m`;
+  return `${minutes}分钟`;
 }
 
 /**
- * Read session store and extract statistics
- * @param {string} sessionKey - Session key (e.g., 'agent:main:main')
- * @param {string} agentId - Agent ID (default: 'main')
- * @returns {Object} Session statistics
+ * 读取会话存储并提取统计信息
+ * @param {string} sessionKey - 会话键（例如：'agent:main:main'）
+ * @param {string} agentId - 代理 ID（默认为 'main'）
+ * @returns {Object} 会话统计信息
  */
 function readSessionStats(sessionKey, agentId = 'main') {
   const storePath = getSessionStorePath(agentId);
   
   if (!fs.existsSync(storePath)) {
-    console.warn(`Session store not found at ${storePath}`);
+    console.warn(`未在 ${storePath} 找到会话存储`);
     return null;
   }
 
@@ -81,7 +81,7 @@ function readSessionStats(sessionKey, agentId = 'main') {
     const session = store[sessionKey];
     
     if (!session) {
-      console.warn(`Session ${sessionKey} not found in store`);
+      console.warn(`在存储中未找到会话 ${sessionKey}`);
       return null;
     }
 
@@ -96,15 +96,15 @@ function readSessionStats(sessionKey, agentId = 'main') {
       provider: session.provider
     };
   } catch (error) {
-    console.error(`Error reading session store: ${error.message}`);
+    console.error(`读取会话存储时出错：${error.message}`);
     return null;
   }
 }
 
 /**
- * Read conversation JSONL to get token counts
- * @param {string} transcriptPath - Path to transcript JSONL
- * @returns {Object} Token statistics
+ * 从会话 JSONL 读取令牌计数
+ * @param {string} transcriptPath -  transcript JSONL 的路径
+ * @returns {Object} 令牌统计信息
  */
 function readTokensFromTranscript(transcriptPath) {
   if (!fs.existsSync(transcriptPath)) {
@@ -134,16 +134,16 @@ function readTokensFromTranscript(transcriptPath) {
       totalTokens: totalInput + totalOutput
     };
   } catch (error) {
-    console.warn(`Could not parse transcript: ${error.message}`);
+    console.warn(`无法解析 transcript：${error.message}`);
     return null;
   }
 }
 
 /**
- * Get transcript path for a session
- * @param {string} sessionId - Session ID
- * @param {string} agentId - Agent ID
- * @returns {string} Path to transcript
+ * 获取会话的 transcript 路径
+ * @param {string} sessionId - 会话 ID
+ * @param {string} agentId - 代理 ID
+ * @returns {string} transcript 的路径
  */
 function getTranscriptPath(sessionId, agentId = 'main') {
   const homeDir = process.env.HOME || process.env.USERPROFILE;
@@ -151,13 +151,13 @@ function getTranscriptPath(sessionId, agentId = 'main') {
 }
 
 /**
- * Estimate context window usage
- * @param {Object} session - Session stats
- * @param {string} model - Model name
- * @returns {Object} Context usage stats
+ * 估算上下文窗口使用情况
+ * @param {Object} session - 会话统计信息
+ * @param {string} model - 模型名称
+ * @returns {Object} 上下文使用统计信息
  */
 function estimateContextUsage(session, model = 'claude-3-5-haiku') {
-  // Context window sizes for common models
+  // 常见模型的上下文窗口大小
   const contextWindows = {
     'claude-3-5-haiku': 200000,
     'claude-haiku-4-5': 200000,
@@ -171,7 +171,7 @@ function estimateContextUsage(session, model = 'claude-3-5-haiku') {
     'gpt-3.5-turbo': 4096
   };
 
-  // Try to match model name (partial matches)
+  // 尝试匹配模型名称（部分匹配）
   let windowSize = 4096;
   for (const [modelKey, size] of Object.entries(contextWindows)) {
     if (model.toLowerCase().includes(modelKey.toLowerCase())) {
@@ -186,15 +186,15 @@ function estimateContextUsage(session, model = 'claude-3-5-haiku') {
   return {
     used: contextUsed,
     total: windowSize,
-    percentage: Math.min(percentage, 100) // Cap at 100%
+    percentage: Math.min(percentage, 100) // 上限为 100%
   };
 }
 
 /**
- * Collect all usage statistics
- * @param {string} sessionKey - Session key to read
- * @param {Object} options - Options
- * @returns {Object} Comprehensive usage stats
+ * 收集所有使用统计信息
+ * @param {string} sessionKey - 要读取的会话键
+ * @param {Object} options - 选项
+ * @returns {Object} 全面的使用统计信息
  */
 function collectUsageStats(sessionKey, options = {}) {
   const {
@@ -207,19 +207,19 @@ function collectUsageStats(sessionKey, options = {}) {
   const session = readSessionStats(sessionKey, agentId);
   
   if (!session) {
-    // Return defaults if session not found
+    // 如果未找到会话，返回默认值
     return {
       quotaRemaining: quotaRemaining || 85,
       sessionTimeRemaining: getTimeUntilReset(resetHour),
       totalTokens: { input: 0, output: 0 },
       contextUsage: { used: 0, total: 4096 },
-      model: 'Unknown',
+      model: '未知',
       provider: provider,
       sessionFound: false
     };
   }
 
-  // Try to read tokens from transcript
+  // 尝试从 transcript 读取令牌
   const transcriptPath = getTranscriptPath(session.sessionId, agentId);
   const transcriptTokens = readTokensFromTranscript(transcriptPath);
 
@@ -252,45 +252,45 @@ function collectUsageStats(sessionKey, options = {}) {
 }
 
 /**
- * Format stats for display
- * @param {Object} stats - Usage statistics
- * @returns {string} Formatted message
+ * 格式化统计信息用于显示
+ * @param {Object} stats - 使用统计信息
+ * @returns {string} 格式化的消息
  */
 function formatStats(stats) {
   const quotaIndicator = getQuotaIndicator(stats.quotaRemaining);
   const contextIndicator = getQuotaIndicator(100 - (stats.contextPercentage || 0));
   const timeRemaining = formatDuration(stats.sessionTimeRemaining);
 
-  let message = '<b>📊 Session Usage Report</b>\n\n';
+  let message = '<b>📊 会话使用报告</b>\n\n';
 
-  message += '<b>🔋 Quota Remaining</b>\n';
-  message += `${quotaIndicator} <code>${stats.quotaRemaining}%</code> of API quota\n`;
-  message += `Provider: ${stats.provider}\n\n`;
+  message += '<b>🔋 剩余配额</b>\n';
+  message += `${quotaIndicator} <code>${stats.quotaRemaining}%</code> 的 API 配额\n`;
+  message += `提供者：${stats.provider}\n\n`;
 
-  message += '<b>⏱️ Session Time</b>\n';
-  message += `${timeRemaining} remaining\n`;
-  message += '(resets daily at 4:00 AM)\n\n';
+  message += '<b>⏱️ 会话时间</b>\n';
+  message += `${timeRemaining} 剩余\n`;
+  message += '（每天凌晨 4:00 重置）\n\n';
 
-  message += '<b>🎯 Tokens Used</b>\n';
+  message += '<b>🎯 已使用令牌</b>\n';
   const total = stats.totalTokens.input + stats.totalTokens.output;
-  message += `${total.toLocaleString('en-US')} total tokens\n`;
-  message += `├─ Input: ${stats.totalTokens.input.toLocaleString('en-US')}\n`;
-  message += `└─ Output: ${stats.totalTokens.output.toLocaleString('en-US')}\n\n`;
+  message += `${total.toLocaleString('zh-CN')} 个令牌总数\n`;
+  message += `├─ 输入：${stats.totalTokens.input.toLocaleString('zh-CN')}\n`;
+  message += `└─ 输出：${stats.totalTokens.output.toLocaleString('zh-CN')}\n\n`;
 
-  message += '<b>📦 Context Window</b>\n';
-  message += `${contextIndicator} <code>${stats.contextPercentage || 0}%</code> used\n`;
-  message += `${stats.contextUsage.used.toLocaleString('en-US')} / ${stats.contextUsage.total.toLocaleString('en-US')} tokens\n`;
+  message += '<b>📦 上下文窗口</b>\n';
+  message += `${contextIndicator} <code>${stats.contextPercentage || 0}%</code> 已使用\n`;
+  message += `${stats.contextUsage.used.toLocaleString('zh-CN')} / ${stats.contextUsage.total.toLocaleString('zh-CN')} 个令牌\n`;
 
-  message += `\n<i>Model: ${stats.model}</i>`;
+  message += `\n<i>模型：${stats.model}</i>`;
   if (stats.sessionId) {
-    message += `\n<i>Session: ${stats.sessionId.substring(0, 8)}...</i>`;
+    message += `\n<i>会话：${stats.sessionId.substring(0, 8)}...</i>`;
   }
 
   return message;
 }
 
 /**
- * Get quota indicator emoji
+ * 获取配额指示器表情符号
  */
 function getQuotaIndicator(percentage) {
   if (percentage >= 75) return '🟢';
@@ -299,7 +299,7 @@ function getQuotaIndicator(percentage) {
   return '🔴';
 }
 
-// Export
+// 导出模块
 module.exports = {
   getSessionStorePath,
   getNextResetTime,
@@ -314,7 +314,7 @@ module.exports = {
   getQuotaIndicator
 };
 
-// CLI usage
+// 命令行使用
 if (require.main === module) {
   const sessionKey = process.argv[2] || 'agent:main:main';
   const agentId = process.argv[3] || 'main';

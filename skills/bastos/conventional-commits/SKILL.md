@@ -1,183 +1,183 @@
 ---
 name: conventional-commits
-description: Format commit messages using the Conventional Commits specification. Use when creating commits, writing commit messages, or when the user mentions commits, git commits, or commit messages. Ensures commits follow the standard format for automated tooling, changelog generation, and semantic versioning.
+description: 使用约定式提交规范格式化提交消息。在创建提交、编写提交消息时使用，或当用户提及提交、git 提交或提交消息时。确保提交遵循标准格式，以便于自动化工具、变更日志生成和语义化版本控制。
 license: MIT
 ---
 
-# Conventional Commits
+# 约定式提交
 
-Format all commit messages according to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. This enables automated changelog generation, semantic versioning, and better commit history.
+根据[约定式提交](https://www.conventionalcommits.org/en/v1.0.0/)规范格式化所有提交消息。这可以实现自动化变更日志生成、语义化版本控制和更好的提交历史。
 
-## Format Structure
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-## Commit Types
-
-### Required Types
-
-- **`feat:`** - A new feature (correlates with MINOR in Semantic Versioning)
-- **`fix:`** - A bug fix (correlates with PATCH in Semantic Versioning)
-
-### Common Additional Types
-
-- **`docs:`** - Documentation only changes
-- **`style:`** - Code style changes (formatting, missing semicolons, etc.)
-- **`refactor:`** - Code refactoring without bug fixes or new features
-- **`perf:`** - Performance improvements
-- **`test:`** - Adding or updating tests
-- **`build:`** - Build system or external dependencies changes
-- **`ci:`** - CI/CD configuration changes
-- **`chore:`** - Other changes that don't modify src or test files
-- **`revert:`** - Reverts a previous commit
-
-## Scope
-
-An optional scope provides additional contextual information about the section of the codebase:
+## 格式结构
 
 ```
-feat(parser): add ability to parse arrays
-fix(auth): resolve token expiration issue
-docs(readme): update installation instructions
+<类型>[可选范围]: <描述>
+
+[可选正文]
+
+[可选页脚]
 ```
 
-## Description
+## 提交类型
 
-- Must immediately follow the colon and space after the type/scope
-- Use imperative mood ("add feature" not "added feature" or "adds feature")
-- Don't capitalize the first letter
-- No period at the end
-- Keep it concise (typically 50-72 characters)
+### 必需类型
 
-## Body
+- **`feat:`** - 新功能（对应语义化版本控制中的 MINOR）
+- **`fix:`** - 错误修复（对应语义化版本控制中的 PATCH）
 
-- Optional longer description providing additional context
-- Must begin one blank line after the description
-- Can consist of multiple paragraphs
-- Explain the "what" and "why" of the change, not the "how"
+### 常见附加类型
 
-## Breaking Changes
+- **`docs:`** - 仅文档更改
+- **`style:`** - 代码样式更改（格式、缺失分号等）
+- **`refactor:`** - 代码重构，不包含错误修复或新功能
+- **`perf:`** - 性能改进
+- **`test:`** - 添加或更新测试
+- **`build:`** - 构建系统或外部依赖更改
+- **`ci:`** - CI/CD 配置更改
+- **`chore:`** - 其他不修改源代码或测试文件的更改
+- **`revert:`** - 回滚之前的提交
 
-Breaking changes can be indicated in two ways:
+## 范围
 
-### 1. Using `!` in the type/scope
-
-```
-feat!: send an email to the customer when a product is shipped
-feat(api)!: send an email to the customer when a product is shipped
-```
-
-### 2. Using BREAKING CHANGE footer
+可选范围提供关于代码库部分的额外上下文信息：
 
 ```
-feat: allow provided config object to extend other configs
-
-BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+feat(parser): 添加解析数组的功能
+fix(auth): 解决令牌过期问题
+docs(readme): 更新安装说明
 ```
 
-### 3. Both methods
+## 描述
+
+- 必须紧跟在类型/范围后的冒号和空格之后
+- 使用祈使语气（"添加功能"而非"已添加功能"或"添加功能"）
+- 首字母不大写
+- 末尾不加句号
+- 保持简洁（通常 50-72 个字符）
+
+## 正文
+
+- 可选的更详细描述，提供额外上下文
+- 必须在描述后一个空行开始
+- 可以由多个段落组成
+- 解释"什么"和"为什么"的变化，而非"如何"变化
+
+## 破坏性变更
+
+破坏性变更可以通过两种方式表示：
+
+### 1. 在类型/范围中使用 `!`
 
 ```
-chore!: drop support for Node 6
-
-BREAKING CHANGE: use JavaScript features not available in Node 6.
+feat!: 在产品发货时向客户发送电子邮件
+feat(api)!: 在产品发货时向客户发送电子邮件
 ```
 
-## Examples
-
-### Simple feature
+### 2. 使用 BREAKING CHANGE 页脚
 
 ```
-feat: add user authentication
+feat: 允许提供的配置对象扩展其他配置
+
+BREAKING CHANGE: 配置文件中的 `extends` 键现在用于扩展其他配置文件
 ```
 
-### Feature with scope
+### 3. 两种方法同时使用
 
 ```
-feat(auth): add OAuth2 support
+chore!: 放弃对 Node 6 的支持
+
+BREAKING CHANGE: 使用 Node 6 中不可用的 JavaScript 特性。
 ```
 
-### Bug fix with body
+## 示例
+
+### 简单功能
 
 ```
-fix: prevent racing of requests
-
-Introduce a request id and a reference to latest request. Dismiss
-incoming responses other than from latest request.
-
-Remove timeouts which were used to mitigate the racing issue but are
-obsolete now.
+feat: 添加用户身份验证
 ```
 
-### Breaking change
+### 带范围的功能
 
 ```
-feat!: migrate to new API client
-
-BREAKING CHANGE: The API client interface has changed. All methods now
-return Promises instead of using callbacks.
+feat(auth): 添加 OAuth2 支持
 ```
 
-### Documentation update
+### 带正文的错误修复
 
 ```
-docs: correct spelling of CHANGELOG
+fix: 防止请求竞态条件
+
+引入请求 ID 和对最新请求的引用。忽略
+来自非最新请求的传入响应。
+
+删除用于缓解竞态问题但现在已过时
+的超时。
 ```
 
-### Multi-paragraph body with footers
+### 破坏性变更
 
 ```
-fix: prevent racing of requests
+feat!: 迁移到新的 API 客户端
 
-Introduce a request id and a reference to latest request. Dismiss
-incoming responses other than from latest request.
+BREAKING CHANGE: API 客户端接口已更改。所有方法现在
+返回 Promise 而不是使用回调。
+```
 
-Remove timeouts which were used to mitigate the racing issue but are
-obsolete now.
+### 文档更新
+
+```
+docs: 更正 CHANGELOG 的拼写
+```
+
+### 带页脚的多段落正文
+
+```
+fix: 防止请求竞态条件
+
+引入请求 ID 和对最新请求的引用。忽略
+来自非最新请求的传入响应。
+
+删除用于缓解竞态问题但现在已过时
+的超时。
 
 Reviewed-by: Z
 Refs: #123
 ```
 
-## Guidelines
+## 指南
 
-1. **Always use a type** - Every commit must start with a type followed by a colon and space
-2. **Use imperative mood** - Write as if completing the sentence "If applied, this commit will..."
-3. **Be specific** - The description should clearly communicate what changed
-4. **Keep it focused** - One logical change per commit
-5. **Use scopes when helpful** - Scopes help categorize changes within a codebase
-6. **Document breaking changes** - Always indicate breaking changes clearly
+1. **始终使用类型** - 每个提交必须以类型开头，后跟冒号和空格
+2. **使用祈使语气** - 编写时仿佛在完成句子"如果应用，此提交将..."
+3. **具体明确** - 描述应清楚传达什么发生了变化
+4. **保持专注** - 每次提交一个逻辑变更
+5. **在有帮助时使用范围** - 范围有助于对代码库内的变更进行分类
+6. **记录破坏性变更** - 始终清楚地指示破坏性变更
 
-## Semantic Versioning Correlation
+## 语义化版本控制关联
 
-- **`fix:`** → PATCH version bump (1.0.0 → 1.0.1)
-- **`feat:`** → MINOR version bump (1.0.0 → 1.1.0)
-- **BREAKING CHANGE** → MAJOR version bump (1.0.0 → 2.0.0)
+- **`fix:`** → PATCH 版本升级 (1.0.0 → 1.0.1)
+- **`feat:`** → MINOR 版本升级 (1.0.0 → 1.1.0)
+- **BREAKING CHANGE** → MAJOR 版本升级 (1.0.0 → 2.0.0)
 
-## When to Use
+## 使用场景
 
-Use this format for:
-- All git commits
-- Commit message generation
-- Pull request merge commits
-- When the user asks about commit messages or git commits
+在以下情况使用此格式：
+- 所有 git 提交
+- 提交消息生成
+- 拉取请求合并提交
+- 当用户询问提交消息或 git 提交时
 
-## Common Mistakes to Avoid
+## 常见错误避免
 
-❌ `Added new feature` (past tense, capitalized)
-✅ `feat: add new feature` (imperative, lowercase)
+❌ `添加了新功能`（过去式，首字母大写）
+✅ `feat: 添加新功能`（祈使式，小写）
 
-❌ `fix: bug` (too vague)
-✅ `fix: resolve null pointer exception in user service`
+❌ `fix: bug`（太模糊）
+✅ `fix: 解决用户服务中的空指针异常`
 
-❌ `feat: add feature` (redundant)
-✅ `feat: add user profile page`
+❌ `feat: 添加功能`（冗余）
+✅ `feat: 添加用户个人资料页面`
 
-❌ `feat: Added OAuth support.` (past tense, period)
-✅ `feat: add OAuth support`
+❌ `feat: 添加了 OAuth 支持。（过去式，句号）
+✅ `feat: 添加 OAuth 支持`

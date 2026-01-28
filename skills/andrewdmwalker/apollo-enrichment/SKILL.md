@@ -1,54 +1,54 @@
 ---
 name: apollo
-description: Apollo.io contact and company enrichment API. Enrich people with email, phone, title, company data. Enrich organizations with industry, revenue, employee count, funding. Search for prospects. Use when the user needs to enrich contacts, find emails, lookup company info, or search for leads.
+description: Apollo.io 联系人和公司富化 API。使用电子邮件、电话、职位、公司数据富化人员。使用行业、收入、员工数量、资金富化组织。搜索潜在客户。当用户需要富化联系人、查找电子邮件、查找公司信息或搜索潜在客户时使用。
 version: 1.0.0
 author: captmarbles
 ---
 
-# Apollo Enrichment Skill
+# Apollo 富化技能
 
-Enrich contacts and companies using [Apollo.io](https://apollo.io) API.
+使用 [Apollo.io](https://apollo.io) API 富化联系人和公司。
 
-## Setup
+## 设置
 
-1. Get your API key from [Apollo Settings](https://app.apollo.io/#/settings/integrations/api)
-2. Set the environment variable:
+1. 从 [Apollo 设置](https://app.apollo.io/#/settings/integrations/api) 获取您的 API 密钥
+2. 设置环境变量：
    ```bash
    export APOLLO_API_KEY=your-api-key-here
    ```
 
-## Usage
+## 使用方法
 
-All commands use the bundled `apollo.py` script in this skill's directory.
+所有命令都使用此技能目录中捆绑的 `apollo.py` 脚本。
 
-### Enrich a Person
+### 富化个人
 
-Get email, phone, title, and company data for a contact.
+获取联系人的电子邮件、电话、职位和公司数据。
 
 ```bash
-# By email
+# 通过电子邮件
 python3 apollo.py enrich --email "john@acme.com"
 
-# By name + company
+# 通过姓名 + 公司
 python3 apollo.py enrich --name "John Smith" --domain "acme.com"
 
-# Include personal email & phone
+# 包含个人电子邮件和电话
 python3 apollo.py enrich --email "john@acme.com" --reveal-email --reveal-phone
 ```
 
-### Bulk Enrich People
+### 批量富化人员
 
-Enrich up to 10 people in one call.
+一次调用富化最多 10 个人。
 
 ```bash
-# From JSON file with array of {email, first_name, last_name, domain}
+# 从包含 {email, first_name, last_name, domain} 数组的 JSON 文件
 python3 apollo.py bulk-enrich --file contacts.json
 
-# Reveal personal contact info
+# 显示个人联系信息
 python3 apollo.py bulk-enrich --file contacts.json --reveal-email --reveal-phone
 ```
 
-**contacts.json example:**
+**contacts.json 示例：**
 ```json
 [
   {"email": "john@acme.com"},
@@ -56,55 +56,55 @@ python3 apollo.py bulk-enrich --file contacts.json --reveal-email --reveal-phone
 ]
 ```
 
-### Enrich a Company
+### 富化公司
 
-Get industry, revenue, employee count, funding data.
+获取行业、收入、员工数量、资金数据。
 
 ```bash
 python3 apollo.py company --domain "stripe.com"
 ```
 
-### Search for People
+### 搜索人员
 
-Find prospects by criteria.
+按条件查找潜在客户。
 
 ```bash
-# By title and company
+# 按职位和公司
 python3 apollo.py search --titles "CEO,CTO" --domain "acme.com"
 
-# By title and location
+# 按职位和位置
 python3 apollo.py search --titles "VP Sales" --locations "San Francisco"
 
-# Limit results
+# 限制结果数量
 python3 apollo.py search --titles "Engineer" --domain "google.com" --limit 10
 ```
 
-## Example Prompts
+## 示例提示
 
-- *"Enrich john@acme.com with Apollo"*
-- *"Get company info for stripe.com"*
-- *"Find CTOs at fintech companies in NYC"*
-- *"Bulk enrich this list of contacts"*
-- *"What's the employee count and revenue for Notion?"*
+- *"使用 Apollo 富化 john@acme.com"*
+- *"获取 stripe.com 的公司信息"*
+- *"查找纽约的金融科技公司的 CTO"*
+- *"批量富化此联系人列表"*
+- *"Notion 的员工数量和收入是多少？"*
 
-## Data Returned
+## 返回的数据
 
-**Person enrichment:**
-- Name, title, headline
-- Email (work & personal)
-- Phone (direct & mobile)
-- Company, industry
+**个人富化：**
+- 姓名、职位、标题
+- 电子邮件（工作和个人）
+- 电话（直拨和移动）
+- 公司、行业
 - LinkedIn URL
-- Location
+- 位置
 
-**Company enrichment:**
-- Name, domain, logo
-- Industry, keywords
-- Employee count, revenue
-- Funding rounds, investors
-- Technologies used
-- Social links
+**公司富化：**
+- 名称、域名、徽标
+- 行业、关键词
+- 员工数量、收入
+- 融资轮次、投资者
+- 使用的技术
+- 社交链接
 
-## Credits
+## 积分
 
-Apollo uses credits for enrichment. Check your usage at [apollo.io/settings/credits](https://app.apollo.io/#/settings/credits).
+Apollo 使用积分进行富化。在 [apollo.io/settings/credits](https://app.apollo.io/#/settings/credits) 查看您的使用情况。

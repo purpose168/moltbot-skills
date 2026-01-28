@@ -1,148 +1,148 @@
 ---
 name: omnifocus
-description: Manage OmniFocus tasks, projects, and folders via Omni Automation. Use for task management, to-do lists, project tracking, GTD workflows, adding/completing/editing tasks, setting due dates, managing tags, and recurring tasks. Requires OmniFocus installed on macOS.
+description: 通过 Omni Automation 管理 OmniFocus 任务、项目和文件夹。用于任务管理、待办事项列表、项目跟踪、GTD 工作流、添加/完成/编辑任务、设置截止日期、管理标签和重复任务。需要 macOS 上安装 OmniFocus。
 ---
 
 # OmniFocus
 
-Control OmniFocus via JXA (JavaScript for Automation).
+通过 JXA（JavaScript for Automation）控制 OmniFocus。
 
-## Requirements
+## 要求
 
-- macOS with OmniFocus 3 or 4 installed
-- OmniFocus must be running (or will auto-launch)
+- 已安装 OmniFocus 3 或 4 的 macOS
+- OmniFocus 必须在运行中（或将自动启动）
 
-## Quick Reference
+## 快速参考
 
 ```bash
-# Run via the wrapper script
-./scripts/of <command> [args...]
+# 通过包装脚本运行
+./scripts/of <命令> [参数...]
 
-# Or directly
-osascript -l JavaScript ./scripts/omnifocus.js <command> [args...]
+# 或直接运行
+osascript -l JavaScript ./scripts/omnifocus.js <命令> [参数...]
 ```
 
-## Commands
+## 命令
 
-### List/Query
+### 列出/查询
 
-| Command | Description |
-|---------|-------------|
-| `inbox` | List inbox tasks |
-| `folders` | List all folders |
-| `projects [folder]` | List projects, optionally filtered by folder |
-| `tasks <project>` | List tasks in a project |
-| `tags` | List all tags |
-| `today` | Tasks due today or overdue |
-| `flagged` | Flagged incomplete tasks |
-| `search <query>` | Search tasks by name |
-| `info <taskId>` | Full task details |
+| 命令 | 描述 |
+|------|------|
+| `inbox` | 列出收件箱任务 |
+| `folders` | 列出所有文件夹 |
+| `projects [文件夹]` | 列出项目，可按文件夹筛选 |
+| `tasks <项目>` | 列出项目中的任务 |
+| `tags` | 列出所有标签 |
+| `today` | 今天或逾期任务 |
+| `flagged` | 已标记的未完成任务 |
+| `search <查询>` | 按名称搜索任务 |
+| `info <任务ID>` | 完整任务详情 |
 
-### Create
+### 创建
 
-| Command | Description |
-|---------|-------------|
-| `add <name> [project]` | Add task to inbox or project |
-| `newproject <name> [folder]` | Create project |
-| `newfolder <name>` | Create top-level folder |
-| `newtag <name>` | Create or get tag |
+| 命令 | 描述 |
+|------|------|
+| `add <名称> [项目]` | 添加任务到收件箱或项目 |
+| `newproject <名称> [文件夹]` | 创建项目 |
+| `newfolder <名称>` | 创建顶级文件夹 |
+| `newtag <名称>` | 创建或获取标签 |
 
-### Modify
+### 修改
 
-| Command | Description |
-|---------|-------------|
-| `complete <taskId>` | Mark complete |
-| `uncomplete <taskId>` | Mark incomplete |
-| `delete <taskId>` | Permanently delete |
-| `rename <taskId> <name>` | Rename task |
-| `note <taskId> <text>` | Append to note |
-| `setnote <taskId> <text>` | Replace note |
-| `defer <taskId> <date>` | Set defer date (YYYY-MM-DD) |
-| `due <taskId> <date>` | Set due date |
-| `flag <taskId> [true\|false]` | Set flagged |
-| `tag <taskId> <tag>` | Add tag (creates if needed) |
-| `untag <taskId> <tag>` | Remove tag |
-| `move <taskId> <project>` | Move to project |
+| 命令 | 描述 |
+|------|------|
+| `complete <任务ID>` | 标记为完成 |
+| `uncomplete <任务ID>` | 标记为未完成 |
+| `delete <任务ID>` | 永久删除 |
+| `rename <任务ID> <名称>` | 重命名任务 |
+| `note <任务ID> <文本>` | 追加到备注 |
+| `setnote <任务ID> <文本>` | 替换备注 |
+| `defer <任务ID> <日期>` | 设置推迟日期（YYYY-MM-DD） |
+| `due <任务ID> <日期>` | 设置截止日期 |
+| `flag <任务ID> [true\|false]` | 设置标记 |
+| `tag <任务ID> <标签>` | 添加标签（如果需要则创建） |
+| `untag <任务ID> <标签>` | 移除标签 |
+| `move <任务ID> <项目>` | 移动到项目 |
 
-### Repeat
+### 重复
 
 ```bash
-# repeat <taskId> <method> <interval> <unit>
+# repeat <任务ID> <方法> <间隔> <单位>
 of repeat abc123 fixed 1 weeks
 of repeat abc123 due-after-completion 2 days
 of repeat abc123 defer-after-completion 1 months
 of unrepeat abc123
 ```
 
-Methods: `fixed`, `due-after-completion`, `defer-after-completion`  
-Units: `days`, `weeks`, `months`, `years`
+方法: `fixed`, `due-after-completion`, `defer-after-completion`  
+单位: `days`, `weeks`, `months`, `years`
 
-## Output Format
+## 输出格式
 
-All commands return JSON. Success responses include `"success": true`. Errors include `"error": "message"`.
+所有命令都返回 JSON。成功响应包括 `"success": true`。错误包括 `"error": "message"`。
 
 ```json
 {
   "success": true,
   "task": {
     "id": "abc123",
-    "name": "Task name",
-    "note": "Notes here",
+    "name": "任务名称",
+    "note": "备注内容",
     "flagged": false,
     "completed": false,
     "deferDate": "2026-01-30",
     "dueDate": "2026-02-01",
-    "project": "Project Name",
-    "tags": ["tag1", "tag2"],
+    "project": "项目名称",
+    "tags": ["标签1", "标签2"],
     "repeat": {"method": "fixed", "rule": "RRULE:FREQ=WEEKLY;INTERVAL=1"}
   }
 }
 ```
 
-## Examples
+## 示例
 
 ```bash
-# Add task to inbox
-of add "Buy groceries"
+# 添加任务到收件箱
+of add "购买杂货"
 
-# Add task to specific project
-of add "Review docs" "Work Projects"
+# 添加任务到特定项目
+of add "审查文档" "工作项目"
 
-# Set due date and flag
+# 设置截止日期和标记
 of due abc123 2026-02-01
 of flag abc123 true
 
-# Add tags
-of tag abc123 "urgent"
-of tag abc123 "home"
+# 添加标签
+of tag abc123 "紧急"
+of tag abc123 "家庭"
 
-# Create recurring task
-of add "Weekly review" "Habits"
+# 创建重复任务
+of add "每周回顾" "习惯"
 of repeat xyz789 fixed 1 weeks
 
-# Search and complete
-of search "groceries"
+# 搜索并完成
+of search "杂货"
 of complete abc123
 
-# Get today's tasks
+# 获取今天的任务
 of today
 ```
 
-## Notes
+## 注意事项
 
-- Task IDs are OmniFocus internal IDs (returned in all task responses)
-- Dates use ISO format: YYYY-MM-DD
-- Project and folder names are case-sensitive
-- Tags are created automatically if they don't exist when using `tag` command
-- All output is JSON for easy parsing
+- 任务 ID 是 OmniFocus 内部 ID（在所有任务响应中返回）
+- 日期使用 ISO 格式：YYYY-MM-DD
+- 项目和文件夹名称区分大小写
+- 使用 `tag` 命令时，如果标签不存在会自动创建
+- 所有输出都是 JSON，便于解析
 
-## Technical Details
+## 技术细节
 
-This skill uses JavaScript for Automation (JXA) for most operations, with AppleScript fallbacks for tag and repeat operations (due to known JXA type conversion bugs with these specific OmniFocus APIs).
+此技能对大多数操作使用 JavaScript for Automation（JXA），对于标签和重复操作使用 AppleScript 回退（由于这些特定 OmniFocus API 的已知 JXA 类型转换错误）。
 
-The hybrid approach provides:
-- JSON output for easy parsing
-- Robust escaping for special characters in tag names
-- Error handling with clear messages
+混合方法提供：
+- 易于解析的 JSON 输出
+- 对标签名称中特殊字符的健壮转义
+- 带有清晰消息的错误处理
 
-**First run:** OmniFocus may prompt to allow automation access. Enable this in System Settings > Privacy & Security > Automation.
+**首次运行：** OmniFocus 可能会提示允许自动化访问。在系统设置 > 隐私与安全 > 自动化中启用。

@@ -1,74 +1,74 @@
 ---
 name: ui-skills
-description: Opinionated constraints for building better interfaces with agents.
+description: 为智能体构建更好界面的固执约束（Opinionated constraints）。包含 UI 组件、动画、交互和性能的详细规范。
 ---
 
-# UI Skills
+# UI 技能
 
-Opinionated constraints for building better interfaces with agents.
+为智能体构建更好界面的固执约束。
 
-## Stack
+## 技术栈
 
-- MUST use Tailwind CSS defaults (spacing, radius, shadows) before custom values
-- MUST use `motion/react` (formerly `framer-motion`) when JavaScript animation is required
-- SHOULD use `tw-animate-css` for entrance and micro-animations in Tailwind CSS
-- MUST use `cn` utility (`clsx` + `tailwind-merge`) for class logic
+- **必须** 在使用自定义值之前使用 Tailwind CSS 默认值（间距、圆角、阴影）
+- **必须** 在需要 JavaScript 动画时使用 `motion/react`（原 `framer-motion`）
+- **应该** 在 Tailwind CSS 中对入场和微动画使用 `tw-animate-css`
+- **必须** 使用 `cn` 工具函数（`clsx` + `tailwind-merge`）处理类名逻辑
 
-## Components
+## 组件
 
-- MUST use accessible component primitives for anything with keyboard or focus behavior (`Base UI`, `React Aria`, `Radix`)
-- MUST use the project’s existing component primitives first
-- NEVER mix primitive systems within the same interaction surface
-- SHOULD prefer [`Base UI`](https://base-ui.com/react/components) for new primitives if compatible with the stack
-- MUST add an `aria-label` to icon-only buttons
-- NEVER rebuild keyboard or focus behavior by hand unless explicitly requested
+- **必须** 对任何具有键盘或焦点行为的组件使用可访问的原始组件（`Base UI`、`React Aria`、`Radix`）
+- **必须** 首先使用项目中现有的组件原始组件
+- **永远不要** 在同一交互界面内混合不同的原始组件系统
+- **应该** 如果兼容，优先使用 [`Base UI`](https://base-ui.com/react/components) 作为新的原始组件
+- **必须** 为纯图标按钮添加 `aria-label`
+- **永远不要** 手动重建键盘或焦点行为，除非明确要求
 
-## Interaction
+## 交互
 
-- MUST use an `AlertDialog` for destructive or irreversible actions
-- SHOULD use structural skeletons for loading states
-- NEVER use `h-screen`, use `h-dvh`
-- MUST respect `safe-area-inset` for fixed elements
-- MUST show errors next to where the action happens
-- NEVER block paste in `input` or `textarea` elements
+- **必须** 对破坏性或不可逆的操作使用 `AlertDialog`
+- **应该** 对加载状态使用结构化骨架屏
+- **永远不要** 使用 `h-screen`，应使用 `h-dvh`
+- **必须** 固定元素需要考虑 `safe-area-inset`
+- **必须** 在操作发生的位置附近显示错误
+- **永远不要** 在 `input` 或 `textarea` 元素中阻止粘贴
 
-## Animation
+## 动画
 
-- NEVER add animation unless it is explicitly requested
-- MUST animate only compositor props (`transform`, `opacity`)
-- NEVER animate layout properties (`width`, `height`, `top`, `left`, `margin`, `padding`)
-- SHOULD avoid animating paint properties (`background`, `color`) except for small, local UI (text, icons)
-- SHOULD use `ease-out` on entrance
-- NEVER exceed `200ms` for interaction feedback
-- MUST pause looping animations when off-screen
-- MUST respect `prefers-reduced-motion`
-- NEVER introduce custom easing curves unless explicitly requested
-- SHOULD avoid animating large images or full-screen surfaces
+- **永远不要** 除非明确要求，否则不要添加动画
+- **必须** 只动画化复合属性（`transform`、`opacity`）
+- **永远不要** 动画化布局属性（`width`、`height`、`top`、`left`、`margin`、`padding`）
+- **应该** 避免动画化绘制属性（`background`、`color`），小范围局部 UI（文本、图标）除外
+- **应该** 入场动画使用 `ease-out`
+- **永远不要** 交互反馈动画超过 `200ms`
+- **必须** 当动画元素不在屏幕内时暂停循环动画
+- **必须** 尊重 `prefers-reduced-motion`
+- **永远不要** 引入自定义缓动曲线，除非明确要求
+- **应该** 避免动画化大型图片或全屏表面
 
-## Typography
+## 排版
 
-- MUST use `text-balance` for headings and `text-pretty` for body/paragraphs
-- MUST use `tabular-nums` for data
-- SHOULD use `truncate` or `line-clamp` for dense UI
-- NEVER modify `letter-spacing` (`tracking-`) unless explicitly requested
+- **必须** 标题使用 `text-balance`，正文/段落使用 `text-pretty`
+- **必须** 数据使用 `tabular-nums`
+- **应该** 密集 UI 使用 `truncate` 或 `line-clamp`
+- **永远不要** 修改 `letter-spacing`（`tracking-`），除非明确要求
 
-## Layout
+## 布局
 
-- MUST use a fixed `z-index` scale (no arbitrary `z-x`)
-- SHOULD use `size-x` for square elements instead of `w-x` + `h-x`
+- **必须** 使用固定的 `z-index` 比例（不使用任意的 `z-x`）
+- **应该** 方形元素使用 `size-x` 而不是 `w-x` + `h-x`
 
-## Performance
+## 性能
 
-- NEVER animate large `blur()` or `backdrop-filter` surfaces
-- NEVER apply `will-change` outside an active animation
-- NEVER use `useEffect` for anything that can be expressed as render logic
+- **永远不要** 动画化大型 `blur()` 或 `backdrop-filter` 表面
+- **永远不要** 在非活动动画期间应用 `will-change`
+- **永远不要** 对任何可以用渲染逻辑表达的内容使用 `useEffect`
 
-## Design
+## 设计
 
-- NEVER use gradients unless explicitly requested
-- NEVER use purple or multicolor gradients
-- NEVER use glow effects as primary affordances
-- SHOULD use Tailwind CSS default shadow scale unless explicitly requested
-- MUST give empty states one clear next action
-- SHOULD limit accent color usage to one per view
-- SHOULD use existing theme or Tailwind CSS color tokens before introducing new ones
+- **永远不要** 使用渐变，除非明确要求
+- **永远不要** 使用紫色或多色渐变
+- **永远不要** 将发光效果作为主要可识别元素
+- **应该** 除非明确要求，否则使用 Tailwind CSS 默认阴影比例
+- **必须** 给空状态一个清晰的下一个操作
+- **应该** 每个视图限制使用一种强调色
+- **应该** 在引入新颜色之前使用现有主题或 Tailwind CSS 颜色标记

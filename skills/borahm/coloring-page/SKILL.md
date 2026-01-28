@@ -1,6 +1,6 @@
 ---
 name: coloring-page
-description: Turn an uploaded photo into a printable black-and-white coloring page.
+description: 将上传的照片转换为可打印的黑白涂色页。
 metadata:
   clawdbot:
     config:
@@ -10,52 +10,52 @@ metadata:
 
 # coloring-page
 
-Create a printable black-and-white outline coloring page from a photo.
+从照片创建可打印的黑白轮廓涂色页。
 
-This skill is designed to be used conversationally:
-- You upload an image
-- You say: “create a coloring page”
-- The assistant runs this skill and sends back the generated PNG
+此技能设计为对话式使用：
+- 您上传一张图片
+- 您说："创建涂色页"
+- 助手运行此技能并返回生成的 PNG 图片
 
-Under the hood, this uses the Nano Banana Pro (Gemini 3 Pro Image) image model.
+底层使用 Nano Banana Pro（Gemini 3 Pro Image）图像模型。
 
-## Requirements
+## 环境要求
 
-- `GEMINI_API_KEY` set (recommended in `~/.clawdbot/.env`)
-- `uv` available (used by the underlying nano-banana-pro skill)
+- 设置 `GEMINI_API_KEY`（建议放在 `~/.clawdbot/.env` 中）
+- 可用 `uv`（底层 nano-banana-pro 技能使用）
 
-## How the assistant should use this
+## 助手如何使用此技能
 
-When a user message includes:
-- an attached image (jpg/png/webp)
-- and the user asks for a “coloring page”
+当用户消息包含：
+- 附加的图片（jpg/png/webp）
+- 用户要求"涂色页"
 
-Run:
-- `bin/coloring-page --in <path-to-uploaded-image> [--out <output.png>] [--resolution 1K|2K|4K]`
+运行：
+- `bin/coloring-page --in <上传图片路径> [--out <输出.png>] [--resolution 1K|2K|4K]`
 
-Then send the output image back to the user.
+然后将输出图片发送回用户。
 
-## CLI
+## 命令行工具
 
-### Basic
+### 基本用法
 
 ```bash
 coloring-page --in photo.jpg
 ```
 
-### Choose output name
+### 选择输出名称
 
 ```bash
 coloring-page --in photo.jpg --out coloring.png
 ```
 
-### Resolution
+### 分辨率
 
 ```bash
 coloring-page --in photo.jpg --resolution 2K
 ```
 
-## Notes
+## 注意事项
 
-- Input must be a raster image (`.jpg`, `.png`, `.webp`).
-- Output is a PNG coloring page on a white background.
+- 输入必须是光栅图像（`.jpg`、`.png`、`.webp`）。
+- 输出是白色背景上的 PNG 涂色页。

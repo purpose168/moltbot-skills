@@ -1,115 +1,115 @@
-# MSPOT Examples
+# MSPOT 案例
 
-## Example 1: TeddySnaps Q1 2026
-
-```
-═══════════════════════════════════════════════
-MSPOT: TeddySnaps
-Period: Q1 2026
-Owner: Artem
-═══════════════════════════════════════════════
-
-MISSION
-Make every parent feel connected to their child's day, even when apart.
-
-STRATEGY
-Win by being the simplest, most privacy-focused photo delivery system for daycares.
-Compete on trust and ease-of-use, not features.
-Grow through daycare partnerships, not direct-to-parent marketing.
-
-PROJECTS (3-5 max)
-1. Face Recognition Accuracy - Outcome: 95% correct tags - Owner: Dev - Due: Feb 15
-2. Daycare Onboarding Flow - Outcome: New center live in <24hrs - Owner: Ops - Due: Jan 31
-3. Parent Mobile Experience - Outcome: 4.5+ App Store rating - Owner: Product - Due: Mar 15
-
-OMISSIONS
-✗ NOT doing video support - Because: Complexity, storage costs, not core job
-✗ NOT doing social features (comments) - Because: Privacy concerns, scope creep
-✗ NOT doing parent-uploaded photos - Because: Quality control, moderation burden
-✗ NOT doing direct marketing to parents - Because: B2B model, trust through daycares
-
-TRACKING
-Lead: Photos processed per day → Target: 1,000 by Mar 31
-Lead: Daycare demo calls per week → Target: 5
-Lag: Active daycares → Target: 10 by Mar 31
-Lag: Parent satisfaction (NPS) → Target: 60+ by Mar 31
-═══════════════════════════════════════════════
-```
-
----
-
-## Example 2: TISA School Year 2025-2026
+## 案例一：TeddySnaps 2026年第一季度
 
 ```
 ═══════════════════════════════════════════════
-MSPOT: TISA International School
-Period: School Year 2025-2026
-Owner: Artem
+MSPOT：TeddySnaps
+时期：2026年第一季度
+负责人：Artem
 ═══════════════════════════════════════════════
 
-MISSION
-Develop globally-minded, creative problem-solvers who thrive in an uncertain world.
+使命
+让每个家长即使在分离时也感觉与孩子的一天有连接。
 
-STRATEGY
-Differentiate on project-based learning and real-world skills.
-Premium pricing justified by outcomes and parent community.
-Grow through referrals and reputation, not advertising.
+战略
+通过成为日托最简单、最注重隐私的照片交付系统来赢。
+在信任和易用性上竞争，而非功能。
+通过日托合作伙伴关系增长，而非直接面向家长营销。
 
-PROJECTS (3-5 max)
-1. Student Portfolio System - Outcome: Every student has digital portfolio - Owner: Academic - Due: Dec 2025
-2. Parent Communication Upgrade - Outcome: Weekly video updates via TeddySnaps - Owner: Ops - Due: Oct 2025
-3. Community Events Program - Outcome: Monthly parent engagement events - Owner: Community - Due: Ongoing
-4. Staff Development - Outcome: 100% teachers PBL certified - Owner: HR - Due: Jan 2026
+项目（3-5 max）
+1. 人脸识别准确率 - 结果：95%正确标签 - 负责人：开发 - 截止：2月15日
+2. 日托入职流程 - 结果：新中心24小时内上线 - 负责人：运营 - 截止：1月31日
+3. 家长移动体验 - 结果：4.5+应用商店评分 - 负责人：产品 - 截止：3月15日
 
-OMISSIONS
-✗ NOT adding new grade levels - Because: Focus on quality over growth this year
-✗ NOT pursuing IB accreditation - Because: Expensive, constrains curriculum flexibility
-✗ NOT opening second location - Because: Premature, core model needs refinement
-✗ NOT reducing class sizes below 15 - Because: Economics don't work
+省略
+✗ 不做视频支持 - 因为：复杂性、存储成本，不是核心工作
+✗ 不做社交功能（评论）- 因为：隐私问题，范围蔓延
+✗ 不做家长上传的照片 - 因为：质量控制，审核负担
+✗ 不做直接面向家长的营销 - 因为：B2B模式，通过日托建立信任
 
-TRACKING
-Lead: Family tours per month → Target: 8
-Lead: Staff retention rate → Target: 90%
-Lag: Enrollment for next year → Target: 95% by May
-Lag: Parent satisfaction (NPS) → Target: 70+
-Lag: Student portfolio completion → Target: 100%
+追踪
+领先：每日处理照片数 → 目标：3月31日前达到1,000
+领先：每周日托演示电话 → 目标：5
+滞后：活跃日托 → 目标：3月31日前达到10
+滞后：家长满意度（NPS）→ 目标：3月31日前达到60+
 ═══════════════════════════════════════════════
 ```
 
 ---
 
-## Example 3: GolfTab MVP Launch
+## 案例二：2025-2026学年 TISA
 
 ```
 ═══════════════════════════════════════════════
-MSPOT: GolfTab
-Period: MVP Launch (Dec 2025 - Mar 2026)
-Owner: Artem
+MSPOT：TISA 国际学校
+时期：2025-2026学年
+负责人：Artem
 ═══════════════════════════════════════════════
 
-MISSION
-Make on-course dining effortless for golfers and profitable for courses.
+使命
+培养具有全球思维、创造性问题解决者，他们在不确定的世界中茁壮成长。
 
-STRATEGY
-Start with single course partnership to prove model.
-Focus on speed and simplicity - golfers have 30 seconds of attention.
-Win by reducing friction, not adding features.
+战略
+在基于项目的学习和现实世界技能上差异化。
+由成果和家长社区证明的溢价定价。
+通过推荐和声誉增长，而非广告。
 
-PROJECTS (3-5 max)
-1. MVP Development - Outcome: Working order flow - Owner: Dev - Due: Dec 31
-2. Pilot Course Partnership - Outcome: Live at one course - Owner: Artem - Due: Jan 15
-3. Kitchen Display System - Outcome: Tablet-based order queue - Owner: Dev - Due: Jan 31
+项目（3-5 max）
+1. 学生作品集系统 - 结果：每个学生都有数字作品集 - 负责人：学术 - 截止：2025年12月
+2. 家长沟通升级 - 结果：通过 TeddySnaps 每周视频更新 - 负责人：运营 - 截止：2025年10月
+3. 社区活动计划 - 结果：每月家长参与活动 - 负责人：社区 - 截止：进行中
+4. 员工发展 - 结果：100%教师获得PBL认证 - 负责人：HR - 截止：2026年1月
 
-OMISSIONS
-✗ NOT building payment integration - Because: Charge to room works, faster launch
-✗ NOT supporting multiple courses - Because: Prove model first
-✗ NOT building mobile app - Because: PWA is enough, no app store approval needed
-✗ NOT adding delivery tracking - Because: Small course, runner knows where to go
+省略
+✗ 不添加新年级水平 - 因为：今年关注质量而非增长
+✗ 不追求IB认证 - 因为：昂贵，限制课程灵活性
+✗ 不开设第二个位置 - 因为：为时过早，核心模式需要完善
+✗ 不将班级规模减少到15以下 - 因为：经济上不可行
 
-TRACKING
-Lead: Orders per day (pilot course) → Target: 20 by Mar 31
-Lead: Kitchen prep time → Target: <10 min average
-Lag: Course revenue increase → Target: 15% F&B revenue lift
-Lag: Golfer satisfaction → Target: 80% would use again
+追踪
+领先：每月家庭参观 → 目标：8
+领先：员工保留率 → 目标：90%
+滞后：下一年注册 → 目标：5月前达到95%
+滞后：家长满意度（NPS）→ 目标：70+
+滞后：学生作品集完成 → 目标：100%
+═══════════════════════════════════════════════
+```
+
+---
+
+## 案例三：GolfTab MVP 启动
+
+```
+═══════════════════════════════════════════════
+MSPOT：GolfTab
+时期：MVP 启动（2025年12月 - 2026年3月）
+负责人：Artem
+═══════════════════════════════════════════════
+
+使命
+让球场上用餐对高尔夫球手轻松，对球场有利可图。
+
+战略
+从单一球场合作伙伴开始以证明模型。
+专注于速度和简洁 - 高尔夫球手有30秒注意力。
+通过减少摩擦获胜，而非添加功能。
+
+项目（3-5 max）
+1. MVP 开发 - 结果：工作订购流程 - 负责人：开发 - 截止：12月31日
+2. 试点球场合作伙伴 - 结果：在一个球场上线 - 负责人：Artem - 截止：1月15日
+3. 厨房显示系统 - 结果：基于平板电脑的订单队列 - 负责人：开发 - 截止：1月31日
+
+省略
+✗ 不构建支付集成 - 因为：房间记账有效，更快启动
+✗ 不支持多个球场 - 因为：先证明模型
+✗ 不构建移动应用 - 因为：PWA 足够，不需要应用商店批准
+✗ 不添加送达追踪 - 因为：小型球场，球童知道去哪里
+
+追踪
+领先：每日订单数（试点球场）→ 目标：3月31日前达到20
+领先：厨房准备时间 → 目标：平均<10分钟
+滞后：球场收入增长 → 目标：15%食品饮料收入提升
+滞后：高尔夫球手满意度 → 目标：80%会再次使用
 ═══════════════════════════════════════════════
 ```

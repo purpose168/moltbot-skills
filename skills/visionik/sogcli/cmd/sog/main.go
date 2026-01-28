@@ -1,7 +1,7 @@
-// sog - Standards Ops Gadget
+// sog - 标准运维工具
 //
-// Open-standards CLI for mail, calendar, contacts, tasks, and files.
-// IMAP/SMTP/CalDAV/CardDAV/WebDAV alternative to gog (Google) and mog (Microsoft).
+// 用于邮件、日历、联系人、任务和文件的开放标准命令行工具。
+// IMAP/SMTP/CalDAV/CardDAV/WebDAV 的替代方案，类似于 gog (Google) 和 mog (Microsoft)。
 package main
 
 import (
@@ -15,7 +15,8 @@ import (
 var version = "dev"
 
 func main() {
-	// Handle --ai-help before kong parsing
+	// 在 kong 解析之前处理 --ai-help 参数
+	// 这样可以在任何子命令之前显示 AI 帮助信息
 	for _, arg := range os.Args[1:] {
 		if arg == "--ai-help" || arg == "-ai-help" {
 			fmt.Println(cli.AIHelpText)
@@ -26,20 +27,21 @@ func main() {
 	var root cli.Root
 	ctx := kong.Parse(&root,
 		kong.Name("sog"),
-		kong.Description("Standards Ops Gadget — IMAP/SMTP/CalDAV/CardDAV/WebDAV CLI"),
+		kong.Description("标准运维工具 — IMAP/SMTP/CalDAV/CardDAV/WebDAV 命令行工具"),
 		kong.UsageOnError(),
 		kong.Vars{
 			"version": version,
 		},
 		kong.PostBuild(func(k *kong.Kong) error {
-			// Add --ai-help to the help text manually
+			// 手动将 --ai-help 添加到帮助文本中
 			return nil
 		}),
 	)
 
 	err := ctx.Run(&root)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		// 将错误输出到标准错误流
+		fmt.Fprintf(os.Stderr, "错误: %v\n", err)
 		os.Exit(1)
 	}
 }

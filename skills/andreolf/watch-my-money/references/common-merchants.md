@@ -1,64 +1,64 @@
-# Common Merchant Mappings
+# 常见商户映射
 
-Override rules for merchants that are hard to auto-categorize.
+难以自动分类的商户的覆盖规则。
 
-## Swiss Merchants
+## 瑞士商户
 
-| Merchant Pattern | Category | Notes |
-|-----------------|----------|-------|
-| COOP, COOP CITY | groceries | Swiss supermarket chain |
-| MIGROS, M-BUDGET | groceries | Swiss supermarket chain |
-| DENNER | groceries | Discount supermarket |
-| ALDI SUISSE | groceries | Discount supermarket |
-| LIDL | groceries | Discount supermarket |
-| MANOR | shopping | Department store (not Manor Food) |
-| MANOR FOOD | groceries | Food section of Manor |
-| SBB, CFF, FFS | transport | Swiss Federal Railways |
-| POSTFINANCE | transfers | Swiss postal bank |
-| TWINT | transfers | Swiss mobile payment |
-| SWISSCOM | utilities | Telecom |
-| SUNRISE | utilities | Telecom |
-| SALT | utilities | Telecom |
-| EWZ | utilities | Zurich electricity |
-| CSS, HELSANA, SWICA | health | Health insurance |
-| CEMBRA | other | Credit card fees |
+| 商户模式 | 类别 | 备注 |
+|---------|------|------|
+| COOP、COOP CITY | 杂货 | 瑞士超市连锁 |
+| MIGROS、M-BUDGET | 杂货 | 瑞士超市连锁 |
+| DENNER | 杂货 | 折扣超市 |
+| ALDI SUISSE | 杂货 | 折扣超市 |
+| LIDL | 杂货 | 折扣超市 |
+| MANOR | 购物 | 百货商店（非 Manor Food）|
+| MANOR FOOD | 杂货 | Manor 食品区 |
+| SBB、CFF、FFS | 交通 | 瑞士联邦铁路 |
+| POSTFINANCE | 转账 | 瑞士邮政银行 |
+| TWINT | 转账 | 瑞士移动支付 |
+| SWISSCOM | 水电费 | 电信 |
+| SUNRISE | 水电费 | 电信 |
+| SALT | 水电费 | 电信 |
+| EWZ | 水电费 | 苏黎世电力 |
+| CSS、HELSANA、SWICA | 健康 | 健康保险 |
+| CEMBRA | 其他 | 信用卡费用 |
 
-## International Merchants
+## 国际商户
 
-| Merchant Pattern | Category | Notes |
-|-----------------|----------|-------|
-| AMAZON | shopping | Unless clearly groceries |
-| APPLE.COM/BILL | subscriptions | App Store, iCloud, etc |
-| GOOGLE *SERVICES | subscriptions | Google One, YouTube Premium |
-| PAYPAL *SPOTIFY | subscriptions | Spotify via PayPal |
-| NETFLIX.COM | subscriptions | Streaming |
-| UBER, UBER EATS | transport OR eating_out | Check amount: <20 = transport |
-| BOOKING.COM | travel | Hotels |
-| AIRBNB | travel | Accommodation |
-| RYANAIR, EASYJET | travel | Budget airlines |
+| 商户模式 | 类别 | 备注 |
+|---------|------|------|
+| AMAZON | 购物 | 除非明显是杂货 |
+| APPLE.COM/BILL | 订阅 | App Store、iCloud 等 |
+| GOOGLE *SERVICES | 订阅 | Google One、YouTube Premium |
+| PAYPAL *SPOTIFY | 订阅 | 通过 PayPal 的 Spotify |
+| NETFLIX.COM | 订阅 | 流媒体 |
+| UBER、UBER EATS | 交通 或 外出就餐 | 检查金额：<20 = 交通 |
+| BOOKING.COM | 旅行 | 酒店 |
+| AIRBNB | 旅行 | 住宿 |
+| RYANAIR、EASYJET | 旅行 | 廉价航空公司 |
 
-## Ambiguous Merchants
+## 模糊商户
 
-These need user confirmation:
+这些需要用户确认：
 
-| Merchant | Could Be | Disambiguation |
-|----------|----------|----------------|
-| STARBUCKS | eating_out OR groceries | In-store = eating_out, beans = groceries |
-| IKEA | shopping OR eating_out | Check amount: >50 = shopping |
-| GAS STATION | transport OR groceries | Shop purchases vs fuel |
-| PHARMACY | health OR groceries | Meds = health, toiletries = groceries |
+| 商户 | 可能是 | 消除歧义 |
+|------|--------|----------|
+| STARBUCKS | 外出就餐 或 杂货 | 店内 = 外出就餐，咖啡豆 = 杂货 |
+| IKEA | 购物 或 外出就餐 | 检查金额：>50 = 购物 |
+| 加油站 | 交通 或 杂货 | 商店购买 vs 燃油 |
+| 药店 | 健康 或 杂货 | 药品 = 健康，洗漱用品 = 杂货 |
 
-## Adding Overrides
+## 添加覆盖
 
-When user categorizes a merchant, save to state:
+当用户对商户进行分类时，保存到状态：
 
 ```bash
 python -m watch_my_money set-merchant "WEIRD MERCHANT NAME" --category shopping
 ```
 
-Or interactively during `analyze`:
+或在 `analyze` 期间交互式进行：
 ```
-Unknown merchant: ACME CORP (3 transactions, 450 CHF)
-Category? [groceries/shopping/other/skip]: shopping
-→ Saved override for future runs
+未知商户：ACME CORP（3 笔交易，450 瑞士法郎）
+类别？[groceries/shopping/other/skip]：shopping
+→ 已保存覆盖以供将来运行
 ```

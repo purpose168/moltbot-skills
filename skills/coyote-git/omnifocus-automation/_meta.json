@@ -1,7 +1,8 @@
 {
   "owner": "coyote-git",
   "slug": "omnifocus-automation",
-  "displayName": "OmniFocus Automation",
+  "displayName": "OmniFocus 自动化",
+  "description": "通过 JXA 和 AppleScript 控制 OmniFocus。管理任务、项目、文件夹、标签和重复任务。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769368357531,

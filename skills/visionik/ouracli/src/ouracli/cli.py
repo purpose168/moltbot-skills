@@ -1,4 +1,4 @@
-"""CLI application for OuraCLI."""
+"""OuraCLI 的命令行应用程序。"""
 
 from enum import Enum
 from typing import Any, Literal
@@ -12,8 +12,8 @@ from ouracli.llm_help import show_llm_help
 
 app = typer.Typer(
     help=(
-        "CLI tool for accessing Oura Ring data.\n"
-        "💡 LLMs/agents: run 'ouracli --ai-help' for detailed usage guidance."
+        "用于访问 Oura Ring 数据的命令行工具。\n"
+        "💡 LLM/智能体：运行 'ouracli --ai-help' 获取详细的使用指南。"
     ),
     context_settings={"help_option_names": ["-h", "--help"]},
 )
@@ -26,30 +26,30 @@ def main_callback(
         False,
         "--ai-help",
         is_eager=True,
-        help="Show comprehensive usage guide for LLMs/agents and exit.",
+        help="显示 LLM/智能体的综合使用指南并退出。",
     ),
     ai_help_format: Literal["markdown", "json"] = typer.Option(
         "markdown",
         "--ai-help-format",
-        help="Format for --ai-help output (markdown or json)",
+        help="--ai-help 输出的格式（markdown 或 json）",
         show_choices=True,
         case_sensitive=False,
     ),
 ) -> None:
-    """CLI tool for accessing Oura Ring data."""
-    # If --ai-help requested, emit dashdash-spec help and exit early
+    """用于访问 Oura Ring 数据的命令行工具。"""
+    # 如果请求了 --ai-help，输出 dashdash-spec 帮助并提前退出
     if ai_help:
         typer.echo(show_llm_help(format_type=ai_help_format))
         raise typer.Exit()
 
-    # If no command was invoked, show help
+    # 如果没有调用命令，显示帮助
     if ctx.invoked_subcommand is None:
         typer.echo(ctx.get_help())
         raise typer.Exit()
 
 
 class OutputFormat(str, Enum):
-    """Output format options."""
+    """输出格式选项。"""
 
     TREE = "tree"
     JSON = "json"
@@ -65,7 +65,7 @@ def get_output_format(
     dataframe_flag: bool,
     html_flag: bool,
 ) -> str:
-    """Determine output format from flags. Tree is default."""
+    """根据标志确定输出格式。默认使用 tree。"""
     format_flags = [
         (json_flag, "json"),
         (tree_flag, "tree"),
@@ -77,8 +77,8 @@ def get_output_format(
 
     if len(active_flags) > 1:
         raise typer.BadParameter(
-            "Only one format flag can be specified at a time: "
-            "--json, --tree, --markdown, --dataframe, or --html"
+            "一次只能指定一个格式标志："
+            "--json、--tree、--markdown、--dataframe 或 --html"
         )
 
     return active_flags[0] if active_flags else "tree"
@@ -91,13 +91,13 @@ def create_format_options() -> tuple[
     typer.models.OptionInfo,
     typer.models.OptionInfo,
 ]:
-    """Create standard format option flags for commands."""
+    """为命令创建标准格式选项标志。"""
     return (
-        typer.Option(False, "--json", help="Output as JSON"),
-        typer.Option(False, "--tree", help="Output as tree (default)"),
-        typer.Option(False, "--markdown", help="Output as markdown"),
-        typer.Option(False, "--dataframe", help="Output as dataframe"),
-        typer.Option(False, "--html", help="Output as HTML"),
+        typer.Option(False, "--json", help="以 JSON 格式输出"),
+        typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+        typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+        typer.Option(False, "--dataframe", help="以数据框格式输出"),
+        typer.Option(False, "--html", help="以 HTML 格式输出"),
     )
 
 
@@ -107,20 +107,20 @@ def execute_data_command(
     output_format: str,
     wrap_key: str | None = None,
 ) -> None:
-    """Execute a standard data fetching command.
+    """执行标准的数据获取命令。
 
-    Args:
-        date_range: Date range string to parse
-        fetch_func: Client method to fetch data (receives start_date, end_date)
-        output_format: Format for output
-        wrap_key: Optional key to wrap list results for markdown/html
+    参数:
+        date_range: 要解析的日期范围字符串
+        fetch_func: 用于获取数据的客户端方法（接收 start_date, end_date）
+        output_format: 输出格式
+        wrap_key: 用于 markdown/html 包装列表结果的可选键
     """
     client = OuraClient()
     start_date, end_date = parse_date_range(date_range)
     data = fetch_func(client, start_date, end_date)
     result = data.get("data", [])
 
-    # Wrap in dict with category key for proper heading in markdown/html
+    # 用类别键包装在字典中，以便在 markdown/html 中正确显示标题
     if wrap_key and output_format in ("markdown", "html") and isinstance(result, list):
         result = {wrap_key: result}
 
@@ -130,14 +130,14 @@ def execute_data_command(
 
 @app.command()
 def activity(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get daily activity data."""
+    """获取每日活动数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -151,14 +151,14 @@ def activity(
 
 @app.command()
 def sleep(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get daily sleep data."""
+    """获取每日睡眠数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -167,14 +167,14 @@ def sleep(
 
 @app.command()
 def readiness(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get daily readiness data."""
+    """获取每日准备度数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -183,14 +183,14 @@ def readiness(
 
 @app.command()
 def spo2(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get daily SpO2 data."""
+    """获取每日血氧数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -199,14 +199,14 @@ def spo2(
 
 @app.command()
 def stress(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get daily stress data."""
+    """获取每日压力数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -215,18 +215,18 @@ def stress(
 
 @app.command()
 def heartrate(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get heart rate time series data."""
+    """获取心率时间序列数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
-    # Heartrate endpoint uses datetime format, not just dates
+    # 心率端点使用日期时间格式，而不仅仅是日期
     execute_data_command(
         date_range,
         lambda c, s, e: c.get_heartrate(f"{s}T00:00:00", f"{e}T23:59:59"),
@@ -236,14 +236,14 @@ def heartrate(
 
 @app.command()
 def workout(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get workout data."""
+    """获取锻炼数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -252,14 +252,14 @@ def workout(
 
 @app.command()
 def session(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get session data."""
+    """获取会话数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -268,14 +268,14 @@ def session(
 
 @app.command()
 def tag(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get tag data."""
+    """获取标签数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -284,14 +284,14 @@ def tag(
 
 @app.command()
 def rest_mode(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get rest mode periods."""
+    """获取休息模式期间的数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -300,13 +300,13 @@ def rest_mode(
 
 @app.command()
 def personal_info(
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
 ) -> None:
-    """Get personal information."""
+    """获取个人信息。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -318,19 +318,19 @@ def personal_info(
 
 @app.command(name="all")
 def get_all(
-    date_range: str = typer.Argument("today", help="Date range (e.g., 'today', '7 days')"),
-    json_flag: bool = typer.Option(False, "--json", help="Output as JSON"),
-    tree_flag: bool = typer.Option(False, "--tree", help="Output as tree (default)"),
-    markdown_flag: bool = typer.Option(False, "--markdown", help="Output as markdown"),
-    dataframe_flag: bool = typer.Option(False, "--dataframe", help="Output as dataframe"),
-    html_flag: bool = typer.Option(False, "--html", help="Output as HTML"),
+    date_range: str = typer.Argument("today", help="日期范围（例如，'today'、'7 days'）"),
+    json_flag: bool = typer.Option(False, "--json", help="以 JSON 格式输出"),
+    tree_flag: bool = typer.Option(False, "--tree", help="以树状格式输出（默认）"),
+    markdown_flag: bool = typer.Option(False, "--markdown", help="以 Markdown 格式输出"),
+    dataframe_flag: bool = typer.Option(False, "--dataframe", help="以数据框格式输出"),
+    html_flag: bool = typer.Option(False, "--html", help="以 HTML 格式输出"),
     by_day_flag: bool = typer.Option(
         True,
         "--by-day/--by-method",
-        help="Group data by day (default) or by method",
+        help="按天（默认）或按方法分组数据",
     ),
 ) -> None:
-    """Get all available data."""
+    """获取所有可用数据。"""
     output_format = get_output_format(
         json_flag, tree_flag, markdown_flag, dataframe_flag, html_flag
     )
@@ -342,7 +342,7 @@ def get_all(
 
 
 def main() -> None:
-    """Main entry point for the CLI."""
+    """CLI 的主入口点。"""
     app()
 
 

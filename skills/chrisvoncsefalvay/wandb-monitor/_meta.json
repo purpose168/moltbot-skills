@@ -1,7 +1,8 @@
 {
   "owner": "chrisvoncsefalvay",
   "slug": "wandb-monitor",
-  "displayName": "Weights & Biases Monitor",
+  "displayName": "Weights & Biases 监控器",
+  "description": "监控和分析 Weights & Biases 训练运行。检查训练状态、检测失败、分析损失曲线、比较运行和监控实验。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769468234686,

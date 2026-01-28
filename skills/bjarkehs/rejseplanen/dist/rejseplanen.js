@@ -251,15 +251,15 @@ async function main() {
     case "search": {
       const query = rest.join(" ");
       if (!query) {
-        console.log("Usage: rejseplanen search <station name>");
+        console.log("用法: rejseplanen search <车站名称>");
         process.exit(1);
       }
       const stations = await searchStations(query);
       output(stations, outputMode, () => {
         if (stations.length === 0)
-          console.log("No stations found");
+          console.log("未找到车站");
         else {
-          console.log("Stations found:");
+          console.log("找到的车站:");
           for (const s of stations.slice(0, 10))
             console.log(`  ${s.id}: ${s.name}`);
         }
@@ -269,22 +269,22 @@ async function main() {
     case "departures": {
       const query = rest.join(" ");
       if (!query) {
-        console.log("Usage: rejseplanen departures <station> [--trains|--buses] [--to <dest>]");
+        console.log("用法: rejseplanen departures <车站> [--trains|--buses] [--to <目的地>]");
         process.exit(1);
       }
       const station = await getStationId(query);
       if (!station) {
-        console.log(`No station found for "${query}"`);
+        console.log(`未找到车站: "${query}"`);
         process.exit(1);
       }
       const departures = await getDepartures(station.id, { filter, to });
       output(departures, outputMode, () => {
         if (departures.length === 0)
-          console.log(`No departures found for ${station.name}${to ? ` to ${to}` : ""}`);
+          console.log(`未找到从 ${station.name}${to ? ` 到 ${to}` : ""} 的出发`);
         else {
-          const modeLabel = filter === "all" ? "" : ` (${filter} only)`;
+          const modeLabel = filter === "all" ? "" : ` (仅${filter})`;
           const destLabel = to ? ` → ${to}` : "";
-          console.log(`Departures from ${station.name}${destLabel}${modeLabel}:
+          console.log(`从 ${station.name}${destLabel}${modeLabel} 出发:
 `);
           for (const d of departures)
             console.log(`  ${formatDeparture(d)}`);
@@ -295,22 +295,22 @@ async function main() {
     case "arrivals": {
       const query = rest.join(" ");
       if (!query) {
-        console.log("Usage: rejseplanen arrivals <station> [--trains|--buses] [--from <origin>]");
+        console.log("用法: rejseplanen arrivals <车站> [--trains|--buses] [--from <起点>]");
         process.exit(1);
       }
       const station = await getStationId(query);
       if (!station) {
-        console.log(`No station found for "${query}"`);
+        console.log(`未找到车站: "${query}"`);
         process.exit(1);
       }
       const arrivals = await getArrivals(station.id, { filter, from });
       output(arrivals, outputMode, () => {
         if (arrivals.length === 0)
-          console.log(`No arrivals found for ${station.name}${from ? ` from ${from}` : ""}`);
+          console.log(`未找到到达 ${station.name}${from ? ` 从 ${from}` : ""}`);
         else {
-          const modeLabel = filter === "all" ? "" : ` (${filter} only)`;
+          const modeLabel = filter === "all" ? "" : ` (仅${filter})`;
           const originLabel = from ? ` ← ${from}` : "";
-          console.log(`Arrivals at ${station.name}${originLabel}${modeLabel}:
+          console.log(`到达 ${station.name}${originLabel}${modeLabel}:
 `);
           for (const a of arrivals)
             console.log(`  ${formatArrival(a)}`);
@@ -320,26 +320,26 @@ async function main() {
     }
     case "trip": {
       if (rest.length < 2) {
-        console.log("Usage: rejseplanen trip <from> <to> [--time HH:MM]");
+        console.log("用法: rejseplanen trip <起点> <终点> [--time HH:MM]");
         process.exit(1);
       }
       const fromStation = await getStationId(rest[0]);
       const toStation2 = await getStationId(rest.slice(1).join(" "));
       if (!fromStation) {
-        console.log(`No station found for "${rest[0]}"`);
+        console.log(`未找到车站: "${rest[0]}"`);
         process.exit(1);
       }
       if (!toStation2) {
-        console.log(`No station found for "${rest.slice(1).join(" ")}"`);
+        console.log(`未找到车站: "${rest.slice(1).join(" ")}"`);
         process.exit(1);
       }
       const trips = await getTrips(fromStation.id, toStation2.id, { time, trainsOnly: filter !== "buses" });
       const result = trips.slice(0, 5);
       output(result, outputMode, () => {
         if (result.length === 0)
-          console.log(`No trips found from ${fromStation.name} to ${toStation2.name}`);
+          console.log(`未找到从 ${fromStation.name} 到 ${toStation2.name} 的路线`);
         else {
-          const timeLabel = time ? ` (from ${time})` : "";
+          const timeLabel = time ? ` (从 ${time})` : "";
           console.log(`${fromStation.name} → ${toStation2.name}${timeLabel}:
 `);
           for (const t of result)
@@ -350,17 +350,17 @@ async function main() {
     }
     case "journey": {
       if (rest.length < 2) {
-        console.log("Usage: rejseplanen journey <station> <line>");
+        console.log("用法: rejseplanen journey <车站> <线路>");
         process.exit(1);
       }
       const station = await getStationId(rest[0]);
       if (!station) {
-        console.log(`No station found for "${rest[0]}"`);
+        console.log(`未找到车站: "${rest[0]}"`);
         process.exit(1);
       }
       const journey = await getJourneyStops(station.id, rest.slice(1).join(" "));
       if (!journey) {
-        console.log(`No train matching "${rest.slice(1).join(" ")}" found`);
+        console.log(`未找到线路: "${rest.slice(1).join(" ")}"`);
         process.exit(1);
       }
       output(journey, outputMode, () => {
@@ -373,25 +373,25 @@ async function main() {
       break;
     }
     default:
-      console.log(`Rejseplanen CLI - Danish Public Transport
+      console.log(`Rejseplanen CLI - 丹麦公共交通
 
-Usage:
-  rejseplanen search <query>                     Search for stations
-  rejseplanen departures <station>               Get departures
-  rejseplanen arrivals <station>                 Get arrivals
-  rejseplanen trip <from> <to>                   Journey planner
-  rejseplanen journey <station> <line>           Show train stops
+用法:
+  rejseplanen search <查询>              搜索车站
+  rejseplanen departures <车站>           查询出发
+  rejseplanen arrivals <车站>             查询到达
+  rejseplanen trip <起点> <终点>          路线规划
+  rejseplanen journey <车站> <线路>       显示列车停靠站
 
-Options:
-  --trains              Show only trains
-  --buses               Show only buses
-  --to <station>        Filter departures by destination
-  --from <station>      Filter arrivals by origin
-  --time HH:MM          Departures after specified time
-  --output json|text    Output format (default: text)
-  --json                Shorthand for --output json
+选项:
+  --trains              仅显示列车
+  --buses               仅显示巴士
+  --to <车站>           按目的地过滤出发
+  --from <车站>         按起点过滤到达
+  --time HH:MM          指定时间后的出发
+  --output json|text    输出格式（默认: text）
+  --json                --output json 的简写
 
-Examples:
+示例:
   rejseplanen departures Odense --trains --to Aalborg
   rejseplanen trip Odense Aalborg --time 07:00 --json
 `);

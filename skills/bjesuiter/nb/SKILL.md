@@ -1,6 +1,6 @@
 ---
 name: nb
-description: Manage notes, bookmarks, and notebooks using the nb CLI. Create, list, search, and organize notes across multiple notebooks with Git-backed versioning.
+description: 使用 nb CLI 管理笔记、书签和笔记本。跨多个笔记本创建、列出、搜索和组织笔记，支持 Git 版本控制。
 author: Benjamin Jesuiter <bjesuiter@gmail.com>
 homepage: https://github.com/xwmx/nb
 metadata:
@@ -11,248 +11,386 @@ metadata:
       bins: ["nb"]
 ---
 
-# nb - Command Line Note-Taking
+# nb - 命令行笔记工具
 
-> ⚠️ **IMPORTANT:** Never edit files in nb git repos (`~/.nb/*`) by hand! Always use the `nb` CLI to ensure proper indexing and Git commits.
+命令行和本地网络笔记工具，具有纯文本数据存储、Git 版本控制和维基风格链接。
 
+## 快速参考
 
-
-A command line and local web note-taking, bookmarking, and archiving tool with plain text data storage, Git-backed versioning, and wiki-style linking.
-
-## Quick Reference
-
-### Notebooks
+### 笔记本操作
 
 ```bash
-# List all notebooks
+# 列出所有笔记本
 nb notebooks
 
-# Switch to a notebook
-nb use <notebook>
+# 切换到笔记本
+nb use <笔记本名>
 
-# Create a new notebook
-nb notebooks add <name>
+# 创建新笔记本
+nb notebooks add <名称>
 
-# Show current notebook
+# 显示当前笔记本
 nb notebooks current
 ```
 
-### Adding Notes
+### 添加笔记
 
 ```bash
-# Add a note with title
-nb add -t "Title" -c "Content here"
+# 添加带标题的笔记
+nb add -t "标题" -c "内容"
 
-# Add note to specific notebook
-nb <notebook>: add -t "Title" -c "Content"
+# 添加到特定笔记本
+nb <笔记本名>: add -t "标题" -c "内容"
 
-# Add note with tags
-nb add -t "Title" --tags tag1,tag2
+# 添加带标签的笔记
+nb add -t "标题" --tags tag1,tag2
 
-# Add note from file content
-nb add <notebook>:filename.md
+# 从文件内容添加笔记
+nb add <笔记本名>:文件名.md
 ```
 
-### Listing Notes
+### 列出笔记
 
 ```bash
-# List notes in current notebook
+# 列出当前笔记本中的笔记
 nb list
 
-# List all notes (no limit)
+# 列出所有笔记（无限制）
 nb list -a
 
-# List notes in specific notebook
-nb <notebook>: list
+# 列出特定笔记本中的笔记
+nb <笔记本名>: list
 
-# List with excerpts
+# 列出带摘录
 nb list -e
 
-# List with tags shown
+# 列出显示标签
 nb list --tags
 ```
 
-### Showing Notes
+### 显示笔记
 
 ```bash
-# Show note by ID or title
+# 按 ID 或标题显示笔记
 nb show <id>
-nb show "<title>"
+nb show "<标题>"
 
-# Show note from specific notebook
-nb show <notebook>:<id>
+# 从特定笔记本显示笔记
+nb show <笔记本名>:<id>
 
-# Print content (for piping)
+# 打印内容（用于管道）
 nb show <id> --print
 ```
 
-### Searching Notes
+### 搜索笔记
 
 ```bash
-# Search across all notebooks
-nb search "query"
+# 跨所有笔记本搜索
+nb search "查询"
 
-# Search in specific notebook
-nb <notebook>: search "query"
+# 在特定笔记本中搜索
+nb <笔记本名>: search "查询"
 
-# Search with AND/OR/NOT
-nb search "term1" --and "term2"
-nb search "term1" --or "term2"
-nb search "term1" --not "exclude"
-
-# Search by tag
-nb search --tag "tagname"
+# 使用 AND/OR/NOT 搜索
+nb search "词1" --and "词2"
+nb search "词1" --or "词2"
+nb search "词1" --not "词2"
 ```
 
-### Editing Notes
+### 书签管理
 
 ```bash
-# Edit by ID
-nb edit <id>
+# 添加书签
+nb bookmark add <URL>
 
-# Edit by title
-nb edit "<title>"
-
-# Append content
-nb edit <id> -c "New content to append"
-
-# Prepend content
-nb edit <id> -c "Content at top" --prepend
-
-# Overwrite content
-nb edit <id> -c "Replace all" --overwrite
-```
-
-### Deleting Notes
-
-```bash
-# Delete by ID (will prompt)
-nb delete <id>
-
-# Force delete without prompt
-nb delete <id> -f
-```
-
-### Moving/Renaming
-
-```bash
-# Move note to another notebook
-nb move <id> <notebook>:
-
-# Rename a note
-nb move <id> new-filename.md
-```
-
-### Todos
-
-```bash
-# Add a todo
-nb todo add "Task title"
-
-# Add todo with due date
-nb todo add "Task" --due "2026-01-15"
-
-# List open todos
-nb todos open
-
-# List closed todos
-nb todos closed
-
-# Mark todo as done
-nb todo do <id>
-
-# Mark todo as not done
-nb todo undo <id>
-```
-
-### Bookmarks
-
-```bash
-# Add a bookmark
-nb bookmark <url>
-
-# Add with comment
-nb bookmark <url> -c "My comment"
-
-# Add with tags
-nb bookmark <url> --tags reference,dev
-
-# List bookmarks
+# 列出书签
 nb bookmark list
 
-# Search bookmarks
-nb bookmark search "query"
+# 带描述添加书签
+nb bookmark add <URL> --title "标题" --description "描述"
 ```
 
-### Git Operations
+## 设置
+
+### 安装
 
 ```bash
-# Sync with remote
-nb sync
+# macOS (Homebrew)
+brew install nb
 
-# Create checkpoint (commit)
-nb git checkpoint "Message"
+# Linux (下载预编译二进制文件)
+curl -L https://github.com/xwmx/nb/releases/download/latest/nb-linux-x86_64.tar.gz | tar xz
+sudo mv nb /usr/local/bin/
 
-# Check dirty status
-nb git dirty
+# pip
+pip install nb
+```
 
-# Run any git command
+### 初始化
+
+```bash
+# 初始化 nb（创建主笔记本）
+nb init
+
+# 初始化特定文件夹
+nb init --path ~/notes/
+```
+
+### Git 集成
+
+nb 自动为每个笔记本创建 Git 仓库：
+
+```bash
+# 查看 Git 状态
 nb git status
-nb git log --oneline -5
+
+# 提交更改
+nb git commit -m "添加新笔记"
+
+# 查看历史
+nb git log
+
+# 推送到远程
+nb git push
 ```
 
-### Folders
+## 笔记本管理
+
+### 笔记本结构
+
+```
+~/notes/
+├── .nb/
+│   ├── config           # nb 配置
+│   └── notebooks/       # 笔记本目录
+│       ├── home/        # 主笔记本
+│       ├── work/        # 工作笔记本
+│       └── journal/     # 日记笔记本
+├── home/                # 笔记本文件夹
+│   ├── 001_note.md
+│   └── 002_note.md
+├── work/
+└── journal/
+```
+
+### 笔记本命令
 
 ```bash
-# Add folder to notebook
-nb folders add <folder-name>
+# 切换到笔记本（临时）
+nb use work
 
-# List folders
-nb folders
+# 创建笔记本
+nb notebooks add projects
 
-# Add note to folder
-nb add <folder>/<filename>.md
+# 重命名笔记本
+nb notebooks rename projects "新名称"
+
+# 删除笔记本
+nb notebooks delete projects
 ```
 
-## Common Patterns
+## 标签系统
 
-### Adding Note with Full Content
-
-For longer notes, create a temp file and import:
+### 添加标签
 
 ```bash
-# Write content to temp file first, then copy to nb
-cp /tmp/note.md ~/.nb/<notebook>/
-cd ~/.nb/<notebook> && git add . && git commit -m "Add note"
-nb <notebook>: index rebuild
+# 单个标签
+nb add -t "标题" --tags python
+
+# 多个标签
+nb add -t "标题" --tags python,coding,learning
+
+# 在笔记本中添加标签
+nb work: add -t "标题" --tags project
 ```
 
-### Searching Across All
+### 按标签搜索
 
 ```bash
-# Search everything
-nb search "term" --all
+# 搜索特定标签
+nb search --tags python
 
-# Search by type
-nb search "term" --type bookmark
-nb search "term" --type todo
+# 搜索多个标签
+nb search --tags "python coding"
+
+# 列出所有标签
+nb tags
 ```
 
-## Data Location
+## 书签功能
 
-Notes are stored in `~/.nb/<notebook>/` as markdown files with Git versioning.
+### 添加书签
 
+```bash
+# 简单添加
+nb bookmark add https://example.com
+
+# 带标题和描述
+nb bookmark add https://example.com \
+  --title "示例网站" \
+  --description "这是一个示例网站"
+
+# 添加到特定笔记本
+nb bookmarks: add https://example.com
 ```
-~/.nb/
-├── notebook-name-1/ # Your first notebook
-├── notebook-name-2/ # Your second notebook
-└── ...
+
+### 管理书签
+
+```bash
+# 列出书签
+nb bookmark list
+nb bookmarks: list
+
+# 搜索书签
+nb bookmark search "python"
+
+# 删除书签
+nb bookmark delete <id>
 ```
 
-## Tips
+## 同步和备份
 
-1. Use `nb <notebook>:` prefix to work with specific notebooks
-2. IDs are numbers shown in `nb list`
-3. Titles can be used instead of IDs (quoted if spaces)
-4. All changes are automatically Git-committed
-5. Use `nb sync` to push/pull from remote repos
+### 同步到 GitHub/GitLab
+
+在 `~/.nbconfig` 中配置：
+
+```json
+{
+  "sync": {
+    "enabled": true,
+    "remote": "git@github.com:user/notes.git",
+    "branch": "main"
+  }
+}
+```
+
+### 手动同步
+
+```bash
+# 推送到远程
+nb git push
+
+# 从远程拉取
+nb git pull
+```
+
+## 插件和扩展
+
+### 安装插件
+
+```bash
+# 安装主题
+nb plugin install nb-theme
+
+# 安装语法高亮
+nb plugin install syntax-highlighting
+```
+
+### 常用插件
+
+| 插件 | 功能 |
+|------|------|
+| `nb-theme` | 主题和颜色方案 |
+| `syntax-highlighting` | 代码语法高亮 |
+| `emoji-completion` | Emoji 自动完成 |
+| `pomodoro` | 番茄钟集成 |
+
+## 使用场景
+
+### 1. 项目笔记
+
+```bash
+# 创建项目笔记本
+nb notebooks add myproject
+
+# 添加项目笔记
+nb myproject: add -t "架构设计" -c "项目架构说明..."
+
+# 标记为项目笔记
+nb myproject: add -t "待办事项" --tags project,todo
+```
+
+### 2. 每日日志
+
+```bash
+# 创建日记笔记本
+nb notebooks add journal
+
+# 添加今日日志
+nb journal: add -t "$(date +%Y-%m-%d)" -c "今天完成了..."
+
+# 搜索今天的日志
+nb journal: search "$(date +%Y-%m-%d)"
+```
+
+### 3. 代码片段库
+
+```bash
+# 创建代码笔记本
+nb notebooks add snippets
+
+# 添加 Python 片段
+nb snippets: add -t "Python 列表推导" \
+  --tags "python,list-comprehension" \
+  -c "```python\n[x for x in range(10) if x % 2 == 0]\n```"
+```
+
+### 4. 书签收藏
+
+```bash
+# 添加开发资源书签
+nb bookmarks: add https://docs.python.org \
+  --title "Python 官方文档" \
+  --tags "python,documentation"
+
+# 搜索书签
+nb bookmarks: search python
+```
+
+## 重要提示
+
+⚠️ **重要提示**：永远不要手动编辑 nb Git 仓库中的文件（`~/.nb/*`）！始终使用 `nb` CLI 以确保正确的索引和 Git 提交。
+
+## 提示和技巧
+
+### 快速笔记
+
+```bash
+# 快速添加（提示输入）
+nb add
+
+# 使用别名
+alias n=nb
+n add -t "快速笔记"
+```
+
+### 导出和备份
+
+```bash
+# 导出为 Markdown
+nb export
+
+# 导出为 HTML
+nb export --format html
+
+# 完整备份
+nb git backup
+```
+
+### 别名配置
+
+在 shell 配置中添加：
+
+```bash
+# ~/.bashrc 或 ~/.zshrc
+alias n=nb
+alias nl="nb list"
+alias ns="nb search"
+alias nn="nb notebooks current"
+```
+
+## 资源
+
+- GitHub: https://github.com/xwmx/nb
+- 文档: https://xbx.me/nb/
+- 维基: https://github.com/xwmx/nb/wiki

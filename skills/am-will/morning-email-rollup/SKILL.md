@@ -1,115 +1,115 @@
 ---
 name: morning-email-rollup
-description: Daily morning rollup of important emails and calendar events at 8am with AI-generated summaries
+description: 每天早上 8 点自动汇总重要邮件和日历事件，并使用 AI 生成摘要
 metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["gog","gemini","jq","date"]}}}
 ---
 
-# Morning Email Rollup
+# 晨间邮件汇总
 
-Automatically generates a daily summary of important emails and delivers it to Telegram at 8am Denver time.
+每天自动生成重要邮件的每日摘要，并在丹佛时间上午 8 点发送到 Telegram。
 
-## Setup
+## 设置
 
-**Required:** Set your Gmail account email:
+**必需：** 设置您的 Gmail 账户邮箱：
 ```bash
 export GOG_ACCOUNT="your-email@gmail.com"
 ```
 
-Or edit the script directly to set the default.
+或直接编辑脚本以设置默认值。
 
-## What It Does
+## 功能
 
-- Runs every day at 8:00 AM (configurable timezone)
-- **Shows today's calendar events** from Google Calendar
-- Searches for emails marked as **important** or **starred** from the last 24 hours
-- Uses AI (Gemini CLI) to generate natural language summaries of each email
-- Shows up to 20 most important emails with:
-  - 🔴 Unread indicator (red)
-  - 🟢 Read indicator (green)
-  - Sender name/email
-  - Subject line
-  - **AI-generated 1-sentence summary** (natural language, not scraped content)
-- Delivers formatted summary to Telegram
+- 每天运行一次，时间为上午 8:00（可配置时区）
+- **显示今天的日历事件** 来自 Google 日历
+- 搜索过去 24 小时内标记为**重要**或**星标**的邮件
+- 使用 AI（Gemini CLI）为每封邮件生成自然语言摘要
+- 显示最多 20 封最重要的邮件，包括：
+  - 🔴 未读指示器（红色）
+  - 🟢 已读指示器（绿色）
+  - 发件人姓名/邮箱
+  - 主题行
+  - **AI 生成的 1 句话摘要**（自然语言，不是抓取的内容）
+- 将格式化的摘要发送到 Telegram
 
-## Usage
+## 使用方法
 
-### Manual Run
+### 手动运行
 ```bash
-# Default (10 emails)
+# 默认（10 封邮件）
 bash skills/morning-email-rollup/rollup.sh
 
-# Custom number of emails
+# 自定义邮件数量
 MAX_EMAILS=20 bash skills/morning-email-rollup/rollup.sh
 MAX_EMAILS=5 bash skills/morning-email-rollup/rollup.sh
 ```
 
-### View Log
+### 查看日志
 ```bash
 cat $HOME/clawd/morning-email-rollup-log.md
 ```
 
-## How It Works
+## 工作原理
 
-1. **Checks calendar** - Lists today's events from Google Calendar via `gog`
-2. **Searches Gmail** - Query: `is:important OR is:starred newer_than:1d`
-3. **Fetches details** - Gets sender, subject, date, and body for each email
-4. **AI Summarization** - Uses Gemini CLI to generate natural language summaries
-5. **Formats output** - Creates readable summary with read/unread markers
-6. **Sends to Telegram** - Delivers via Clawdbot's messaging system
+1. **检查日历** - 通过 `gog` 从 Google 日历列出今天的事件
+2. **搜索 Gmail** - 查询：`is:important OR is:starred newer_than:1d`
+3. **获取详情** - 获取每封邮件的发件人、主题、日期和正文
+4. **AI 摘要** - 使用 Gemini CLI 生成自然语言摘要
+5. **格式化输出** - 创建带有已读/未读标记的可读摘要
+6. **发送到 Telegram** - 通过 Clawdbot 的消息系统发送
 
-## Calendar Integration
+## 日历集成
 
-The script automatically includes today's calendar events from your Google Calendar using the same `gog` CLI that queries Gmail.
+脚本自动使用与查询 Gmail 相同的 `gog` CLI 从您的 Google 日历包含今天的事件。
 
-**Graceful Fallback:**
-- If `gog` is not installed → Calendar section is silently skipped (no errors)
-- If no events today → Calendar section is silently skipped
-- If events exist → Shows formatted list with 12-hour times and titles
+**优雅降级：**
+- 如果 `gog` 未安装 → 日历部分静默跳过（无错误）
+- 如果今天没有事件 → 日历部分静默跳过
+- 如果有事件 → 显示格式化的列表，包含 12 小时制时间和标题
 
-**Requirements:**
-- `gog` must be installed and authenticated
-- Uses the same Google account configured for Gmail (set via `GOG_ACCOUNT` environment variable)
+**要求：**
+- `gog` 必须已安装并通过身份验证
+- 使用为 Gmail 配置的相同 Google 账户（通过 `GOG_ACCOUNT` 环境变量设置）
 
-## Email Criteria
+## 邮件标准
 
-Emails are included if they match **any** of:
-- Marked as **Important** by Gmail (lightning bolt icon)
-- Manually **Starred** by you
-- Received in the **last 24 hours**
+邮件如果符合**任何**以下条件就会被包含：
+- 被 Gmail 标记为**重要**（闪电图标）
+- 被您手动**标星**
+- 在**过去 24 小时内**收到
 
-## AI Summarization
+## AI 摘要
 
-Each email is summarized using the Gemini CLI (`gemini`):
-- Extracts the email body (cleans HTML/CSS)
-- Sends to `gemini --model gemini-2.0-flash` with a prompt to summarize in 1 sentence
-- The summary is medium-to-long length natural language (not scraped content)
-- Falls back to cleaned body text if Gemini is unavailable
+每封邮件使用 Gemini CLI（`gemini`）进行摘要：
+- 提取邮件正文（清理 HTML/CSS）
+- 发送到 `gemini --model gemini-2.0-flash`，并带有摘要提示
+- 摘要是中等到长的自然语言（不是抓取的内容）
+- 如果 Gemini 不可用，则回退到清理后的正文文本
 
-**Important:** The email body is passed as part of the prompt (not via stdin) because the gemini CLI doesn't handle piped input with prompts correctly.
+**重要：** 邮件正文作为提示的一部分传递（而不是通过 stdin），因为 gemini CLI 不能正确处理带提示的管道输入。
 
-**Example output:**
+**示例输出：**
 ```
-🔴 **William Ryan: Invitation to team meeting**
-   The email invites you to a team meeting tomorrow at 2pm to discuss the Q1 roadmap and assign tasks for the upcoming sprint.
+🔴 **William Ryan: 团队会议邀请**
+   邮件邀请您明天下午 2 点参加团队会议，讨论 Q1 路线图并分配即将到来的冲刺任务。
 ```
 
-## Read/Unread Indicators
+## 已读/未读指示器
 
-- 🔴 Red dot = Unread email
-- 🟢 Green dot = Read email
+- 🔴 红点 = 未读邮件
+- 🟢 绿点 = 已读邮件
 
-All emails show one of these markers for visual consistency.
+所有邮件都显示这些标记之一，以保持视觉一致性。
 
-## Formatting Notes
+## 格式化说明
 
-**Subject and Summary Cleanup:**
-- Extra quotes are automatically stripped from subject lines (e.g., `""Agent Skills""` → `Agent Skills`)
-- Summaries from Gemini are also cleaned of leading/trailing quotes
-- This ensures clean, readable output in Telegram/other channels
+**主题和摘要清理：**
+- 自动从主题行中去除额外的引号（例如 `""Agent Skills""` → `Agent Skills`）
+- 来自 Gemini 的摘要也会清理前导/尾随引号
+- 这确保了在 Telegram/其他渠道中的干净、可读的输出
 
-## Cron Schedule
+## Cron 定时任务
 
-Set up a daily cron job at your preferred time:
+在您偏好的时间设置每日 cron 作业：
 ```bash
 cron add --name "Morning Email Rollup" \
   --schedule "0 8 * * *" \
@@ -118,118 +118,118 @@ cron add --name "Morning Email Rollup" \
   --message "GOG_ACCOUNT=your-email@gmail.com bash /path/to/skills/morning-email-rollup/rollup.sh"
 ```
 
-Adjust the time (8:00 AM) and timezone to your preference.
+根据您的偏好调整时间（上午 8:00）和时区。
 
-## Customization
+## 自定义
 
-### Change Number of Emails
+### 更改邮件数量
 
-By default, the rollup shows **10 emails**. To change this:
+默认情况下，汇总显示**10 封邮件**。要更改此设置：
 
-**Temporary (one-time):**
+**临时（一次性）：**
 ```bash
 MAX_EMAILS=20 bash skills/morning-email-rollup/rollup.sh
 ```
 
-**Permanent:**
-Edit `skills/morning-email-rollup/rollup.sh`:
+**永久：**
+编辑 `skills/morning-email-rollup/rollup.sh`：
 ```bash
-MAX_EMAILS="${MAX_EMAILS:-20}"  # Change 10 to your preferred number
+MAX_EMAILS="${MAX_EMAILS:-20}"  # 将 10 更改为您偏好的数量
 ```
 
-### Change Search Criteria
+### 更改搜索条件
 
-Edit `skills/morning-email-rollup/rollup.sh`:
+编辑 `skills/morning-email-rollup/rollup.sh`：
 
 ```bash
-# Current: important or starred from last 24h
+# 当前：过去 24 小时内的重要或星标邮件
 IMPORTANT_EMAILS=$(gog gmail search 'is:important OR is:starred newer_than:1d' --max 20 ...)
 
-# Examples of other searches:
-# Unread important emails only
+# 其他搜索示例：
+# 仅未读的重要邮件
 IMPORTANT_EMAILS=$(gog gmail search 'is:important is:unread newer_than:1d' --max 20 ...)
 
-# Specific senders
+# 特定发件人
 IMPORTANT_EMAILS=$(gog gmail search 'from:boss@company.com OR from:client@example.com newer_than:1d' --max 20 ...)
 
-# By label/category
+# 按标签/类别
 IMPORTANT_EMAILS=$(gog gmail search 'label:work is:important newer_than:1d' --max 20 ...)
 ```
 
-### Change Time
+### 更改时间
 
-Update the cron schedule:
+更新 cron 定时任务：
 ```bash
-# List cron jobs to get the ID
+# 列出 cron 作业以获取 ID
 cron list
 
-# Update schedule (example: 7am instead of 8am)
+# 更新定时任务（例如：上午 7 点而不是上午 8 点）
 cron update <job-id> --schedule "0 7 * * *" --tz "America/Denver"
 ```
 
-### Change Summary Style
+### 更改摘要样式
 
-Edit the prompt in the `summarize_email()` function in `rollup.sh`:
+编辑 `rollup.sh` 中 `summarize_email()` 函数的提示：
 
 ```bash
-# Current: medium-to-long 1 sentence
+# 当前：中等到长的 1 句话
 "Summarize this email in exactly 1 sentence of natural language. Make it medium to long length. Don't use quotes:"
 
-# Shorter summaries
+# 更短的摘要
 "Summarize in 1 short sentence:"
 
-# More detail
+# 更多细节
 "Summarize in 2-3 sentences with key details:"
 ```
 
-### Change AI Model
+### 更改 AI 模型
 
-Edit the gemini command in `summarize_email()`:
+编辑 `summarize_email()` 中的 gemini 命令：
 ```bash
-# Current: gemini-2.0-flash (fast)
+# 当前：gemini-2.0-flash（快速）
 gemini --model gemini-2.0-flash "Summarize..."
 
-# Use a different model
+# 使用不同的模型
 gemini --model gemini-pro "Summarize..."
 ```
 
-## Troubleshooting
+## 故障排除
 
-### Not receiving rollups
+### 未收到汇总
 ```bash
-# Check if cron job is enabled
+# 检查 cron 作业是否已启用
 cron list
 
-# Check last run status
+# 检查上次运行状态
 cron runs <job-id>
 
-# Test manually
+# 手动测试
 bash skills/morning-email-rollup/rollup.sh
 ```
 
-### Missing emails
-- Gmail's importance markers may filter out expected emails
-- Check if emails are actually marked important/starred in Gmail
-- Try running manual search: `gog gmail search 'is:important newer_than:1d'`
+### 缺少邮件
+- Gmail 的重要性标记可能会过滤掉预期的邮件
+- 检查邮件是否在 Gmail 中实际标记为重要/星标
+- 尝试手动搜索：`gog gmail search 'is:important newer_than:1d'`
 
-### Summaries not appearing
-- Check if `gemini` CLI is installed: `which gemini`
-- Test manually: `echo "test" | gemini "Summarize this:"`
-- Verify Gemini is authenticated (it should prompt on first run)
+### 摘要未出现
+- 检查是否安装了 `gemini` CLI：`which gemini`
+- 手动测试：`echo "test" | gemini "Summarize this:"`
+- 验证 Gemini 已通过身份验证（它应该在首次运行时提示）
 
-### Wrong timezone
-- Cron uses `America/Denver` (MST/MDT)
-- Update with: `cron update <job-id> --tz "Your/Timezone"`
+### 时区错误
+- Cron 使用 `America/Denver`（MST/MDT）
+- 使用以下命令更新：`cron update <job-id> --tz "Your/Timezone"`
 
-## Log History
+## 日志历史
 
-All rollup runs are logged to:
+所有汇总运行都记录到：
 ```
 $HOME/clawd/morning-email-rollup-log.md
 ```
 
-Format:
+格式：
 ```markdown
-- [2026-01-15 08:00:00] 🔄 Starting morning email rollup
-- [2026-01-15 08:00:02] ✅ Rollup complete: 15 emails
+- [2026-01-15 08:00:00] 🔄 开始晨间邮件汇总
+- [2026-01-15 08:00:02] ✅ 汇总完成：15 封邮件
 ```

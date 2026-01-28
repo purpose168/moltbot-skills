@@ -1,188 +1,188 @@
 ---
 name: todoist
-description: Manage Todoist tasks, projects, labels, and comments via the todoist CLI wrapper. Use when a user asks to add tasks, list todos, complete items, manage projects, or interact with their Todoist account.
+description: 通过 todoist CLI 包装器管理 Todoist 任务、项目、标签和评论。当用户要求添加任务、列出待办事项、完成项目、管理项目或与其 Todoist 账户交互时使用。
 ---
 
 # Todoist CLI
 
-Manage Todoist via the REST API v2.
+通过 REST API v2 管理 Todoist。
 
-## Setup
+## 设置
 
-1. Get API token: Todoist → Settings → Integrations → Developer → API token
-2. Set environment variable:
+1. 获取 API 令牌：Todoist → 设置 → 集成 → 开发者 → API 令牌
+2. 设置环境变量：
    ```bash
    export TODOIST_API_TOKEN="your_token_here"
    ```
-3. Make CLI executable:
+3. 使 CLI 可执行：
    ```bash
    chmod +x ~/clawd/skills/todoist/scripts/todoist
    ```
 
-## CLI Location
+## CLI 位置
 
 ```bash
 ~/clawd/skills/todoist/scripts/todoist
 ```
 
-## Quick Reference
+## 快速参考
 
-### Tasks
+### 任务
 
 ```bash
-# List all tasks
+# 列出所有任务
 todoist tasks
 
-# List with filter
+# 带过滤器列表
 todoist tasks --filter "today"
 todoist tasks --filter "overdue"
 todoist tasks --filter "#Work"
 todoist tasks --project PROJECT_ID
 
-# Quick views
+# 快速视图
 todoist today
 todoist overdue
 todoist upcoming
 
-# Get single task
+# 获取单个任务
 todoist task TASK_ID
 
-# Add task
+# 添加任务
 todoist add "Buy groceries"
 todoist add "Call mom" --due tomorrow
 todoist add "Meeting prep" --due "today 3pm" --priority 4
 todoist add "Review PR" --project PROJECT_ID --labels "work,urgent"
 todoist add "Write docs" --description "Include examples"
 
-# Update task
+# 更新任务
 todoist update TASK_ID --content "New title"
 todoist update TASK_ID --due "next monday"
 todoist update TASK_ID --priority 3
 
-# Complete / reopen / delete
+# 完成 / 重新打开 / 删除
 todoist complete TASK_ID
 todoist reopen TASK_ID
 todoist delete-task TASK_ID
 ```
 
-### Projects
+### 项目
 
 ```bash
-# List projects
+# 列出项目
 todoist projects
 
-# Get project
+# 获取项目
 todoist project PROJECT_ID
 
-# Create project
+# 创建项目
 todoist add-project "Work"
 todoist add-project "Personal" --color blue --favorite
 
-# Update project
+# 更新项目
 todoist update-project PROJECT_ID --name "New Name"
 todoist update-project PROJECT_ID --color red
 
-# Delete project
+# 删除项目
 todoist delete-project PROJECT_ID
 ```
 
-### Sections
+### 版块
 
 ```bash
-# List sections
+# 列出版块
 todoist sections
 todoist sections PROJECT_ID
 
-# Create section
+# 创建版块
 todoist add-section --name "In Progress" --project PROJECT_ID
 
-# Delete section
+# 删除版块
 todoist delete-section SECTION_ID
 ```
 
-### Labels
+### 标签
 
 ```bash
-# List labels
+# 列出标签
 todoist labels
 
-# Create label
+# 创建标签
 todoist add-label "urgent"
 todoist add-label "blocked" --color red
 
-# Delete label
+# 删除标签
 todoist delete-label LABEL_ID
 ```
 
-### Comments
+### 评论
 
 ```bash
-# List comments
+# 列出评论
 todoist comments --task TASK_ID
 todoist comments --project PROJECT_ID
 
-# Add comment
+# 添加评论
 todoist add-comment "Need more info" --task TASK_ID
 
-# Delete comment
+# 删除评论
 todoist delete-comment COMMENT_ID
 ```
 
-## Filter Syntax
+## 过滤器语法
 
-Todoist supports powerful filter queries:
+Todoist 支持强大的过滤器查询：
 
-| Filter | Description |
-|--------|-------------|
-| `today` | Due today |
-| `tomorrow` | Due tomorrow |
-| `overdue` | Past due |
-| `7 days` | Due in next 7 days |
-| `no date` | No due date |
-| `#ProjectName` | In specific project |
-| `@label` | Has label |
-| `p1`, `p2`, `p3`, `p4` | Priority level |
-| `assigned to: me` | Assigned to you |
-| `created: today` | Created today |
+| 过滤器 | 描述 |
+|--------|------|
+| `today` | 今天到期 |
+| `tomorrow` | 明天到期 |
+| `overdue` | 已过期 |
+| `7 days` | 未来 7 天到期 |
+| `no date` | 无截止日期 |
+| `#ProjectName` | 在特定项目中 |
+| `@label` | 带有标签 |
+| `p1`, `p2`, `p3`, `p4` | 优先级级别 |
+| `assigned to: me` | 分配给你 |
+| `created: today` | 今天创建 |
 
-Combine with `&` (and) or `|` (or):
+使用 `&`（和）或 `|`（或）组合：
 ```bash
 todoist tasks --filter "today & #Work"
 todoist tasks --filter "overdue | p1"
 ```
 
-## Due Date Strings
+## 截止日期字符串
 
-Natural language due dates:
-- `today`, `tomorrow`, `yesterday`
-- `next monday`, `next week`
+自然语言截止日期：
+- `today`、`tomorrow`、`yesterday`
+- `next monday`、`next week`
 - `in 3 days`
-- `every day`, `every weekday`
+- `every day`、`every weekday`
 - `every monday at 9am`
-- `Jan 15`, `2026-01-20`
+- `Jan 15`、`2026-01-20`
 - `today at 3pm`
 
-## Priority Levels
+## 优先级级别
 
-| Value | Meaning |
-|-------|---------|
-| 1 | Normal (default) |
-| 2 | Medium |
-| 3 | High |
-| 4 | Urgent |
+| 值 | 含义 |
+|----|------|
+| 1 | 正常（默认）|
+| 2 | 中等 |
+| 3 | 高 |
+| 4 | 紧急 |
 
-## Output
+## 输出
 
-All commands return JSON. Pipe to `jq` for formatting:
+所有命令都返回 JSON。使用管道到 `jq` 进行格式化：
 
 ```bash
 todoist tasks | jq '.[] | {id, content, due: .due.string}'
 todoist today | jq -r '.[].content'
 ```
 
-## Notes
+## 注意事项
 
-- Requires `curl` and `jq`
-- All output is JSON for easy scripting
-- Task IDs are numeric strings (e.g., "8765432109")
-- Project IDs are also numeric strings
+- 需要 `curl` 和 `jq`
+- 所有输出都是 JSON，便于脚本编写
+- 任务是数字字符串（例如 "8765432109"）
+- 项目也是数字字符串

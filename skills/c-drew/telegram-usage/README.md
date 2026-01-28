@@ -1,33 +1,33 @@
-# Telegram Usage Command Skill
+# Telegram 使用统计命令技能
 
-A custom Telegram command that displays comprehensive session usage statistics in a clean, formatted message.
+一个自定义的 Telegram 命令技能，可以在一格式整洁的消息中显示全面的会话使用统计信息。
 
-## Features
+## 功能特性
 
-✅ **Quota Remaining** - Shows percentage of API quota left (provider-specific)  
-✅ **Session Time** - Displays time remaining before session resets  
-✅ **Token Usage** - Shows input and output tokens used in session  
-✅ **Context Window** - Displays current context window usage  
-✅ **Visual Indicators** - Color-coded emoji for quick status check  
-✅ **Single Message** - All info in one clean Telegram message  
+✅ **剩余配额** - 显示剩余 API 配额的百分比（特定于提供者）  
+✅ **会话时间** - 显示会话重置前的剩余时间  
+✅ **令牌使用量** - 显示会话中使用的输入和输出令牌数量  
+✅ **上下文窗口** - 显示当前上下文窗口使用情况  
+✅ **可视化指示器** - 颜色编码的表情符号，便于快速状态检查  
+✅ **单条消息** - 所有信息整合在一条整洁的 Telegram 消息中  
 
-## Installation
+## 安装方法
 
-### Option 1: Automatic (via ClawdHub)
+### 方式一：通过 ClawdHub 自动安装
 
 ```bash
 clawdhub install telegram-usage
 ```
 
-### Option 2: Manual (Already in workspace)
+### 方式二：手动安装（已存在于工作区）
 
-The skill is located at `/skills/telegram-usage` in your Clawdbot workspace.
+该技能位于您 Clawdbot 工作区的 `/skills/telegram-usage` 目录。
 
-## Setup
+## 配置步骤
 
-### 1. Enable the Skill
+### 1. 启用技能
 
-Ensure the skill is enabled in `~/.clawdbot/clawdbot.json`:
+确保在 `~/.clawdbot/clawdbot.json` 中启用了该技能：
 
 ```json
 {
@@ -41,9 +41,9 @@ Ensure the skill is enabled in `~/.clawdbot/clawdbot.json`:
 }
 ```
 
-### 2. Add Custom Command to Telegram (Optional)
+### 2. 添加自定义命令到 Telegram（可选）
 
-Register the command in Telegram's bot menu via config:
+通过配置在 Telegram 机器人菜单中注册命令：
 
 ```json
 {
@@ -52,7 +52,7 @@ Register the command in Telegram's bot menu via config:
       "customCommands": [
         {
           "command": "usage",
-          "description": "Show session usage stats"
+          "description": "显示会话使用统计"
         }
       ]
     }
@@ -60,62 +60,62 @@ Register the command in Telegram's bot menu via config:
 }
 ```
 
-### 3. Restart Gateway
+### 3. 重启网关
 
 ```bash
 clawdbot gateway restart
 ```
 
-Or if running manually:
+或者如果手动运行：
 
 ```bash
 clawdbot gateway
 ```
 
-## Usage
+## 使用方法
 
-### In Telegram
+### 在 Telegram 中使用
 
-Send any of these:
+发送以下任意命令：
 
 ```
 /telegram_usage
-/usage          (if custom command registered)
+/usage          （如果已注册自定义命令）
 /skill telegram-usage
 ```
 
-### Output Example
+### 输出示例
 
 ```
-📊 Session Usage Report
+📊 会话使用报告
 
-🔋 Quota Remaining
-🟢 82% of API quota available
-Provider: anthropic
+🔋 剩余配额
+🟢 82% 的 API 配额可用
+提供者：anthropic
 
-⏱️ Session Time
-3 hours 40 minutes remaining
-(resets daily at 4:00 AM)
+⏱️ 会话时间
+3 小时 40 分钟剩余
+（每天凌晨 4:00 重置）
 
-🎯 Tokens Used
-4,370 total tokens
-├─ Input: 2,847
-└─ Output: 1,523
+🎯 已使用令牌
+4,370 个令牌总数
+├─ 输入：2,847
+└─ 输出：1,523
 
-📦 Context Window
-🟢 45% used
-1,856 / 4,096 tokens
+📦 上下文窗口
+🟢 已使用 45%
+1,856 / 4,096 个令牌
 
-Model: Claude 3.5 Haiku
+模型：Claude 3.5 Haiku
 ```
 
-## Configuration
+## 配置说明
 
-No additional configuration required. The skill reads from Clawdbot's session state automatically.
+无需额外配置。该技能会自动从 Clawdbot 的会话状态中读取数据。
 
-### Optional: Adjust Reset Time
+### 可选：调整重置时间
 
-The default session reset is 4:00 AM. Configure in `~/.clawdbot/clawdbot.json`:
+默认会话重置时间为凌晨 4:00。在 `~/.clawdbot/clawdbot.json` 中配置：
 
 ```json
 {
@@ -128,122 +128,122 @@ The default session reset is 4:00 AM. Configure in `~/.clawdbot/clawdbot.json`:
 }
 ```
 
-## Color Indicators
+## 颜色指示器含义
 
-- 🟢 **Green** — Good (75%+ remaining)
-- 🟡 **Yellow** — Warning (50-75% remaining)
-- 🟠 **Orange** — Low (25-50% remaining)
-- 🔴 **Red** — Critical (<25% remaining)
+- 🟢 **绿色** - 良好（剩余 75% 以上）
+- 🟡 **黄色** - 警告（剩余 50-75%）
+- 🟠 **橙色** - 低（剩余 25-50%）
+- 🔴 **红色** - 紧急（剩余不足 25%）
 
-## How It Works
+## 工作原理
 
-1. **Runs as a skill** — Loads via Clawdbot's skill system
-2. **Uses session data** — Reads from current session store
-3. **Formats with HTML** — Telegram-safe HTML formatting (bold, code blocks)
-4. **Single message** — Returns all info in one Telegram message
-5. **Real-time** — Updates on each invocation with current values
+1. **作为技能运行** - 通过 Clawdbot 的技能系统加载
+2. **使用会话数据** - 从当前会话存储中读取
+3. **使用 HTML 格式化** - Telegram 安全的 HTML 格式（粗体、代码块）
+4. **单条消息** - 在一条 Telegram 消息中返回所有信息
+5. **实时更新** - 每次调用时使用当前值更新
 
-## Files Included
+## 包含的文件
 
-- `SKILL.md` — Skill metadata and AgentSkills manifest
-- `handler.js` — Node.js handler for formatting usage data
-- `README.md` — This file
-- `config-example.json` — Example configuration
+- `SKILL.md` - 技能元数据和 AgentSkills 清单
+- `handler.js` - 用于格式化使用数据的 Node.js 处理器
+- `README.md` - 本文档
+- `config-example.json` - 配置示例
 
-## Testing
+## 测试方法
 
-### Manual Test (CLI)
+### 手动测试（命令行）
 
 ```bash
 node /home/drew-server/clawd/skills/telegram-usage/handler.js
 ```
 
-Expected output: Formatted usage report in HTML
+预期输出：HTML 格式的使用报告
 
-### JSON Output
+### JSON 输出
 
 ```bash
 node /home/drew-server/clawd/skills/telegram-usage/handler.js json
 ```
 
-Expected output: Raw statistics as JSON
+预期输出：原始统计数据的 JSON 格式
 
-### In Telegram
+### 在 Telegram 中测试
 
-1. Send `/usage` in any DM with the bot
-2. Expect a formatted message with current stats
-3. Repeat to see updated values
+1. 在与机器人的任何私聊中发送 `/usage`
+2. 期望收到包含当前统计信息的格式消息
+3. 重复操作以查看更新后的值
 
-## Troubleshooting
+## 故障排除
 
-### Command not appearing in Telegram
+### 命令未出现在 Telegram 中
 
-- Make sure the skill is enabled: `clawdbot config get skills.entries.telegram-usage.enabled`
-- Restart the gateway: `clawdbot gateway restart`
-- Check logs: `clawdbot logs --follow`
+- 确保技能已启用：`clawdbot config get skills.entries.telegram-usage.enabled`
+- 重启网关：`clawdbot gateway restart`
+- 检查日志：`clawdbot logs --follow`
 
-### Stats show zero/wrong values
+### 统计显示为零/错误值
 
-- The skill reads from your current session state
-- Start a new session with `/new` and try again
-- Verify session file exists: `~/.clawdbot/agents/main/sessions/sessions.json`
+- 该技能从当前会话状态读取数据
+- 使用 `/new` 开始新会话后再试
+- 验证会话文件是否存在：`~/.clawdbot/agents/main/sessions/sessions.json`
 
-### HTML formatting looks wrong
+### HTML 格式显示错误
 
-- Telegram has limited HTML support
-- The skill uses safe tags: `<b>`, `<i>`, `<code>`
-- If Telegram rejects it, check gateway logs
+- Telegram 的 HTML 支持有限
+- 该技能使用安全的标签：`<b>`、`<i>`、`<code>`
+- 如果 Telegram 拒绝，请检查网关日志
 
-## Technical Details
+## 技术细节
 
-### Quota Source
+### 配额来源
 
-The quota percentage comes from:
-1. Current provider's usage tracking (if enabled)
-2. Defaults to 85% if no tracking available
-3. Can be customized per provider
+配额百分比来自：
+1. 当前提供者的使用情况跟踪（如果已启用）
+2. 如果没有跟踪数据，默认为 85%
+3. 可以按提供者自定义
 
-### Session Time
+### 会话时间
 
-- Resets daily at configured time (default 4:00 AM local)
-- Shows time until next reset
-- Can be overridden with `/reset` or `/new` commands
+- 在配置的时间（默认本地时间凌晨 4:00）重置
+- 显示距离下次重置的剩余时间
+- 可以通过 `/reset` 或 `/new` 命令覆盖
 
-### Tokens
+### 令牌统计
 
-- **Input tokens**: Counted from the assistant's input context
-- **Output tokens**: Counted from the assistant's responses
-- **Total**: Sum of input + output for the current session
+- **输入令牌**：从助手的输入上下文中计算
+- **输出令牌**：从助手的响应中计算
+- **总数**：当前会话的输入 + 输出之和
 
-### Context Usage
+### 上下文使用情况
 
-- Shows current position in context window
-- Updates as conversation grows
-- Includes messages, files, tools, and system prompts
+- 显示在上下文窗口中的当前位置
+- 随着对话增长而更新
+- 包括消息、文件、工具和系统提示
 
-## Limitations
+## 使用限制
 
-- **DMs only** — Groups show session-specific stats but structure is the same
-- **Session-based** — Stats reset when session resets (daily or on explicit `/reset`)
-- **Approximate** — Percentages are rounded to nearest whole number
-- **Provider-dependent** — Quota details vary by API provider (Anthropic, OpenAI, etc.)
+- **仅限私聊** - 群组显示会话特定的统计信息，但结构相同
+- **基于会话** - 统计信息在会话重置时重置（每天或显式 `/reset` 时）
+- **近似值** - 百分比四舍五入到最接近的整数
+- **依赖于提供者** - 配额详情因 API 提供者而异（Anthropic、OpenAI 等）
 
-## Future Enhancements
+## 未来改进方向
 
-Potential improvements:
-- [ ] Graph visualization (text-based)
-- [ ] Historical tracking across sessions
-- [ ] Cost estimation per provider
-- [ ] Token burn rate (tokens/minute)
-- [ ] Context compression recommendations
-- [ ] Quota alerts when low
+潜在的改进：
+- [ ] 图形可视化（基于文本）
+- [ ] 跨会话历史记录跟踪
+- [ ] 每个提供者的成本估算
+- [ ] 令牌消耗率（令牌/分钟）
+- [ ] 上下文压缩建议
+- [ ] 低配额警报
 
-## License
+## 许可证
 
-This skill is part of the Clawdbot project.
+此技能是 Clawdbot 项目的一部分。
 
-## Support
+## 支持
 
-- **Docs**: https://docs.clawd.bot/tools/skills
-- **Issues**: Check Clawdbot GitHub
-- **Questions**: See `/help` in Telegram
+- **文档**：https://docs.clawd.bot/tools/skills
+- **问题反馈**：查看 Clawdbot GitHub
+- **常见问题**：在 Telegram 中使用 `/help` 查看

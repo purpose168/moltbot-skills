@@ -1,61 +1,61 @@
 ---
 name: context7
 description: |
-  Fetch up-to-date library documentation via Context7 API. Use PROACTIVELY when:
-  (1) Working with ANY external library (React, Next.js, Supabase, etc.)
-  (2) User asks about library APIs, patterns, or best practices
-  (3) Implementing features that rely on third-party packages
-  (4) Debugging library-specific issues
-  (5) Need current documentation beyond training data cutoff
-  Always prefer this over guessing library APIs or using outdated knowledge.
+  通过 Context7 API 获取最新的库文档。当以下情况时主动使用：
+  (1) 使用任何外部库时（React、Next.js、Supabase 等）
+  (2) 用户询问库 API、模式或最佳实践时
+  (3) 实现依赖第三方包的功能时
+  (4) 调试特定于库的问题时
+  (5) 需要训练数据截止日期之外的当前文档时
+  始终优先使用此功能，而不是猜测库 API 或使用过时的知识。
 ---
 
-# Context7 Documentation Fetcher
+# Context7 文档获取器
 
-Retrieve current library documentation via Context7 API.
+通过 Context7 API 检索当前的库文档。
 
-## Workflow
+## 工作流程
 
-### 1. Search for the library
+### 1. 搜索库
 
 ```bash
-python3 ~/.claude/skills/context7/scripts/context7.py search "<library-name>"
+python3 ~/.claude/skills/context7/scripts/context7.py search "<库名称>"
 ```
 
-Example:
+示例：
 ```bash
 python3 ~/.claude/skills/context7/scripts/context7.py search "next.js"
 ```
 
-Returns library metadata including the `id` field needed for step 2.
+返回库元数据，包括步骤 2 所需的 `id` 字段。
 
-### 2. Fetch documentation context
+### 2. 获取文档上下文
 
 ```bash
-python3 ~/.claude/skills/context7/scripts/context7.py context "<library-id>" "<query>"
+python3 ~/.claude/skills/context7/scripts/context7.py context "<库-id>" "<查询>"
 ```
 
-Example:
+示例：
 ```bash
 python3 ~/.claude/skills/context7/scripts/context7.py context "/vercel/next.js" "app router middleware"
 ```
 
-Options:
-- `--type txt|md` - Output format (default: txt)
-- `--tokens N` - Limit response tokens
+选项：
+- `--type txt|md` - 输出格式（默认：txt）
+- `--tokens N` - 限制响应令牌数
 
-## Quick Reference
+## 快速参考
 
-| Task | Command |
+| 任务 | 命令 |
 |------|---------|
-| Find React docs | `search "react"` |
-| Get React hooks info | `context "/facebook/react" "useEffect cleanup"` |
-| Find Supabase | `search "supabase"` |
-| Get Supabase auth | `context "/supabase/supabase" "authentication row level security"` |
+| 查找 React 文档 | `search "react"` |
+| 获取 React hooks 信息 | `context "/facebook/react" "useEffect cleanup"` |
+| 查找 Supabase | `search "supabase"` |
+| 获取 Supabase 身份验证 | `context "/supabase/supabase" "authentication row level security"` |
 
-## When to Use
+## 使用时机
 
-- Before implementing any library-dependent feature
-- When unsure about current API signatures
-- For library version-specific behavior
-- To verify best practices and patterns
+- 在实现任何依赖库的功能之前
+- 当不确定当前 API 签名时
+- 对于特定于库版本的行为
+- 验证最佳实践和模式时

@@ -14,7 +14,7 @@ import (
 
 var postsCmd = &cobra.Command{
 	Use:   "posts",
-	Short: "List posts",
+	Short: "列出文章",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -35,7 +35,7 @@ var postsCmd = &cobra.Command{
 		}
 
 		if len(resp.Posts) == 0 {
-			println("No posts found")
+			println("未找到文章")
 			return nil
 		}
 
@@ -48,7 +48,7 @@ var postsCmd = &cobra.Command{
 
 var postCmd = &cobra.Command{
 	Use:   "post <id|slug>",
-	Short: "Get a single post",
+	Short: "获取单个文章",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -69,25 +69,25 @@ var postCmd = &cobra.Command{
 		}
 
 		printf("ID:        %s\n", post.ID)
-		printf("Title:     %s\n", post.Title)
-		printf("Slug:      %s\n", post.Slug)
-		printf("Status:    %s\n", post.Status)
-		printf("Created:   %s\n", post.CreatedAt)
+		printf("标题:      %s\n", post.Title)
+		printf("别名:      %s\n", post.Slug)
+		printf("状态:      %s\n", post.Status)
+		printf("创建时间:   %s\n", post.CreatedAt)
 		if post.PublishedAt != "" {
-			printf("Published: %s\n", post.PublishedAt)
+			printf("发布时间:   %s\n", post.PublishedAt)
 		}
 		if len(post.Tags) > 0 {
 			var tagNames []string
 			for _, t := range post.Tags {
 				tagNames = append(tagNames, t.Name)
 			}
-			printf("Tags:      %s\n", strings.Join(tagNames, ", "))
+			printf("标签:      %s\n", strings.Join(tagNames, ", "))
 		}
 		if post.Excerpt != "" && !showBody {
-			printf("\nExcerpt:\n%s\n", post.Excerpt)
+			printf("\n摘要:\n%s\n", post.Excerpt)
 		}
 		if showBody && post.HTML != "" {
-			printf("\nBody (HTML):\n%s\n", post.HTML)
+			printf("\n正文 (HTML):\n%s\n", post.HTML)
 		}
 		return nil
 	},
@@ -95,7 +95,7 @@ var postCmd = &cobra.Command{
 
 var postCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new post",
+	Short: "创建新文章",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -109,7 +109,7 @@ var postCreateCmd = &cobra.Command{
 		tagsStr, _ := cmd.Flags().GetString("tag")
 
 		if title == "" {
-			return fmt.Errorf("--title is required")
+			return fmt.Errorf("--title 是必需的")
 		}
 
 		post := &libecto.Post{
@@ -117,12 +117,12 @@ var postCreateCmd = &cobra.Command{
 			Status: status,
 		}
 
-		// Read content
+		// 读取内容
 		var content []byte
 		if mdFile != "" {
 			content, err = os.ReadFile(mdFile)
 			if err != nil {
-				return fmt.Errorf("reading markdown file: %w", err)
+				return fmt.Errorf("读取markdown文件: %w", err)
 			}
 		} else if stdinFormat == "markdown" {
 			scanner := bufio.NewScanner(os.Stdin)
@@ -137,7 +137,7 @@ var postCreateCmd = &cobra.Command{
 			post.HTML = libecto.MarkdownToHTML(content)
 		}
 
-		// Handle tags
+		// 处理标签
 		if tagsStr != "" {
 			tagNames := strings.Split(tagsStr, ",")
 			for _, name := range tagNames {
@@ -150,14 +150,14 @@ var postCreateCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Created post: %s (%s)\n", created.ID, created.Slug)
+		printf("已创建文章: %s (%s)\n", created.ID, created.Slug)
 		return nil
 	},
 }
 
 var postEditCmd = &cobra.Command{
 	Use:   "edit <id|slug>",
-	Short: "Edit a post",
+	Short: "编辑文章",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -165,14 +165,14 @@ var postEditCmd = &cobra.Command{
 			return err
 		}
 
-		// First get the existing post
+		// 首先获取现有文章
 		existing, err := client.GetPost(args[0])
 		if err != nil {
 			return err
 		}
 
 		update := &libecto.Post{
-			UpdatedAt: existing.UpdatedAt, // Required for conflict detection
+			UpdatedAt: existing.UpdatedAt, // 用于冲突检测
 		}
 
 		if title, _ := cmd.Flags().GetString("title"); title != "" {
@@ -188,7 +188,7 @@ var postEditCmd = &cobra.Command{
 		if mdFile, _ := cmd.Flags().GetString("markdown-file"); mdFile != "" {
 			content, err := os.ReadFile(mdFile)
 			if err != nil {
-				return fmt.Errorf("reading markdown file: %w", err)
+				return fmt.Errorf("读取markdown文件: %w", err)
 			}
 			update.HTML = libecto.MarkdownToHTML(content)
 		}
@@ -201,14 +201,14 @@ var postEditCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Updated post: %s\n", updated.ID)
+		printf("已更新文章: %s\n", updated.ID)
 		return nil
 	},
 }
 
 var postDeleteCmd = &cobra.Command{
 	Use:   "delete <id|slug>",
-	Short: "Delete a post",
+	Short: "删除文章",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -218,18 +218,18 @@ var postDeleteCmd = &cobra.Command{
 
 		force, _ := cmd.Flags().GetBool("force")
 
-		// Get post first to get ID and confirm
+		// 首先获取文章以获取ID并确认
 		post, err := client.GetPost(args[0])
 		if err != nil {
 			return err
 		}
 
 		if !force {
-			printf("Delete post %q (%s)? [y/N]: ", post.Title, post.ID)
+			printf("删除文章 %q (%s)? [y/N]: ", post.Title, post.ID)
 			var answer string
 			fmt.Scanln(&answer)
 			if strings.ToLower(answer) != "y" {
-				println("Cancelled")
+				println("已取消")
 				return nil
 			}
 		}
@@ -238,14 +238,14 @@ var postDeleteCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Deleted post: %s\n", post.ID)
+		printf("已删除文章: %s\n", post.ID)
 		return nil
 	},
 }
 
 var postPublishCmd = &cobra.Command{
 	Use:   "publish <id|slug>",
-	Short: "Publish a post",
+	Short: "发布文章",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -258,14 +258,14 @@ var postPublishCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Published post: %s\n", updated.ID)
+		printf("已发布文章: %s\n", updated.ID)
 		return nil
 	},
 }
 
 var postUnpublishCmd = &cobra.Command{
 	Use:   "unpublish <id|slug>",
-	Short: "Unpublish a post (set to draft)",
+	Short: "取消发布文章（设置为草稿）",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -278,14 +278,14 @@ var postUnpublishCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Unpublished post: %s\n", updated.ID)
+		printf("已取消发布文章: %s\n", updated.ID)
 		return nil
 	},
 }
 
 var postScheduleCmd = &cobra.Command{
 	Use:   "schedule <id|slug>",
-	Short: "Schedule a post for publication",
+	Short: "安排文章发布",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -296,7 +296,7 @@ var postScheduleCmd = &cobra.Command{
 		at, _ := cmd.Flags().GetString("at")
 
 		if at == "" {
-			return fmt.Errorf("--at is required (ISO8601 timestamp)")
+			return fmt.Errorf("--at 是必需的 (ISO8601 时间戳)")
 		}
 
 		updated, err := client.SchedulePost(args[0], at)
@@ -304,11 +304,12 @@ var postScheduleCmd = &cobra.Command{
 			return err
 		}
 
-		printf("Scheduled post %s for %s\n", updated.ID, at)
+		printf("已安排文章 %s 于 %s 发布\n", updated.ID, at)
 		return nil
 	},
 }
 
+// outputJSON 将数据以JSON格式输出到当前的输出写入器。
 func outputJSON(v interface{}) error {
 	enc := json.NewEncoder(output)
 	enc.SetIndent("", "  ")
@@ -316,28 +317,28 @@ func outputJSON(v interface{}) error {
 }
 
 func init() {
-	postsCmd.Flags().String("status", "", "Filter by status (draft|published|scheduled|all)")
-	postsCmd.Flags().Int("limit", 15, "Number of posts to return")
-	postsCmd.Flags().Bool("json", false, "Output as JSON")
+	postsCmd.Flags().String("status", "", "按状态过滤 (draft|published|scheduled|all)")
+	postsCmd.Flags().Int("limit", 15, "返回的文章数量")
+	postsCmd.Flags().Bool("json", false, "以JSON格式输出")
 
-	postCmd.Flags().Bool("json", false, "Output as JSON")
-	postCmd.Flags().Bool("body", false, "Include full HTML body")
+	postCmd.Flags().Bool("json", false, "以JSON格式输出")
+	postCmd.Flags().Bool("body", false, "包含完整HTML正文")
 
-	postCreateCmd.Flags().String("title", "", "Post title (required)")
-	postCreateCmd.Flags().String("status", "draft", "Post status (draft|published)")
-	postCreateCmd.Flags().String("markdown-file", "", "Path to markdown file for content")
-	postCreateCmd.Flags().String("stdin-format", "", "Read content from stdin (markdown)")
-	postCreateCmd.Flags().String("tag", "", "Comma-separated tags")
+	postCreateCmd.Flags().String("title", "", "文章标题 (必需)")
+	postCreateCmd.Flags().String("status", "draft", "文章状态 (draft|published)")
+	postCreateCmd.Flags().String("markdown-file", "", "内容的markdown文件路径")
+	postCreateCmd.Flags().String("stdin-format", "", "从stdin读取内容 (markdown)")
+	postCreateCmd.Flags().String("tag", "", "逗号分隔的标签")
 
-	postEditCmd.Flags().String("title", "", "New title")
-	postEditCmd.Flags().String("status", "", "New status")
-	postEditCmd.Flags().String("markdown-file", "", "Path to markdown file for new content")
-	postEditCmd.Flags().String("publish-at", "", "Schedule for publication (ISO8601)")
-	postEditCmd.Flags().String("feature-image", "", "URL for the feature image")
+	postEditCmd.Flags().String("title", "", "新标题")
+	postEditCmd.Flags().String("status", "", "新状态")
+	postEditCmd.Flags().String("markdown-file", "", "新内容的markdown文件路径")
+	postEditCmd.Flags().String("publish-at", "", "安排发布时间 (ISO8601)")
+	postEditCmd.Flags().String("feature-image", "", "特色图片URL")
 
-	postDeleteCmd.Flags().Bool("force", false, "Delete without confirmation")
+	postDeleteCmd.Flags().Bool("force", false, "无需确认直接删除")
 
-	postScheduleCmd.Flags().String("at", "", "Publication time (ISO8601)")
+	postScheduleCmd.Flags().String("at", "", "发布时间 (ISO8601)")
 
 	postCmd.AddCommand(postCreateCmd)
 	postCmd.AddCommand(postEditCmd)

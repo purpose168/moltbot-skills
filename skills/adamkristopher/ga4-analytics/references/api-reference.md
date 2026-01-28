@@ -1,403 +1,403 @@
-# API Reference
+# API 参考
 
-Complete function reference for all GA4 Analytics Toolkit modules.
+GA4 分析工具包的所有函数的完整参考。
 
-## Table of Contents
+## 目录
 
-- [Reports API](#reports-api) (7 functions)
-- [Realtime API](#realtime-api) (4 functions)
-- [Metadata API](#metadata-api) (3 functions)
-- [Search Console API](#search-console-api) (6 functions)
-- [Indexing API](#indexing-api) (4 functions)
-- [Bulk Lookup API](#bulk-lookup-api) (3 functions)
-- [Storage](#storage) (4 functions)
+- [报告 API](#报告-api)（7个函数）
+- [实时 API](#实时-api)（4个函数）
+- [元数据 API](#元数据-api)（3个函数）
+- [Search Console API](#search-console-api)（6个函数）
+- [索引 API](#索引-api)（4个函数）
+- [批量查询 API](#批量查询-api)（3个函数）
+- [存储](#存储)（4个函数）
 
 ---
 
-## Reports API
+## 报告 API
 
-Import: `from './api/reports.js'`
+导入：`from './api/reports.js'`
 
 ### `parseDateRange(range?)`
 
-Parse shorthand date range (e.g., "7d", "30d") to GA4 date range format.
+解析简写日期范围（例如 "7d"、"30d"）为 GA4 日期范围格式。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `range` | `string \| DateRange \| undefined` | Settings default | Date range to parse |
+| `range` | `string \| DateRange \| undefined` | 设置默认值 | 要解析的日期范围 |
 
-**Returns:** `DateRange` — `{startDate: string, endDate: string}`
+**返回：** `DateRange` — `{startDate: string, endDate: string}`
 
 ### `runReport(options)`
 
-Run a custom GA4 report with arbitrary dimensions and metrics.
+使用任意维度和指标运行自定义 GA4 报告。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `options.dimensions` | `string[]` | required | GA4 dimension names |
-| `options.metrics` | `string[]` | required | GA4 metric names |
-| `options.dateRange` | `string \| DateRange` | `"30d"` | Date range |
-| `options.filters` | `Record<string, string>` | `undefined` | Dimension filters |
-| `options.orderBy` | `string[]` | `undefined` | Sort order |
-| `options.limit` | `number` | `undefined` | Row limit |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `options.dimensions` | `string[]` | 必需 | GA4 维度名称 |
+| `options.metrics` | `string[]` | 必需 | GA4 指标名称 |
+| `options.dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
+| `options.filters` | `Record<string, string>` | `undefined` | 维度过滤器 |
+| `options.orderBy` | `string[]` | `undefined` | 排序顺序 |
+| `options.limit` | `number` | `undefined` | 行数限制 |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<ReportResponse>` — Rows with dimension and metric values.
+**返回：** `Promise<ReportResponse>` — 带有维度和指标值的行
 
 ### `getPageViews(dateRange?)`
 
-Get page view data with paths, titles, users, and session duration.
+获取页面浏览量数据，包括路径、标题、用户和会话持续时间。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `pagePath`, `pageTitle`
-**Metrics:** `screenPageViews`, `activeUsers`, `averageSessionDuration`
+**维度：** `pagePath`、`pageTitle`
+**指标：** `screenPageViews`、`activeUsers`、`averageSessionDuration`
 
 ### `getTrafficSources(dateRange?)`
 
-Get traffic source data by source, medium, and campaign.
+按来源、媒介和广告系列获取流量来源数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `sessionSource`, `sessionMedium`, `sessionCampaignName`
-**Metrics:** `sessions`, `activeUsers`, `newUsers`, `bounceRate`
+**维度：** `sessionSource`、`sessionMedium`、`sessionCampaignName`
+**指标：** `sessions`、`activeUsers`、`newUsers`、`bounceRate`
 
 ### `getUserDemographics(dateRange?)`
 
-Get user demographic data by country, device, and browser.
+按国家、设备和浏览器获取用户人口统计数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `country`, `deviceCategory`, `browser`
-**Metrics:** `activeUsers`, `sessions`, `newUsers`
+**维度：** `country`、`deviceCategory`、`browser`
+**指标：** `activeUsers`、`sessions`、`newUsers`
 
 ### `getEventCounts(dateRange?)`
 
-Get event count data by event name.
+按事件名称获取事件计数数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `eventName`
-**Metrics:** `eventCount`, `eventCountPerUser`, `activeUsers`
+**维度：** `eventName`
+**指标：** `eventCount`、`eventCountPerUser`、`activeUsers`
 
 ### `getConversions(dateRange?)`
 
-Get conversion data by event name and source.
+按事件名称和来源获取转化数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `eventName`, `sessionSource`
-**Metrics:** `conversions`, `totalRevenue`
+**维度：** `eventName`、`sessionSource`
+**指标：** `conversions`、`totalRevenue`
 
 ### `getEcommerceRevenue(dateRange?)`
 
-Get e-commerce revenue data by date and transaction.
+按日期和交易获取电商收入数据。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| DateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
 
-**Dimensions:** `date`, `transactionId`
-**Metrics:** `totalRevenue`, `ecommercePurchases`, `averagePurchaseRevenue`
+**维度：** `date`、`transactionId`
+**指标：** `totalRevenue`、`ecommercePurchases`、`averagePurchaseRevenue`
 
 ---
 
-## Realtime API
+## 实时 API
 
-Import: `from './api/realtime.js'`
+导入：`from './api/realtime.js'`
 
 ### `getActiveUsers(save?)`
 
-Get current active users by screen/page name.
+获取当前活跃用户（按屏幕/页面名称）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<RealtimeResponse>` — Active users by `unifiedScreenName`.
+**返回：** `Promise<RealtimeResponse>` — 按 `unifiedScreenName` 分组的活跃用户
 
 ### `getRealtimeEvents(save?)`
 
-Get currently firing events.
+获取当前触发的事件。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<RealtimeResponse>` — Event counts by `eventName`.
+**返回：** `Promise<RealtimeResponse>` — 按 `eventName` 分组的事件计数
 
 ### `getRealtimePages(save?)`
 
-Get currently viewed pages.
+获取当前查看的页面。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<RealtimeResponse>` — Page views by `unifiedScreenName`.
+**返回：** `Promise<RealtimeResponse>` — 按 `unifiedScreenName` 分组的页面浏览量
 
 ### `getRealtimeSources(save?)`
 
-Get current traffic sources.
+获取当前流量来源。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<RealtimeResponse>` — Active users by `firstUserSource` and `firstUserMedium`.
+**返回：** `Promise<RealtimeResponse>` — 按 `firstUserSource` 和 `firstUserMedium` 分组的活跃用户
 
 ---
 
-## Metadata API
+## 元数据 API
 
-Import: `from './api/metadata.js'`
+导入：`from './api/metadata.js'`
 
 ### `getAvailableDimensions(save?)`
 
-Get all available dimensions for the GA4 property.
+获取 GA4 属性的所有可用维度。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<MetadataResponse>` — Array of `{apiName, uiName, description}`.
+**返回：** `Promise<MetadataResponse>` — `{apiName, uiName, description}` 对象的数组
 
 ### `getAvailableMetrics(save?)`
 
-Get all available metrics for the GA4 property.
+获取 GA4 属性的所有可用指标。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<MetadataResponse>` — Array of `{apiName, uiName, description}`.
+**返回：** `Promise<MetadataResponse>` — `{apiName, uiName, description}` 对象的数组
 
 ### `getPropertyMetadata(save?)`
 
-Get full property metadata (dimensions + metrics combined).
+获取完整的属性元数据（维度 + 指标组合）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `save` | `boolean` | `true` | Save results to JSON |
+| `save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<MetadataResponse>` — Full metadata response.
+**返回：** `Promise<MetadataResponse>` — 完整的元数据响应
 
 ---
 
 ## Search Console API
 
-Import: `from './api/searchConsole.js'`
+导入：`from './api/searchConsole.js'`
 
 ### `querySearchAnalytics(options)`
 
-Run a custom Search Console analytics query.
+运行自定义 Search Console 分析查询。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `options.dimensions` | `string[]` | `["query"]` | Dimensions: `query`, `page`, `device`, `country`, `searchAppearance` |
-| `options.dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
-| `options.rowLimit` | `number` | `1000` | Max rows |
-| `options.startRow` | `number` | `0` | Pagination offset |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `options.dimensions` | `string[]` | `["query"]` | 维度：`query`、`page`、`device`、`country`、`searchAppearance` |
+| `options.dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
+| `options.rowLimit` | `number` | `1000` | 最大行数 |
+| `options.startRow` | `number` | `0` | 分页偏移量 |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<SearchAnalyticsResponse>` — Rows with `{keys, clicks, impressions, ctr, position}`.
+**返回：** `Promise<SearchAnalyticsResponse>` — 带有 `{keys, clicks, impressions, ctr, position}` 的行
 
 ### `getTopQueries(dateRange?)`
 
-Get top 100 search queries by clicks.
+按点击量获取排名靠前的100个搜索查询。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
 
-**Returns:** `Promise<SearchAnalyticsResponse>`
+**返回：** `Promise<SearchAnalyticsResponse>`
 
 ### `getTopPages(dateRange?)`
 
-Get top 100 pages by search impressions.
+按搜索展示获取排名靠前的100个页面。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
 
-**Returns:** `Promise<SearchAnalyticsResponse>`
+**返回：** `Promise<SearchAnalyticsResponse>`
 
 ### `getDevicePerformance(dateRange?)`
 
-Get search performance breakdown by device type (desktop, mobile, tablet).
+按设备类型（桌面、移动、平板）获取搜索表现分布。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
 
-**Returns:** `Promise<SearchAnalyticsResponse>`
+**返回：** `Promise<SearchAnalyticsResponse>`
 
 ### `getCountryPerformance(dateRange?)`
 
-Get search performance by country (top 50).
+按国家获取搜索表现（前50名）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
 
-**Returns:** `Promise<SearchAnalyticsResponse>`
+**返回：** `Promise<SearchAnalyticsResponse>`
 
 ### `getSearchAppearance(dateRange?)`
 
-Get search appearance data (rich results, AMP, etc.).
+获取搜索展示数据（富结果、AMP 等）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | Date range |
+| `dateRange` | `string \| SearchConsoleDateRange` | `"30d"` | 日期范围 |
 
-**Returns:** `Promise<SearchAnalyticsResponse>`
+**返回：** `Promise<SearchAnalyticsResponse>`
 
 ---
 
-## Indexing API
+## 索引 API
 
-Import: `from './api/indexing.js'`
+导入：`from './api/indexing.js'`
 
 ### `requestIndexing(url, options?)`
 
-Request Google to re-crawl a single URL.
+请求 Google 重新抓取单个 URL。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `url` | `string` | required | Full URL to request indexing for |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `url` | `string` | 必需 | 要请求索引的完整 URL |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<UrlNotificationResult>` — `{url, type: 'URL_UPDATED', notifyTime}`.
+**返回：** `Promise<UrlNotificationResult>` — `{url, type: 'URL_UPDATED', notifyTime}`
 
 ### `requestIndexingBatch(urls, options?)`
 
-Request re-crawling for multiple URLs (processed sequentially to avoid rate limits).
+请求重新抓取多个 URL（按顺序处理以避免速率限制）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `urls` | `string[]` | required | Array of URLs |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `urls` | `string[]` | 必需 | URL 数组 |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<UrlNotificationResult[]>`
+**返回：** `Promise<UrlNotificationResult[]>`
 
 ### `removeFromIndex(url, options?)`
 
-Request URL removal from Google's index.
+请求从 Google 索引中移除 URL。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `url` | `string` | required | URL to remove |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `url` | `string` | 必需 | 要移除的 URL |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<UrlNotificationResult>` — `{url, type: 'URL_DELETED', notifyTime}`.
+**返回：** `Promise<UrlNotificationResult>` — `{url, type: 'URL_DELETED', notifyTime}`
 
 ### `inspectUrl(url, options?)`
 
-Check a URL's index status, mobile usability, and rich results.
+检查 URL 的索引状态、移动可用性和富结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `url` | `string` | required | URL to inspect |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `url` | `string` | 必需 | 要检查的 URL |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<UrlInspectionResult>` — Contains `indexStatus.verdict` ('PASS' | 'FAIL' | 'NEUTRAL'), `coverageState`, `lastCrawlTime`, `mobileUsability`, `richResults`.
+**返回：** `Promise<UrlInspectionResult>` — 包含 `indexStatus.verdict`（'PASS' | 'FAIL' | 'NEUTRAL'）、`coverageState`、`lastCrawlTime`、`mobileUsability`、`richResults`
 
 ---
 
-## Bulk Lookup API
+## 批量查询 API
 
-Import: `from './api/bulk-lookup.js'`
+导入：`from './api/bulk-lookup.js'`
 
 ### `normalizeUrls(urls)`
 
-Normalize page paths: trim whitespace, add leading slash.
+规范化页面路径：修剪空白，添加前导斜杠。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `urls` | `string[]` | required | Array of page paths |
+| `urls` | `string[]` | 必需 | 页面路径数组 |
 
-**Returns:** `string[]` — Normalized paths.
+**返回：** `string[]` — 规范化后的路径
 
 ### `buildUrlFilter(urls)`
 
-Build a GA4 dimension filter expression for a list of page paths.
+为页面路径列表构建 GA4 维度过滤器表达式。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `urls` | `string[]` | required | Normalized page paths |
+| `urls` | `string[]` | 必需 | 规范化的页面路径 |
 
-**Returns:** `DimensionFilterExpression | null`
+**返回：** `DimensionFilterExpression | null`
 
 ### `getMetricsForUrls(urls, options?)`
 
-Get GA4 metrics for specific page paths (bulk lookup).
+获取特定页面路径的 GA4 指标（批量查询）。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `urls` | `string[]` | required | Page paths (e.g., `["/pricing", "/about"]`) |
-| `options.dateRange` | `string \| DateRange` | `"30d"` | Date range |
-| `options.metrics` | `string[]` | `["screenPageViews", "activeUsers", "averageSessionDuration", "bounceRate", "engagementRate"]` | Metrics to retrieve |
-| `options.save` | `boolean` | `true` | Save results to JSON |
+| `urls` | `string[]` | 必需 | 页面路径（例如 `["/pricing", "/about"]`） |
+| `options.dateRange` | `string \| DateRange` | `"30d"` | 日期范围 |
+| `options.metrics` | `string[]` | `["screenPageViews", "activeUsers", "averageSessionDuration", "bounceRate", "engagementRate"]` | 要检索的指标 |
+| `options.save` | `boolean` | `true` | 将结果保存为 JSON |
 
-**Returns:** `Promise<ReportResponse>` — Metrics for each URL.
+**返回：** `Promise<ReportResponse>` — 每个 URL 的指标
 
 ---
 
-## Storage
+## 存储
 
-Import: `from './core/storage.js'`
+导入：`from './core/storage.js'`
 
 ### `saveResult<T>(data, category, operation, extraInfo?)`
 
-Save result data to a timestamped JSON file with metadata wrapper.
+将结果数据保存到带元数据包装器的带时间戳的 JSON 文件。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `data` | `T` | required | Data to save |
-| `category` | `string` | required | Category directory (e.g., `"reports"`, `"realtime"`) |
-| `operation` | `string` | required | Operation name (e.g., `"page_views"`) |
-| `extraInfo` | `string` | `undefined` | Optional extra info for filename |
+| `data` | `T` | 必需 | 要保存的数据 |
+| `category` | `string` | 必需 | 类别目录（例如 `"reports"`、`"realtime"`） |
+| `operation` | `string` | 必需 | 操作名称（例如 `"page_views"`） |
+| `extraInfo` | `string` | `undefined` | 文件名的可选额外信息 |
 
-**Returns:** `string` — Full path to the saved file.
+**返回：** `string` — 保存文件的完整路径
 
 ### `loadResult<T>(filepath)`
 
-Load a previously saved result from a JSON file.
+从 JSON 文件加载先前保存的结果。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `filepath` | `string` | required | Path to the JSON file |
+| `filepath` | `string` | 必需 | JSON 文件的路径 |
 
-**Returns:** `SavedResult<T> | null`
+**返回：** `SavedResult<T> | null`
 
 ### `listResults(category, limit?)`
 
-List saved result files for a category, sorted newest first.
+列出某个类别的保存结果文件，按最新排序。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `category` | `string` | required | Category to list |
-| `limit` | `number` | `undefined` | Max results to return |
+| `category` | `string` | 必需 | 要列出的类别 |
+| `limit` | `number` | `undefined` | 返回的最大结果数 |
 
-**Returns:** `string[]` — Array of file paths.
+**返回：** `string[]` — 文件路径数组
 
 ### `getLatestResult<T>(category, operation?)`
 
-Get the most recent result for a category, optionally filtered by operation.
+获取某个类别最近的结果，可选择按操作名称过滤。
 
-| Parameter | Type | Default | Description |
+| 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `category` | `string` | required | Category to search |
-| `operation` | `string` | `undefined` | Filter by operation name |
+| `category` | `string` | 必需 | 要搜索的类别 |
+| `operation` | `string` | `undefined` | 按操作名称过滤 |
 
-**Returns:** `SavedResult<T> | null`
+**返回：** `SavedResult<T> | null`

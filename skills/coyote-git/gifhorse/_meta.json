@@ -1,7 +1,8 @@
 {
   "owner": "coyote-git",
   "slug": "gifhorse",
-  "displayName": "GifHorse",
+  "displayName": "GifHorse 对话搜索 GIF 制作器",
+  "description": "搜索视频对白并创建带有时间轴字幕的反应 GIF。从电影和电视节目创建有趣的 meme 片段。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769379801078,

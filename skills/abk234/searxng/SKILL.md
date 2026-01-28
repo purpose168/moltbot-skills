@@ -1,52 +1,52 @@
 ---
 name: searxng
-description: Privacy-respecting metasearch using your local SearXNG instance. Search the web, images, news, and more without external API dependencies.
+description: 使用本地SearXNG实例进行尊重隐私的元搜索。无需外部API依赖，即可搜索网络、图片、新闻等。
 author: Avinash Venkatswamy
 version: 1.0.1
 homepage: https://searxng.org
 triggers:
-  - "search for"
-  - "search web"
-  - "find information"
-  - "look up"
-metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["python3"]},"config":{"env":{"SEARXNG_URL":{"description":"SearXNG instance URL","default":"http://localhost:8080","required":true}}}}}
+  - "搜索"
+  - "搜索网络"
+  - "查找信息"
+  - "查询"
+metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["python3"]},"config":{"env":{"SEARXNG_URL":{"description":"SearXNG实例URL","default":"http://localhost:8080","required":true}}}}}
 ---
 
-# SearXNG Search
+# SearXNG 搜索
 
-Search the web using your local SearXNG instance - a privacy-respecting metasearch engine.
+使用您的本地SearXNG实例搜索网络——一个尊重隐私的元搜索引擎。
 
-## Commands
+## 命令
 
-### Web Search
+### 网络搜索
 ```bash
-uv run {baseDir}/scripts/searxng.py search "query"              # Top 10 results
-uv run {baseDir}/scripts/searxng.py search "query" -n 20        # Top 20 results
-uv run {baseDir}/scripts/searxng.py search "query" --format json # JSON output
+uv run {baseDir}/scripts/searxng.py search "查询"              # 前10个结果
+uv run {baseDir}/scripts/searxng.py search "查询" -n 20        # 前20个结果
+uv run {baseDir}/scripts/searxng.py search "查询" --format json # JSON输出
 ```
 
-### Category Search
+### 类别搜索
 ```bash
-uv run {baseDir}/scripts/searxng.py search "query" --category images
-uv run {baseDir}/scripts/searxng.py search "query" --category news
-uv run {baseDir}/scripts/searxng.py search "query" --category videos
+uv run {baseDir}/scripts/searxng.py search "查询" --category images
+uv run {baseDir}/scripts/searxng.py search "查询" --category news
+uv run {baseDir}/scripts/searxng.py search "查询" --category videos
 ```
 
-### Advanced Options
+### 高级选项
 ```bash
-uv run {baseDir}/scripts/searxng.py search "query" --language en
-uv run {baseDir}/scripts/searxng.py search "query" --time-range day
+uv run {baseDir}/scripts/searxng.py search "查询" --language en
+uv run {baseDir}/scripts/searxng.py search "查询" --time-range day
 ```
 
-## Configuration
+## 配置
 
-**Required:** Set the `SEARXNG_URL` environment variable to your SearXNG instance:
+**必需：** 设置 `SEARXNG_URL` 环境变量到您的SearXNG实例：
 
 ```bash
 export SEARXNG_URL=https://your-searxng-instance.com
 ```
 
-Or configure in your Clawdbot config:
+或在您的Clawdbot配置中配置：
 ```json
 {
   "env": {
@@ -55,16 +55,16 @@ Or configure in your Clawdbot config:
 }
 ```
 
-Default (if not set): `http://localhost:8080`
+默认值（如果未设置）：`http://localhost:8080`
 
-## Features
+## 特性
 
-- 🔒 Privacy-focused (uses your local instance)
-- 🌐 Multi-engine aggregation
-- 📰 Multiple search categories
-- 🎨 Rich formatted output
-- 🚀 Fast JSON mode for programmatic use
+- 🔒 **隐私优先**（使用您的本地实例）
+- 🌐 **多引擎聚合**
+- 📰 **多种搜索类别**
+- 🎨 **丰富的格式化输出**
+- 🚀 **快速JSON模式用于程序化使用**
 
 ## API
 
-Uses your local SearXNG JSON API endpoint (no authentication required by default).
+使用您的本地SearXNG JSON API端点（默认无需身份验证）。

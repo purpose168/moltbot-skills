@@ -1,44 +1,44 @@
 ---
 name: topydo
-description: Manage todo.txt tasks using topydo CLI. Add, list, complete, prioritize, tag, and organize tasks with dependencies, due dates, recurrence, and projects. Use for any task management, todo lists, or when the user mentions tasks, todos, or todo.txt.
+description: 使用 topydo CLI 管理 todo.txt 任务。添加、列出、完成、优先级、标签和组织任务，支持依赖关系、截止日期、重复、项目和上下文。适用于任何任务管理、待办事项列表，或当用户提及任务、待办事项或 todo.txt 时。
 license: MIT
-compatibility: Requires Python 3 and pip. Works on macOS, Linux, and Windows.
+compatibility: 需要 Python 3 和 pip。在 macOS、Linux 和 Windows 上运行。
 metadata: {"clawdbot":{"requires":{"bins":["topydo"]},"install":[{"id":"brew","kind":"brew","formula":"topydo","bins":["topydo"],"label":"Install topydo (brew)"},{"id":"pip","kind":"pip","package":"topydo","bins":["topydo"],"label":"Install topydo (pip)"}]}}
 ---
 
-# topydo - Todo.txt Task Manager
+# topydo - Todo.txt 任务管理器
 
-topydo is a powerful CLI for managing tasks in the todo.txt format. It supports dependencies, due dates, start dates, recurrence, priorities, projects, and contexts.
+topydo 是一个强大的 CLI 工具，用于管理 todo.txt 格式的任务。它支持依赖关系、截止日期、开始日期、重复、优先级、项目和上下文。
 
-## Task Format Reference
+## 任务格式参考
 
 ```
-(A) 2025-01-11 Task text +Project @Context due:2025-01-15 t:2025-01-10 rec:1w star:1
+(A) 2025-01-11 任务内容 +Project @Context due:2025-01-15 t:2025-01-10 rec:1w star:1
 │   │          │         │        │        │             │            │      │
-│   │          │         │        │        │             │            │      └─ Star marker
-│   │          │         │        │        │             │            └─ Recurrence
-│   │          │         │        │        │             └─ Start/threshold date
-│   │          │         │        │        └─ Due date
-│   │          │         │        └─ Context
-│   │          │         └─ Project
-│   │          └─ Task description
-│   └─ Creation date
-└─ Priority (A-Z)
+│   │          │         │        │        │             │            │      └─ 星标标记
+│   │          │         │        │        │             │            └─ 重复周期
+│   │          │         │        │        │             └─ 开始/阈值日期
+│   │          │         │        │        └─ 截止日期
+│   │          │         │        └─ 上下文
+│   │          │         └─ 项目
+│   │          └─ 任务描述
+│   └─ 创建日期
+└─ 优先级 (A-Z)
 ```
 
-## Installation
+## 安装
 
-### Homebrew (macOS, preferred)
+### Homebrew (macOS，首选)
 ```bash
 brew install topydo
 ```
 
-### pip (all platforms)
+### pip (所有平台)
 ```bash
 pip3 install topydo
 ```
 
-With optional features:
+使用可选功能：
 ```bash
 pip3 install 'topydo[columns,prompt,ical]'
 ```
@@ -48,14 +48,14 @@ pip3 install 'topydo[columns,prompt,ical]'
 sudo apt install python3-pip && pip3 install topydo
 ```
 
-## Configuration
+## 配置
 
-Config file locations (in order of precedence):
-- `topydo.conf` or `.topydo` (current directory)
-- `~/.topydo` or `~/.config/topydo/config`
+配置文件位置（按优先级排序）：
+- `topydo.conf` 或 `.topydo`（当前目录）
+- `~/.topydo` 或 `~/.config/topydo/config`
 - `/etc/topydo.conf`
 
-Example `~/.topydo`:
+示例 `~/.topydo`：
 ```ini
 [topydo]
 filename = ~/todo.txt
@@ -71,350 +71,350 @@ sort_string = desc:importance,due,desc:priority
 ignore_weekends = 1
 ```
 
-## Adding Tasks
+## 添加任务
 
-Basic task:
+基本任务：
 ```bash
-topydo add "Buy groceries"
+topydo add "购买杂货"
 ```
 
-With priority (A is highest):
+带优先级（A 最高）：
 ```bash
-topydo add "(A) Urgent task"
+topydo add "(A) 紧急任务"
 ```
 
-With project and context:
+带项目和上下文：
 ```bash
-topydo add "Write report +ProjectX @office"
+topydo add "写报告 +ProjectX @办公室"
 ```
 
-With due date (absolute):
+带截止日期（绝对日期）：
 ```bash
-topydo add "Submit proposal due:2025-01-15"
+topydo add "提交提案 due:2025-01-15"
 ```
 
-With due date (relative):
+带截止日期（相对日期）：
 ```bash
-topydo add "Call mom due:tomorrow"
+topydo add "打电话给妈妈 due:明天"
 ```
 
-With due date (weekday):
+带截止日期（星期几）：
 ```bash
-topydo add "Weekly review due:fri"
+topydo add "每周回顾 due:周五"
 ```
 
-With start/threshold date:
+带开始/阈值日期：
 ```bash
-topydo add "Future task t:2025-02-01"
+topydo add "未来任务 t:2025-02-01"
 ```
 
-With recurrence (weekly):
+带重复（每周）：
 ```bash
-topydo add "Water plants due:sat rec:1w"
+topydo add "浇花 due:周六 rec:1w"
 ```
 
-With strict recurrence (always on 1st of month):
+带严格重复（始终在每月 1 号）：
 ```bash
-topydo add "Pay rent due:2025-02-01 rec:+1m"
+topydo add "付房租 due:2025-02-01 rec:+1m"
 ```
 
-With dependency (must complete before task 1):
+带依赖（必须先完成任务 1）：
 ```bash
-topydo add "Write tests before:1"
+topydo add "编写测试 before:1"
 ```
 
-As subtask of task 1:
+作为任务 1 的子任务：
 ```bash
-topydo add "Review code partof:1"
+topydo add "审查代码 partof:1"
 ```
 
-## Listing Tasks
+## 列出任务
 
-List all relevant tasks:
+列出所有相关任务：
 ```bash
 topydo ls
 ```
 
-Include hidden/blocked tasks:
+包括隐藏/阻塞的任务：
 ```bash
 topydo ls -x
 ```
 
-Filter by project:
+按项目筛选：
 ```bash
 topydo ls +ProjectX
 ```
 
-Filter by context:
+按上下文筛选：
 ```bash
-topydo ls @office
+topydo ls @办公室
 ```
 
-Filter by priority:
+按优先级筛选：
 ```bash
 topydo ls "(A)"
 ```
 
-Filter by priority range:
+按优先级范围筛选：
 ```bash
 topydo ls "(>C)"
 ```
 
-Filter tasks due today:
+筛选今天到期的任务：
 ```bash
-topydo ls due:today
+topydo ls due:今天
 ```
 
-Filter overdue tasks:
+筛选逾期任务：
 ```bash
-topydo ls "due:<today"
+topydo ls "due:<今天"
 ```
 
-Filter tasks due by Friday:
+筛选周五到期的任务：
 ```bash
-topydo ls "due:<=fri"
+topydo ls "due:<=周五"
 ```
 
-Combine multiple filters:
+组合多个筛选条件：
 ```bash
-topydo ls +ProjectX @office due:today
+topydo ls +ProjectX @办公室 due:今天
 ```
 
-Exclude context:
+排除上下文：
 ```bash
-topydo ls -- -@waiting
+topydo ls -- -@等待中
 ```
 
-Sort by priority:
+按优先级排序：
 ```bash
 topydo ls -s priority
 ```
 
-Sort descending by due date, then priority:
+按截止日期降序，然后按优先级：
 ```bash
 topydo ls -s desc:due,priority
 ```
 
-Group by project:
+按项目分组：
 ```bash
 topydo ls -g project
 ```
 
-Limit to 5 results:
+限制为 5 个结果：
 ```bash
 topydo ls -n 5
 ```
 
-Custom output format:
+自定义输出格式：
 ```bash
 topydo ls -F "%I %p %s %{due:}d"
 ```
 
-Output as JSON:
+输出为 JSON：
 ```bash
 topydo ls -f json
 ```
 
-## Completing Tasks
+## 完成任务
 
-Complete task by ID:
+按 ID 完成：
 ```bash
 topydo do 1
 ```
 
-Complete multiple tasks:
+完成多个任务：
 ```bash
 topydo do 1 2 3
 ```
 
-Complete all tasks due today:
+完成所有今天到期的任务：
 ```bash
-topydo do -e due:today
+topydo do -e due:今天
 ```
 
-Complete with custom date:
+使用自定义日期完成：
 ```bash
-topydo do -d yesterday 1
+topydo do -d 昨天 1
 ```
 
-## Priority Management
+## 优先级管理
 
-Set priority A:
+设置优先级 A：
 ```bash
 topydo pri 1 A
 ```
 
-Set priority for multiple tasks:
+为多个任务设置优先级：
 ```bash
 topydo pri 1 2 3 B
 ```
 
-Remove priority:
+移除优先级：
 ```bash
 topydo depri 1
 ```
 
-## Tagging Tasks
+## 标签任务
 
-Set due date:
+设置截止日期：
 ```bash
-topydo tag 1 due tomorrow
+topydo tag 1 due 明天
 ```
 
-Star a task:
+星标任务：
 ```bash
 topydo tag 1 star 1
 ```
 
-Remove a tag:
+移除标签：
 ```bash
 topydo tag 1 due
 ```
 
-Set custom tag with relative date:
+使用相对日期设置自定义标签：
 ```bash
 topydo tag -r 1 review 2w
 ```
 
-## Modifying Tasks
+## 修改任务
 
-Append text to task:
+追加文本到任务：
 ```bash
-topydo append 1 "additional notes"
+topydo append 1 "附加笔记"
 ```
 
-Append due date:
+追加截止日期：
 ```bash
-topydo append 1 due:friday
+topydo append 1 due:周五
 ```
 
-Edit task in text editor:
+在文本编辑器中编辑任务：
 ```bash
 topydo edit 1
 ```
 
-Edit all tasks in project:
+编辑项目中的所有任务：
 ```bash
 topydo edit -e +ProjectX
 ```
 
-## Deleting Tasks
+## 删除任务
 
-Delete by ID:
+按 ID 删除：
 ```bash
 topydo del 1
 ```
 
-Delete multiple:
+删除多个：
 ```bash
 topydo del 1 2 3
 ```
 
-Delete by expression:
+按表达式删除：
 ```bash
-topydo del -e completed:today
+topydo del -e completed:今天
 ```
 
-## Dependencies
+## 依赖关系
 
-Add dependency (task 2 depends on task 1):
+添加依赖（任务 2 依赖于任务 1）：
 ```bash
 topydo dep add 2 to 1
 ```
 
-Task 2 is part of task 1:
+任务 2 是任务 1 的一部分：
 ```bash
 topydo dep add 2 partof 1
 ```
 
-List what depends on task 1:
+列出依赖任务 1 的任务：
 ```bash
 topydo dep ls 1 to
 ```
 
-List what task 1 depends on:
+列出任务 1 依赖的任务：
 ```bash
 topydo dep ls to 1
 ```
 
-Remove dependency:
+移除依赖：
 ```bash
 topydo dep rm 2 to 1
 ```
 
-Visualize dependencies (requires graphviz):
+可视化依赖关系（需要 graphviz）：
 ```bash
 topydo dep dot 1 | dot -Tpng -o deps.png
 ```
 
-## Postponing Tasks
+## 推迟任务
 
-Postpone by 1 week:
+推迟 1 周：
 ```bash
 topydo postpone 1 1w
 ```
 
-Postpone by 3 days:
+推迟 3 天：
 ```bash
 topydo postpone 1 3d
 ```
 
-Postpone including start date:
+包括开始日期推迟：
 ```bash
 topydo postpone -s 1 1w
 ```
 
-## Other Commands
+## 其他命令
 
-Sort the todo.txt file:
+排序 todo.txt 文件：
 ```bash
 topydo sort
 ```
 
-Revert last command:
+回退上一个命令：
 ```bash
 topydo revert
 ```
 
-Show revert history:
+显示回退历史：
 ```bash
 topydo revert ls
 ```
 
-List all projects:
+列出所有项目：
 ```bash
 topydo lsprj
 ```
 
-List all contexts:
+列出所有上下文：
 ```bash
 topydo lscon
 ```
 
-Archive completed tasks:
+归档已完成的任务：
 ```bash
 topydo archive
 ```
 
-## Relative Dates
+## 相对日期
 
-- `today`, `tomorrow`, `yesterday`
-- Weekdays: `mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun`
-- Periods: `1d` (days), `2w` (weeks), `3m` (months), `1y` (years)
-- Business days: `5b` (excludes weekends)
+- `今天`、`明天`、`昨天`
+- 星期几：`周一`、`周二`、`周三`、`周四`、`周五`、`周六`、`周日`
+- 时间段：`1d`（天）、`2w`（周）、`3m`（月）、`1y`（年）
+- 工作日：`5b`（排除周末）
 
-## Sort/Group Fields
+## 排序/分组字段
 
-- `priority`, `due`, `creation`, `completed`
-- `importance`, `importance-avg`
-- `project`, `context`, `text`, `length`
+- `priority`、`due`、`creation`、`completed`
+- `importance`、`importance-avg`
+- `project`、`context`、`text`、`length`
 
-Prefix with `desc:` for descending. Example: `desc:importance,due`
+添加 `desc:` 前缀以降序排列。示例：`desc:importance,due`
 
-## Tips
+## 提示
 
-- Use a clean, human-readable format to present results to the user
-- Enable stable text IDs: set `identifiers = text` in config
-- Star important tasks: add `star:1` tag
-- Hidden tags by default: `id`, `p`, `ical`
-- Importance = priority + due date proximity + star status
+- 使用清晰、易读的格式向用户呈现结果
+- 启用稳定的文本 ID：在配置中设置 `identifiers = text`
+- 星标重要任务：添加 `star:1` 标签
+- 默认隐藏标签：`id`、`p`、`ical`
+- 重要性 = 优先级 + 截止日期接近度 + 星标状态

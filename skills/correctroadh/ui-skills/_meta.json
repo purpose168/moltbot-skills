@@ -1,7 +1,8 @@
 {
   "owner": "correctroadh",
   "slug": "ui-skills",
-  "displayName": "Ui Skills",
+  "displayName": "UI 技能",
+  "description": "为智能体构建更好界面的固执约束。包含 UI 组件、动画、交互和性能的详细规范。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768190434855,

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""PhantomBuster CLI for Clawdbot.
+"""
+PhantomBuster CLI 工具 for Clawdbot。
 
-Control your PhantomBuster automation agents.
+控制您的 PhantomBuster 自动化智能体。
 
-Commands:
-- list: List all agents
-- launch: Launch an agent
-- output: Get agent output
-- status: Check agent status
-- abort: Abort running agent
-- get: Get agent details
+支持的命令：
+- list: 列出所有智能体
+- launch: 启动智能体
+- output: 获取智能体输出
+- status: 检查智能体状态
+- abort: 中止正在运行的智能体
+- get: 获取智能体详情
 """
 
 import argparse
@@ -19,72 +20,104 @@ import sys
 import urllib.request
 import urllib.error
 
+# PhantomBuster API 的基础 URL
 API_BASE = "https://api.phantombuster.com/api/v2"
 
 
 def get_api_key():
-    """Get API key from environment."""
+    """
+    从环境变量中获取 API 密钥。
+    
+    返回:
+        str: PhantomBuster API 密钥
+        
+    退出:
+        如果环境变量未设置，则退出程序并显示错误信息
+    """
     api_key = os.environ.get("PHANTOMBUSTER_API_KEY")
     if not api_key:
-        print("Error: PHANTOMBUSTER_API_KEY environment variable not set", file=sys.stderr)
-        print("Get your key at: https://phantombuster.com/workspace-settings", file=sys.stderr)
+        print("错误: PHANTOMBUSTER_API_KEY 环境变量未设置", file=sys.stderr)
+        print("获取密钥的地址: https://phantombuster.com/workspace-settings", file=sys.stderr)
         sys.exit(1)
     return api_key
 
 
 def api_request(method, endpoint, data=None):
-    """Make an API request to PhantomBuster."""
+    """
+    向 PhantomBuster API 发起请求。
+    
+    参数:
+        method: HTTP 方法（GET、POST 等）
+        endpoint: API 端点路径
+        data: 请求体数据（可选）
+        
+    返回:
+        dict: API 响应的 JSON 数据
+        
+    退出:
+        遇到 HTTP 错误或网络错误时退出程序
+    """
     api_key = get_api_key()
     url = f"{API_BASE}{endpoint}"
     
+    # 设置请求头，包含 API 密钥和内容类型
     headers = {
         "X-Phantombuster-Key": api_key,
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
     
+    # 序列化请求数据为 JSON
     if data:
         data = json.dumps(data).encode('utf-8')
     
+    # 创建请求对象
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     
     try:
+        # 发送请求并获取响应，设置超时为 30 秒
         with urllib.request.urlopen(req, timeout=30) as response:
             return json.loads(response.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
+        # 处理 HTTP 错误
         error_body = e.read().decode('utf-8')
         try:
             error_json = json.loads(error_body)
-            print(f"Error {e.code}: {error_json.get('message', error_body)}", file=sys.stderr)
+            print(f"错误 {e.code}: {error_json.get('message', error_body)}", file=sys.stderr)
         except:
-            print(f"Error {e.code}: {error_body}", file=sys.stderr)
+            print(f"错误 {e.code}: {error_body}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.URLError as e:
-        print(f"Network error: {e.reason}", file=sys.stderr)
+        # 处理网络错误
+        print(f"网络错误: {e.reason}", file=sys.stderr)
         sys.exit(1)
 
 
 def cmd_list(args):
-    """List all agents."""
+    """列出所有智能体。"""
     result = api_request("GET", "/agents/fetch-all")
     
+    # 处理响应数据
     agents = result if isinstance(result, list) else result.get("data", [])
     
+    # 如果要求 JSON 格式输出
     if args.json:
         print(json.dumps(agents, indent=2))
         return
     
+    # 显示摘要信息
     if not agents:
-        print("No agents found.")
+        print("未找到智能体。")
         return
     
-    print(f"Found {len(agents)} agents:\n")
+    print(f"找到 {len(agents)} 个智能体:\n")
     for agent in agents:
         agent_id = agent.get("id", "?")
-        name = agent.get("name", "Unnamed")
+        name = agent.get("name", "未命名")
         script = agent.get("scriptName", agent.get("script", ""))
         last_status = agent.get("lastEndStatus", "unknown")
         
+        # 状态表情符号映射
         status_emoji = {
             "finished": "✅",
             "error": "❌",
@@ -94,50 +127,57 @@ def cmd_list(args):
         
         print(f"{status_emoji} [{agent_id}] {name}")
         if script:
-            print(f"   Script: {script}")
+            print(f"   脚本: {script}")
         print()
 
 
 def cmd_launch(args):
-    """Launch an agent."""
+    """启动智能体。"""
     data = {"id": args.agent_id}
     
+    # 处理可选参数
     if args.argument:
         try:
             data["argument"] = json.loads(args.argument)
         except json.JSONDecodeError:
-            # Treat as string argument
+            # 作为字符串参数处理
             data["argument"] = args.argument
     
+    # 调用启动 API
     result = api_request("POST", "/agents/launch", data)
     
+    # 根据输出格式显示结果
     if args.json:
         print(json.dumps(result, indent=2))
     else:
         container_id = result.get("containerId", "unknown")
-        print(f"✅ Agent {args.agent_id} launched!")
-        print(f"   Container ID: {container_id}")
+        print(f"✅ 智能体 {args.agent_id} 已启动！")
+        print(f"   容器 ID: {container_id}")
 
 
 def cmd_output(args):
-    """Get agent output."""
+    """获取智能体输出。"""
     result = api_request("GET", f"/agents/fetch-output?id={args.agent_id}")
     
+    # 如果要求 JSON 格式输出
     if args.json:
         print(json.dumps(result, indent=2))
         return
     
+    # 解析并显示结果
     status = result.get("status", "unknown")
     output = result.get("output", "")
     result_object = result.get("resultObject")
     
-    print(f"Status: {status}")
+    print(f"状态: {status}")
     
+    # 显示控制台输出
     if output:
-        print(f"\n--- Console Output ---\n{output}")
+        print(f"\n--- 控制台输出 ---\n{output}")
     
+    # 显示结果数据
     if result_object:
-        print(f"\n--- Result Data ---")
+        print(f"\n--- 结果数据 ---")
         if isinstance(result_object, str):
             try:
                 parsed = json.loads(result_object)
@@ -149,59 +189,66 @@ def cmd_output(args):
 
 
 def cmd_status(args):
-    """Check agent status."""
+    """检查智能体状态。"""
     result = api_request("GET", f"/agents/fetch?id={args.agent_id}")
     
+    # 如果要求 JSON 格式输出
     if args.json:
         print(json.dumps(result, indent=2))
         return
     
-    name = result.get("name", "Unknown")
+    # 解析并显示状态信息
+    name = result.get("name", "未知")
     last_status = result.get("lastEndStatus", "unknown")
     last_end = result.get("lastEndMessage", "")
     running = result.get("runningContainers", 0)
     
+    # 状态表情符号映射
     status_emoji = {
         "finished": "✅",
         "error": "❌",
         "running": "🔄"
     }.get(last_status, "❓")
     
-    print(f"Agent: {name}")
-    print(f"Status: {status_emoji} {last_status}")
+    print(f"智能体: {name}")
+    print(f"状态: {status_emoji} {last_status}")
     if running > 0:
-        print(f"Running containers: {running}")
+        print(f"正在运行的容器: {running}")
     if last_end:
-        print(f"Last message: {last_end}")
+        print(f"最后消息: {last_end}")
 
 
 def cmd_abort(args):
-    """Abort a running agent."""
+    """中止正在运行的智能体。"""
     result = api_request("POST", "/agents/abort", {"id": args.agent_id})
     
+    # 根据输出格式显示结果
     if args.json:
         print(json.dumps(result, indent=2))
     else:
-        print(f"🛑 Abort signal sent to agent {args.agent_id}")
+        print(f"🛑 中止信号已发送到智能体 {args.agent_id}")
 
 
 def cmd_get(args):
-    """Get agent details."""
+    """获取智能体详情。"""
     result = api_request("GET", f"/agents/fetch?id={args.agent_id}")
     
+    # 如果要求 JSON 格式输出
     if args.json:
         print(json.dumps(result, indent=2))
         return
     
-    print(f"Agent: {result.get('name', 'Unknown')}")
+    # 显示智能体详细信息
+    print(f"智能体: {result.get('name', '未知')}")
     print(f"ID: {result.get('id', '?')}")
-    print(f"Script: {result.get('scriptName', result.get('script', 'N/A'))}")
-    print(f"Last Status: {result.get('lastEndStatus', 'unknown')}")
-    print(f"Last Message: {result.get('lastEndMessage', 'N/A')}")
-    print(f"Running: {result.get('runningContainers', 0)} container(s)")
+    print(f"脚本: {result.get('scriptName', result.get('script', 'N/A'))}")
+    print(f"最后状态: {result.get('lastEndStatus', 'unknown')}")
+    print(f"最后消息: {result.get('lastEndMessage', 'N/A')}")
+    print(f"运行中: {result.get('runningContainers', 0)} 个容器")
     
+    # 显示智能体参数
     if result.get("argument"):
-        print(f"\nArgument:")
+        print(f"\n参数:")
         arg = result["argument"]
         if isinstance(arg, str):
             try:
@@ -213,52 +260,57 @@ def cmd_get(args):
 
 
 def main():
+    """
+    主函数：解析命令行参数并执行相应命令。
+    """
     parser = argparse.ArgumentParser(
-        description="PhantomBuster CLI for Clawdbot",
+        description="Clawdbot 的 PhantomBuster CLI 工具",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  pb.py list                          # List all agents
-  pb.py launch 12345                  # Launch agent by ID
-  pb.py output 12345                  # Get output from agent
-  pb.py status 12345                  # Check agent status
-  pb.py abort 12345                   # Abort running agent
+示例:
+  pb.py list                          # 列出所有智能体
+  pb.py launch 12345                  # 按 ID 启动智能体
+  pb.py output 12345                  # 从智能体获取输出
+  pb.py status 12345                  # 检查智能体状态
+  pb.py abort 12345                   # 中止正在运行的智能体
         """
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     
-    # List
-    list_parser = subparsers.add_parser("list", help="List all agents")
-    list_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 列出命令 ==========
+    list_parser = subparsers.add_parser("list", help="列出所有智能体")
+    list_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
-    # Launch
-    launch_parser = subparsers.add_parser("launch", help="Launch an agent")
-    launch_parser.add_argument("agent_id", help="Agent ID")
-    launch_parser.add_argument("--argument", "-a", help="JSON argument to pass")
-    launch_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 启动命令 ==========
+    launch_parser = subparsers.add_parser("launch", help="启动智能体")
+    launch_parser.add_argument("agent_id", help="智能体 ID")
+    launch_parser.add_argument("--argument", "-a", help="要传递的 JSON 参数")
+    launch_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
-    # Output
-    output_parser = subparsers.add_parser("output", help="Get agent output")
-    output_parser.add_argument("agent_id", help="Agent ID")
-    output_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 输出命令 ==========
+    output_parser = subparsers.add_parser("output", help="获取智能体输出")
+    output_parser.add_argument("agent_id", help="智能体 ID")
+    output_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
-    # Status
-    status_parser = subparsers.add_parser("status", help="Check agent status")
-    status_parser.add_argument("agent_id", help="Agent ID")
-    status_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 状态命令 ==========
+    status_parser = subparsers.add_parser("status", help="检查智能体状态")
+    status_parser.add_argument("agent_id", help="智能体 ID")
+    status_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
-    # Abort
-    abort_parser = subparsers.add_parser("abort", help="Abort running agent")
-    abort_parser.add_argument("agent_id", help="Agent ID")
-    abort_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 中止命令 ==========
+    abort_parser = subparsers.add_parser("abort", help="中止正在运行的智能体")
+    abort_parser.add_argument("agent_id", help="智能体 ID")
+    abort_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
-    # Get
-    get_parser = subparsers.add_parser("get", help="Get agent details")
-    get_parser.add_argument("agent_id", help="Agent ID")
-    get_parser.add_argument("--json", action="store_true", help="JSON output")
+    # ========== 获取详情命令 ==========
+    get_parser = subparsers.add_parser("get", help="获取智能体详情")
+    get_parser.add_argument("agent_id", help="智能体 ID")
+    get_parser.add_argument("--json", action="store_true", help="JSON 输出")
     
+    # 解析命令行参数
     args = parser.parse_args()
     
+    # 命令映射表
     commands = {
         "list": cmd_list,
         "launch": cmd_launch,
@@ -268,6 +320,7 @@ Examples:
         "get": cmd_get,
     }
     
+    # 执行对应的命令
     commands[args.command](args)
 
 

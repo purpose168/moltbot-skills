@@ -1,122 +1,122 @@
-# GEO Audit Template
+# GEO 审计模板
 
-**Page:** [URL]
-**Date:** [Date]
-**Auditor:** [Name]
-
----
-
-## Scoring (0=missing, 1=partial, 2=excellent)
-
-### 1. Entity Clarity (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| First paragraph defines entity | /2 | |
-| Entity name used consistently | /2 | |
-| Clear category ("X is a [type]") | /2 | |
-| Relationship to other entities | /2 | |
-| Wikipedia-style objectivity | /2 | |
-| **Subtotal** | /10 | |
-
-### 2. Quotable Facts (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| Specific numbers present | /2 | |
-| Statistics current & sourced | /2 | |
-| Claims concrete & verifiable | /2 | |
-| Key facts in standalone sentences | /2 | |
-| "By the numbers" section exists | /2 | |
-| **Subtotal** | /10 | |
-
-### 3. FAQ Coverage (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| FAQ section exists | /2 | |
-| Questions match LLM prompts | /2 | |
-| Answers direct & complete | /2 | |
-| FAQ schema implemented | /2 | |
-| Covers what/how/why/vs questions | /2 | |
-| **Subtotal** | /10 | |
-
-### 4. Comparison Positioning (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| Comparison tables exist | /2 | |
-| Competitors named explicitly | /2 | |
-| Factual differences (not marketing) | /2 | |
-| "Alternative to X" content | /2 | |
-| Fair representation | /2 | |
-| **Subtotal** | /10 | |
-
-### 5. Structural Clarity (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| Clear H1→H2→H3 hierarchy | /2 | |
-| Bullet points for lists | /2 | |
-| Tables for comparisons | /2 | |
-| Short paragraphs (2-4 sentences) | /2 | |
-| Summary/TL;DR present | /2 | |
-| **Subtotal** | /10 | |
-
-### 6. Authority Signals (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| Credentials stated | /2 | |
-| Customer names/logos | /2 | |
-| Case studies with numbers | /2 | |
-| Third-party mentions | /2 | |
-| "Last updated" date | /2 | |
-| **Subtotal** | /10 | |
-
-### 7. Technical (Max 10)
-
-| Item | Score | Notes |
-|------|-------|-------|
-| Page loads fast (<3s) | /2 | |
-| Mobile-friendly | /2 | |
-| Schema markup present | /2 | |
-| Proper meta tags | /2 | |
-| Sitemap includes page | /2 | |
-| **Subtotal** | /10 | |
+**页面:** [URL]
+**日期:** [日期]
+**审计员:** [姓名]
 
 ---
 
-## Total Score: ___/70
+## 评分标准（0=缺失，1=部分，2=优秀）
 
-**Rating:**
-- 60-70: Excellent GEO readiness
-- 45-59: Good, needs optimization
-- 30-44: Fair, significant gaps
-- <30: Poor, major overhaul needed
+### 1. 实体清晰度（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 首段定义实体 | /2 | |
+| 实体名称一致使用 | /2 | |
+| 清晰类别（"X 是一种[类型]"）| /2 | |
+| 与其他实体的关系 | /2 | |
+| 维基百科式客观性 | /2 | |
+| **小计** | /10 | |
+
+### 2. 可引用的事实（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 存在具体数字 | /2 | |
+| 统计数据当前且有来源 | /2 | |
+| 主张具体且可验证 | /2 | |
+| 关键事实放在独立句子中 | /2 | |
+| 存在"数据一览"部分 | /2 | |
+| **小计** | /10 | |
+
+### 3. 常见问题解答覆盖（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 存在常见问题解答部分 | /2 | |
+| 问题匹配 LLM 提示 | /2 | |
+| 答案直接且完整 | /2 | |
+| 已实施常见问题解答模式 | /2 | |
+| 涵盖什么/如何/为什么/对比问题 | /2 | |
+| **小计** | /10 | |
+
+### 4. 对比定位（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 存在对比表格 | /2 | |
+| 明确命名竞争对手 | /2 | |
+| 事实差异（不是营销）| /2 | |
+| "X 的替代品"内容 | /2 | |
+| 公平 representation | /2 | |
+| **小计** | /10 | |
+
+### 5. 结构清晰度（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 清晰的 H1→H2→H3 层次 | /2 | |
+| 列表使用项目符号 | /2 | |
+| 对比使用表格 | /2 | |
+| 短段落（2-4 句）| /2 | |
+| 存在摘要/总结 | /2 | |
+| **小计** | /10 | |
+
+### 6. 权威信号（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 凭据已说明 | /2 | |
+| 客户名称/徽标 | /2 | |
+| 有数字的案例研究 | /2 | |
+| 第三方提及 | /2 | |
+| "最后更新"日期 | /2 | |
+| **小计** | /10 | |
+
+### 7. 技术方面（最高 10 分）
+
+| 项目 | 评分 | 备注 |
+|------|------|------|
+| 页面加载快（<3秒）| /2 | |
+| 移动端友好 | /2 | |
+| 存在模式标记 | /2 | |
+| 正确的元标签 | /2 | |
+| 站点地图包含页面 | /2 | |
+| **小计** | /10 | |
 
 ---
 
-## Priority Fixes
+## 总分: ___/70
+
+**评级：**
+- 60-70：优秀的 GEO 准备度
+- 45-59：良好，需要优化
+- 30-44：一般，存在显著差距
+- <30：较差，需要大修
+
+---
+
+## 优先修复项
 
 1. 
 2. 
 3. 
 
-## Quick Wins
+## 快速见效项
 
 1. 
 2. 
 3. 
 
-## LLM Test Results
+## LLM 测试结果
 
-**Perplexity "What is [entity]?":**
-- Appears: Yes/No
-- Cited: Yes/No
-- Accuracy: Good/Fair/Poor
+**Perplexity "什么是 [实体]?":**
+- 出现: 是/否
+- 被引用: 是/否
+- 准确性: 好/一般/差
 
-**ChatGPT (web) "[entity] vs [competitor]":**
-- Appears: Yes/No
-- Cited: Yes/No
-- Accuracy: Good/Fair/Poor
+**ChatGPT（网络）"[实体] vs [竞争对手]":**
+- 出现: 是/否
+- 被引用: 是/否
+- 准确性: 好/一般/差

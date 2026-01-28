@@ -1,69 +1,69 @@
-# DuckDB CLI AI Skill
+# DuckDB CLI AI 技能
 
-A comprehensive AI skill for [Claude Code](https://claude.ai/code) that provides expert assistance with DuckDB CLI operations.
+一个为 [Claude Code](https://claude.ai/code) 提供的全面 AI 技能，专门帮助用户完成 DuckDB CLI 操作。
 
-## What is this?
+## 这是什么？
 
-This is a **skill file** for Claude Code (Anthropic's CLI tool). When activated, it gives Claude deep knowledge about DuckDB CLI, enabling it to help you with:
+这是一个用于 Claude Code（Anthropic 的 CLI 工具）的**技能文件**。激活后，它会让 Claude 深入了解 DuckDB CLI，帮助用户完成：
 
-- SQL queries on CSV, Parquet, and JSON files
-- Data conversion between formats
-- Database operations and analysis
-- Command-line arguments and dot commands
-- Output formatting and configuration
+- CSV、Parquet 和 JSON 文件的 SQL 查询
+- 格式之间的数据转换
+- 数据库操作和数据分析
+- 命令行参数和点命令
+- 输出格式化和配置
 
-## Installation
+## 安装方法
 
-### Claude Code (recommended)
+### Claude Code（推荐）
 
-Copy `SKILL.md` to your Claude Code skills directory:
+将 `SKILL.md` 复制到您的 Claude Code 技能目录：
 
 ```bash
 mkdir -p ~/.claude/skills/duckdb
 cp SKILL.md ~/.claude/skills/duckdb/
 ```
 
-Then use `/duckdb` in Claude Code to activate the skill.
+然后在 Claude Code 中使用 `/duckdb` 激活该技能。
 
-### Other AI Tools
+### 其他 AI 工具
 
-The `SKILL.md` file follows standard markdown conventions and can be adapted for use with other AI assistants that support custom instructions or system prompts.
+`SKILL.md` 文件遵循标准的 Markdown 约定，可以适配用于支持自定义说明或系统提示的其他 AI 助手。
 
-## What's Included
+## 包含内容
 
-The skill covers all official DuckDB CLI documentation:
+该技能涵盖所有官方的 DuckDB CLI 文档：
 
-- **Quick Start** - Read files directly with SQL
-- **Command Line Arguments** - All flags and options
-- **Data Conversion** - CSV, Parquet, JSON transformations
-- **Dot Commands** - Schema inspection, output control
-- **Output Formats** - All 18 available formats
-- **Keyboard Shortcuts** - Navigation, history, editing
-- **Autocomplete** - Context-aware completion
-- **Configuration** - ~/.duckdbrc settings
-- **Safe Mode** - Restricted file access mode
+- **快速开始** - 直接用 SQL 读取文件
+- **命令行参数** - 所有标志和选项
+- **数据转换** - CSV、Parquet、JSON 转换
+- **点命令** - 架构检查、输出控制
+- **输出格式** - 所有 18 种可用格式
+- **键盘快捷键** - 导航、历史、编辑
+- **自动补全** - 上下文感知补全
+- **配置** - ~/.duckdbrc 设置
+- **安全模式** - 限制文件访问模式
 
-## Example Usage
+## 使用示例
 
-Once the skill is activated, you can ask Claude things like:
+激活技能后，您可以向 Claude 询问：
 
-- "Convert this CSV to Parquet"
-- "Show me statistics for sales.csv"
-- "Join these two files on customer_id"
-- "What's the DuckDB command to export as JSON?"
+- "将这个 CSV 转换为 Parquet"
+- "显示 sales.csv 的统计信息"
+- "根据 customer_id 连接这两个文件"
+- "DuckDB 导出为 JSON 的命令是什么？"
 
-## Documentation Sources
+## 文档来源
 
-Based on official DuckDB documentation:
-- [CLI Overview](https://duckdb.org/docs/stable/clients/cli/overview)
-- [Arguments](https://duckdb.org/docs/stable/clients/cli/arguments)
-- [Dot Commands](https://duckdb.org/docs/stable/clients/cli/dot_commands)
-- [Output Formats](https://duckdb.org/docs/stable/clients/cli/output_formats)
-- [Editing](https://duckdb.org/docs/stable/clients/cli/editing)
-- [Autocomplete](https://duckdb.org/docs/stable/clients/cli/autocomplete)
-- [Syntax Highlighting](https://duckdb.org/docs/stable/clients/cli/syntax_highlighting)
-- [Safe Mode](https://duckdb.org/docs/stable/clients/cli/safe_mode)
+基于官方的 DuckDB 文档：
+- [CLI 概述](https://duckdb.org/docs/stable/clients/cli/overview)
+- [参数](https://duckdb.org/docs/stable/clients/cli/arguments)
+- [点命令](https://duckdb.org/docs/stable/clients/cli/dot_commands)
+- [输出格式](https://duckdb.org/docs/stable/clients/cli/output_formats)
+- [编辑](https://duckdb.org/docs/stable/clients/cli/editing)
+- [自动补全](https://duckdb.org/docs/stable/clients/cli/autocomplete)
+- [语法高亮](https://duckdb.org/docs/stable/clients/cli/syntax_highlighting)
+- [安全模式](https://duckdb.org/docs/stable/clients/cli/safe_mode)
 
-## License
+## 许可证
 
 MIT

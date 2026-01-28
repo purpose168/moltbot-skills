@@ -1,65 +1,65 @@
 ---
 name: inversion-strategist
-description: Flip problems upside down - instead of "how to succeed", ask "how to definitely fail" then avoid those paths. Use when user says "invert", "inversion", "flip it", "opposite approach", "how would this fail", "avoid failure", "what NOT to do", "Munger", "anti-goals", "guarantee failure".
+description: 将问题翻转——不问"如何成功"，而是问"如何肯定失败"，然后避免这些路径。当用户说"invert"、"inversion"、"翻转它"、"相反方法"、"这会如何失败"、"避免失败"、"什么不该做"、"Munger"、"反目标"、"保证失败"时使用。
 ---
 
-# Inversion Strategist
+# 反转策略师
 
-## The Core Principle
+## 核心原则
 
-"Invert, always invert." - Carl Jacobi
+"反转，始终反转。" - 卡尔·雅可比
 
-Instead of: "How do I achieve X?"
-Ask: "What would GUARANTEE I DON'T achieve X?"
-Then: Systematically avoid those things.
+不问：我如何实现X？
+而是问：什么会保证我**不**实现X？
+然后：系统性地避免这些事情。
 
-## The Process
+## 工作流程
 
-1. **State the goal**
-2. **Invert it:** "What would guarantee failure?"
-3. **List failure paths** (7-10, obvious AND subtle)
-4. **Categorize:** Fatal / Damaging / Annoying
-5. **Flip to avoidance strategies**
-6. **Build anti-checklist**
+1. **陈述目标**
+2. **反转它：** "什么会保证失败？"
+3. **列出失败路径**（7-10个，明显和微妙的）
+4. **分类：** 致命 / 损害 / 烦恼
+5. **翻转为避免策略**
+6. **构建反检查清单**
 
-## Output Format
+## 输出格式
 
 ```
-GOAL: [What you want]
-INVERTED: "How would I guarantee failure at [goal]?"
+目标：[你想要什么]
+反转："我如何在[目标]上肯定失败？"
 
-FAILURE PATHS:
+失败路径：
 
-🔴 FATAL:
-• [Path] → AVOID BY: [Strategy]
+🔴 致命：
+• [路径] → 避免：[策略]
 
-🟡 DAMAGING:
-• [Path] → AVOID BY: [Strategy]
+🟡 损害：
+• [路径] → 避免：[策略]
 
-🟢 ANNOYING:
-• [Path] → AVOID BY: [Strategy]
+🟢 烦恼：
+• [路径] → 避免：[策略]
 
-ANTI-CHECKLIST:
-□ Never [behavior]
-□ Never [behavior]
+反检查清单：
+□ 从不 [行为]
+□ 从不 [行为]
 
-PRO-CHECKLIST:
-□ Always [opposite of failure]
-□ Always [opposite of failure]
+正向检查清单：
+□ 总是 [失败的相反]
+□ 总是 [失败的相反]
 ```
 
-## Charlie Munger Wisdom
+## 查理·芒格智慧
 
-"It is remarkable how much long-term advantage people like us have gotten by trying to be consistently not stupid, instead of trying to be very intelligent."
+"值得注意的是，我们这些长期优势的人是如何通过持续不愚蠢来获得的，而不是试图非常聪明。"
 
-"Tell me where I'm going to die, and I'll never go there."
+"告诉我我将死在哪里，我就永远不会去那里。"
 
-## Integration
+## 组合使用
 
-Compounds with:
-- **first-principles-decomposer** → Rebuild from fundamentals after inverting
-- **pre-mortem-analyst** → Inversion finds paths; pre-mortem stress-tests timeline
-- **six-thinking-hats** → Black Hat is inversion-lite; combine for thorough analysis
+与以下技能协同增效：
+- **first-principles-decomposer** - 从基本原理重建后，反转以找出新方法的风险
+- **pre-mortem-analyst** - 反转找到路径；预死分析时间线压力测试
+- **six-thinking-hats** - 黑帽是轻量级反转；组合进行全面分析
 
 ---
-See references/examples.md for Artem-specific inversions
+查看 references/examples.md 获取 Artem 特定的反转案例

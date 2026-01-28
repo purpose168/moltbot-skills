@@ -1,52 +1,52 @@
 ---
 name: firecrawl
-description: Web scraping and crawling with Firecrawl API. Fetch webpage content as markdown, take screenshots, extract structured data, search the web, and crawl documentation sites. Use when the user needs to scrape a URL, get current web info, capture a screenshot, extract specific data from pages, or crawl docs for a framework/library.
+description: 使用 Firecrawl API 进行网页抓取和爬取。获取网页内容为 Markdown、截取屏幕截图、提取结构化数据、搜索网络以及爬取文档站点。当用户需要抓取 URL、获取当前网络信息、捕获屏幕截图、从页面提取特定数据或爬取框架/库的文档时使用。
 version: 1.0.0
 author: captmarbles
 ---
 
-# Firecrawl Web Skill
+# Firecrawl 网络技能
 
-Scrape, search, and crawl the web using [Firecrawl](https://firecrawl.dev).
+使用 [Firecrawl](https://firecrawl.dev) 进行网页抓取、搜索和爬取。
 
-## Setup
+## 设置
 
-1. Get your API key from [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys)
-2. Set the environment variable:
+1. 从 [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys) 获取您的 API 密钥
+2. 设置环境变量：
    ```bash
    export FIRECRAWL_API_KEY=fc-your-key-here
    ```
-3. Install the SDK:
+3. 安装 SDK：
    ```bash
    pip3 install firecrawl
    ```
 
-## Usage
+## 使用方法
 
-All commands use the bundled `fc.py` script in this skill's directory.
+所有命令都使用此技能目录中捆绑的 `fc.py` 脚本。
 
-### Get Page as Markdown
+### 获取页面为 Markdown
 
-Fetch any URL and convert to clean markdown. Handles JavaScript-rendered content.
+获取任意 URL 并转换为干净的 Markdown。处理 JavaScript 渲染的内容。
 
 ```bash
 python3 fc.py markdown "https://example.com"
-python3 fc.py markdown "https://example.com" --main-only  # skip nav/footer
+python3 fc.py markdown "https://example.com" --main-only  # 跳过导航/页脚
 ```
 
-### Take Screenshot
+### 截取屏幕截图
 
-Capture a full-page screenshot of any URL.
+捕获任意 URL 的全页面屏幕截图。
 
 ```bash
 python3 fc.py screenshot "https://example.com" -o screenshot.png
 ```
 
-### Extract Structured Data
+### 提取结构化数据
 
-Pull specific fields from a page using a JSON schema.
+使用 JSON 架构从页面拉取特定字段。
 
-**Schema example** (`schema.json`):
+**架构示例** (`schema.json`)：
 ```json
 {
   "type": "object",
@@ -60,45 +60,45 @@ Pull specific fields from a page using a JSON schema.
 
 ```bash
 python3 fc.py extract "https://example.com/product" --schema schema.json
-python3 fc.py extract "https://example.com/product" --schema schema.json --prompt "Extract the main product details"
+python3 fc.py extract "https://example.com/product" --schema schema.json --prompt "提取主要产品详情"
 ```
 
-### Web Search
+### 网络搜索
 
-Search the web and get content from results (may require paid tier).
+搜索网络并从结果中获取内容（可能需要付费层）。
 
 ```bash
-python3 fc.py search "Python 3.13 new features" --limit 5
+python3 fc.py search "Python 3.13 新特性" --limit 5
 ```
 
-### Crawl Documentation
+### 爬取文档
 
-Crawl an entire documentation site. Great for learning new frameworks.
+爬取整个文档站点。非常适合学习新框架。
 
 ```bash
 python3 fc.py crawl "https://docs.example.com" --limit 30
 python3 fc.py crawl "https://docs.example.com" --limit 50 --output ./docs
 ```
 
-**Note:** Each page costs 1 credit. Set reasonable limits.
+**注意：** 每个页面消耗 1 积分。设置合理的限制。
 
-### Map Site URLs
+### 映射站点 URL
 
-Discover all URLs on a website before deciding what to scrape.
+在决定抓取之前发现网站上的所有 URL。
 
 ```bash
 python3 fc.py map "https://example.com" --limit 100
 python3 fc.py map "https://example.com" --search "api"
 ```
 
-## Example Prompts
+## 示例提示
 
-- *"Scrape https://blog.example.com/post and summarize it"*
-- *"Take a screenshot of stripe.com"*
-- *"Extract the name, price, and features from this product page"*
-- *"Crawl the Astro docs so you can help me build a site"*
-- *"Map all the URLs on docs.stripe.com"*
+- *"抓取 https://blog.example.com/post 并总结它"*
+- *"截取 stripe.com 的屏幕截图"*
+- *"从此产品页面提取名称、价格和功能"*
+- *"爬取 Astro 文档以便您可以帮助我构建网站"*
+- *"映射 docs.stripe.com 上的所有 URL"*
 
-## Pricing
+## 定价
 
-Free tier includes 500 credits. 1 credit = 1 page/screenshot/search query.
+免费层包含 500 积分。1 积分 = 1 个页面/屏幕截图/搜索查询。

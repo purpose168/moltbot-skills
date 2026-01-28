@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Telegram /usage Command Handler
- * Displays session usage statistics in a clean, formatted message
+ * Telegram /usage 命令处理器
+ * 在整洁的格式化消息中显示会话使用统计信息
  */
 
 const fs = require('fs');
@@ -10,7 +10,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
- * Format a time duration in milliseconds to human-readable string
+ * 将毫秒级的时间持续格式化为人类可读的字符串
  */
 function formatDuration(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -18,43 +18,43 @@ function formatDuration(ms) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return `${hours}小时 ${minutes}分钟`;
   }
-  return `${minutes}m`;
+  return `${minutes}分钟`;
 }
 
 /**
- * Format a number with thousands separator
+ * 格式化数字，添加千位分隔符
  */
 function formatNumber(n) {
-  return n.toLocaleString('en-US');
+  return n.toLocaleString('zh-CN');
 }
 
 /**
- * Calculate percentage bar with emoji indicators
+ * 根据百分比计算进度条并返回表情符号指示器
  */
 function getQuotaIndicator(percentage) {
-  if (percentage >= 75) return '🟢'; // Good
-  if (percentage >= 50) return '🟡'; // Warning
-  if (percentage >= 25) return '🟠'; // Low
-  return '🔴'; // Critical
+  if (percentage >= 75) return '🟢'; // 良好
+  if (percentage >= 50) return '🟡'; // 警告
+  if (percentage >= 25) return '🟠'; // 较低
+  return '🔴'; // 紧急
 }
 
 /**
- * Get real quota data from clawdbot models status
+ * 从 clawdbot 模型状态获取真实的配额数据
  */
 function getRealQuotaData() {
   try {
     const output = execSync('clawdbot models status', { encoding: 'utf-8' });
 
-    // Parse the line like: "- anthropic usage: 5h 58% left ⏱1h 1m"
+    // 解析类似 "- anthropic usage: 5h 58% left ⏱1h 1m" 的行
     const usageMatch = output.match(/usage:\s+\d+h\s+(\d+)%\s+left\s+⏱(.+)/);
 
     if (usageMatch) {
       const percentage = parseInt(usageMatch[1], 10);
       const timeRemaining = usageMatch[2].trim();
 
-      // Convert time string to milliseconds for consistency
+      // 将时间字符串转换为毫秒以保持一致性
       const timeMs = parseTimeToMs(timeRemaining);
 
       return {
@@ -64,29 +64,29 @@ function getRealQuotaData() {
       };
     }
   } catch (error) {
-    console.error('Failed to get quota data:', error.message);
+    console.error('获取配额数据失败：', error.message);
   }
 
-  // Fallback to defaults
+  // 返回默认值
   return {
     quotaRemaining: 0,
     sessionTimeRemaining: 0,
-    timeRemainingFormatted: '0m'
+    timeRemainingFormatted: '0分钟'
   };
 }
 
 /**
- * Parse time string like "1h 1m" to milliseconds
+ * 解析如 "1小时 1分钟" 格式的时间字符串并转换为毫秒
  */
 function parseTimeToMs(timeStr) {
   let totalMs = 0;
 
-  const hourMatch = timeStr.match(/(\d+)h/);
+  const hourMatch = timeStr.match(/(\d+)小时/);
   if (hourMatch) {
     totalMs += parseInt(hourMatch[1], 10) * 60 * 60 * 1000;
   }
 
-  const minMatch = timeStr.match(/(\d+)m/);
+  const minMatch = timeStr.match(/(\d+)分钟/);
   if (minMatch) {
     totalMs += parseInt(minMatch[1], 10) * 60 * 1000;
   }
@@ -95,7 +95,7 @@ function parseTimeToMs(timeStr) {
 }
 
 /**
- * Get quota tracker file path
+ * 获取配额跟踪文件的路径
  */
 function getQuotaTrackerPath() {
   const homeDir = process.env.HOME || process.env.USERPROFILE;
@@ -103,13 +103,13 @@ function getQuotaTrackerPath() {
 }
 
 /**
- * Read quota start time from tracker
+ * 从跟踪器读取配额开始时间
  */
 function getQuotaStartTime() {
   const trackerPath = getQuotaTrackerPath();
 
   if (!fs.existsSync(trackerPath)) {
-    // Create new tracker with current time
+    // 使用当前时间创建新的跟踪器
     const quotaData = {
       startTime: Date.now(),
       resetHours: 4
@@ -117,7 +117,7 @@ function getQuotaStartTime() {
     try {
       fs.writeFileSync(trackerPath, JSON.stringify(quotaData, null, 2));
     } catch (error) {
-      console.error('Failed to create quota tracker:', error.message);
+      console.error('创建配额跟踪器失败：', error.message);
     }
     return quotaData;
   }
@@ -126,13 +126,13 @@ function getQuotaStartTime() {
     const data = JSON.parse(fs.readFileSync(trackerPath, 'utf-8'));
     return data;
   } catch (error) {
-    console.error('Failed to read quota tracker:', error.message);
+    console.error('读取配额跟踪器失败：', error.message);
     return { startTime: Date.now(), resetHours: 4 };
   }
 }
 
 /**
- * Calculate time remaining until quota reset (4 hours from start)
+ * 计算距离配额重置的剩余时间（从开始起 4 小时）
  */
 function getTimeUntilReset() {
   const quotaData = getQuotaStartTime();
@@ -140,7 +140,7 @@ function getTimeUntilReset() {
   const resetTime = quotaData.startTime + (resetHours * 60 * 60 * 1000);
   const timeRemaining = resetTime - Date.now();
 
-  // If quota period has passed, reset it
+  // 如果配额周期已过，重置它
   if (timeRemaining <= 0) {
     const trackerPath = getQuotaTrackerPath();
     const newQuotaData = {
@@ -150,43 +150,43 @@ function getTimeUntilReset() {
     try {
       fs.writeFileSync(trackerPath, JSON.stringify(newQuotaData, null, 2));
     } catch (error) {
-      console.error('Failed to reset quota tracker:', error.message);
+      console.error('重置配额跟踪器失败：', error.message);
     }
-    return resetHours * 60 * 60 * 1000; // Return full period
+    return resetHours * 60 * 60 * 1000; // 返回整个周期
   }
 
   return timeRemaining;
 }
 
 /**
- * Generate usage report message
- * @param {Object} stats - Session statistics
- * @returns {string} Formatted Telegram message
+ * 生成使用报告消息
+ * @param {Object} stats - 会话统计信息
+ * @returns {string} 格式化的 Telegram 消息
  */
 function generateUsageReport(stats) {
   const {
     quotaRemaining = 85,
-    sessionTimeRemaining = 14400000, // 4 hours in ms
+    sessionTimeRemaining = 14400000, // 4 小时的毫秒数
     provider = 'anthropic'
   } = stats;
 
   const quotaIndicator = getQuotaIndicator(quotaRemaining);
   const timeRemaining = formatDuration(sessionTimeRemaining);
 
-  let message = `📊 API Usage\n\n`;
-  message += `🔋 Quota: ${quotaIndicator} ${quotaRemaining}%\n`;
-  message += `⏱️ Resets in: ${timeRemaining}`;
+  let message = `📊 API 使用统计\n\n`;
+  message += `🔋 配额：${quotaIndicator} ${quotaRemaining}%\n`;
+  message += `⏱️ 重置倒计时：${timeRemaining}`;
 
   return message;
 }
 
 /**
- * Parse status/context data if provided
+ * 解析状态/上下文数据（如果提供）
  */
 function parseContextData(contextInfo) {
   if (!contextInfo) return null;
   
-  // Extract token counts from context info
+  // 从上下文信息中提取令牌计数
   const tokenMatch = contextInfo.match(/(\d+)\s*\/\s*(\d+)/);
   if (tokenMatch) {
     return {
@@ -198,18 +198,18 @@ function parseContextData(contextInfo) {
 }
 
 /**
- * Main handler
+ * 主处理器
  */
 async function main() {
-  // Parse command arguments if any
+  // 解析命令行参数（如果有）
   const args = process.argv.slice(2);
   const command = args[0] || 'report';
 
-  // Get real quota data from clawdbot
+  // 从 clawdbot 获取真实的配额数据
   const quotaData = getRealQuotaData();
 
-  // Default session statistics
-  // In a real implementation, these would come from the gateway API or session state
+  // 默认会话统计信息
+  // 在实际实现中，这些应该来自网关 API 或会话状态
   const stats = {
     quotaRemaining: quotaData.quotaRemaining,
     sessionTimeRemaining: quotaData.sessionTimeRemaining,
@@ -236,12 +236,12 @@ async function main() {
     process.exit(0);
   }
 
-  // Unknown command
-  console.error(`Unknown command: ${command}`);
+  // 未知命令
+  console.error(`未知命令：${command}`);
   process.exit(1);
 }
 
-// Export for use as module
+// 导出供作为模块使用
 module.exports = {
   generateUsageReport,
   formatDuration,
@@ -252,10 +252,10 @@ module.exports = {
   getTimeUntilReset
 };
 
-// Run if invoked directly
+// 如果直接调用则运行
 if (require.main === module) {
   main().catch(err => {
-    console.error('Error:', err.message);
+    console.error('错误：', err.message);
     process.exit(1);
   });
 }

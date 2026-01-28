@@ -1,30 +1,30 @@
 #!/bin/bash
-# Show status of all tmux agent sessions
+# 显示所有 tmux 代理会话的状态
 
-echo "🖥️  Tmux Agent Sessions"
+echo "🖥️  Tmux 代理会话"
 echo "========================"
 echo ""
 
 SESSIONS=$(tmux list-sessions -F "#{session_name}" 2>/dev/null)
 
 if [ -z "$SESSIONS" ]; then
-  echo "No active sessions"
+  echo "没有活动的会话"
   exit 0
 fi
 
 for session in $SESSIONS; do
-  echo "📍 Session: $session"
-  echo "   Created: $(tmux display-message -t "$session" -p '#{session_created}' | xargs -I{} date -r {} '+%Y-%m-%d %H:%M')"
+  echo "📍 会话: $session"
+  echo "   创建时间: $(tmux display-message -t "$session" -p '#{session_created}' | xargs -I{} date -r {} '+%Y-%m-%d %H:%M')"
   
-  # Get last few lines to show current state
+  # 获取最后几行以显示当前状态
   LAST_LINE=$(tmux capture-pane -t "$session" -p | grep -v '^$' | tail -1)
   if [ -n "$LAST_LINE" ]; then
-    echo "   Status: ${LAST_LINE:0:60}..."
+    echo "   状态: ${LAST_LINE:0:60}..."
   fi
   echo ""
 done
 
-echo "Commands:"
-echo "  Check:  ./skills/tmux-agents/scripts/check.sh <name>"
-echo "  Attach: tmux attach -t <name>"
-echo "  Kill:   tmux kill-session -t <name>"
+echo "命令:"
+echo "  检查:  ./skills/tmux-agents/scripts/check.sh <名称>"
+echo "  附加: tmux attach -t <名称>"
+echo "  终止: tmux kill-session -t <名称>"

@@ -1,24 +1,24 @@
 ---
 name: dexcom
-description: Monitor blood glucose via Dexcom G7/G6 CGM
+description: 通过 Dexcom G7/G6 连续血糖监测仪（CGM）监控血糖
 homepage: https://www.dexcom.com
 metadata: {"clawdbot":{"emoji":"🩸","requires":{"bins":["uv"],"env":["DEXCOM_USER","DEXCOM_PASSWORD"]},"primaryEnv":"DEXCOM_USER","install":[{"id":"uv-brew","kind":"brew","formula":"uv","bins":["uv"],"label":"Install uv (brew)"}]}}
 ---
 
-# Dexcom CGM
+# Dexcom 连续血糖监测
 
-Real-time blood glucose monitoring via Dexcom G6/G7 continuous glucose monitor.
+通过 Dexcom G6/G7 连续血糖监测仪实时监控血糖。
 
-## Setup
+## 初始设置
 
-Set environment variables:
+设置环境变量：
 ```bash
 export DEXCOM_USER="your@email.com"
 export DEXCOM_PASSWORD="your-password"
-export DEXCOM_REGION="ous"  # or "us" (optional, defaults to "ous")
+export DEXCOM_REGION="ous"  # 或 "us"（可选，默认为 "ous"）
 ```
 
-Or configure in `~/.clawdbot/clawdbot.json`:
+或在 `~/.clawdbot/clawdbot.json` 中配置：
 ```json5
 {
   skills: {
@@ -33,29 +33,29 @@ Or configure in `~/.clawdbot/clawdbot.json`:
 }
 ```
 
-## Usage
+## 使用方法
 
-**Formatted report:**
+**格式化的报告：**
 ```bash
 uv run {baseDir}/scripts/glucose.py now
 ```
 
-**Raw JSON:**
+**原始 JSON 数据：**
 ```bash
 uv run {baseDir}/scripts/glucose.py json
 ```
 
-## Example Output
+## 输出示例
 
 ```
-🩸 Glucose: 100 mg/dL (5.6 mmol/L)
-📈 Trend: steady ➡️
-🎯 Status: 🟢 In range
+🩸 血糖: 100 mg/dL (5.6 mmol/L)
+📈 趋势: 稳定 ➡️
+🎯 状态: 🟢 正常范围
 ⏰ 2026-01-18 09:30:00
 ```
 
-## Requirements
+## 环境要求
 
-- Dexcom G6 or G7 with Share enabled
-- uv (Python package manager)
-- Valid Dexcom Share credentials
+- 启用了 Share 功能的 Dexcom G6 或 G7 设备
+- uv（Python 包管理器）
+- 有效的 Dexcom Share 凭据

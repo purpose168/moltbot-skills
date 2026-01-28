@@ -11,21 +11,21 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// PPTCmd handles PowerPoint operations.
+// PPTCmd 处理PowerPoint操作。
 type PPTCmd struct {
-	List   PPTListCmd   `cmd:"" help:"List PowerPoint presentations"`
-	Get    PPTGetCmd    `cmd:"" help:"Get presentation metadata"`
-	Export PPTExportCmd `cmd:"" help:"Export a presentation"`
-	Copy   PPTCopyCmd   `cmd:"" help:"Copy a presentation"`
-	Create PPTCreateCmd `cmd:"" help:"Create a new presentation"`
+	List   PPTListCmd   `cmd:"" help:"列出PowerPoint演示文稿"`
+	Get    PPTGetCmd    `cmd:"" help:"获取演示文稿元数据"`
+	Export PPTExportCmd `cmd:"" help:"导出演示文稿"`
+	Copy   PPTCopyCmd   `cmd:"" help:"复制演示文稿"`
+	Create PPTCreateCmd `cmd:"" help:"创建新演示文稿"`
 }
 
-// PPTListCmd lists presentations.
+// PPTListCmd 列出演示文稿。
 type PPTListCmd struct {
-	Max int `help:"Maximum results" default:"50"`
+	Max int `help:"最大结果数" default:"50"`
 }
 
-// Run executes ppt list.
+// Run 执行ppt list命令。
 func (c *PPTListCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -49,7 +49,7 @@ func (c *PPTListCmd) Run(root *Root) error {
 		return err
 	}
 
-	// Filter to only .pptx files
+	// 过滤出仅.pptx文件
 	var presentations []DriveItem
 	for _, item := range resp.Value {
 		if strings.HasSuffix(strings.ToLower(item.Name), ".pptx") {
@@ -62,11 +62,11 @@ func (c *PPTListCmd) Run(root *Root) error {
 	}
 
 	if len(presentations) == 0 {
-		fmt.Println("No PowerPoint presentations found")
+		fmt.Println("未找到PowerPoint演示文稿")
 		return nil
 	}
 
-	fmt.Println("PowerPoint Presentations")
+	fmt.Println("PowerPoint演示文稿")
 	fmt.Println()
 	for _, ppt := range presentations {
 		fmt.Printf("📊 %s  %s  %s\n", ppt.Name, formatSize(ppt.Size), ppt.LastModifiedDateTime[:10])
@@ -75,16 +75,16 @@ func (c *PPTListCmd) Run(root *Root) error {
 			fmt.Printf("   URL: %s\n", ppt.WebURL)
 		}
 	}
-	fmt.Printf("\n%d presentation(s)\n", len(presentations))
+	fmt.Printf("\n%d 个演示文稿\n", len(presentations))
 	return nil
 }
 
-// PPTGetCmd gets presentation metadata.
+// PPTGetCmd 获取演示文稿元数据。
 type PPTGetCmd struct {
-	ID string `arg:"" help:"Presentation ID"`
+	ID string `arg:"" help:"演示文稿ID"`
 }
 
-// Run executes ppt get.
+// Run 执行ppt get命令。
 func (c *PPTGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -109,24 +109,24 @@ func (c *PPTGetCmd) Run(root *Root) error {
 	}
 
 	fmt.Printf("ID:       %s\n", graph.FormatID(item.ID))
-	fmt.Printf("Name:     %s\n", item.Name)
-	fmt.Printf("Size:     %s\n", formatSize(item.Size))
-	fmt.Printf("Created:  %s\n", item.CreatedDateTime)
-	fmt.Printf("Modified: %s\n", item.LastModifiedDateTime)
+	fmt.Printf("名称:     %s\n", item.Name)
+	fmt.Printf("大小:     %s\n", formatSize(item.Size))
+	fmt.Printf("创建时间: %s\n", item.CreatedDateTime)
+	fmt.Printf("修改时间: %s\n", item.LastModifiedDateTime)
 	if item.WebURL != "" {
 		fmt.Printf("URL:      %s\n", item.WebURL)
 	}
 	return nil
 }
 
-// PPTExportCmd exports a presentation.
+// PPTExportCmd 导出演示文稿。
 type PPTExportCmd struct {
-	ID     string `arg:"" help:"Presentation ID"`
-	Out    string `help:"Output path" required:""`
-	Format string `help:"Export format (pptx, pdf)" default:"pptx"`
+	ID     string `arg:"" help:"演示文稿ID"`
+	Out    string `help:"输出路径" required:""`
+	Format string `help:"导出格式（pptx, pdf）" default:"pptx"`
 }
 
-// Run executes ppt export.
+// Run 执行ppt export命令。
 func (c *PPTExportCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -158,20 +158,20 @@ func (c *PPTExportCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "path": c.Out, "format": format})
 	}
 
-	fmt.Println("✓ Exported")
-	fmt.Printf("  Format: %s\n", strings.ToUpper(format))
-	fmt.Printf("  Saved to: %s\n", c.Out)
+	fmt.Println("✓ 导出成功")
+	fmt.Printf("  格式: %s\n", strings.ToUpper(format))
+	fmt.Printf("  保存到: %s\n", c.Out)
 	return nil
 }
 
-// PPTCopyCmd copies a presentation.
+// PPTCopyCmd 复制演示文稿。
 type PPTCopyCmd struct {
-	ID     string `arg:"" help:"Presentation ID"`
-	Name   string `arg:"" help:"New name"`
-	Folder string `help:"Destination folder ID"`
+	ID     string `arg:"" help:"演示文稿ID"`
+	Name   string `arg:"" help:"新名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes ppt copy.
+// Run 执行ppt copy命令。
 func (c *PPTCopyCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -199,25 +199,25 @@ func (c *PPTCopyCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "name": c.Name})
 	}
 
-	fmt.Println("✓ Copy initiated")
-	fmt.Printf("  Name: %s\n", c.Name)
+	fmt.Println("✓ 复制已启动")
+	fmt.Printf("  名称: %s\n", c.Name)
 	return nil
 }
 
-// PPTCreateCmd creates a presentation.
+// PPTCreateCmd 创建演示文稿。
 type PPTCreateCmd struct {
-	Name   string `arg:"" help:"Presentation name"`
-	Folder string `help:"Destination folder ID"`
+	Name   string `arg:"" help:"演示文稿名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes ppt create.
+// Run 执行ppt create命令。
 func (c *PPTCreateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
 		return err
 	}
 
-	// Ensure .pptx extension
+	// 确保.pptx扩展名
 	name := c.Name
 	if !strings.HasSuffix(strings.ToLower(name), ".pptx") {
 		name += ".pptx"
@@ -231,7 +231,7 @@ func (c *PPTCreateCmd) Run(root *Root) error {
 		path = fmt.Sprintf("/me/drive/root:/%s:/content", name)
 	}
 
-	// Create empty pptx
+	// 创建空的pptx
 	data, err := client.Put(ctx, path, []byte{}, "application/vnd.openxmlformats-officedocument.presentationml.presentation")
 	if err != nil {
 		return err
@@ -246,8 +246,8 @@ func (c *PPTCreateCmd) Run(root *Root) error {
 		return outputJSON(item)
 	}
 
-	fmt.Println("✓ Presentation created")
-	fmt.Printf("  Name: %s\n", item.Name)
+	fmt.Println("✓ 演示文稿创建成功")
+	fmt.Printf("  名称: %s\n", item.Name)
 	fmt.Printf("  ID: %s\n", graph.FormatID(item.ID))
 	return nil
 }

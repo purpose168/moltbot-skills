@@ -7,12 +7,12 @@ import (
 
 var imageCmd = &cobra.Command{
 	Use:   "image",
-	Short: "Manage images",
+	Short: "管理图片",
 }
 
 var imageUploadCmd = &cobra.Command{
 	Use:   "upload <path>",
-	Short: "Upload an image",
+	Short: "上传图片",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -32,14 +32,14 @@ var imageUploadCmd = &cobra.Command{
 		}
 
 		if len(resp.Images) > 0 {
-			printf("Uploaded: %s\n", resp.Images[0].URL)
+			printf("已上传: %s\n", resp.Images[0].URL)
 		}
 		return nil
 	},
 }
 
 func init() {
-	imageUploadCmd.Flags().Bool("json", false, "Output as JSON")
+	imageUploadCmd.Flags().Bool("json", false, "以JSON格式输出")
 
 	imageCmd.AddCommand(imageUploadCmd)
 	rootCmd.AddCommand(imageCmd)

@@ -1,141 +1,110 @@
 ---
-name: onchain
-description: CLI for crypto portfolio tracking, market data, and CEX history. Use when the user asks about crypto prices, wallet balances, portfolio values, Coinbase/Binance holdings, or Polymarket predictions.
+name: onchain-test
+description: Onchain CLI 的测试版本，用于加密货币投资组合跟踪、市场数据和 CEX 历史记录。
 ---
 
-# Onchain CLI
+# Onchain 测试版 CLI
 
-CLI for crypto portfolio tracking, market data, and CEX history.
+用于加密货币投资组合跟踪、市场数据和 CEX 历史记录的 CLI（测试版本）。
 
-## Invocation
+## 调用方式
 
 ```
 onchain <command>
 ```
 
-## Commands
+## 命令
 
-### Market Data
-
-```bash
-onchain price <token>         # Token price (btc, eth, sol, etc.)
-onchain markets               # Market overview with trending
-```
-
-### Wallet Data
+### 市场数据
 
 ```bash
-onchain balance [address]           # Token balances (auto-detects EVM/Solana)
-onchain balance --chain polygon     # Filter by chain
-onchain history [address]           # Transaction history
-onchain portfolio [address]         # Full portfolio with DeFi positions
+onchain price <token>           # 代币价格（btc、eth、sol 等）
+onchain markets                 # 市场概览及热门趋势
 ```
 
-### CEX Data
+### 钱包数据
 
 ```bash
-onchain coinbase balance      # Coinbase balances
-onchain coinbase history      # Coinbase trade history
-onchain binance balance       # Binance balances
-onchain binance history       # Binance trade history
+onchain balance [address]       # 代币余额（自动检测 EVM/Solana）
+onchain history [address]       # 交易历史
+onchain portfolio [address]     # 完整投资组合及 DeFi 持仓
 ```
 
-### Prediction Markets
+### CEX 数据
 
 ```bash
-onchain polymarket trending          # Trending markets
-onchain polymarket search <query>    # Search markets
-onchain polymarket view <slug>       # View market details
+onchain coinbase balance        # Coinbase 余额
+onchain coinbase history        # Coinbase 交易历史
+onchain binance balance         # Binance 余额
+onchain binance history         # Binance 交易历史
 ```
 
-### Configuration
+### 预测市场
 
 ```bash
-onchain setup                 # Interactive setup wizard
-onchain config                # View current config
-onchain config wallet add <name> <address>
-onchain config wallet set-default <name>
+onchain polymarket trending     # 热门市场
+onchain polymarket search <q>   # 搜索市场
+onchain polymarket view <slug>  # 市场详情
 ```
 
-## Global Options
+### 配置
 
-- `--json` - Output as JSON (agent-friendly)
-- `--plain` - Disable colors and emoji
-- `--timeout <ms>` - Request timeout
+```bash
+onchain setup                   # 交互式设置向导
+onchain config                  # 查看当前配置
+onchain test                    # 测试所有配置的提供程序
+```
 
-## Configuration
+## 全局选项
 
-Config file: `~/.config/onchain/config.json5`
+- `--json` - 输出为 JSON（智能体友好）
+- `--plain` - 禁用颜色和 emoji
+- `--timeout <ms>` - 请求超时时间
 
-### Required API Keys
+## 配置
 
-| Feature | API Key | Get Key |
+配置文件：`~/.config/onchain/config.json5`
+
+### API 密钥配置
+
+| 功能 | API 密钥 | 提供程序 |
 |---------|---------|---------|
-| EVM wallets | `DEBANK_API_KEY` | [DeBank](https://cloud.debank.com/) |
-| Solana wallets | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
-| Coinbase CEX | `COINBASE_API_KEY` + `COINBASE_API_SECRET` | [Coinbase](https://www.coinbase.com/settings/api) |
-| Binance CEX | `BINANCE_API_KEY` + `BINANCE_API_SECRET` | [Binance](https://www.binance.com/en/my/settings/api-management) |
+| EVM 钱包 | `DEBANK_API_KEY` | [DeBank](https://cloud.debank.com/) |
+| Solana 钱包 | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
+| Coinbase | `COINBASE_API_KEY_ID` + `COINBASE_API_KEY_SECRET` | [Coinbase CDP](https://portal.cdp.coinbase.com/) |
+| Binance | `BINANCE_API_KEY` + `BINANCE_API_SECRET` | [Binance](https://www.binance.com/en/my/settings/api-management) |
 
-### Optional API Keys
+### 可选 API 密钥
 
-| Feature | API Key | Notes |
+| 功能 | API 密钥 | 备注 |
 |---------|---------|-------|
-| Market data | `COINGECKO_API_KEY` | Free tier works, Pro for higher limits |
-| Market fallback | `COINMARKETCAP_API_KEY` | Alternative market data source |
+| 市场数据 | `COINGECKO_API_KEY` | 免费层可用 |
+| 市场回退 | `COINMARKETCAP_API_KEY` | 替代数据源 |
 
-## Examples
+## 示例
 
-### Get Bitcoin price
+### 获取代币价格
 ```bash
 onchain price btc
 ```
 
-### Check wallet balance
+### 检查钱包余额
 ```bash
 onchain balance 0x1234...5678
 ```
 
-### View portfolio with DeFi positions
+### 查看投资组合
 ```bash
-onchain portfolio main  # Uses saved wallet named "main"
+onchain portfolio main
 ```
 
-### Get trending prediction markets
-```bash
-onchain polymarket trending -n 5
-```
-
-### JSON output for scripts
+### JSON 输出（用于脚本）
 ```bash
 onchain --json price eth | jq '.priceUsd'
 ```
 
-## Supported Chains
+## 支持的链
 
-### EVM (via DeBank)
-Ethereum, BNB Chain, Polygon, Arbitrum, Optimism, Avalanche, Base, zkSync Era, Linea, Scroll, Blast, Mantle, Gnosis, Fantom, Celo, and more.
+**EVM（通过 DeBank）：** Ethereum、BNB Chain、Polygon、Arbitrum、Optimism、Avalanche、Base、zkSync Era、Linea、Scroll、Blast、Mantle 等。
 
-### Solana (via Helius)
-Full Solana mainnet support including SPL tokens and NFTs.
-
-## Agent Integration
-
-This CLI is designed for agent use. Key patterns:
-
-1. **Always use `--json`** for programmatic access
-2. **Check exit codes** - 0 for success, 1 for error
-3. **Use saved wallets** - Configure once with `onchain setup`, reference by name
-4. **Rate limiting** - APIs have rate limits, add delays between rapid calls
-
-### Example Agent Usage
-
-```bash
-# Get portfolio value
-VALUE=$(onchain --json portfolio main | jq -r '.totalValueUsd')
-
-# Get price with change
-onchain --json price btc | jq '{price: .priceUsd, change24h: .priceChange24h}'
-
-# Check if market is bullish
-CHANGE=$(onchain --json markets | jq '.marketCapChange24h')
-```
+**Solana（通过 Helius）：** 完全支持 Solana 主网。

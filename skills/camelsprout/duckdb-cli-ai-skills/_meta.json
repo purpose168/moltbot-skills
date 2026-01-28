@@ -1,7 +1,8 @@
 {
   "owner": "camelsprout",
   "slug": "duckdb-cli-ai-skills",
-  "displayName": "DuckDB CLI skills",
+  "displayName": "DuckDB CLI 技能",
+  "description": "为 AI 助手提供的 DuckDB CLI 专业技能，支持 SQL 数据分析、数据处理和文件转换",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769247814673,

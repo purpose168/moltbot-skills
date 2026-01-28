@@ -1,115 +1,115 @@
-# First Principles Examples - Artem's World
+# 第一性原理案例 - Artem 的实践
 
-## Example 1: TeddySnaps Photo System
+## 案例一：TeddySnaps 照片系统
 
-### Surface Problem
-"We need to send more photos to parents"
+### 表面问题
+"我们需要给家长发送更多照片"
 
-### Assumptions Challenged
-1. ❌ Parents want MORE photos → Actually: they want the RIGHT photos
-2. ❌ All moments are equal → Actually: moments with THEIR child matter
-3. ❌ Staff should curate → Actually: staff time is expensive and inconsistent
+### 被挑战的假设
+1. ❌ 家长想要更多照片 → 实际上：他们想要正确的照片
+2. ❌ 所有时刻都平等 → 实际上：有他们孩子的时刻才重要
+3. ❌ 员工应该筛选 → 实际上：员工时间昂贵且不一致
 
-### Fundamental Truths
-- Parents want proof their specific child is safe/happy
-- Face = identity = "that's MY child"
-- Time = context = "this happened today"
-- Automatic > Manual for consistency
+### 根本真理
+- 家长想要证明他们特定的孩子安全/快乐
+- 脸 = 身份 = "那是我的孩子"
+- 时间 = 上下文 = "这发生在今天"
+- 自动 > 手动（为了一致性）
 
-### Rebuilt Solution
-AI face recognition + automatic tagging + parent-specific feed
-Staff takes photos freely → System sorts and delivers automatically
-
----
-
-## Example 2: TISA Enrollment Process
-
-### Surface Problem
-"Our enrollment process is too slow"
-
-### Assumptions Challenged
-1. ❌ We need all info upfront → Actually: we need enough to make a decision
-2. ❌ Forms must be comprehensive → Actually: forms create friction
-3. ❌ Parents want to give info → Actually: parents want to RECEIVE confirmation
-
-### Fundamental Truths
-- Enrollment = exchange of commitment (parent commits child, school commits spot)
-- Minimum viable info: child name, age, parent contact
-- Everything else can come later
-- Speed of response = perception of quality
-
-### Rebuilt Solution
-Phase 1: Name + age + email (30 seconds) → Instant spot reservation
-Phase 2: Detailed forms (after commitment)
-Result: 10x faster, higher conversion
+### 重建的解决方案
+AI 人脸识别 + 自动标记 + 家长特定动态
+员工自由拍照 → 系统自动排序和交付
 
 ---
 
-## Example 3: GolfTab Ordering
+## 案例二：TISA 注册流程
 
-### Surface Problem
-"Golfers need to order food on the course"
+### 表面问题
+"我们的注册流程太慢了"
 
-### Assumptions Challenged
-1. ❌ Need full restaurant menu → Actually: simplified menu works better
-2. ❌ Need precise delivery time → Actually: "by hole X" is enough
-3. ❌ Complex payment flow → Actually: charge to room/tab, settle later
+### 被挑战的假设
+1. ❌ 我们需要提前获取所有信息 → 实际上：我们需要足够信息来做决策
+2. ❌ 表单必须全面 → 实际上：表单创造摩擦
+3. ❌ 家长想要提供信息 → 实际上：家长想要收到确认
 
-### Fundamental Truths
-- Golfer's hands are often dirty/gloved
-- Attention span on course = minimal
-- Location = hole number (already known via tee time)
-- Speed > options
+### 根本真理
+- 注册 = 承诺交换（家长承诺孩子，学校承诺学位）
+- 最低可行信息：孩子姓名、年龄、家长联系方式
+- 其他都可以 later
+- 响应速度 = 质量感知
 
-### Rebuilt Solution
-5-tap ordering: Item → Quantity → Hole → Confirm → Done
-No menu browsing, no payment friction, no address entry
-
----
-
-## Example 4: Staff Scheduling (TeddyKids)
-
-### Surface Problem
-"Staff scheduling is complex and time-consuming"
-
-### Assumptions Challenged
-1. ❌ Manager must create schedule → Actually: AI can draft, manager approves
-2. ❌ Staff preferences are unpredictable → Actually: patterns emerge over time
-3. ❌ Ratio compliance is manual → Actually: this is pure math
-
-### Fundamental Truths
-- Child:staff ratios are legally mandated (deterministic)
-- Staff availability has patterns (learnable)
-- Cost optimization is mathematical
-- Human oversight needed for exceptions only
-
-### Rebuilt Solution
-Algorithm generates schedule → Manager reviews exceptions → Staff confirms
-80% automated, 20% human judgment
+### 重建的解决方案
+第一阶段：姓名 + 年龄 + 电子邮件（30秒）→ 即时学位保留
+第二阶段：详细表单（承诺之后）
+结果：速度快10倍，转化率更高
 
 ---
 
-## Template for New Problems
+## 案例三：GolfTab 点餐
+
+### 表面问题
+"高尔夫球手需要在球场上点餐"
+
+### 被挑战的假设
+1. ❌ 需要完整餐厅菜单 → 实际上：简化菜单效果更好
+2. ❌ 需要精确送达时间 → 实际上，"在X洞之前"就足够了
+3. ❌ 复杂付款流程 → 实际上：房间/记帐收费，稍后结算
+
+### 根本真理
+- 高尔夫球手的手经常脏/戴手套
+- 球场上的注意力跨度 = 极小
+- 位置 = 洞号（已通过发球时间知道）
+- 速度 > 选项
+
+### 重建的解决方案
+5次点击点餐：项目 → 数量 → 洞 → 确认 → 完成
+无需浏览菜单，无需付款摩擦，无需输入地址
+
+---
+
+## 案例四：员工排班（TeddyKids）
+
+### 表面问题
+"员工排班复杂且耗时"
+
+### 被挑战的假设
+1. ❌ 经理必须创建排班 → 实际上：AI可以起草，经理批准
+2. ❌ 员工偏好不可预测 → 实际上：模式随时间出现
+3. ❌ 比例合规是手动的 → 实际上：这是纯数学
+
+### 根本真理
+- 孩子：员工比例是法律规定的（确定性的）
+- 员工可用性有模式（可学习的）
+- 成本优化是数学问题
+- 人力监督仅用于例外情况
+
+### 重建的解决方案
+算法生成排班 → 经理审核例外 → 员工确认
+80%自动化，20%人力判断
+
+---
+
+## 新问题模板
 
 ```
-PROBLEM: [What are you trying to solve?]
+问题：[你要解决什么？]
 
-CURRENT APPROACH: [How is it done now?]
+当前方法：[现在怎么做？]
 
-ASSUMPTIONS (list 3-5):
-1. We assume [X] → But what if [challenge]?
-2. We assume [Y] → But what if [challenge]?
+假设（列出3-5个）：
+1. 我们假设[X] → 但如果[挑战]？
+2. 我们假设[Y] → 但如果[挑战]？
 
-FUNDAMENTAL TRUTHS:
-• [Irreducible fact 1]
-• [Irreducible fact 2]
-• [Irreducible fact 3]
+根本真理：
+• [不可简化的事实 1]
+• [不可简化的事实 2]
+• [不可简化的事实 3]
 
-REBUILT SOLUTION:
-[Solution built only from truths above]
+重建的解决方案：
+[仅从上述真理构建的解决方案]
 
-VALIDATION:
-- Does this solve the core need? [Y/N]
-- Is it simpler than current approach? [Y/N]
-- Can we build this? [Y/N]
+验证：
+- 这解决了核心需求吗？[Y/N]
+- 它比当前方法简单吗？[Y/N]
+- 我们能构建这个吗？[Y/N]
 ```

@@ -1,64 +1,64 @@
-# refund-radar
+# 退款雷达
 
-## Metadata
+## 元数据
 
-- **Name**: refund-radar
-- **Version**: 1.0.0
-- **Author**: andreolf
-- **Repository**: https://github.com/andreolf/refund-radar
-- **License**: MIT
+- **名称**：refund-radar
+- **版本**：1.0.0
+- **作者**：andreolf
+- **仓库**：https://github.com/andreolf/refund-radar
+- **许可证**：MIT
 
-## Description
+## 描述
 
-Local-first bank statement auditor that detects recurring charges, flags suspicious transactions, and drafts ready-to-send refund request templates. Generates interactive HTML reports with privacy toggle.
+本地优先的银行对账单审计器，可检测定期收费、标记可疑交易，并起草可发送的退款请求模板。生成带有隐私开关的交互式 HTML 报告。
 
-## Tags
+## 标签
 
-- finance
-- bank
-- statement
-- refund
-- subscription
-- audit
-- privacy
-- local-first
+- 财务
+- 银行
+- 对账单
+- 退款
+- 订阅
+- 审计
+- 隐私
+- 本地优先
 
-## Features
+## 功能
 
-- Parse CSV and text bank statements with auto-detection
-- Detect recurring subscriptions with cadence estimation
-- Flag duplicates, amount spikes, new merchants, fees
-- Generate ready-to-send refund templates (email, chat, dispute)
-- Interactive HTML reports with dark/light mode
-- Privacy toggle to blur merchant names
-- Persistent state for learning preferences
-- Zero external dependencies
+- 使用自动检测功能解析 CSV 和文本银行对账单
+- 检测带有周期估计的定期订阅
+- 标记重复项、金额异常、新商户、费用
+- 生成可发送的退款模板（电子邮件、聊天、争议）
+- 带有深色/浅色模式的交互式 HTML 报告
+- 隐私开关以模糊商户名称
+- 持久状态用于学习偏好
+- 零外部依赖
 
-## Workflow Summary
+## 工作流程摘要
 
-1. User provides bank statement (CSV or pasted text)
-2. Tool parses and normalizes transactions
-3. Detects recurring charges automatically
-4. Flags suspicious/unexpected charges
-5. Asks clarifying questions in batches
-6. Generates interactive HTML report
-7. Drafts refund request templates
-8. Learns from user decisions for future runs
+1.用户提供银行对账单（CSV 或粘贴的文本）
+2.工具解析和标准化交易
+3.自动检测定期收费
+4.标记可疑/意外收费
+5.分批询问确认问题
+6.生成交互式 HTML 报告
+7.起草退款请求模板
+8.从用户决策中学习以供未来运行
 
-## Requirements
+## 要求
 
 - Python 3.9+
-- No external packages required
+- 无需外部包
 
-## Privacy
+## 隐私
 
-All processing happens locally. No network calls. No external APIs.
+所有处理都在本地进行。无网络调用。无外部 API。
 
-## Screenshots
+## 屏幕截图
 
-Report shows:
-- Summary cards with totals
-- Recurring charges table with next expected dates
-- Flagged transactions with severity badges
-- Copy-to-clipboard refund templates
-- Dark mode and privacy blur toggle
+报告显示：
+- 带有总计的摘要卡片
+- 带有下次预期日期的定期收费表
+- 带有严重程度徽章的标记交易
+- 复制到剪贴板的退款模板
+- 深色模式和隐私模糊切换

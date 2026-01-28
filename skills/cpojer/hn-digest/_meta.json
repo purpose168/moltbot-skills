@@ -1,7 +1,8 @@
 {
   "owner": "cpojer",
   "slug": "hn-digest",
-  "displayName": "HN Digest",
+  "displayName": "Hacker News 文摘",
+  "description": "按需获取并发送 Hacker News 首页帖子。支持按数量和主题筛选，排除加密货币内容。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768389856241,

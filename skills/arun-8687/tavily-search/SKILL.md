@@ -1,38 +1,39 @@
 ---
 name: tavily
-description: AI-optimized web search via Tavily API. Returns concise, relevant results for AI agents.
+description: 通过 Tavily API 进行 AI 优化的网络搜索。为 AI 智能体返回简洁、相关的结果。
 homepage: https://tavily.com
 metadata: {"clawdbot":{"emoji":"🔍","requires":{"bins":["node"],"env":["TAVILY_API_KEY"]},"primaryEnv":"TAVILY_API_KEY"}}
 ---
 
-# Tavily Search
+# Tavily 搜索
 
-AI-optimized web search using Tavily API. Designed for AI agents - returns clean, relevant content.
+使用 Tavily API 进行 AI 优化的网络搜索。为 AI 智能体设计 - 返回干净、相关的内容。
 
-## Search
+## 搜索
 
 ```bash
-node {baseDir}/scripts/search.mjs "query"
-node {baseDir}/scripts/search.mjs "query" -n 10
-node {baseDir}/scripts/search.mjs "query" --deep
-node {baseDir}/scripts/search.mjs "query" --topic news
+node {baseDir}/scripts/search.mjs "查询词"
+node {baseDir}/scripts/search.mjs "查询词" -n 10
+node {baseDir}/scripts/search.mjs "查询词" --deep
+node {baseDir}/scripts/search.mjs "查询词" --topic news
 ```
 
-## Options
+## 选项
 
-- `-n <count>`: Number of results (default: 5, max: 20)
-- `--deep`: Use advanced search for deeper research (slower, more comprehensive)
-- `--topic <topic>`: Search topic - `general` (default) or `news`
-- `--days <n>`: For news topic, limit to last n days
+- `-n <数量>`: 结果数量（默认：5，最大：20）
+- `--deep`: 使用高级搜索进行更深入的研究（较慢，但更全面）
+- `--topic <主题>`: 搜索主题 - `general`（默认）或 `news`
+- `--days <n>`: 对于新闻主题，限制为最近 n 天
 
-## Extract content from URL
+## 从 URL 提取内容
 
 ```bash
 node {baseDir}/scripts/extract.mjs "https://example.com/article"
 ```
 
-Notes:
-- Needs `TAVILY_API_KEY` from https://tavily.com
-- Tavily is optimized for AI - returns clean, relevant snippets
-- Use `--deep` for complex research questions
-- Use `--topic news` for current events
+## 注意事项
+
+- 需要从 https://tavily.com 获取 `TAVILY_API_KEY`
+- Tavily 针对 AI 进行了优化 - 返回干净、相关的摘要
+- 对于复杂的研究问题使用 `--deep`
+- 对于时事使用 `--topic news`

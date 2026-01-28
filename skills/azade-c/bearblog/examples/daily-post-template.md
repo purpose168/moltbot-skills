@@ -1,46 +1,46 @@
-# Daily Post Template
+# 每日文章模板
 
-Example header and body for a daily blog post.
+每日博客文章的头部和主体示例。
 
-## Header Content
+## 头部内容
 
 ```
-title: Journal du {DATE}
-link: journal-{DATE}
-published_date: {DATE} 09:00
-tags: journal, daily
+title: 日记 {日期}
+link: 日记-{日期}
+published_date: {日期} 09:00
+tags: 日记, 每日
 make_discoverable: true
 is_page: false
-meta_description: Réflexions et notes du {DATE}
+meta_description: {日期} 的思考和笔记
 lang: fr
 ```
 
-## Body Content
+## 主体内容
 
 ```markdown
-Aujourd'hui...
+今天...
 
-## Ce que j'ai appris
+## 我学到的
 
-- Point 1
-- Point 2
+- 第一点
+- 第二点
 
-## Ce que j'ai fait
+## 我做的
 
-- [x] Tâche accomplie
-- [ ] Tâche en cours
+- [x] 已完成任务
+- [ ] 进行中的任务
 
-## Réflexions
+## 思考
 
-> Une citation ou pensée du jour
+> 当日引用或想法
 
 ---
 
-*À demain !* 🐐
+*明天见！*
 
 {{ previous_post }}
 ```
 
-## Usage Notes
+## 使用说明
 
-Replace `{DATE}` with the actual date in YYYY-MM-DD format.
+将 `{日期}` 替换为 YYYY-MM-DD 格式的实际日期。

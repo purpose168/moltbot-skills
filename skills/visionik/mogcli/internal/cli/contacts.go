@@ -9,23 +9,23 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// ContactsCmd handles contact operations.
+// ContactsCmd 处理联系人操作命令。
 type ContactsCmd struct {
-	List      ContactsListCmd      `cmd:"" help:"List contacts"`
-	Search    ContactsSearchCmd    `cmd:"" help:"Search contacts"`
-	Get       ContactsGetCmd       `cmd:"" help:"Get a contact"`
-	Create    ContactsCreateCmd    `cmd:"" help:"Create a contact"`
-	Update    ContactsUpdateCmd    `cmd:"" help:"Update a contact"`
-	Delete    ContactsDeleteCmd    `cmd:"" help:"Delete a contact"`
-	Directory ContactsDirectoryCmd `cmd:"" help:"Search organization directory"`
+	List      ContactsListCmd      `cmd:"" help:"列出联系人"`
+	Search    ContactsSearchCmd    `cmd:"" help:"搜索联系人"`
+	Get       ContactsGetCmd       `cmd:"" help:"获取联系人"`
+	Create    ContactsCreateCmd    `cmd:"" help:"创建联系人"`
+	Update    ContactsUpdateCmd    `cmd:"" help:"更新联系人"`
+	Delete    ContactsDeleteCmd    `cmd:"" help:"删除联系人"`
+	Directory ContactsDirectoryCmd `cmd:"" help:"搜索组织目录"`
 }
 
-// ContactsListCmd lists contacts.
+// ContactsListCmd 列出联系人。
 type ContactsListCmd struct {
-	Max int `help:"Maximum results" default:"50"`
+	Max int `help:"最大结果数" default:"50"`
 }
 
-// Run executes contacts list.
+// Run 执行联系人列表命令。
 func (c *ContactsListCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -63,12 +63,12 @@ func (c *ContactsListCmd) Run(root *Root) error {
 	return nil
 }
 
-// ContactsSearchCmd searches contacts.
+// ContactsSearchCmd 搜索联系人。
 type ContactsSearchCmd struct {
-	Query string `arg:"" help:"Search query"`
+	Query string `arg:"" help:"搜索查询"`
 }
 
-// Run executes contacts search.
+// Run 执行联系人搜索命令。
 func (c *ContactsSearchCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -105,12 +105,12 @@ func (c *ContactsSearchCmd) Run(root *Root) error {
 	return nil
 }
 
-// ContactsGetCmd gets a contact.
+// ContactsGetCmd 获取联系人。
 type ContactsGetCmd struct {
-	ID string `arg:"" help:"Contact ID"`
+	ID string `arg:"" help:"联系人 ID"`
 }
 
-// Run executes contacts get.
+// Run 执行联系人获取命令。
 func (c *ContactsGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -135,35 +135,35 @@ func (c *ContactsGetCmd) Run(root *Root) error {
 	}
 
 	fmt.Printf("ID:    %s\n", graph.FormatID(contact.ID))
-	fmt.Printf("Name:  %s\n", contact.DisplayName)
+	fmt.Printf("姓名:  %s\n", contact.DisplayName)
 	for _, e := range contact.EmailAddresses {
-		fmt.Printf("Email: %s\n", e.Address)
+		fmt.Printf("邮箱: %s\n", e.Address)
 	}
 	for _, p := range contact.BusinessPhones {
-		fmt.Printf("Phone: %s (business)\n", p)
+		fmt.Printf("电话: %s (工作)\n", p)
 	}
 	if contact.MobilePhone != "" {
-		fmt.Printf("Phone: %s (mobile)\n", contact.MobilePhone)
+		fmt.Printf("电话: %s (移动)\n", contact.MobilePhone)
 	}
 	if contact.CompanyName != "" {
-		fmt.Printf("Company: %s\n", contact.CompanyName)
+		fmt.Printf("公司: %s\n", contact.CompanyName)
 	}
 	if contact.JobTitle != "" {
-		fmt.Printf("Title: %s\n", contact.JobTitle)
+		fmt.Printf("职位: %s\n", contact.JobTitle)
 	}
 	return nil
 }
 
-// ContactsCreateCmd creates a contact.
+// ContactsCreateCmd 创建联系人。
 type ContactsCreateCmd struct {
-	Name    string `help:"Display name" required:"" name:"name"`
-	Email   string `help:"Email address"`
-	Phone   string `help:"Phone number"`
-	Company string `help:"Company name"`
-	Title   string `help:"Job title"`
+	Name    string `help:"显示姓名" required:"" name:"name"`
+	Email   string `help:"电子邮件地址"`
+	Phone   string `help:"电话号码"`
+	Company string `help:"公司名称"`
+	Title   string `help:"职位"`
 }
 
-// Run executes contacts create.
+// Run 执行联系人创建命令。
 func (c *ContactsCreateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -203,21 +203,21 @@ func (c *ContactsCreateCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Contact created: %s (%s)\n", created.DisplayName, graph.FormatID(created.ID))
+	fmt.Printf("✓ 联系人创建成功: %s (%s)\n", created.DisplayName, graph.FormatID(created.ID))
 	return nil
 }
 
-// ContactsUpdateCmd updates a contact.
+// ContactsUpdateCmd 更新联系人。
 type ContactsUpdateCmd struct {
-	ID      string `arg:"" help:"Contact ID"`
-	Name    string `help:"Display name"`
-	Email   string `help:"Email address"`
-	Phone   string `help:"Phone number"`
-	Company string `help:"Company name"`
-	Title   string `help:"Job title"`
+	ID      string `arg:"" help:"联系人 ID"`
+	Name    string `help:"显示姓名"`
+	Email   string `help:"电子邮件地址"`
+	Phone   string `help:"电话号码"`
+	Company string `help:"公司名称"`
+	Title   string `help:"职位"`
 }
 
-// Run executes contacts update.
+// Run 执行联系人更新命令。
 func (c *ContactsUpdateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -243,7 +243,7 @@ func (c *ContactsUpdateCmd) Run(root *Root) error {
 	}
 
 	if len(updates) == 0 {
-		return fmt.Errorf("no updates specified")
+		return fmt.Errorf("未指定更新内容")
 	}
 
 	ctx := context.Background()
@@ -254,16 +254,16 @@ func (c *ContactsUpdateCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ Contact updated")
+	fmt.Println("✓ 联系人更新成功")
 	return nil
 }
 
-// ContactsDeleteCmd deletes a contact.
+// ContactsDeleteCmd 删除联系人。
 type ContactsDeleteCmd struct {
-	ID string `arg:"" help:"Contact ID"`
+	ID string `arg:"" help:"联系人 ID"`
 }
 
-// Run executes contacts delete.
+// Run 执行联系人删除命令。
 func (c *ContactsDeleteCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -277,16 +277,16 @@ func (c *ContactsDeleteCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ Contact deleted")
+	fmt.Println("✓ 联系人删除成功")
 	return nil
 }
 
-// ContactsDirectoryCmd searches the organization directory.
+// ContactsDirectoryCmd 搜索组织目录。
 type ContactsDirectoryCmd struct {
-	Query string `arg:"" help:"Search query"`
+	Query string `arg:"" help:"搜索查询"`
 }
 
-// Run executes contacts directory.
+// Run 执行联系人目录命令。
 func (c *ContactsDirectoryCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -320,7 +320,7 @@ func (c *ContactsDirectoryCmd) Run(root *Root) error {
 	return nil
 }
 
-// Contact represents a contact.
+// Contact 表示联系人。
 type Contact struct {
 	ID             string        `json:"id"`
 	DisplayName    string        `json:"displayName"`
@@ -331,13 +331,13 @@ type Contact struct {
 	JobTitle       string        `json:"jobTitle"`
 }
 
-// EmailRecord represents an email record.
+// EmailRecord 表示电子邮件记录。
 type EmailRecord struct {
 	Address string `json:"address"`
 	Name    string `json:"name"`
 }
 
-// DirectoryUser represents a directory user.
+// DirectoryUser 表示目录用户。
 type DirectoryUser struct {
 	ID          string `json:"id"`
 	DisplayName string `json:"displayName"`

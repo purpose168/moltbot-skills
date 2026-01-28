@@ -1,129 +1,129 @@
-# Tessie Skill
+# Tessie 技能
 
-Control your Tesla vehicles via Tessie API - a Tesla management platform with 500,000+ users.
+通过 Tessie API 控制您的 Tesla 车辆 - 一个拥有超过 500,000 用户的 Tesla 管理平台。
 
-## Setup
+## 设置
 
-Get your Tessie API credentials:
-1. Go to https://tessie.com/developers
-2. Sign up and create an API key
-3. Configure in Clawdbot:
+获取您的 Tessie API 凭据：
+1. 访问 https://tessie.com/developers
+2. 注册并创建 API 密钥
+3. 在 Clawdbot 中配置：
 
 ```yaml
 skills:
   entries:
     tessie:
-      apiKey: "your-tessie-api-key-here"
+      apiKey: "您的-tessie-api-密钥"
 ```
 
-Or via environment variable:
+或者通过环境变量：
 ```bash
-export TESSIE_API_KEY="your-tessie-api-key-here"
+export TESSIE_API_KEY="您的-tessie-api-密钥"
 ```
 
-**Note**: Vehicle ID and VIN are auto-detected from API. No manual configuration needed.
+**注意**：车辆 ID 和 VIN 会从 API 自动检测。无需手动配置。
 
-## Capabilities
+## 功能
 
-### Vehicle Status
-- **Battery level**: Current state of charge percentage
-- **Range**: Estimated driving range
-- **Location**: Current vehicle coordinates
-- **Vehicle state**: Locked/unlocked, charging status, sleep mode
-- **Connection**: Is the car online/offline?
+### 车辆状态
+- **电池电量**：当前充电百分比
+- **续航里程**：估计可行驶里程
+- **位置**：当前车辆坐标
+- **车辆状态**：锁定/解锁、充电状态、睡眠模式
+- **连接**：车辆是在线还是离线？
 
-### Climate Control
-- **Start/stop**: Turn climate on or off
-- **Preheat/precool**: Set cabin temperature (auto-detects Fahrenheit/Celsius)
-- **Defrost**: Defrost windows/mirrors
+### 气候控制
+- **启动/停止**：打开或关闭气候控制
+- **预热/预冷**：设置驾驶室温度（自动检测华氏/摄氏）
+- **除雾**：为车窗/后视镜除雾
 
-### Charging
-- **Start/stop**: Control charging remotely
-- **Charge limit**: Set daily/standard charge limit
-- **Charging status**: Current rate, time to complete, battery level
+### 充电
+- **启动/停止**：远程控制充电
+- **充电限制**：设置每日/标准充电限制
+- **充电状态**：当前速率、完成时间、电池电量
 
-### Drives
-- **Recent drives**: Last trips with distance, energy, locations
+### 行程
+- **最近行程**：带有距离、能耗、位置的最近旅行记录
 
-## Usage Examples
+## 使用示例
 
 ```
-# Check battery and range
+# 检查电池和续航
 "tessie battery"
 "tessie how much charge"
 "tessie range"
 
-# Preheat the car (assumes Fahrenheit if > 50)
+# 预热车辆（如果 >50 则假设为华氏度）
 "tessie preheat 72"
 "tessie precool"
 "tessie turn on climate"
 
-# Check drives
+# 检查行程
 "tessie show my drives"
 "tessie recent drives"
 "tessie drives 5"
 
-# Charging commands
+# 充电命令
 "tessie start charging"
 "tessie stop charging"
 "tessie set charge limit to 90%"
 "tessie charging status"
 
-# Vehicle location
+# 车辆位置
 "tessie where is my car"
 "tessie location"
 
-# Vehicle state
+# 车辆状态
 "tessie is the car locked?"
 "tessie vehicle status"
 ```
 
-## API Endpoints (Tessie)
+## API 端点 (Tessie)
 
-### Authentication
-All requests require:
+### 身份验证
+所有请求都需要：
 ```
 Authorization: Bearer <api-key>
 ```
 
-### Get Vehicles
+### 获取车辆列表
 ```
 GET https://api.tessie.com/vehicles
 ```
-Returns full vehicle list with `last_state` embedded
+返回完整的车辆列表，其中包含嵌入的 `last_state`
 
-### Get Drives
+### 获取行程
 ```
 GET https://api.tessie.com/{VIN}/drives?limit=10
 ```
-Returns recent drive history
+返回最近的行程历史
 
-### Get Idles
+### 获取空闲记录
 ```
 GET https://api.tessie.com/{VIN}/idles?limit=10
 ```
-Returns parked sessions with climate/sentry usage
+返回停车期间的驻车记录，包含气候/哨兵模式使用情况
 
-### Commands
-All control commands use VIN (not vehicle_id):
+### 命令
+所有控制命令使用 VIN（而非 vehicle_id）：
 ```
 POST https://api.tessie.com/{VIN}/command/{command}
 ```
 
-**Available commands**:
+**可用命令**：
 - `start_climate`, `stop_climate`, `set_temperatures`
 - `start_charging`, `stop_charging`, `set_charge_limit`
 - `lock`, `unlock`, `enable_sentry`, `disable_sentry`
 - `activate_front_trunk`, `activate_rear_trunk`
 - `open_windows`, `close_windows`, `vent_windows`
 
-Full list: See https://developer.tessie.com
+完整列表：请参阅 https://developer.tessie.com
 
-## Notes
+## 注意事项
 
-- Tessie acts as a middleman between you and Tesla's API
-- Provides richer data and analytics than raw Tesla API
-- Requires Tesla account to be linked to Tessie first
-- API uses VIN for commands (auto-detected)
-- All temperatures in Celsius internally
-- **NOT YET DEPLOYED** - Prepared for deployment pending user review
+- Tessie 作为您和 Tesla API 之间的中间人
+- 提供比原始 Tesla API 更丰富的数据和分析
+- 需要先将 Tesla 账户链接到 Tessie
+- API 使用 VIN 进行命令（自动检测）
+- 所有温度在内部使用摄氏度
+- **尚未部署** - 准备部署，待用户审核

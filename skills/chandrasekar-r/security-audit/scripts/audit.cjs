@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * security-audit.cjs - Comprehensive security scanner for Clawdbot
- * Usage: node audit.js [--full] [--json] [--credentials] [--ports] [--configs] [--permissions] [--docker]
+ * security-audit.cjs - Clawdbot 综合安全扫描器
+ * 用法: node audit.js [--full] [--json] [--credentials] [--ports] [--configs] [--permissions] [--docker]
  */
 
 const { execSync } = require('child_process');
@@ -9,18 +9,24 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// Configuration
+// 配置常量 - 定义扫描的目标路径
 const CLAWDBOT_DIR = '/root/clawd';
 const CONFIG_DIR = '/root/clawd/skills/.env';
 const DOCKER_DIR = '/root/clawd';
 
-// Results collection
+// 审计结果收集 - 存储发现的安全问题
 const findings = [];
 let checkCount = 0;
 let criticalCount = 0;
 let highCount = 0;
 
-// Helper functions
+/**
+ * 记录发现的安全问题
+ * @param {string} level - 严重级别 (CRITICAL, HIGH, MEDIUM, LOW, INFO)
+ * @param {string} category - 问题类别 (CREDENTIALS, PORTS, CONFIGS, PERMISSIONS, DOCKER, GIT, HISTORY)
+ * @param {string} message - 问题描述信息
+ * @param {object} details - 详细信息对象（可选）
+ */
 function log(level, category, message, details = null) {
   const emoji = {
     CRITICAL: '🔴',
@@ -43,6 +49,11 @@ function log(level, category, message, details = null) {
   if (level === 'HIGH') highCount++;
 }
 
+/**
+ * 检查文件是否存在
+ * @param {string} filePath - 文件路径
+ * @returns {boolean} 文件是否存在
+ */
 function checkFileExists(filePath) {
   try {
     return fs.existsSync(filePath);
@@ -51,6 +62,12 @@ function checkFileExists(filePath) {
   }
 }
 
+/**
+ * 扫描文件中的敏感信息模式
+ * @param {string} filePath - 要扫描的文件路径
+ * @param {Array} patterns - 敏感信息检测模式数组
+ * @param {string} category - 问题分类
+ */
 function scanFileForPatterns(filePath, patterns, category) {
   if (!checkFileExists(filePath)) return;
   
@@ -66,10 +83,16 @@ function scanFileForPatterns(filePath, patterns, category) {
       }
     }
   } catch (e) {
-    // Ignore unreadable files
+    // 忽略无法读取的文件
   }
 }
 
+/**
+ * 递归获取指定目录下的所有文件
+ * @param {string} dir - 起始目录路径
+ * @param {Array} extensions - 要包含的文件扩展名数组
+ * @returns {Array} 匹配的文件路径数组
+ */
 function getFilesRecursively(dir, extensions = ['.js', '.ts', '.json', '.env', '.md', '.yml', '.yaml']) {
   const files = [];
   
@@ -81,6 +104,7 @@ function getFilesRecursively(dir, extensions = ['.js', '.ts', '.json', '.env', '
         const fullPath = path.join(currentDir, entry.name);
         
         if (entry.isDirectory()) {
+          // 跳过隐藏目录和 node_modules
           if (!entry.name.startsWith('.') && !entry.name.includes('node_modules')) {
             traverse(fullPath);
           }
@@ -89,7 +113,7 @@ function getFilesRecursively(dir, extensions = ['.js', '.ts', '.json', '.env', '
         }
       }
     } catch {
-      // Ignore inaccessible directories
+      // 忽略无法访问的目录
     }
   }
   
@@ -97,45 +121,54 @@ function getFilesRecursively(dir, extensions = ['.js', '.ts', '.json', '.env', '
   return files;
 }
 
-// === CHECKS ===
+// === 安全检查函数 ===
 
+/**
+ * 检查凭据安全性 - 扫描敏感信息泄露
+ * 检测类型：
+ * - API 密钥硬编码
+ * - 令牌和密钥暴露
+ * - 密码硬编码
+ * - 私钥文件泄露
+ * - URL 中包含凭据
+ */
 function checkCredentials() {
-  log('INFO', 'CREDENTIALS', 'Starting credential scan...');
+  log('INFO', 'CREDENTIALS', '开始凭据扫描...');
   
   const credentialPatterns = [
     {
       level: 'CRITICAL',
-      message: 'Potential API key found in file',
+      message: '文件中发现可能的 API 密钥',
       regex: /api[_-]?key\s*[:=]\s*['"'][a-zA-Z0-9]{20,}['"']/gi,
       match: 'API key pattern'
     },
     {
       level: 'CRITICAL',
-      message: 'Potential secret token found',
+      message: '发现可能的密钥令牌',
       regex: /(secret|token|auth)[_-]?key\s*[:=]\s*['"'][a-zA-Z0-9_\-]{30,}['"']/gi,
       match: 'Secret pattern'
     },
     {
       level: 'HIGH',
-      message: 'Hardcoded password found',
+      message: '发现硬编码的密码',
       regex: /password\s*[:=]\s*['"'][^'"']{8,}['"']/gi,
       match: 'Password pattern'
     },
     {
       level: 'HIGH',
-      message: 'Private key detected',
+      message: '检测到私钥文件',
       regex: /-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/g,
       match: 'Private key'
     },
     {
       level: 'MEDIUM',
-      message: 'URL with credentials found',
+      message: '发现包含凭据的 URL',
       regex: /https?:\/\/[^:]+:[^@]+@/g,
       match: 'URL with credentials'
     }
   ];
   
-  // Scan key files
+  // 扫描关键配置文件
   const keyFiles = [
     CONFIG_DIR,
     path.join(CLAWDBOT_DIR, 'skills/.env'),
@@ -147,22 +180,26 @@ function checkCredentials() {
     scanFileForPatterns(file, credentialPatterns, 'CREDENTIALS');
   }
   
-  // Scan all code files
+  // 扫描所有代码文件
   const codeFiles = getFilesRecursively(CLAWDBOT_DIR);
   
   for (const file of codeFiles) {
     if (file.includes('node_modules') || file.includes('.git')) continue;
+    // 非关键文件只扫描非严重级别的问题
     scanFileForPatterns(file, credentialPatterns.filter(p => p.level !== 'CRITICAL'), 'CREDENTIALS');
   }
   
-  log('INFO', 'CREDENTIALS', `Scanned ${codeFiles.length} files`);
+  log('INFO', 'CREDENTIALS', `扫描了 ${codeFiles.length} 个文件`);
 }
 
+/**
+ * 检查开放端口 - 检测意外暴露的网络端口
+ */
 function checkPorts() {
-  log('INFO', 'PORTS', 'Checking for open ports...');
+  log('INFO', 'PORTS', '检查开放端口...');
   
   try {
-    // Check if ss or netstat is available
+    // 检查 ss 或 netstat 工具是否可用
     const ssResult = execSync('ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null || echo "not available"', 
       { encoding: 'utf8', timeout: 5000 });
     
@@ -173,6 +210,7 @@ function checkPorts() {
       const portMatch = line.match(/:(\d+)\s/);
       if (portMatch) {
         const port = parseInt(portMatch[1]);
+        // 只记录大于 1024 的端口（系统保留端口）
         if (port > 1024 && !ports.includes(port)) {
           ports.push(port);
         }
@@ -180,60 +218,67 @@ function checkPorts() {
     }
     
     if (ports.length > 0) {
-      log('MEDIUM', 'PORTS', `Found ${ports.length} open ports`, { ports });
+      log('MEDIUM', 'PORTS', `发现 ${ports.length} 个开放端口`, { ports });
     } else {
-      log('INFO', 'PORTS', 'No unexpected open ports detected');
+      log('INFO', 'PORTS', '未检测到意外的开放端口');
     }
   } catch {
-    log('LOW', 'PORTS', 'Could not scan ports (tool not available)');
+    log('LOW', 'PORTS', '无法扫描端口（工具不可用）');
   }
 }
 
+/**
+ * 检查配置安全性 - 验证环境配置是否存在安全隐患
+ */
 function checkConfigs() {
-  log('INFO', 'CONFIGS', 'Validating configuration security...');
+  log('INFO', 'CONFIGS', '验证配置安全性...');
   
-  // Check for .env file
+  // 检查 .env 文件是否存在
   if (!checkFileExists(CONFIG_DIR)) {
-    log('HIGH', 'CONFIGS', 'No .env file found - credentials may not be configured');
+    log('HIGH', 'CONFIGS', '未找到 .env 文件 - 凭据可能未配置');
     return;
   }
   
   try {
     const envContent = fs.readFileSync(CONFIG_DIR, 'utf8');
     
-    // Check for rate limiting config
+    // 检查速率限制配置
     if (!envContent.includes('RATE_LIMIT')) {
-      log('MEDIUM', 'CONFIGS', 'No RATE_LIMIT configuration found');
+      log('MEDIUM', 'CONFIGS', '未找到 RATE_LIMIT 配置');
     }
     
-    // Check for auth settings
+    // 检查身份验证设置
     if (!envContent.includes('AUTH_') && !envContent.includes('API_KEY')) {
-      log('HIGH', 'CONFIGS', 'No authentication configuration detected');
+      log('HIGH', 'CONFIGS', '未检测到身份验证配置');
     }
     
-    // Check for log level
+    // 检查日志级别（调试模式可能泄露敏感信息）
     if (envContent.includes('LOG_LEVEL=debug') || envContent.includes('LOG_LEVEL=DEBUG')) {
-      log('MEDIUM', 'CONFIGS', 'Debug logging enabled - may expose sensitive data');
+      log('MEDIUM', 'CONFIGS', '启用了调试日志 - 可能暴露敏感数据');
     }
     
-    // Check for CORS
+    // 检查 CORS 配置（允许所有来源存在安全风险）
     if (envContent.includes('CORS_ORIGIN=*') || envContent.includes('CORS_ALLOW_ALL=true')) {
-      log('HIGH', 'CONFIGS', 'CORS configured to allow all origins');
+      log('HIGH', 'CONFIGS', 'CORS 配置为允许所有来源');
     }
     
   } catch (e) {
-    log('LOW', 'CONFIGS', 'Could not read configuration file');
+    log('LOW', 'CONFIGS', '无法读取配置文件');
   }
 }
 
+/**
+ * 检查文件权限 - 确保敏感文件不被过度授权访问
+ */
 function checkPermissions() {
-  log('INFO', 'PERMISSIONS', 'Checking file permissions...');
+  log('INFO', 'PERMISSIONS', '检查文件权限...');
   
+  // 定义敏感文件模式及对应严重级别
   const sensitivePatterns = [
-    { pattern: /\.env$/, level: 'CRITICAL', message: 'World-readable .env file' },
-    { pattern: /\.json$/, level: 'HIGH', message: 'World-readable JSON config' },
-    { pattern: /\.key$/, level: 'CRITICAL', message: 'World-readable key file' },
-    { pattern: /\.pem$/, level: 'CRITICAL', message: 'World-readable PEM file' }
+    { pattern: /\.env$/, level: 'CRITICAL', message: '.env 文件全局可读' },
+    { pattern: /\.json$/, level: 'HIGH', message: 'JSON 配置文件全局可读' },
+    { pattern: /\.key$/, level: 'CRITICAL', message: '密钥文件全局可读' },
+    { pattern: /\.pem$/, level: 'CRITICAL', message: 'PEM 文件全局可读' }
   ];
   
   const files = getFilesRecursively(CLAWDBOT_DIR);
@@ -243,7 +288,7 @@ function checkPermissions() {
       const stats = fs.statSync(file);
       const mode = stats.mode & 0o777;
       
-      // Check if world-readable
+      // 检查是否全局可读
       if ((mode & 0o004) !== 0) {
         for (const sp of sensitivePatterns) {
           if (sp.pattern.test(file)) {
@@ -252,83 +297,108 @@ function checkPermissions() {
         }
       }
       
-      // Check if executable by all
+      // 检查是否全局可执行（JS 文件）
       if ((mode & 0o001) !== 0 && file.endsWith('.js')) {
-        log('MEDIUM', 'PERMISSIONS', `Executable JS file: ${path.basename(file)}`);
+        log('MEDIUM', 'PERMISSIONS', `可执行的 JS 文件: ${path.basename(file)}`);
       }
     } catch {
-      // Ignore inaccessible files
+      // 忽略无法访问的文件
     }
   }
 }
 
+/**
+ * 检查 Docker 安全性 - 分析 Dockerfile 中的安全配置
+ */
 function checkDocker() {
-  log('INFO', 'DOCKER', 'Checking Docker security...');
+  log('INFO', 'DOCKER', '检查 Docker 安全性...');
   
   const dockerFile = path.join(CLAWDBOT_DIR, 'Dockerfile');
   
   if (!checkFileExists(dockerFile)) {
-    log('INFO', 'DOCKER', 'No Dockerfile found - skipping Docker checks');
+    log('INFO', 'DOCKER', '未找到 Dockerfile - 跳过 Docker 检查');
     return;
   }
   
   try {
     const dockerContent = fs.readFileSync(dockerFile, 'utf8');
     
+    // 检查是否以 root 用户运行
     if (dockerContent.includes('USER root') || !dockerContent.includes('USER ')) {
-      log('HIGH', 'DOCKER', 'Container may run as root user');
+      log('HIGH', 'DOCKER', '容器可能以 root 用户运行');
     }
     
+    // 检查特权模式
     if (dockerContent.includes('--privileged')) {
-      log('CRITICAL', 'DOCKER', 'Container has privileged mode enabled');
+      log('CRITICAL', 'DOCKER', '容器启用了特权模式');
     }
     
+    // 检查健康检查指令
     if (!dockerContent.includes('HEALTHCHECK')) {
-      log('LOW', 'DOCKER', 'No HEALTHCHECK instruction found');
+      log('LOW', 'DOCKER', '未找到 HEALTHCHECK 指令');
     }
     
+    // 检查镜像标签（使用 :latest 可能导致不稳定部署）
     if (dockerContent.includes(':latest') && !dockerContent.includes('BUILDARG')) {
-      log('MEDIUM', 'DOCKER', 'Using floating tag :latest - consider specific version');
+      log('MEDIUM', 'DOCKER', '使用浮动标签 :latest - 建议使用特定版本');
     }
     
   } catch (e) {
-    log('LOW', 'DOCKER', 'Could not analyze Dockerfile');
+    log('LOW', 'DOCKER', '无法分析 Dockerfile');
   }
 }
 
+/**
+ * 检查 Git 相关信息 - 防止 Git 目录暴露
+ */
 function checkGit() {
-  log('INFO', 'GIT', 'Checking for exposed Git information...');
+  log('INFO', 'GIT', '检查暴露的 Git 信息...');
   
   const gitDir = path.join(CLAWDBOT_DIR, '.git');
   
   if (checkFileExists(gitDir)) {
-    log('MEDIUM', 'GIT', '.git directory exists - ensure it is not web-accessible');
+    log('MEDIUM', 'GIT', '.git 目录存在 - 确保其不可通过 Web 访问');
   }
   
   const gitIgnore = path.join(CLAWDBOT_DIR, '.gitignore');
   if (!checkFileExists(gitIgnore)) {
-    log('LOW', 'GIT', 'No .gitignore file found');
+    log('LOW', 'GIT', '未找到 .gitignore 文件');
   }
 }
 
+/**
+ * 检查最近提交 - 查看历史记录中是否泄露敏感信息
+ */
 function checkRecentCommits() {
-  log('INFO', 'HISTORY', 'Checking for credential exposure in recent commits...');
+  log('INFO', 'HISTORY', '检查最近提交中的凭据泄露...');
   
   try {
     const logOutput = execSync('git log --oneline -20 2>/dev/null || echo "not a git repo"', 
       { encoding: 'utf8', timeout: 5000 });
     
-    // Check for secrets in commit messages (paranoid check)
+    // 检查提交消息中是否包含敏感关键词（paranoid 检查）
     if (/secret|token|password|key|auth/i.test(logOutput)) {
-      log('LOW', 'HISTORY', 'Recent commits contain security-related keywords in messages');
+      log('LOW', 'HISTORY', '最近提交的消息中包含安全相关关键词');
     }
   } catch {
-    log('INFO', 'HISTORY', 'Not a Git repository or Git not available');
+    log('INFO', 'HISTORY', '不是 Git 仓库或 Git 不可用');
   }
 }
 
-// === MAIN ===
+// === 主函数 ===
 
+/**
+ * 运行安全审计
+ * @param {object} options - 审计选项配置对象
+ * @param {boolean} options.full - 是否执行完整审计
+ * @param {boolean} options.json - 是否输出 JSON 格式报告
+ * @param {boolean} options.credentials - 是否检查凭据
+ * @param {boolean} options.ports - 是否检查端口
+ * @param {boolean} options.configs - 是否检查配置
+ * @param {boolean} options.permissions - 是否检查权限
+ * @param {boolean} options.docker - 是否检查 Docker
+ * @returns {object} 审计结果对象
+ */
 async function runAudit(options = {}) {
   const { full = false, json = false, credentials = false, ports = false, 
            configs = false, permissions = false, docker = false } = options;
@@ -336,7 +406,7 @@ async function runAudit(options = {}) {
   const runAll = full || (!credentials && !ports && !configs && !permissions && !docker);
   
   console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║       CLAWDBOT SECURITY AUDIT v1.0                         ║');
+  console.log('║       CLAWDBOT 安全审计 v1.0                               ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
   
   const startTime = Date.now();
@@ -351,30 +421,31 @@ async function runAudit(options = {}) {
   
   const duration = Date.now() - startTime;
   
-  // Summary
+  // 输出摘要信息
   console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║                    AUDIT SUMMARY                            ║');
+  console.log('║                    审计摘要                                 ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
   
-  console.log(`Checks performed: ${checkCount}`);
-  console.log(`🔴 Critical: ${criticalCount}`);
-  console.log(`🟠 High: ${highCount}`);
-  console.log(`Total findings: ${findings.length}`);
-  console.log(`Duration: ${duration}ms\n`);
+  console.log(`执行检查数: ${checkCount}`);
+  console.log(`🔴 严重: ${criticalCount}`);
+  console.log(`🟠 高风险: ${highCount}`);
+  console.log(`发现问题总数: ${findings.length}`);
+  console.log(`耗时: ${duration}ms\n`);
   
-  // Critical issues first
+  // 优先显示严重问题
   const criticalFindings = findings.filter(f => f.level === 'CRITICAL');
   if (criticalFindings.length > 0) {
-    console.log('🔴 CRITICAL ISSUES (Immediate action required):');
+    console.log('🔴 严重问题（需要立即处理）:');
     for (const f of criticalFindings) {
       console.log(`  • ${f.message}`);
-      if (f.details?.file) console.log(`    File: ${f.details.file}`);
+      if (f.details?.file) console.log(`    文件: ${f.details.file}`);
     }
     console.log('');
   }
   
+  // 如果需要 JSON 格式输出
   if (json) {
-    console.log('\n=== JSON REPORT ===');
+    console.log('\n=== JSON 报告 ===');
     console.log(JSON.stringify({
       summary: {
         checks: checkCount,
@@ -388,28 +459,30 @@ async function runAudit(options = {}) {
     }, null, 2));
   }
   
-  // Recommendation
+  // 部署建议
   if (criticalCount > 0) {
-    console.log('\n⚠️  CRITICAL ISSUES FOUND - Do not deploy until fixed!');
+    console.log('\n⚠️  发现严重问题 - 修复前请勿部署!');
     process.exitCode = 1;
   } else if (highCount > 0) {
-    console.log('\n⚠️  High-risk issues found - Review recommended before deployment.');
+    console.log('\n⚠️  发现高风险问题 - 建议部署前审查。');
   } else {
-    console.log('\n✅ No critical issues found. Security posture looks reasonable.');
+    console.log('\n✅ 未发现严重问题。安全状况良好。');
   }
   
   return { findings, criticalCount, highCount, checkCount };
 }
 
-// Auto-fix function
+/**
+ * 自动修复函数 - 尝试自动修复常见安全问题
+ */
 async function runAutoFix() {
   console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║                    AUTO-FIX MODE                            ║');
+  console.log('║                    自动修复模式                             ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
   
   let fixedCount = 0;
   
-  // Fix 1: Secure .env file
+  // 修复 1: 保护 .env 文件权限
   const envFile = '/root/clawd/skills/.env';
   if (checkFileExists(envFile)) {
     try {
@@ -417,15 +490,15 @@ async function runAutoFix() {
       const mode = stats.mode & 0o777;
       if ((mode & 0o077) !== 0) {
         fs.chmodSync(envFile, 0o600);
-        console.log('✅ Fixed: Set 600 permissions on .env');
+        console.log('✅ 已修复: 设置 .env 权限为 600');
         fixedCount++;
       }
     } catch (e) {
-      console.log('❌ Failed to fix .env permissions:', e.message);
+      console.log('❌ 修复 .env 权限失败:', e.message);
     }
   }
   
-  // Fix 2: Secure other sensitive files
+  // 修复 2: 保护其他敏感文件
   const sensitivePatterns = [
     { pattern: /\.env$/, perms: 0o600 },
     { pattern: /\.json$/, perms: 0o600 },
@@ -442,17 +515,17 @@ async function runAutoFix() {
           const mode = stats.mode & 0o777;
           if (mode !== sp.perms) {
             fs.chmodSync(file, sp.perms);
-            console.log(`✅ Fixed: Set ${sp.perms.toString(8)} on ${path.basename(file)}`);
+            console.log(`✅ 已修复: 设置 ${path.basename(file)} 权限为 ${sp.perms.toString(8)}`);
             fixedCount++;
           }
         } catch {
-          // Ignore
+          // 忽略错误
         }
       }
     }
   }
   
-  // Fix 3: Create .gitignore if missing
+  // 修复 3: 如果缺失则创建 .gitignore
   const gitignorePath = path.join(CLAWDBOT_DIR, '.gitignore');
   if (!checkFileExists(gitignorePath)) {
     const defaultGitignore = `# Clawdbot
@@ -464,18 +537,18 @@ node_modules/
 *.key
 `;
     fs.writeFileSync(gitignorePath, defaultGitignore);
-    console.log('✅ Fixed: Created .gitignore');
+    console.log('✅ 已修复: 创建 .gitignore');
     fixedCount++;
   }
   
-  console.log(`\n✅ Auto-fix complete! ${fixedCount} issues resolved.`);
+  console.log(`\n✅ 自动修复完成! 解决了 ${fixedCount} 个问题。`);
   
-  // Re-run audit to confirm
-  console.log('\n🔍 Re-running audit to verify...\n');
+  // 重新运行审计以确认修复效果
+  console.log('\n🔍 重新运行审计以验证...\n');
   return fixedCount;
 }
 
-// Run if called directly
+// 直接运行时执行主逻辑
 if (require.main === module) {
   const args = process.argv.slice(2);
   
@@ -483,7 +556,7 @@ if (require.main === module) {
   
   if (shouldFix) {
     runAutoFix().catch(e => {
-      console.error('Auto-fix error:', e.message);
+      console.error('自动修复错误:', e.message);
       process.exit(1);
     });
   } else {
@@ -496,10 +569,11 @@ if (require.main === module) {
       permissions: args.includes('--permissions'),
       docker: args.includes('--docker')
     }).catch(e => {
-      console.error('Audit error:', e.message);
+      console.error('审计错误:', e.message);
       process.exit(1);
     });
   }
 }
 
+// 导出函数供其他模块调用
 module.exports = { runAudit, checkCredentials, checkPorts, checkConfigs, checkPermissions, checkDocker };

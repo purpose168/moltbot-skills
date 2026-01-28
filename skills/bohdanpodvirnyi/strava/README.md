@@ -1,30 +1,30 @@
-# Strava Skill for Clawdbot
+# Strava 技能（Clawdbot）
 
-🏃 **Load and analyze your Strava activities, stats, and workouts** using the Strava API.
+🏃 **使用 Strava API 加载和分析您的 Strava 活动、统计数据和训练**。
 
-## Features
+## 功能
 
-- ✅ List recent activities with pagination
-- ✅ Filter activities by date ranges
-- ✅ Get detailed activity stats (distance, pace, heart rate, elevation)
-- ✅ Access athlete profile and cumulative statistics
-- ✅ Auto token refresh helper script
-- ✅ Rate limit aware (200/15min, 2000/day)
-- ✅ Works with curl only (no additional dependencies)
+- ✅ 列出最近的活动（支持分页）
+- ✅ 按日期范围筛选活动
+- ✅ 获取详细的活动统计（距离、配速、心率、爬升）
+- ✅ 访问运动员个人资料和累计统计
+- ✅ 自动令牌刷新辅助脚本
+- ✅ 速率限制感知（200次/15分钟，2000次/天）
+- ✅ 纯 curl 工作（无额外依赖）
 
-## Quick Start
+## 快速开始
 
-### 1. Create Strava API Application
+### 1. 创建 Strava API 应用
 
-Visit https://www.strava.com/settings/api and create an app.
+访问 https://www.strava.com/settings/api 创建一个应用。
 
-### 2. Get OAuth Tokens
+### 2. 获取 OAuth 令牌
 
-Follow the setup instructions in [SKILL.md](./SKILL.md) to obtain your access token and refresh token.
+按照 [SKILL.md](./SKILL.md) 中的设置说明获取访问令牌和刷新令牌。
 
-### 3. Configure
+### 3. 配置
 
-Add to `~/.clawdbot/clawdbot.json`:
+添加到 `~/.clawdbot/clawdbot.json`：
 
 ```json
 {
@@ -33,10 +33,10 @@ Add to `~/.clawdbot/clawdbot.json`:
       "strava": {
         "enabled": true,
         "env": {
-          "STRAVA_ACCESS_TOKEN": "your-access-token",
-          "STRAVA_REFRESH_TOKEN": "your-refresh-token",
-          "STRAVA_CLIENT_ID": "your-client-id",
-          "STRAVA_CLIENT_SECRET": "your-client-secret"
+          "STRAVA_ACCESS_TOKEN": "您的访问令牌",
+          "STRAVA_REFRESH_TOKEN": "您的刷新令牌",
+          "STRAVA_CLIENT_ID": "您的客户端ID",
+          "STRAVA_CLIENT_SECRET": "您的客户端密钥"
         }
       }
     }
@@ -44,55 +44,55 @@ Add to `~/.clawdbot/clawdbot.json`:
 }
 ```
 
-## Usage Examples
+## 使用示例
 
-Ask your agent:
-- "Show me my last 10 Strava activities"
-- "What activities did I do last week?"
-- "Get details for my most recent run"
-- "What's my total distance this month?"
-- "Show my Strava profile and stats"
+向您的代理询问：
+- "显示我最近的 10 个 Strava 活动"
+- "上周我做了什么活动？"
+- "获取我最近一次跑步的详情"
+- "我这个月的总距离是多少？"
+- "显示我的 Strava 个人资料和统计"
 
-## What You Can Do
+## 您可以做什么
 
-- **List Activities**: Recent workouts with customizable page size
-- **Filter by Date**: Query specific date ranges using Unix timestamps
-- **Activity Details**: Full metrics including pace, heart rate, elevation
-- **Athlete Stats**: Profile info and cumulative statistics
-- **Token Management**: Auto-refresh expired tokens (expire every 6 hours)
+- **列出活动**：可自定义页面大小的近期训练
+- **按日期筛选**：使用 Unix 时间戳查询特定日期范围
+- **活动详情**：包含配速、心率、爬升的完整指标
+- **运动员统计**：个人资料信息和累计统计数据
+- **令牌管理**：自动刷新过期的令牌（每 6 小时过期）
 
-## API Coverage
+## API 覆盖范围
 
-- `GET /athlete/activities` - List activities
-- `GET /activities/{id}` - Activity details
-- `GET /athlete` - Athlete profile
-- `GET /athletes/{id}/stats` - Athlete statistics
-- `POST /oauth/token` - Token refresh
+- `GET /athlete/activities` - 列出活动
+- `GET /activities/{id}` - 活动详情
+- `GET /athlete` - 运动员个人资料
+- `GET /athletes/{id}/stats` - 运动员统计
+- `POST /oauth/token` - 令牌刷新
 
-## Documentation
+## 文档
 
-See [SKILL.md](./SKILL.md) for complete setup instructions, API reference, and advanced usage.
+完整的设置说明、API 参考和高级用法请参见 [SKILL.md](./SKILL.md)。
 
-## Requirements
+## 环境要求
 
-- `curl` (bundled with macOS/Linux)
-- Strava API application credentials
-- OAuth access token
+- `curl`（macOS/Linux 自带）
+- Strava API 应用凭据
+- OAuth 访问令牌
 
-## Links
+## 链接
 
-- **Strava Developers**: https://developers.strava.com/
-- **API Docs**: https://developers.strava.com/docs/reference/
-- **Create App**: https://www.strava.com/settings/api
+- **Strava 开发者**：https://developers.strava.com/
+- **API 文档**：https://developers.strava.com/docs/reference/
+- **创建应用**：https://www.strava.com/settings/api
 
-## License
+## 许可证
 
 MIT
 
-## Author
+## 作者
 
-Created for Clawdbot AI Assistant
+为 Clawdbot AI 助手创建
 
 ---
 
-🦞 Part of the Clawdbot skill ecosystem
+🦞 Clawdbot 技能生态系统的一部分

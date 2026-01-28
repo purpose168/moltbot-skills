@@ -1,196 +1,196 @@
-# JTBD Examples - Artem's World
+# 待完成工作案例 - Artem 的实践
 
-## Example 1: TeddySnaps
+## 案例一：TeddySnaps
 
-### User: Working Parent
+### 用户：工作家长
 
-**JOB STATEMENT:**
-"When I'm at work and feeling disconnected from my toddler, I want to see visual proof they're happy and cared for, so I can focus on work without guilt"
+**工作陈述：**
+"当我在工作，与我的幼儿失去连接时，我想看到他们快乐且被照顾的视觉证据，所以我可以专注于工作而不内疚"
 
-📋 **FUNCTIONAL JOB:**
-See photos of my specific child during their day
+📋 **功能工作：**
+看我孩子一天中的照片
 
-💜 **EMOTIONAL JOB:**
-Feel like a good parent even though I'm physically absent
-Release the low-grade anxiety of "are they okay?"
-Feel connected despite distance
+💜 **情感工作：**
+即使我不在场，感觉像个好父母
+释放"他们好吗？"的低度焦虑
+尽管距离仍感到连接
 
-👥 **SOCIAL JOB:**
-Have something to share with partner/grandparents
-Prove to myself I made the right childcare choice
-Have stories to ask about at pickup
+👥 **社会工作：**
+有东西可以与伴侣/祖父母分享
+证明我做出了正确的 childcare 选择
+接孩子时有故事可问
 
-**CURRENT ALTERNATIVES:**
-- Text the daycare (disruptive, feels needy)
-- Wait until pickup (builds anxiety all day)
-- Check random Instagram posts (not MY child)
-- Just trust and worry (current default)
+**当前替代方案：**
+- 短信给日托所（干扰，感觉无能）
+- 等到接孩子（整天积累焦虑）
+- 检查随机Instagram帖子（不是我的孩子）
+- 只是信任和担心（当前默认）
 
-**UNDERSERVED ASPECTS:**
-- Real-time or near-real-time photos
-- MY child specifically, not group shots
-- Context (what activity, who they're with)
+**未被满足的方面：**
+- 实时或接近实时的照片
+- 特别是我孩子，不是集体照
+- 上下文（什么活动，他们和谁在一起）
 
-**FEATURE IMPLICATIONS:**
-→ Face recognition is CRITICAL (not group shots)
-→ Push notifications satisfy the "proof" need
-→ Multiple daily photos beat one batch at end
-→ Easy sharing to family extends social job
-
----
-
-## Example 2: TISA International School
-
-### User: Expat Parent in Netherlands
-
-**JOB STATEMENT:**
-"When we've relocated internationally and I'm worried about my child's education continuity, I want a school that combines global standards with local opportunity, so I can feel my child isn't falling behind AND is thriving"
-
-📋 **FUNCTIONAL JOB:**
-Provide quality education matching international standards
-Teach both English and local language
-Develop practical skills, not just academics
-
-💜 **EMOTIONAL JOB:**
-Feel I'm giving my child an advantage, not a compromise
-Feel confident they'll adapt to any future country
-Feel proud of choosing something innovative
-
-👥 **SOCIAL JOB:**
-Be seen as a parent who "gets" education
-Have a school I'm proud to name
-Feel part of a community of like-minded families
-
-**CURRENT ALTERNATIVES:**
-- Traditional international school (expensive, academic-only)
-- Dutch public school (language barrier, different pedagogy)
-- Homeschooling (huge parent time commitment)
-- Move back to home country (nuclear option)
-
-**UNDERSERVED ASPECTS:**
-- Entrepreneurship + academics combination
-- Bilingual from day one (not add-on)
-- Practical skills (not just test prep)
-- Community of international families
-
-**FEATURE IMPLICATIONS:**
-→ Entrepreneurship pillar is differentiator
-→ Bilingual structure (not "English school with Dutch class")
-→ Parent community building is part of the product
-→ Small class sizes enable personalization
+**功能含义：**
+→ 人脸识别是关键（不是集体照）
+→ 推送通知满足"证明"需求
+→ 多张每日照片胜过结束时的批量
+→ 轻松分享给家人扩展社会工作
 
 ---
 
-## Example 3: GolfTab
+## 案例二：TISA 国际学校
 
-### User: Golfer (mid-round)
+### 用户：荷兰外籍家长
 
-**JOB STATEMENT:**
-"When I'm on hole 7 and getting hungry, I want to order food that arrives at the right moment without interrupting my round, so I can keep enjoying golf without hangry frustration"
+**工作陈述：**
+"当我们国际搬迁，我担心孩子的教育连续性，我想要一个结合全球标准和本地机会的学校，所以我可以感觉我的孩子没有落后**而且**正在蓬勃发展"
 
-📋 **FUNCTIONAL JOB:**
-Order food that meets me at the right hole
-Know when it's arriving
-Pay without hassle
+📋 **功能工作：**
+提供符合国际标准的优质教育
+教授英语和当地语言
+发展实用技能，不仅仅是学术
 
-💜 **EMOTIONAL JOB:**
-Feel like the course "gets" me
-Feel smart for using efficient solution
-Avoid the frustration of bad timing
+💜 **情感工作：
+感觉我给了孩子优势，不是妥协
+自信他们将适应任何未来国家
+为选择创新事物感到骄傲
 
-👥 **SOCIAL JOB:**
-Look organized to playing partners
-Not be the one who "forgot to order"
-Maybe be the hero who orders for the group
+👥 **社会工作：**
+被视为"懂教育"的家长
+有我可以自豪说出的学校
+感觉像志同道合家庭社区的一部分
 
-**CURRENT ALTERNATIVES:**
-- Flag down beverage cart (unreliable timing)
-- Wait until turn (hangry by hole 9)
-- Bring snacks in bag (not hot food)
-- Skip eating (suffer)
+**当前替代方案：**
+- 传统国际学校（昂贵，仅学术）
+- 荷兰公立学校（语言障碍，不同教学方法）
+- 在家教育（巨大的家长时间投入）
+- 搬回本国（核选项）
 
-**UNDERSERVED ASPECTS:**
-- Timing precision (not "in 20 minutes" but "at hole 10")
-- Simplified ordering (don't need full menu mid-swing)
-- Group ordering capability
+**未被满足的方面：**
+- 创业 + 学术组合
+- 从第一天开始双语（不是附加）
+- 实用技能（不仅仅是应试）
+- 国际家庭社区
 
-**FEATURE IMPLICATIONS:**
-→ Hole-based delivery is core UX, not address
-→ Simplified menu (not full restaurant)
-→ 5-tap maximum ordering flow
-→ Group ordering for foursomes
-
----
-
-## Example 4: TeddyKids (Daycare)
-
-### User: First-Time Parent
-
-**JOB STATEMENT:**
-"When I'm returning to work after parental leave, I want to trust that strangers will care for my baby as well as I would, so I can work without constant fear"
-
-📋 **FUNCTIONAL JOB:**
-Safe, quality care during work hours
-Developmental activities appropriate for age
-Reliable schedule and pickup flexibility
-
-💜 **EMOTIONAL JOB:**
-Feel my baby is loved, not just "watched"
-Feel I'm not abandoning them
-Feel confident in the caregivers
-
-👥 **SOCIAL JOB:**
-Tell others I found a "great" daycare
-Not feel judged for going back to work
-Be part of a parent community
-
-**CURRENT ALTERNATIVES:**
-- Grandparents (not always available/capable)
-- Nanny (expensive, single point of failure)
-- Au pair (language/cultural challenges)
-- Delay return to work (career impact)
-
-**JOB PRIORITY:** CRITICAL - this is peak anxiety moment
-
-**UNDERSERVED ASPECTS:**
-- Trust building (transparency into the day)
-- Communication quality (not just "fine")
-- Transition support (first week is hardest)
-
-**FEATURE IMPLICATIONS:**
-→ TeddySnaps directly serves emotional job
-→ Onboarding experience is product, not admin
-→ Staff quality + communication = core value prop
-→ Parent community building reduces isolation
+**功能含义：**
+→ 创业支柱是差异化因素
+→ 双语结构（不是"英语学校带荷兰语课"）
+→ 家长社区建设是产品的一部分
+→ 小班规模实现个性化
 
 ---
 
-## Quick JTBD Template
+## 案例三：GolfTab
+
+### 用户：高尔夫球手（回合中）
+
+**工作陈述：**
+"当我在第7洞饿了，我希望订的食物在正确时机送达而不中断我的回合，所以我可以继续享受高尔夫而不受饥饿挫败"
+
+📋 **功能工作：**
+在正确洞遇见我的订单
+知道什么时候到达
+轻松付款
+
+💜 **情感工作：
+感觉球场"理解"我
+感觉使用高效解决方案很聪明
+避免糟糕时机的挫败
+
+👥 **社会工作：**
+对球友看起来有条理
+不是那个"忘记订购"的人
+也许是订购整个小组的英雄
+
+**当前替代方案：**
+- 拦截饮料车（不可靠时机）
+- 等到转弯（第9洞时饿了）
+- 从包里带零食（不是热食）
+- 不吃（受苦）
+
+**未被满足的方面：**
+- 时机精确性（不是"20分钟内"而是"在第10洞"）
+- 简化订购（不需要完整菜单在挥杆中间）
+- 小组订购能力
+
+**功能含义：**
+→ 基于洞的送达是核心用户体验，不是地址
+→ 简化菜单（不是完整餐厅）
+→ 最多5次点击订购流程
+→ 四人小组的群体订购
+
+---
+
+## 案例四：TeddyKids（日托）
+
+### 用户：第一次家长
+
+**工作陈述：**
+"当我返回工作后休完育儿假，我希望陌生人能像我一样照顾我的宝宝，所以我可以工作而不持续恐惧"
+
+📋 **功能工作：**
+工作时间安全、优质的照顾
+适合年龄的发展活动
+可靠的日程和接送灵活性
+
+💜 **情感工作：
+感觉我的宝宝被爱，而不仅仅是"看着"
+感觉我没有抛弃他们
+对照护者有信心
+
+👥 **社会工作：
+告诉别人我找到了"很棒"的日托
+不因返回工作而感到被评判
+成为家长社区的一部分
+
+**当前替代方案：**
+- 祖父母（不总是可用/有能力）
+- 保姆（昂贵，单点故障）
+- 互惠生（语言/文化挑战）
+- 延迟返回工作（职业影响）
+
+**工作优先级：** 关键 - 这是焦虑高峰时刻
+
+**未被满足的方面：**
+- 信任建设（透明到一天）
+- 沟通质量（不仅仅是"还好"）
+- 过渡支持（第一周最困难）
+
+**功能含义：**
+→ TeddySnaps 直接服务情感工作
+→ 入职体验是产品，不是行政
+→ 员工质量 + 沟通 = 核心价值主张
+→ 家长社区建设减少孤立
+
+---
+
+## 快速 JTBD 模板
 
 ```
-PRODUCT: [What you're analyzing]
-USER: [Specific user type]
+产品：[你在分析什么]
+用户：[特定用户类型]
 
-JOB STATEMENT:
-"When [situation], I want to [motivation], so I can [outcome]"
+工作陈述：
+"当[情况]，我想要[动机]，所以我可以[结果]"
 
-📋 FUNCTIONAL JOB:
-[What task?]
+📋 功能工作：
+[什么任务？]
 
-💜 EMOTIONAL JOB:
-[How feel?]
+💜 情感工作：
+[如何感觉？]
 
-👥 SOCIAL JOB:
-[How perceived?]
+👥 社会工作：
+[如何被感知？]
 
-CURRENT ALTERNATIVES:
-• [Option 1]
-• [Option 2]
+当前替代方案：
+• [选项 1]
+• [选项 2]
 
-UNDERSERVED ASPECTS:
-• [Gap 1]
-• [Gap 2]
+未被满足的方面：
+• [差距 1]
+• [差距 2]
 
-FEATURE IMPLICATIONS:
-→ [What this means for design]
+功能含义：
+→ [这对设计意味着什么]
 ```

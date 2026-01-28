@@ -1,11 +1,11 @@
 {
   "owner": "arein",
   "slug": "onchain",
-  "displayName": "Onchain CLI",
+  "displayName": "加密货币 CLI",
   "latest": {
-    "version": "0.1.5",
-    "publishedAt": 1769415191037,
-    "commit": "https://github.com/clawdbot/skills/commit/c3842c2a725020958b7b3ca8246ffb3efe86d521"
+    "version": "1.0.0",
+    "publishedAt": 1769402464206,
+    "commit": "https://github.com/clawdbot/skills/commit/d5cba0bb1d9af01af41c0fdad87f1f012756c19c"
   },
   "history": []
 }

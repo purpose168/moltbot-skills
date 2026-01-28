@@ -1,156 +1,156 @@
-# Jobs-To-Be-Done Framework - Detailed Methodology
+# 待完成工作框架 - 详细方法论
 
-## The Milkshake Story
+## 奶昔故事
 
-Clayton Christensen's famous example:
+克莱顿·克里斯滕森著名的例子：
 
-**Surface Problem:** McDonald's wanted to sell more milkshakes
+**表面问题：** 麦当劳想卖出更多奶昔
 
-**Traditional Approach:** Improve flavor, make thicker, add toppings
+**传统方法：** 改善口味，加厚，添加配料
 
-**JTBD Approach:** What "job" are people hiring the milkshake for?
+**JTBD 方法：** 人们雇用奶昔做什么？
 
-**Discovery:** 
-- Morning buyers: "I need something to make my commute less boring and keep me full until lunch"
-- Afternoon buyers: "I want to bond with my kid and feel like a good parent"
+**发现：**
+- 早晨买家："我需要一些东西让我的通勤不那么无聊，并让我在午餐前保持饱腹"
+- 下午买家："我想和孩子建立联系，感觉像个好父母"
 
-**Insight:** SAME product, DIFFERENT jobs, DIFFERENT competition
+**洞察：** 相同产品，**不同**工作，**不同**竞争
 
-Morning milkshake competes with: bagels, bananas, boredom
-Afternoon milkshake competes with: ice cream, toy stores, playground
+早晨奶昔的竞争：贝果、香蕉、无聊
+下午奶昔的竞争：冰淇淋、玩具店、游乐场
 
-## The Job Statement Formula
+## 工作陈述公式
 
-### Basic Structure
-"When [situation/trigger], I want to [motivation], so I can [expected outcome]"
+### 基本结构
+"当[情况/触发]，我想要[动机]，所以我可以[预期结果]"
 
-### Examples
+### 示例
 
-**TeddySnaps Parent:**
-"When I'm at work and missing my child, I want to see they're happy and engaged, so I can feel like a good parent even though I'm away"
+**TeddySnaps 家长：**
+"当我在工作，想念我的孩子时，我想看到他们快乐且被照顾，所以即使我不在，我也能感觉像个好父母"
 
-**TISA Parent:**
-"When I'm choosing a school, I want my child to develop real-world skills, so I can feel confident they'll succeed in life"
+**TISA 家长：**
+"当我选择学校时，我希望我的孩子发展现实世界的技能，所以我可以自信他们会在生活中成功"
 
-**GolfTab Golfer:**
-"When I'm hungry on the course, I want food delivered without disrupting my game, so I can keep enjoying golf without hangry frustration"
+**GolfTab 高尔夫球手：**
+"当我在球场上饿了时，我希望食物送达而不中断我的比赛，所以我可以继续享受高尔夫而不受饥饿挫败"
 
-## Forces of Progress
+## 进步力量
 
-Four forces determine whether someone "switches" to your solution:
+四个力量决定某人是否"切换"到你的解决方案：
 
-### Push of Current Situation
-What's wrong with how they do it now?
-- Pain points
-- Frustrations
-- Unmet needs
+### 当前情况的推力
+他们现在怎么做有什么问题？
+- 痛点
+- 沮丧
+- 未满足的需求
 
-### Pull of New Solution
-What's attractive about the alternative?
-- Better outcomes
-- New capabilities
-- Emotional benefits
+### 新解决方案的拉力
+替代方案有什么吸引人的？
+- 更好的结果
+- 新能力
+- 情感利益
 
-### Anxiety of New Solution
-What fears prevent switching?
-- Will it work?
-- What if I lose X?
-- Is it complicated?
+### 新解决方案的焦虑
+什么恐惧阻止切换？
+- 会有效吗？
+- 如果我失去X怎么办？
+- 它复杂吗？
 
-### Habit of Current Situation
-What makes staying comfortable?
-- Familiarity
-- Sunk costs
-- "Good enough"
+### 当前情况的习惯
+什么让保持现状舒服？
+- 熟悉感
+- 沉没成本
+- "足够好"
 
-**Switch happens when:** Push + Pull > Anxiety + Habit
+**当以下情况切换发生：** 推力 + 拉力 > 焦虑 + 习惯
 
-## Job Hierarchy
+## 工作层次
 
-### Core Job
-The fundamental thing they're trying to accomplish
-"Get my child quality education"
+### 核心工作
+他们试图完成的基本事情
+"让我的孩子获得优质教育"
 
-### Related Jobs
-Jobs that cluster around the core
-- "Stay informed about my child's progress"
-- "Connect with other parents"
-- "Feel confident in school choice"
+### 相关工作
+围绕核心聚集的工作
+- "了解我孩子的进度"
+- "与其他家长联系"
+- "对学校选择有信心"
 
-### Emotional Jobs
-How they want to feel
-- "Feel like an involved parent"
-- "Feel my investment is worthwhile"
-- "Feel my child is special"
+### 情感工作
+他们想如何感觉
+- "感觉像参与的家长"
+- "感觉我的投资值得"
+- "感觉我的孩子很特别"
 
-### Social Jobs
-How they want to be perceived
-- "Be seen as caring about education"
-- "Be seen as making smart choices"
-- "Be seen as a good parent"
+### 社会工作
+他们希望如何被感知
+- "被视为关心教育"
+- "被视为做出明智选择"
+- "被视为好父母"
 
-## Discovering Jobs
+## 发现工作
 
-### Interview Techniques
+### 访谈技术
 
-**Timeline Interview:**
-"Walk me through the last time you [action]..."
-"What happened right before that?"
-"What were you thinking at that moment?"
+**时间线访谈：**
+"带我走过你上次[行动]的时候......"
+"那之前发生了什么？"
+"那时你在想什么？"
 
-**Switch Interview:**
-"Tell me about when you started using [product]"
-"What weren't you happy with before?"
-"What almost stopped you from switching?"
+**切换访谈：**
+"告诉我你开始使用[产品]的时候"
+"之前什么你不满意？"
+"什么几乎阻止你切换？"
 
-**Contrast Interview:**
-"When does [solution] work great? When does it fall short?"
-"Compare the best experience to the worst experience"
+**对比访谈：**
+"[解决方案]什么时候 great？什么时候不足？"
+"将最佳体验与最差体验对比"
 
-### What to Listen For
+### 听什么
 
-- "I need to..." (functional)
-- "I want to feel..." (emotional)
-- "People will think..." (social)
-- "It frustrates me when..." (pain points)
-- "I wish I could..." (unmet needs)
+- "我需要......"（功能）
+- "我想感觉......"（情感）
+- "人们会想......"（社会）
+- "当......我很沮丧"（痛点）
+- "我希望我可以......"（未满足需求）
 
-## Competition Through Job Lens
+## 通过工作视角竞争
 
-Traditional competition: same product category
-JTBD competition: anything that could do the same job
+传统竞争：相同产品类别
+JTBD 竞争：任何可以做相同工作的东西
 
-**Netflix's real competitors aren't other streaming services:**
-- Sleep
-- Video games
-- Social media
-- Going out
-- Reading
+**Netflix 的真正竞争不是其他流媒体服务：**
+- 睡眠
+- 电子游戏
+- 社交媒体
+- 外出
+- 阅读
 
-**TeddySnaps' real competitors:**
-- Text messages from staff
-- End-of-day verbal updates
-- Worrying and imagining
-- Calling the daycare
-- Other parent apps
+**TeddySnaps 的真正竞争：**
+- 员工的短信
+- 结束时的口头更新
+- 担心和想象
+- 打电话给日托所
+- 其他家长应用
 
-## Prioritizing Jobs
+## 优先工作
 
-### Importance Matrix
+### 重要性矩阵
 
-|           | Well Served | Underserved |
-|-----------|-------------|-------------|
-| Important | Maintain    | OPPORTUNITY |
-| Unimportant| Ignore    | Ignore      |
+|           | 服务良好 | 未被服务 |
+|-----------|---------|---------|
+| 重要 | 维持 | 机会 |
+| 不重要 | 忽略 | 忽略 |
 
-### Opportunity Score
-Importance + (Importance - Satisfaction) = Opportunity
+### 机会分数
+重要性 +（重要性 - 满意度）= 机会
 
-High importance + Low satisfaction = Biggest opportunity
+高重要性 + 低满意度 = 最大机会
 
-## Integration with Other Skills
+## 与其他技能的组合
 
-- **First Principles**: What's the atomic need behind this job?
-- **Second-Order**: If we solve this job, what happens next?
-- **Inversion**: What would make us terrible at this job?
-- **Cross-Pollination**: Who else solves similar jobs well?
+- **第一性原理**：这个工作背后的原子需求是什么？
+- **二阶效应**：如果我们解决这个工作，接下来会发生什么？
+- **反转**：什么会让我们在工作中表现糟糕？
+- **跨界创新**：谁 else 很好地解决类似工作？

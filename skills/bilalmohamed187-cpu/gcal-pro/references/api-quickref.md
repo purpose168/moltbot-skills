@@ -1,47 +1,47 @@
-# Google Calendar API Quick Reference
+# Google Calendar API 快速参考
 
-## Base URL
+## 基础 URL
 ```
 https://www.googleapis.com/calendar/v3
 ```
 
-## Authentication
-All requests require OAuth 2.0 Bearer token:
+## 身份验证
+所有请求都需要 OAuth 2.0 令牌：
 ```
 Authorization: Bearer {access_token}
 ```
 
-## Common Endpoints
+## 常用端点
 
-### List Events
+### 列出事件
 ```
 GET /calendars/{calendarId}/events
 ```
 
-Parameters:
-- `timeMin` (datetime): Start of range (RFC3339)
-- `timeMax` (datetime): End of range (RFC3339)
-- `maxResults` (int): Max events to return
-- `singleEvents` (bool): Expand recurring events
-- `orderBy` (string): "startTime" or "updated"
-- `q` (string): Search query
+参数说明：
+- `timeMin`（datetime）：时间范围开始（RFC3339 格式）
+- `timeMax`（datetime）：时间范围结束（RFC3339 格式）
+- `maxResults`（int）：返回的最大事件数量
+- `singleEvents`（bool）：是否展开重复事件
+- `orderBy`（string）："startTime" 或 "updated"
+- `q`（string）：搜索查询关键词
 
-### Get Event
+### 获取单个事件
 ```
 GET /calendars/{calendarId}/events/{eventId}
 ```
 
-### Create Event
+### 创建事件
 ```
 POST /calendars/{calendarId}/events
 ```
 
-Body:
+请求体：
 ```json
 {
-  "summary": "Event title",
-  "description": "Details",
-  "location": "Address",
+  "summary": "事件标题",
+  "description": "详情描述",
+  "location": "地址位置",
   "start": {
     "dateTime": "2026-01-27T10:00:00-05:00",
     "timeZone": "America/New_York"
@@ -56,38 +56,38 @@ Body:
 }
 ```
 
-### Quick Add (Natural Language)
+### 快速添加（自然语言）
 ```
 POST /calendars/{calendarId}/events/quickAdd?text={text}
 ```
 
-Example text: "Lunch with Alex Friday noon at Cafe Roma"
+示例文本："周五中午与 Alex 在 Cafe Roma 午餐"
 
-### Update Event
+### 更新事件
 ```
 PUT /calendars/{calendarId}/events/{eventId}
 ```
-or
+或
 ```
 PATCH /calendars/{calendarId}/events/{eventId}
 ```
 
-### Delete Event
+### 删除事件
 ```
 DELETE /calendars/{calendarId}/events/{eventId}
 ```
 
-### List Calendars
+### 列出日历
 ```
 GET /users/me/calendarList
 ```
 
-### Free/Busy Query
+### 空闲/忙碌查询
 ```
 POST /freeBusy
 ```
 
-Body:
+请求体：
 ```json
 {
   "timeMin": "2026-01-27T00:00:00Z",
@@ -96,14 +96,14 @@ Body:
 }
 ```
 
-## Event Object
+## 事件对象结构
 
 ```json
 {
   "id": "abc123",
-  "summary": "Meeting",
-  "description": "Discuss project",
-  "location": "Conference Room A",
+  "summary": "会议",
+  "description": "讨论项目",
+  "location": "会议室 A",
   "start": {
     "dateTime": "2026-01-27T10:00:00-05:00",
     "timeZone": "America/New_York"
@@ -127,9 +127,9 @@ Body:
 }
 ```
 
-## All-Day Events
+## 全天事件
 
-Use `date` instead of `dateTime`:
+使用 `date` 代替 `dateTime`：
 ```json
 {
   "start": {"date": "2026-01-27"},
@@ -137,7 +137,7 @@ Use `date` instead of `dateTime`:
 }
 ```
 
-## Recurring Events
+## 重复事件
 
 ```json
 {
@@ -147,29 +147,29 @@ Use `date` instead of `dateTime`:
 }
 ```
 
-## Response Codes
+## 响应状态码
 
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 201 | Created |
-| 204 | Deleted (no content) |
-| 400 | Bad request |
-| 401 | Unauthorized (token expired) |
-| 403 | Forbidden (no access) |
-| 404 | Not found |
-| 410 | Gone (deleted) |
-| 429 | Rate limited |
+| 状态码 | 含义 |
+|--------|------|
+| 200 | 成功 |
+| 201 | 已创建 |
+| 204 | 已删除（无内容） |
+| 400 | 错误请求 |
+| 401 | 未授权（令牌过期） |
+| 403 | 禁止（无访问权限） |
+| 404 | 未找到 |
+| 410 | 已消失（已删除） |
+| 429 | 请求频率受限 |
 
-## Rate Limits
+## 速率限制
 
-- ~10 requests/second per user
-- Exponential backoff recommended
+- 每用户约 10 次请求/秒
+- 建议使用指数退避策略
 
-## Scopes
+## 权限范围
 
-| Scope | Access |
-|-------|--------|
-| `calendar.readonly` | Read calendars and events |
-| `calendar.events` | Read/write events only |
-| `calendar` | Full access |
+| 权限范围 | 访问权限 |
+|----------|----------|
+| `calendar.readonly` | 读取日历和事件 |
+| `calendar.events` | 仅读/写事件 |
+| `calendar` | 完全访问权限 |

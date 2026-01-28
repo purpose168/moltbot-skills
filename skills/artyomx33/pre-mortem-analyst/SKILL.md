@@ -1,65 +1,65 @@
 ---
 name: pre-mortem-analyst
-description: Imagine the project already failed, then work backward to find why. More powerful than risk assessment because it assumes failure is certain. Use when user says "pre-mortem", "premortem", "imagine this failed", "what could go wrong", "risk analysis", "before we launch", "stress test", "what would kill this", "project risks".
+description: 想象项目已经失败，然后往回找出为什么。比风险评估更强大，因为假设失败是确定的。当用户说"pre-mortem"、"premortem"、"想象这失败了"、"什么可能出错"、"风险分析"、"在我们启动前"、"压力测试"、"什么会杀死这个"、"项目风险"时使用。
 ---
 
-# Pre-Mortem Analyst
+# 预死分析器
 
-## Why Pre-Mortem > Risk Assessment
+## 为什么预死 > 风险评估
 
-**Risk Assessment:** "What MIGHT go wrong?" → Optimism bias filters answers
-**Pre-Mortem:** "It's 6 months later. It FAILED. Why?" → Liberates honest analysis
+**风险评估：** "什么可能出错？" → 乐观偏见过滤答案
+**预死：** "6个月后。它**失败了**。为什么？" → 释放诚实分析
 
-Research: Pre-mortems increase problem identification by 30%.
+研究：预死 增加问题识别 30%。
 
-## The Process
+## 工作流程
 
-1. **Set the scene:** "It's [date]. This has failed completely."
-2. **Brainstorm causes:** List 10+ failure reasons (no filtering)
-3. **Categorize:** People, Process, Technology, External
-4. **Rate:** Likelihood × Impact (H/M/L)
-5. **Prevent:** Top 3 get specific mitigation actions
-6. **Monitor:** Define early warning signs
+1. **设置场景：** "现在是[日期]。这完全失败了。"
+2. **集思广益原因：** 列出10+个失败原因（不过滤）
+3. **分类：** 人、过程、技术、外部
+4. **评级：** 可能性 × 影响（H/M/L）
+5. **预防：** 前3个获得具体缓解行动
+6. **监控：** 定义早期警告信号
 
-## Output Format
+## 输出格式
 
 ```
-PROJECT: [Name]
-FAILURE SCENARIO: "It's [date]. [Project] has completely failed."
+项目：[名称]
+失败场景："现在是[日期]。[项目]完全失败了。"
 
-WHY IT FAILED:
+为什么失败：
 
-👥 PEOPLE: [Cause] - L×I: H/H | Prevent: [x] | Warning: [y]
-⚙️ PROCESS: [Cause] - L×I: M/H | Prevent: [x] | Warning: [y]
-💻 TECHNOLOGY: [Cause] - L×I: L/H | Prevent: [x] | Warning: [y]
-🌍 EXTERNAL: [Cause] - L×I: M/M | Prevent: [x] | Warning: [y]
+👥 人：[原因] - L×I：H/H | 预防：[x] | 警告：[y]
+⚙️ 过程：[原因] - L×I：M/H | 预防：[x] | 警告：[y]
+💻 技术：[原因] - L×I：L/H | 预防：[x] | 警告：[y]
+🌍 外部：[原因] - L×I：M/M | 预防：[x] | 警告：[y]
 
-TOP 3 PRIORITIES:
-1. [Risk] → [Specific action]
-2. [Risk] → [Specific action]
-3. [Risk] → [Specific action]
+前3个优先事项：
+1. [风险] → [具体行动]
+2. [风险] → [具体行动]
+3. [风险] → [具体行动]
 
-WARNING SIGNS TO MONITOR:
-□ [Early indicator 1]
-□ [Early indicator 2]
+要监控的警告信号：
+□ [早期指标 1]
+□ [早期指标 2]
 ```
 
-## Common Failure Categories
+## 常见失败类别
 
-| Category | Common Causes |
-|----------|---------------|
-| **People** | Key person leaves, skill gaps, misalignment, low buy-in |
-| **Process** | Aggressive timeline, scope creep, dependency issues |
-| **Tech** | Doesn't scale, integration fails, security breach |
-| **External** | Market shift, competitor move, regulation change |
+| 类别 | 常见原因 |
+|------|---------|
+| **人** | 关键人员离开、技能差距、不对齐、低买入 |
+| **过程** | 激进时间表、范围蔓延、依赖问题 |
+| **技术** | 不能扩展、集成失败、安全漏洞 |
+| **外部** | 市场转变、竞争对手行动、监管变化 |
 
-## Integration
+## 组合使用
 
-Compounds with:
-- **inversion-strategist** → Create systematic avoidance strategies
-- **second-order-consequences** → Project impact of prevented failures
-- **first-principles-decomposer** → Question hidden assumptions
-- **mspot-generator** → Validate MSPOT projects before committing
+与以下技能协同增效：
+- **inversion-strategist** - 创建系统避免策略
+- **second-order-consequences** - 预测预防失败的影响
+- **first-principles-decomposer** - 质疑隐藏假设
+- **mspot-generator** - 在承诺之前验证 MSPOT 项目
 
 ---
-See references/examples.md for Artem-specific pre-mortems
+查看 references/examples.md 获取 Artem 特定的预死分析

@@ -1,135 +1,135 @@
-# Refund Template Reference
+# 退款模板参考
 
-Templates are generated for HIGH and MEDIUM severity flags only.
-All templates avoid apostrophes per spec.
+模板仅针对高严重程度和中严重程度的标记生成。
+所有模板根据规范避免撇号。
 
-## Template Types
+## 模板类型
 
-### Email
-Full formal email with subject line. Best for:
-- First contact with merchant
-- Documentation trail
-- Larger amounts
+### 电子邮件
+带有主题行的完整正式电子邮件。适用于：
+- 与商户的首次联系
+- 文档记录
+- 较大金额
 
-### Chat
-Short message for live support. Best for:
-- Quick resolution
-- Real-time support
-- Smaller amounts
+### 聊天
+用于实时支持的简短消息。适用于：
+- 快速解决
+- 实时支持
+- 较小金额
 
-### Dispute
-Formal bank dispute form text. Best for:
-- Unauthorized charges
-- Failed merchant resolution
-- Fraud cases
+### 争议
+正式的银行争议表单文本。适用于：
+- 未经授权的收费
+- 商户解决失败
+- 欺诈案件
 
-## Tone Variants
+## 语气变体
 
-### Concise (default)
-- Direct and professional
-- States facts clearly
-- Requests action politely
+### 简洁（默认）
+- 直接且专业
+- 清晰地陈述事实
+- 礼貌地请求行动
 
-### Firm
-- Assertive language
-- References consumer rights
-- Sets deadlines
-- Mentions escalation options
+### 坚定
+- 断言性语言
+- 参考消费者权利
+- 设定最后期限
+- 提及升级选项
 
-### Friendly
-- Warm and polite
-- Assumes good faith
-- Asks for help
-- Thanks in advance
+### 友好
+- 温暖且礼貌
+- 假设善意
+- 请求帮助
+- 预先致谢
 
-## Template Placeholders
+## 模板占位符
 
-Templates include these placeholders for user to fill:
+模板包含这些占位符供用户填写：
 
-| Placeholder | Description |
-|------------|-------------|
-| `[YOUR NAME]` | Customer name |
-| `[CARD ENDING IN XXXX]` | Last 4 digits of card |
-| `[YOUR PHONE NUMBER]` | Contact phone |
-| `[IF AVAILABLE]` | Reference number if known |
+| 占位符 | 描述 |
+|--------|------|
+| `[YOUR NAME]` | 客户姓名 |
+| `[CARD ENDING IN XXXX]` | 卡号后 4 位 |
+| `[YOUR PHONE NUMBER]` | 联系电话 |
+| `[IF AVAILABLE]` | 参考编号（如已知） |
 
-## Reason Text by Flag Type
+## 按标记类型的原因文本
 
-### Duplicate
-> This appears to be a duplicate charge. I was charged twice for the same transaction.
+### 重复
+> 这看起来是一笔重复收费。我因同一笔交易被扣了两次款。
 
-### Amount Spike
-> This charge is significantly higher than my usual charges with this merchant. I believe there may be a billing error.
+### 金额异常
+> 这笔收费比我通常在该商户的收费高出很多。我认为可能存在计费错误。
 
-### New Merchant
-> I do not recognize this merchant and did not authorize this transaction.
+### 新商户
+> 我不认可此商户，也未授权此笔交易。
 
-### Fee-like
-> This fee was not disclosed or agreed upon. I am requesting a refund of this charge.
+### 费用类
+> 此费用未被披露或同意。我请求退还此笔收费。
 
-### Currency Anomaly
-> This transaction was processed in an unexpected currency. I may have been subject to unauthorized currency conversion.
+### 货币异常
+> 此笔交易以意外货币处理。我可能遭受了未经授权的货币转换。
 
-### Missing Refund
-> I previously disputed this charge but have not received the refund. I am following up on this matter.
+### 缺失退款
+> 我之前对此笔收费有争议，但尚未收到退款。我正在跟进此事。
 
-## Dispute Categories
+## 争议类别
 
-| Flag Type | Dispute Category |
-|-----------|-----------------|
-| Duplicate | Duplicate Transaction |
-| Amount Spike | Incorrect Amount Charged |
-| New Merchant | Unauthorized Transaction / Fraud |
-| Fee-like | Unauthorized Fee |
-| Currency Anomaly | Currency/Conversion Error |
-| Missing Refund | Refund Not Received |
+| 标记类型 | 争议类别 |
+|---------|---------|
+| 重复 | 重复交易 |
+| 金额异常 | 金额错误收费 |
+| 新商户 | 未经授权的交易 / 欺诈 |
+| 费用类 | 未经授权的费用 |
+| 货币异常 | 货币/转换错误 |
+| 缺失退款 | 未收到退款 |
 
-## Example Email (Concise)
-
-```
-Subject: Refund Request - $29.99 charge on January 12, 2026
-
-Hello,
-
-I am requesting a refund for the following transaction:
-
-Merchant: Amazon
-Amount: $29.99
-Date: January 12, 2026
-
-Reason: This appears to be a duplicate charge. I was charged twice for the same transaction.
-
-Please process this refund at your earliest convenience.
-
-Thank you.
-```
-
-## Example Chat (Firm)
+## 电子邮件示例（简洁）
 
 ```
-I need to dispute a charge immediately. $29.99 from Amazon on January 12, 2026. This is a duplicate charge. I need this refunded today or I will file a formal dispute.
+主题：退款请求 - 2026年1月12日的 29.99 美元收费
+
+您好，
+
+我请求退还以下交易：
+
+商户：Amazon
+金额：29.99 美元
+日期：2026年1月12日
+
+原因：这看起来是一笔重复收费。我因同一笔交易被扣了两次款。
+
+请在您方便时尽快处理此退款。
+
+谢谢。
 ```
 
-## Example Dispute (Friendly)
+## 聊天示例（坚定）
 
 ```
-Hi,
+我需要立即争议一笔收费。2026年1月12日从 Amazon 收取的 29.99 美元。这是一笔重复收费。我需要今天退款，否则我将提交正式争议。
+```
 
-I would like to file a dispute for a charge on my account.
+## 争议示例（友好）
 
-Here are the details:
-- Merchant: Amazon
-- Amount: $29.99
-- Date: January 12, 2026
-- My card ends in: [XXXX]
+```
+您好，
 
-Reason for dispute: Duplicate Transaction
+我想就我账户上的一笔收费提交争议。
 
-What happened: This appears to be a duplicate charge. I was charged twice for the same transaction.
+详情如下：
+- 商户：Amazon
+- 金额：29.99 美元
+- 日期：2026年1月12日
+- 我的卡号末四位：[XXXX]
 
-I would appreciate it if you could look into this and help me get a refund. Please let me know if you need any additional information from me.
+争议原因：重复交易
 
-Thank you for your help!
+情况说明：这看起来是一笔重复收费。我因同一笔交易被扣了两次款。
+
+如果您能调查此事并帮助我获得退款，我将不胜感激。如需任何其他信息，请告诉我。
+
+感谢您的帮助！
 
 [YOUR NAME]
 [YOUR PHONE NUMBER]

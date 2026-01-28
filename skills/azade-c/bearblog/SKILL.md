@@ -1,110 +1,110 @@
 ---
 name: bearblog
-description: Create and manage blog posts on Bear Blog (bearblog.dev). Supports extended Markdown, custom attributes, and browser-based publishing.
+description: 在 Bear Blog (bearblog.dev) 上创建和管理博客文章。支持扩展 Markdown、自定义属性和基于浏览器的发布。
 metadata: {"clawdbot":{"emoji":"🐻","homepage":"https://bearblog.dev","requires":{"config":["browser.enabled"]}}}
 ---
 
-# Bear Blog Skill
+# Bear Blog 技能
 
-Create, edit, and manage posts on [Bear Blog](https://bearblog.dev) — a minimal, fast blogging platform.
+在 [Bear Blog](https://bearblog.dev) 上创建、编辑和管理文章 — 一个极简、快速的博客平台。
 
-## Authentication
+## 身份验证
 
-Bear Blog requires browser-based authentication. Log in once via the browser tool, and cookies will persist.
+Bear Blog 需要基于浏览器的身份验证。通过浏览器工具登录一次，Cookie 将保持有效。
 
 ```
 browser action:navigate url:https://bearblog.dev/accounts/login/
 ```
 
-## Creating a Post
+## 创建文章
 
-### Step 1: Navigate to the post editor
+### 步骤 1：导航到文章编辑器
 
 ```
-browser action:navigate url:https://<subdomain>.bearblog.dev/dashboard/post/
+browser action:navigate url:https://<子域名>.bearblog.dev/dashboard/post/
 ```
 
-### Step 2: Fill the editor
+### 步骤 2：填写编辑器
 
-Bear Blog uses a **plain text header format** — no JavaScript DOM manipulation needed!
+Bear Blog 使用**纯文本头部格式**——无需 JavaScript DOM 操作！
 
-The editor has two textareas:
-- `header_content` — metadata attributes (one per line)
-- `body_content` — the actual post content in Markdown
+编辑器有两个文本区域：
+- `header_content` — 元数据属性（每行一个）
+- `body_content` — 实际的 Markdown 文章内容
 
-**Header format:**
+**头部格式：**
 ```
-title: Your Post Title
-link: custom-slug
+title: 您的文章标题
+link: 自定义别名
 published_date: 2026-01-05 14:00
-tags: tag1, tag2, tag3
+tags: 标签1, 标签2, 标签3
 make_discoverable: true
 is_page: false
-class_name: custom-css-class
-meta_description: SEO description for the post
+class_name: 自定义CSS类
+meta_description: 文章的 SEO 描述
 meta_image: https://example.com/image.jpg
 lang: en
-canonical_url: https://original-source.com/post
-alias: alternative-url
+canonical_url: https://原始来源.com/文章
+alias: 替代URL
 ```
 
-**Body format:** Standard Markdown with extensions (see below).
+**主体格式：** 带有扩展的标准 Markdown（见下文）。
 
-The separator `___` (three underscores) is used in templates to separate header from body.
+模板中使用分隔符 `___`（三个下划线）将头部与主体分开。
 
-### Step 3: Publish
+### 步骤 3：发布
 
-Click the publish button or submit the form with `publish: true`.
+点击发布按钮或使用 `publish: true` 提交表单。
 
-## Post Attributes Reference
+## 文章属性参考
 
-| Attribute | Description | Example |
-|-----------|-------------|---------|
-| `title` | Post title (required) | `title: My Post` |
-| `link` | Custom URL slug | `link: my-custom-url` |
-| `published_date` | Publication date/time | `published_date: 2026-01-05 14:30` |
-| `tags` | Comma-separated tags | `tags: tech, ai, coding` |
-| `make_discoverable` | Show in discovery feed | `make_discoverable: true` |
-| `is_page` | Static page vs blog post | `is_page: false` |
-| `class_name` | Custom CSS class (slugified) | `class_name: featured` |
-| `meta_description` | SEO meta description | `meta_description: A post about...` |
-| `meta_image` | Open Graph image URL | `meta_image: https://...` |
-| `lang` | Language code | `lang: fr` |
-| `canonical_url` | Canonical URL for SEO | `canonical_url: https://...` |
-| `alias` | Alternative URL path | `alias: old-url` |
+| 属性 | 描述 | 示例 |
+|------|------|------|
+| `title` | 文章标题（必需） | `title: 我的文章` |
+| `link` | 自定义 URL 别名 | `link: 我的自定义URL` |
+| `published_date` | 发布日期/时间 | `published_date: 2026-01-05 14:30` |
+| `tags` | 逗号分隔的标签 | `tags: 技术, 人工智能, 编程` |
+| `make_discoverable` | 显示在发现订阅源中 | `make_discoverable: true` |
+| `is_page` | 静态页面 vs 博客文章 | `is_page: false` |
+| `class_name` | 自定义 CSS 类（短横线分隔） | `class_name: 精选` |
+| `meta_description` | SEO 元描述 | `meta_description: 关于...的文章` |
+| `meta_image` | Open Graph 图片 URL | `meta_image: https://...` |
+| `lang` | 语言代码 | `lang: zh` |
+| `canonical_url` | SEO 规范 URL | `canonical_url: https://...` |
+| `alias` | 替代 URL 路径 | `alias: 旧URL` |
 
-## Extended Markdown
+## 扩展 Markdown
 
-Bear Blog uses [Mistune](https://github.com/lepture/mistune) with plugins:
+Bear Blog 使用带有插件的 [Mistune](https://github.com/lepture/mistune)：
 
-### Text Formatting
-- `~~strikethrough~~` → ~~strikethrough~~
-- `^superscript^` → superscript
-- `~subscript~` → subscript
-- `==highlighted==` → highlighted (mark)
-- `**bold**` and `*italic*` — standard
+### 文本格式化
+- `~~删除线~~` → ~~删除线~~
+- `^上标^` → 上标
+- `~下标~` → 下标
+- `==高亮==` → 高亮 (mark)
+- `**粗体**` 和 `*斜体*` — 标准格式
 
-### Footnotes
+### 脚注
 ```markdown
-Here's a sentence with a footnote.[^1]
+这里有一句带脚注的句子。[^1]
 
-[^1]: This is the footnote content.
+[^1]: 这是脚注内容。
 ```
 
-### Task Lists
+### 任务列表
 ```markdown
-- [x] Completed task
-- [ ] Incomplete task
+- [x] 已完成任务
+- [ ] 未完成任务
 ```
 
-### Tables
+### 表格
 ```markdown
-| Header 1 | Header 2 |
-|----------|----------|
-| Cell 1   | Cell 2   |
+| 表头 1 | 表头 2 |
+|--------|--------|
+| 单元格 1 | 单元格 2 |
 ```
 
-### Code Blocks
+### 代码块
 ````markdown
 ```python
 def hello():
@@ -112,101 +112,101 @@ def hello():
 ```
 ````
 
-Syntax highlighting via Pygments (specify language after ```).
+通过 Pygments 实现语法高亮（在 ``` 后指定语言）。
 
-### Math (LaTeX)
-- Inline: `$E = mc^2$`
-- Block: `$$\int_0^\infty e^{-x^2} dx$$`
+### 数学公式 (LaTeX)
+- 行内: `$E = mc^2$`
+- 块级: `$$\int_0^\infty e^{-x^2} dx$$`
 
-### Abbreviations
+### 缩写
 ```markdown
-*[HTML]: Hypertext Markup Language
-The HTML specification is maintained by the W3C.
+*[HTML]: 超文本标记语言
+HTML 规范由 W3C 维护。
 ```
 
-### Admonitions
+### 警告框
 ```markdown
 .. note::
-   This is a note admonition.
+   这是一个提示警告。
 
 .. warning::
-   This is a warning.
+   这是一个警告。
 ```
 
-### Table of Contents
+### 目录
 ```markdown
 .. toc::
 ```
 
-## Dynamic Variables
+## 动态变量
 
-Use `{{ variable }}` in your content:
+在内容中使用 `{{ 变量 }}`：
 
-### Blog Variables
-- `{{ blog_title }}` — Blog title
-- `{{ blog_description }}` — Blog meta description
-- `{{ blog_created_date }}` — Blog creation date
-- `{{ blog_last_modified }}` — Time since last modification
-- `{{ blog_last_posted }}` — Time since last post
-- `{{ blog_link }}` — Full blog URL
-- `{{ tags }}` — Rendered tag list with links
+### 博客变量
+- `{{ blog_title }}` — 博客标题
+- `{{ blog_description }}` — 博客元描述
+- `{{ blog_created_date }}` — 博客创建日期
+- `{{ blog_last_modified }}` — 上次修改时间
+- `{{ blog_last_posted }}` — 距上次发布的时间
+- `{{ blog_link }}` — 完整博客 URL
+- `{{ tags }}` — 带链接的渲染标签列表
 
-### Post Variables (in post templates)
-- `{{ post_title }}` — Current post title
-- `{{ post_description }}` — Post meta description
-- `{{ post_published_date }}` — Publication date
-- `{{ post_last_modified }}` — Time since modification
-- `{{ post_link }}` — Full post URL
-- `{{ next_post }}` — Link to next post
-- `{{ previous_post }}` — Link to previous post
+### 文章变量（在文章模板中）
+- `{{ post_title }}` — 当前文章标题
+- `{{ post_description }}` — 文章元描述
+- `{{ post_published_date }}` — 发布日期
+- `{{ post_last_modified }}` — 距修改时间
+- `{{ post_link }}` — 完整文章 URL
+- `{{ next_post }}` — 下一篇文章链接
+- `{{ previous_post }}` — 上一篇文章链接
 
-### Post Listing
+### 文章列表
 ```markdown
 {{ posts }}
 {{ posts limit:5 }}
-{{ posts tag:"tech" }}
-{{ posts tag:"tech,ai" limit:10 order:asc }}
+{{ posts tag:"技术" }}
+{{ posts tag:"技术,人工智能" limit:10 order:asc }}
 {{ posts description:True image:True content:True }}
 ```
 
-Parameters:
-- `tag:` — filter by tag(s), comma-separated
-- `limit:` — max number of posts
-- `order:` — `asc` or `desc` (default: desc)
-- `description:True` — show meta descriptions
-- `image:True` — show meta images
-- `content:True` — show full content (only on pages)
+参数：
+- `tag:` — 按标签筛选，逗号分隔
+- `limit:` — 最大文章数量
+- `order:` — `asc` 或 `desc`（默认：desc）
+- `description:True` — 显示元描述
+- `image:True` — 显示元图片
+- `content:True` — 显示完整内容（仅在页面上）
 
-### Email Signup (upgraded blogs only)
+### 邮件订阅（仅限升级的博客）
 ```markdown
 {{ email-signup }}
 {{ email_signup }}
 ```
 
-## Links
+## 链接
 
-### Standard Links
+### 标准链接
 ```markdown
-[Link text](https://example.com)
-[Link with title](https://example.com "Title text")
+[链接文本](https://example.com)
+[带标题的链接](https://example.com "标题文本")
 ```
 
-### Open in New Tab
-Prefix URL with `tab:`:
+### 在新标签页打开
+在 URL 前加上 `tab:`：
 ```markdown
-[External link](tab:https://example.com)
+[外部链接](tab:https://example.com)
 ```
 
-### Heading Anchors
-Headings automatically get slugified IDs:
+### 标题锚点
+标题自动获得短横线格式的 ID：
 ```markdown
-## My Section Title
+## 我的章节标题
 ```
-Links to: `#my-section-title`
+链接到：`#我的章节标题`
 
-## Typography
+## 排版
 
-Automatic replacements:
+自动替换：
 - `(c)` → ©
 - `(C)` → ©
 - `(r)` → ®
@@ -217,94 +217,94 @@ Automatic replacements:
 - `(P)` → ℗
 - `+-` → ±
 
-## Raw HTML
+## 原始 HTML
 
-HTML is supported directly in Markdown:
+HTML 可直接在 Markdown 中使用：
 
 ```html
 <div class="custom-class" style="text-align: center;">
-  <p>Centered content with custom styling</p>
+  <p>居中内容，附带自定义样式</p>
 </div>
 ```
 
-**Note:** `<script>`, `<object>`, `<embed>`, `<form>` are stripped for free accounts. Iframes are whitelisted (YouTube, Vimeo, Spotify, etc.).
+**注意：** 对于免费账户，`<script>`、`<object>`、`<embed>`、`<form>` 会被移除。Iframe 白名单（YouTube、Vimeo、Spotify 等）。
 
-## Whitelisted Iframe Sources
+## 白名单 Iframe 来源
 
 - youtube.com, youtube-nocookie.com
 - vimeo.com
 - soundcloud.com
 - spotify.com
 - codepen.io
-- google.com (docs, drive, maps)
+- google.com（文档、驱动器、地图）
 - bandcamp.com
-- apple.com (music embeds)
+- apple.com（音乐嵌入）
 - archive.org
-- And more...
+- 等等...
 
-## Dashboard URLs
+## 仪表板 URL
 
-Replace `<subdomain>` with your blog subdomain:
+将 `<子域名>` 替换为您的博客子域名：
 
-- **Blog list:** `https://bearblog.dev/dashboard/`
-- **Dashboard:** `https://<subdomain>.bearblog.dev/dashboard/`
-- **New post:** `https://<subdomain>.bearblog.dev/dashboard/post/`
-- **Edit post:** `https://<subdomain>.bearblog.dev/dashboard/post/<uid>/`
-- **Styles:** `https://<subdomain>.bearblog.dev/dashboard/styles/`
-- **Navigation:** `https://<subdomain>.bearblog.dev/dashboard/nav/`
-- **Analytics:** `https://<subdomain>.bearblog.dev/dashboard/analytics/`
-- **Settings:** `https://<subdomain>.bearblog.dev/dashboard/settings/`
+- **博客列表：** `https://bearblog.dev/dashboard/`
+- **仪表板：** `https://<子域名>.bearblog.dev/dashboard/`
+- **新文章：** `https://<子域名>.bearblog.dev/dashboard/post/`
+- **编辑文章：** `https://<子域名>.bearblog.dev/dashboard/post/<uid>/`
+- **样式：** `https://<子域名>.bearblog.dev/dashboard/styles/`
+- **导航：** `https://<子域名>.bearblog.dev/dashboard/nav/`
+- **分析：** `https://<子域名>.bearblog.dev/dashboard/analytics/`
+- **设置：** `https://<子域名>.bearblog.dev/dashboard/settings/`
 
-## Example: Complete Post
+## 示例：完整文章
 
-**Header content:**
+**头部内容：**
 ```
-title: Getting Started with AI Assistants
+title: AI 助手入门指南
 link: ai-assistants-intro
 published_date: 2026-01-05 15:00
-tags: ai, tutorial, tech
+tags: ai, 教程, 技术
 make_discoverable: true
 is_page: false
-meta_description: A beginner's guide to working with AI assistants
+meta_description: AI 助手使用初学者指南
 lang: en
 ```
 
-**Body content:**
+**主体内容：**
 ```markdown
-AI assistants are changing how we work. Here's what you need to know.
+AI 助手正在改变我们的工作方式。以下是您需要了解的内容。
 
-## Why AI Assistants?
+## 为什么使用 AI 助手？
 
-They help with:
-- [x] Writing and editing
-- [x] Research and analysis
-- [ ] Making coffee (not yet!)
+它们可以帮助：
+- [x] 写作和编辑
+- [x] 研究和分析
+- [ ] 煮咖啡（还没有！）
 
-> "The best tool is the one you actually use." — Someone wise
+> "最好的工具是您实际使用的那一个。" — 某位智者
 
-## Getting Started
+## 入门
 
-Check out [OpenAI](tab:https://openai.com) or [Anthropic](tab:https://anthropic.com) for popular options.
+查看 [OpenAI](tab:https://openai.com) 或 [Anthropic](tab:https://anthropic.com) 了解热门选择。
 
 ---
 
-*What's your experience with AI? Let me know!*
+*您使用 AI 的体验如何？请告诉我！*
 
 {{ previous_post }} {{ next_post }}
 ```
 
-## Tips
+## 提示
 
-1. **Preview before publishing** — Use the preview button to check formatting
-2. **Use templates** — Set up a post template in dashboard settings for consistent headers
-3. **Schedule posts** — Set `published_date` in the future
-4. **Draft mode** — Don't click publish to keep as draft
-5. **Custom CSS** — Add `class_name` and style in your blog's CSS
-6. **SEO** — Always set `meta_description` and `meta_image`
+1. **发布前预览** — 使用预览按钮检查格式
+2. **使用模板** — 在仪表板设置中设置文章模板以保持一致的头部
+3. **定时发布** — 设置未来的 `published_date`
+4. **草稿模式** — 不点击发布以保持为草稿
+5. **自定义 CSS** — 添加 `class_name` 并在博客 CSS 中设置样式
+6. **SEO** — 始终设置 `meta_description` 和 `meta_image`
 
-## Troubleshooting
+## 故障排除
 
-- **Post not showing?** Check `publish` status and `published_date`
-- **Tags not working?** Use comma separation, no quotes
-- **Styling issues?** Check `class_name` is slugified (lowercase, hyphens)
-- **Date format error?** Use `YYYY-MM-DD HH:MM`
+- **文章不显示？** 检查 `publish` 状态和 `published_date`
+- **标签不工作？** 使用逗号分隔，不加引号
+- **样式问题？** 检查 `class_name` 是否为短横线格式（小写、连字符）
+- **日期格式错误？** 使用 `YYYY-MM-DD HH:MM`

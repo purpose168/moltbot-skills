@@ -1,7 +1,8 @@
 {
   "owner": "cotyledonlab",
   "slug": "irish-takeaway",
-  "displayName": "Irish Takeaway Finder",
+  "displayName": "爱尔兰外卖查找器",
+  "description": "通过 Deliveroo/Just Eat 查找爱尔兰附近的外卖店并浏览菜单。使用 Google Places API 进行发现。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768582793215,

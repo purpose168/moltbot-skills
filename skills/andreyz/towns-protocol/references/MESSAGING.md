@@ -1,42 +1,42 @@
-# Messaging API
+# 消息 API
 
-## Send Message with Mention
+## 发送带提及的消息
 
-**MUST include BOTH formatted text AND mentions array:**
+**必须同时包含格式化的文本和 mentions 数组：**
 
 ```typescript
-// Format: Hello <@0x...>!
+// 格式: Hello <@0x...>!
 const text = 'Hello <@' + userId + '>!'
 await handler.sendMessage(channelId, text, {
-  mentions: [{ userId, displayName: 'User' }]
+  mentions: [{ userId, displayName: '用户' }]
 })
 
 // @channel
-await handler.sendMessage(channelId, 'Attention!', {
+await handler.sendMessage(channelId, '请注意！', {
   mentions: [{ atChannel: true }]
 })
 ```
 
-## Threads & Replies
+## 线程和回复
 
 ```typescript
-// Reply in thread
-await handler.sendMessage(channelId, 'Thread reply', { threadId: event.eventId })
+// 在线程中回复
+await handler.sendMessage(channelId, '线程回复', { threadId: event.eventId })
 
-// Reply to specific message
-await handler.sendMessage(channelId, 'Reply', { replyId: messageId })
+// 回复特定消息
+await handler.sendMessage(channelId, '回复', { replyId: messageId })
 ```
 
-## Attachments
+## 附件
 
 ```typescript
-// Image
-attachments: [{ type: 'image', url: 'https://...jpg', alt: 'Description' }]
+// 图片
+attachments: [{ type: 'image', url: 'https://...jpg', alt: '描述' }]
 
-// Miniapp
+// 小程序
 attachments: [{ type: 'miniapp', url: 'https://your-app.com/miniapp.html' }]
 
-// Large file (chunked)
+// 大文件（分块）
 attachments: [{
   type: 'chunked',
   data: readFileSync('./video.mp4'),
@@ -45,32 +45,32 @@ attachments: [{
 }]
 ```
 
-## Message Formatting
+## 消息格式化
 
-Towns has specific rendering behavior:
-- **Use `\n\n`** (double newlines) between sections - single `\n` causes overlap
-- **Never use `---`** as separator - renders as zero-height rule
-- **Use middot** for inline data: `Value: $1.00 · P&L: $0.50`
+Towns 有特定的渲染行为：
+- **使用 `\n\n`**（双换行）分隔各部分 - 单个 `\n` 会导致重叠
+- **永远不要使用 `---`** 作为分隔符 - 渲染为零高度规则
+- **使用中间点** 表示内联数据: `价值: $1.00 · 盈亏: $0.50`
 
 ```typescript
-// Good - double newlines
-const msg = ['**Header**', 'Line 1', 'Line 2'].join('\n\n')
+// 良好实践 - 双换行
+const msg = ['**标题**', '第1行', '第2行'].join('\n\n')
 
-// Bad - single newlines will collapse
+// 不良实践 - 单个换行会重叠
 const bad = lines.join('\n')
 ```
 
-## Edit and Delete
+## 编辑和删除
 
 ```typescript
-// Edit bot's own message
-await handler.editMessage(channelId, eventId, 'Updated text')
+// 编辑机器人自己的消息
+await handler.editMessage(channelId, eventId, '更新后的文本')
 
-// Delete bot's own message
+// 删除机器人自己的消息
 await handler.removeEvent(channelId, eventId)
 ```
 
-## Reactions
+## 反应
 
 ```typescript
 await handler.sendReaction(channelId, messageId, '👍')

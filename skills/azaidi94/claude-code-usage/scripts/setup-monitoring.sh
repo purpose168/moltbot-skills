@@ -1,69 +1,71 @@
 #!/bin/bash
-# Setup Claude Code usage monitoring with Clawdbot cron
+# Claude Code 使用情况监控设置脚本
+# 使用 Clawdbot cron 设置 Claude Code 使用情况监控
 
 set -euo pipefail
 
+# 获取脚本所在目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MONITOR_SCRIPT="$SCRIPT_DIR/monitor-usage.sh"
 
-echo "🦞 Claude Code Usage Monitoring Setup"
+echo "🦞 Claude Code 使用情况监控设置"
 echo ""
 
-# Check if clawdbot is available
+# 检查 clawdbot 是否可用
 if ! command -v clawdbot >/dev/null 2>&1; then
-  echo "❌ clawdbot CLI not found in PATH"
-  echo "Please ensure Clawdbot is installed and accessible"
+  echo "❌ 在 PATH 中找不到 clawdbot CLI"
+  echo "请确保 Clawdbot 已安装且可访问"
   exit 1
 fi
 
-# Check if monitor script exists
+# 检查监控脚本是否存在
 if [ ! -f "$MONITOR_SCRIPT" ]; then
-  echo "❌ Monitor script not found: $MONITOR_SCRIPT"
+  echo "❌ 找不到监控脚本: $MONITOR_SCRIPT"
   exit 1
 fi
 
-# Default: check every 30 minutes
+# 默认：每30分钟检查一次
 INTERVAL="${1:-30m}"
 
-echo "📋 Configuration:"
-echo "   Check interval: $INTERVAL"
-echo "   Monitor script: $MONITOR_SCRIPT"
+echo "📋 配置信息:"
+echo "   检查间隔: $INTERVAL"
+echo "   监控脚本: $MONITOR_SCRIPT"
 echo ""
 
-# Create cron job via Clawdbot
-echo "🔧 Creating cron job..."
+# 通过 Clawdbot 创建 cron 作业
+echo "🔧 正在创建 cron 作业..."
 
-# Use clawdbot's cron add command
-# The job will run the monitor script at the specified interval
-CRON_TEXT="Monitor Claude Code usage resets every $INTERVAL"
+# 使用 clawdbot 的 cron add 命令
+# 该作业将按指定间隔运行监控脚本
+CRON_TEXT="每 $INTERVAL 监控一次 Claude Code 使用情况重置"
 
-# Note: This is a placeholder - actual implementation depends on Clawdbot's cron API
-# For now, we'll output the command that needs to be run
+# 注意：这是一个占位符 - 实际实现取决于 Clawdbot 的 cron API
+# 目前，我们将输出需要运行的命令
 
 cat <<EOF
 
-✅ Setup complete!
+✅ 设置完成！
 
-To activate monitoring, run:
+要激活监控，请运行：
 
   clawdbot cron add \\
     --schedule "$INTERVAL" \\
     --command "$MONITOR_SCRIPT" \\
-    --label "Claude Code Usage Monitor"
+    --label "Claude Code 使用情况监控"
 
-Or add via Clawdbot gateway config:
+或通过 Clawdbot 网关配置添加：
 
   {
     "schedule": "$INTERVAL",
     "command": "$MONITOR_SCRIPT",
-    "label": "Claude Code Usage Monitor"
+    "label": "Claude Code 使用情况监控"
   }
 
-You'll receive notifications when:
-- 🟢 Your 5-hour session quota resets
-- 🟢 Your 7-day weekly quota resets
+当以下情况发生时，您将收到通知：
+- 🟢 您的5小时会话配额已重置
+- 🟢 您的7天每周配额已重置
 
-Test the monitor manually:
+手动测试监控器：
   $MONITOR_SCRIPT
 
 EOF

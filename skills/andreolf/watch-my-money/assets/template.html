@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>watch-my-money · {{MONTH}}</title>
+    <title>看管我的钱 · {{MONTH}}</title>
     <style>
         :root {
             --bg: #fafafa;
@@ -402,33 +402,33 @@
         
         <div class="summary-grid">
             <div class="summary-item">
-                <div class="summary-label">Income</div>
+                <div class="summary-label">收入</div>
                 <div class="summary-value income blur-target">{{INCOME}}</div>
             </div>
             <div class="summary-item">
-                <div class="summary-label">Expenses</div>
+                <div class="summary-label">支出</div>
                 <div class="summary-value expenses blur-target">{{EXPENSES}}</div>
             </div>
             <div class="summary-item">
-                <div class="summary-label">Net</div>
+                <div class="summary-label">净额</div>
                 <div class="summary-value net {{NET_CLASS}} blur-target">{{NET}}</div>
             </div>
         </div>
         
-        <p class="timestamp">Generated {{TIMESTAMP}}</p>
+        <p class="timestamp">生成于 {{TIMESTAMP}}</p>
     </div>
     
     <!-- CONTROLS -->
     <div class="controls">
-        <button class="control-btn" onclick="togglePrivacy()">🔒 Privacy</button>
-        <button class="control-btn" onclick="expandAll()">Expand All</button>
+        <button class="control-btn" onclick="togglePrivacy()">🔒 隐私</button>
+        <button class="control-btn" onclick="expandAll()">全部展开</button>
     </div>
     
     <!-- ALERTS SECTION -->
     <div class="alerts-section {{ALERTS_EMPTY_CLASS}}" id="alerts-section">
         <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-            <span class="section-title">⚠️ Alerts</span>
-            <span class="section-count">{{ALERTS_COUNT}} alerts</span>
+            <span class="section-title">⚠️ 警报</span>
+            <span class="section-count">{{ALERTS_COUNT}} 个警报</span>
         </div>
         <div class="section-content">
             <!-- TEMPLATE: Alert Card
@@ -447,8 +447,8 @@
     <!-- CATEGORIES SECTION -->
     <div class="section" id="categories-section">
         <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-            <span class="section-title">📊 Categories</span>
-            <span class="section-count">{{CATEGORIES_COUNT}} categories</span>
+            <span class="section-title">📊 类别</span>
+            <span class="section-count">{{CATEGORIES_COUNT}} 个类别</span>
         </div>
         <div class="section-content">
             <!-- TEMPLATE: Category Card with Budget
@@ -482,16 +482,16 @@
     <!-- TOP MERCHANTS SECTION -->
     <div class="section" id="merchants-section">
         <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-            <span class="section-title">🏪 Top Merchants</span>
-            <span class="section-count">by spend</span>
+            <span class="section-title">🏪 顶级商户</span>
+            <span class="section-count">按支出排序</span>
         </div>
         <div class="section-content">
             <table class="merchants-table">
                 <thead>
                     <tr>
-                        <th>Merchant</th>
-                        <th>Category</th>
-                        <th style="text-align: right">Amount</th>
+                        <th>商户</th>
+                        <th>类别</th>
+                        <th style="text-align: right">金额</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -512,15 +512,15 @@
     </div>
     
     <!-- FLOATING BUTTON -->
-    <button class="floating-btn" onclick="copySummary()">📋 Copy Summary</button>
+    <button class="floating-btn" onclick="copySummary()">📋 复制摘要</button>
     
     <script>
         function togglePrivacy() {
             document.body.classList.toggle('privacy-mode');
             const btn = document.querySelector('.control-btn');
             btn.textContent = document.body.classList.contains('privacy-mode') 
-                ? '🔓 Show' 
-                : '🔒 Privacy';
+                ? '🔓 显示' 
+                : '🔒 隐私';
         }
         
         function expandAll() {
@@ -535,15 +535,15 @@
             const net = document.querySelector('.summary-value.net')?.textContent || '';
             const month = document.querySelector('.month-title')?.textContent || '';
             
-            const text = `${month}\nIncome: ${income}\nExpenses: ${expenses}\nNet: ${net}`;
+            const text = `${month}\n收入: ${income}\n支出: ${expenses}\n净额: ${net}`;
             
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.querySelector('.floating-btn');
                 btn.classList.add('copied');
-                btn.textContent = '✓ Copied!';
+                btn.textContent = '✓ 已复制！';
                 setTimeout(() => {
                     btn.classList.remove('copied');
-                    btn.textContent = '📋 Copy Summary';
+                    btn.textContent = '📋 复制摘要';
                 }, 1500);
             });
         }

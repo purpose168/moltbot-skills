@@ -1,82 +1,82 @@
 ---
 name: geo-optimizer
 version: 1.0.0
-description: Optimize content for AI citation (GEO). Use when user says "GEO", "generative engine optimization", "AI citation", "get cited by AI", "AI-friendly content", or creating content for ChatGPT/Claude/Perplexity visibility.
+description: 优化AI引用内容（生成式引擎优化）。当用户说"GEO"、"generative engine optimization"、"AI引用"、"被AI引用"、"AI友好内容"或创建ChatGPT/Claude/Perplexity可见性内容时使用。
 ---
 
-# GEO Content Optimizer
+# GEO 内容优化器
 
-## When To Use
-- Creating content for AI citation
-- Refactoring articles for AI compatibility
-- Improving quotability for AI responses
-- Competing in AI-first search
-- Adding authority signals AI systems recognize
+## 何时使用
+- 为AI引用创建内容
+- 重构文章以适应AI兼容性
+- 提高AI响应的可引用性
+- 在AI优先搜索中竞争
+- 添加AI系统识别的权威信号
 
-## Core Concept
-**SEO** = Rank in search results
-**GEO** = Get cited in AI-generated answers
+## 核心概念
+**SEO** = 在搜索结果中排名
+**GEO** = 在AI生成的答案中被引用
 
-## The 8 GEO Dimensions
+## 八个GEO维度
 
-| Dimension | Low (1-2) | High (4-5) |
-|-----------|-----------|------------|
-| Definition Clarity | Vague | Citable definitions with metrics |
-| Quotable Statements | Generic claims | Specific facts with sources |
-| Factual Density | Opinion-heavy | Data-packed |
-| Source Citations | None | Traceable to authority |
-| Q&A Format | Prose only | Explicit Q&A sections |
-| Authority Signals | No credentials | Expert bylines, credentials |
-| Content Freshness | Outdated | Dated citations, recent data |
-| Structural Clarity | Poor hierarchy | Clear headers, lists, tables |
+| 维度 | 低（1-2） | 高（4-5） |
+|------|-----------|-----------|
+| 定义清晰度 | 模糊 | 可引用定义带指标 |
+| 可引用声明 | 通用声明 | 特定事实带来源 |
+| 事实密度 | 意见为主 | 数据丰富 |
+| 来源引用 | 无 | 可追溯到权威 |
+| 问答格式 | 仅散文 | 明确的问答部分 |
+| 权威信号 | 无凭证 | 专家署名、凭证 |
+| 内容新鲜度 | 过时 | 引用日期、最近数据 |
+| 结构清晰度 | 层次差 | 清晰标题、列表、表格 |
 
-## The GEO Score
-Score each dimension 1-5. Total /40:
-- 32-40: AI-ready
-- 24-31: Needs optimization
-- 16-23: Major work needed
+## GEO评分
+每个维度打分1-5。总分/40：
+- 32-40：AI就绪
+- 24-31：需要优化
+- 16-23：需要重大改进
 
-## Quick Wins (30-minute edits)
+## 快速见效（30分钟编辑）
 
-1. Add specific statistics with dates and sources
-2. Create standalone definition paragraphs
-3. Include expert quotes with credentials
-4. Add comparison tables
-5. Create FAQ section with 5-7 questions
-6. Replace vague claims with verified facts
-7. Insert authoritative source citations
+1. 添加带日期和来源的具体统计数据
+2. 创建独立定义段落
+3. 包括带凭证的专家引言
+4. 添加比较表格
+5. 创建FAQ部分，包含5-7个问题
+6. 用经过验证的事实替换模糊声明
+7. 插入权威来源引用
 
-## Output Format
+## 输出格式
 
 ```markdown
-## GEO Audit
-Current Score: [X]/40
+## GEO审计
+当前评分：[X]/40
 
-### Dimension Scores
-| Dimension | Score | Quick Fix |
-|-----------|-------|-----------|
-| [dimension] | [1-5] | [action] |
+### 维度评分
+| 维度 | 评分 | 快速修复 |
+|------|-----|---------|
+| [维度] | [1-5] | [操作] |
 
-## Optimized Content Sections
+## 优化内容部分
 
-### Definition (Citable)
-[Term] is [category] that [function], [key metric].
+### 定义（可引用）
+[术语] 是 [类别]，功能是 [关键指标]。
 
-### Key Statistics
-- [Stat with source and date]
-- [Stat with source and date]
+### 关键统计数据
+- [带来源和日期的统计]
+- [带来源和日期的统计]
 
-### FAQ Section
-**Q: [Common question]?**
-A: [Direct, quotable answer with citation]
+### FAQ部分
+**Q: [常见问题]？**
+A: [直接、可引用的回答带引用]
 ```
 
-## Integration
-Compounds with:
-- **app-planning-skill** → Plan content strategy
-- **writing-plans** → Structure content projects
+## 组合使用
+与以下技能协同增效：
+- **app-planning-skill** → 规划内容策略
+- **writing-plans** → 结构化内容项目
 
 ---
-See references/dimensions.md for scoring details
-See references/patterns.md for optimization patterns
-See references/examples.md for before/after examples
+查看 references/dimensions.md 获取评分详情
+查看 references/patterns.md 获取优化模式
+查看 references/examples.md 获取前后对比示例

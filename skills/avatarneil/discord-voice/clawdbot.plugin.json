@@ -1,7 +1,7 @@
 {
   "id": "discord-voice",
-  "name": "Discord Voice",
-  "description": "Real-time voice conversations in Discord voice channels",
+  "name": "Discord语音",
+  "description": "在Discord语音频道中进行实时语音对话",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -18,7 +18,7 @@
       "streamingSTT": {
         "type": "boolean",
         "default": true,
-        "description": "Use streaming STT for lower latency (Deepgram only)"
+        "description": "使用流式STT以降低延迟(仅Deepgram)"
       },
       "ttsProvider": {
         "type": "string",
@@ -37,17 +37,17 @@
       "bargeIn": {
         "type": "boolean",
         "default": true,
-        "description": "Stop speaking when user starts talking"
+        "description": "用户开始说话时停止说话"
       },
       "model": {
         "type": "string",
-        "description": "LLM model for voice responses (e.g., anthropic/claude-3-5-haiku-latest)"
+        "description": "语音响应的LLM模型(例如 anthropic/claude-3-5-haiku-latest)"
       },
       "thinkLevel": {
         "type": "string",
         "enum": ["off", "low", "medium", "high"],
         "default": "off",
-        "description": "Thinking level for voice responses (lower = faster)"
+        "description": "语音响应的思考级别(越低越快)"
       },
       "allowedUsers": {
         "type": "array",
@@ -69,11 +69,11 @@
       "heartbeatIntervalMs": {
         "type": "number",
         "default": 30000,
-        "description": "Connection health check interval in ms"
+        "description": "连接健康检查间隔(毫秒)"
       },
       "autoJoinChannel": {
         "type": "string",
-        "description": "Voice channel ID to auto-join on startup"
+        "description": "启动时自动加入的语音频道ID"
       },
       "openai": {
         "type": "object",
@@ -102,39 +102,39 @@
   },
   "uiHints": {
     "enabled": {
-      "label": "Enable Discord Voice",
-      "help": "Enable real-time voice conversations in Discord voice channels"
+      "label": "启用Discord语音",
+      "help": "在Discord语音频道中启用实时语音对话"
     },
     "sttProvider": {
-      "label": "Speech-to-Text Provider",
-      "help": "Use 'whisper' (OpenAI) or 'deepgram'"
+      "label": "语音转文本提供商",
+      "help": "使用 'whisper'(OpenAI) 或 'deepgram'"
     },
     "ttsProvider": {
-      "label": "Text-to-Speech Provider",
-      "help": "Use 'openai' or 'elevenlabs'"
+      "label": "文本转语音提供商",
+      "help": "使用 'openai' 或 'elevenlabs'"
     },
     "ttsVoice": {
-      "label": "TTS Voice",
-      "help": "Voice ID for TTS (e.g., 'nova', 'alloy' for OpenAI)"
+      "label": "TTS语音",
+      "help": "TTS的语音ID(例如OpenAI的 'nova'、'alloy')"
     },
     "vadSensitivity": {
-      "label": "VAD Sensitivity",
-      "help": "Voice activity detection sensitivity (low/medium/high)"
+      "label": "VAD灵敏度",
+      "help": "语音活动检测灵敏度(低/中等/高)"
     },
     "allowedUsers": {
-      "label": "Allowed Users",
-      "help": "Discord user IDs allowed to use voice (empty = all allowed)"
+      "label": "允许的用户",
+      "help": "允许使用语音的Discord用户ID(为空 = 全部允许)"
     },
     "openai.apiKey": {
-      "label": "OpenAI API Key",
+      "label": "OpenAI API密钥",
       "sensitive": true
     },
     "elevenlabs.apiKey": {
-      "label": "ElevenLabs API Key",
+      "label": "ElevenLabs API密钥",
       "sensitive": true
     },
     "deepgram.apiKey": {
-      "label": "Deepgram API Key",
+      "label": "Deepgram API密钥",
       "sensitive": true
     }
   }

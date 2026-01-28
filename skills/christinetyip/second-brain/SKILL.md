@@ -1,254 +1,254 @@
 ---
 name: second-brain
-description: Personal knowledge base powered by Ensue for capturing and retrieving understanding. Use when user wants to save knowledge, recall what they know, manage their toolbox, or build on past learnings. Triggers on "save this", "remember", "what do I know about", "add to toolbox", "my notes on", "store this concept".
+description: 基于 Ensue 的个人知识库，用于捕获和检索理解。当用户想要保存知识、回忆他们知道的内容、管理工具箱或基于过去的学习构建时使用。触发词："save this"、"remember"、"what do I know about"、"add to toolbox"、"my notes on"、"store this concept"。
 metadata: {"clawdbot":{"emoji":"🧠","requires":{"env":["ENSUE_API_KEY"]},"primaryEnv":"ENSUE_API_KEY","homepage":"https://ensue-network.ai"}}
 ---
 
-# Second Brain
+# 第二大脑 (Second Brain)
 
-A personal knowledge base for **building understanding that compounds over time**. Not a note dump - a structured system for capturing knowledge you can actually retrieve and use.
+一个用于**构建随时间累积的理解**的个人知识库。不是笔记倾倒场 - 是一个结构化的系统，用于捕获您实际可以检索和使用的知识。
 
-## Philosophy
+## 理念
 
-Your second brain should:
-- **Capture understanding, not just facts** - Write for your future self who forgot the context
-- **Be retrievable** - Structured so you can find things when you need them
-- **Stay evergreen** - No private details, credentials, or time-sensitive data
-- **Reflect real experience** - Only save what you've actually learned or used
+您的第二大脑应该：
+- **捕获理解，而不仅仅是事实** - 为忘记上下文的未来自己而写
+- **可检索** - 结构化，以便在需要时能找到
+- **常青** - 不包含私人详细信息、凭据或时间敏感数据
+- **反映真实经验** - 只保存您真正学过或用过的东西
 
-Before saving: *Will future-me thank me for this?*
+保存前问自己：*未来的我会感谢这个吗？*
 
-## Namespace Structure
-
-```
-public/                           --> Shareable knowledge
-  concepts/                       --> How things work
-    [domain]/                     --> Organize by topic
-      [concept-name]              --> Individual concepts
-  toolbox/                        --> Tools and technologies
-    _index                        --> Master index of tools
-    [category]/                   --> Group by type
-      [tool-name]                 --> Individual tools
-  patterns/                       --> Reusable solutions
-    [domain]/                     --> Design patterns, workflows
-  references/                     --> Quick-reference material
-    [topic]/                      --> Cheatsheets, syntax, APIs
-
-private/                          --> Personal only
-  notes/                          --> Scratchpad, drafts
-  journal/                        --> Dated reflections
-```
-
-**Example domains:** `programming`, `devops`, `design`, `business`, `data`, `security`, `productivity`
-
-## Content Formats
-
-### Concepts
-
-For understanding how something works:
+## 命名空间结构
 
 ```
-CONCEPT NAME
-============
+public/                           --> 可共享的知识
+  concepts/                       --> 事物如何运作
+    [domain]/                     --> 按主题组织
+      [concept-name]              --> 单独的概念
+  toolbox/                        --> 工具和技术
+    _index                        --> 工具的主索引
+    [category]/                   --> 按类型分组
+      [tool-name]                 --> 单独的工具
+  patterns/                       --> 可复用的解决方案
+    [domain]/                     --> 设计模式、工作流
+  references/                     --> 快速参考材料
+    [topic]/                      --> 速查表、语法、API
 
-What it is:
-[One-line definition]
+private/                          --> 仅私人使用
+  notes/                          --> 草稿、草案
+  journal/                        -->  dated reflections
+```
 
-Why it matters:
-[What problem it solves, when you'd need it]
+**示例领域：** `programming`、`devops`、`design`、`business`、`data`、`security`、`productivity`
 
-How it works:
-[Explanation with examples]
-[ASCII diagrams for architecture/flows where helpful]
+## 内容格式
+
+### 概念
+
+用于理解事物如何运作：
+
+```
+概念名称
+=============
+
+它是什么：
+[单行定义]
+
+为什么重要：
+[解决的问题，何时需要它]
+
+它是如何工作的：
+[带示例的解释]
+[在有帮助的地方使用 ASCII 图表示架构/流程]
 
 +----------+      +----------+
-| Client   | ---> | Server   |
+| 客户端   | ---> | 服务器   |
 +----------+      +----------+
 
-Key insight:
-[The "aha" moment - what makes this click]
+关键洞察：
+["啊哈"时刻 - 什么让你恍然大悟]
 
-Related: [links to related concepts]
+相关：[相关概念的链接]
 ```
 
-### Toolbox Entries
+### 工具箱条目
 
-For tools and technologies you've actually used:
-
-```
-TOOL NAME
-
-Category: [category]
-Website: [url]
-Cost: [free/paid/freemium]
-
-What it does:
-[Brief description]
-
-Why I use it:
-[Personal experience - what problem it solved for you]
-
-When to reach for it:
-[Scenarios where this is the right choice]
-
-Quick start:
-[Minimal setup/usage to get going]
-
-Gotchas:
-[Things that tripped you up]
-```
-
-### Patterns
-
-For reusable solutions:
+用于您实际使用过的工具和技术：
 
 ```
-PATTERN NAME
+工具名称
 
-Problem:
-[What situation triggers this pattern]
+类别：[类别]
+网站：[URL]
+成本：[免费/付费/免费增值]
 
-Solution:
-[The approach, with code/pseudocode if relevant]
+它做什么：
+[简要描述]
 
-Trade-offs:
-[Pros and cons, when NOT to use it]
+为什么我用它：
+[个人经验 - 它为你解决了什么问题]
 
-Example:
-[Concrete implementation]
+何时使用它：
+[这是正确选择的场景]
+
+快速开始：
+[最小设置/使用以开始]
+
+陷阱：
+[绊倒你的事情]
 ```
 
-### References
+### 模式
 
-For quick-lookup material:
+用于可复用的解决方案：
 
 ```
-REFERENCE: [TOPIC]
+模式名称
 
-[Organized, scannable content]
-[Tables, lists, code snippets]
-[Minimal prose, maximum signal]
+问题：
+[触发此模式的情况]
+
+解决方案：
+[方法，相关时包含代码/伪代码]
+
+权衡取舍：
+[优缺点，何时不使用]
+
+示例：
+[具体实现]
 ```
 
-## Interaction Rules
+### 参考资料
 
-### Saving Knowledge
+用于快速查找材料：
 
-Always confirm before saving:
-1. "Want me to save this to your second brain?"
-2. Show draft of what will be saved
-3. Save after confirmation
-4. Confirm what was saved and where
+```
+参考资料：[主题]
 
-### Retrieving Knowledge
+[有组织的、可扫描的内容]
+[表格、列表、代码片段]
+[最少散文，最大信号]
+```
 
-When relevant topics come up:
-- Search for existing knowledge
-- Surface related concepts
-- Connect new learning to existing understanding
+## 交互规则
 
-### Maintaining Quality
+### 保存知识
 
-Before saving, verify:
-- Written for future self who forgot context
-- Includes the WHY, not just the WHAT
-- Has concrete examples
-- No credentials, API keys, or private paths
-- Structured for retrieval
+始终在保存前确认：
+1. "想让我把这个保存到你的第二大脑吗？"
+2. 显示将要保存的草稿
+3. 确认后保存
+4. 确认保存了什么以及保存在哪里
 
-## Anti-Patterns
+### 检索知识
 
-1. **Don't auto-save** - Always ask first
-2. **Don't save unused tools** - Only tools actually used
-3. **Don't save half-understood concepts** - Learn first, save after
-4. **Don't include secrets** - No API keys, passwords, tokens
-5. **Don't create shallow entries** - If you can't explain it well, don't save it
-6. **Don't duplicate** - Check if it exists first, update if needed
+当相关主题出现时：
+- 搜索现有知识
+- 显示相关概念
+- 将新学习与现有理解联系起来
 
-## API Usage
+### 维护质量
 
-Use the wrapper script:
+保存前验证：
+- 为忘记上下文的未来自己而写
+- 包含"为什么"，而不仅仅是"什么"
+- 有具体示例
+- 无凭据、API 密钥或私人路径
+- 为检索而结构化
+
+## 反模式
+
+1. **不要自动保存** - 始终先问
+2. **不要保存未使用的工具** - 只保存实际使用的工具
+3. **不要保存半理解的概念** - 先学习，后保存
+4. **不要包含机密** - 无 API 密钥、密码、令牌
+5. **不要创建浅层条目** - 如果无法很好地解释它，就不要保存
+6. **不要重复** - 先检查是否存在，必要时更新
+
+## API 使用
+
+使用包装脚本：
 
 ```bash
 {baseDir}/scripts/ensue-api.sh <method> '<json_args>'
 ```
 
-### Operations
+### 操作
 
-**Search knowledge:**
+**搜索知识：**
 ```bash
-{baseDir}/scripts/ensue-api.sh discover_memories '{"query": "how does X work", "limit": 5}'
+{baseDir}/scripts/ensue-api.sh discover_memories '{"query": "X 是如何工作的", "limit": 5}'
 ```
 
-**List by namespace:**
+**按命名空间列出：**
 ```bash
 {baseDir}/scripts/ensue-api.sh list_keys '{"prefix": "public/concepts/", "limit": 20}'
 ```
 
-**Get specific entries:**
+**获取特定条目：**
 ```bash
 {baseDir}/scripts/ensue-api.sh get_memory '{"key_names": ["public/concepts/programming/recursion"]}'
 ```
 
-**Create entry:**
+**创建条目：**
 ```bash
 {baseDir}/scripts/ensue-api.sh create_memory '{"items":[
-  {"key_name":"public/concepts/domain/name","description":"Short description","value":"Full content","embed":true}
+  {"key_name":"public/concepts/domain/name","description":"简短描述","value":"完整内容","embed":true}
 ]}'
 ```
 
-**Update entry:**
+**更新条目：**
 ```bash
-{baseDir}/scripts/ensue-api.sh update_memory '{"key_name": "public/toolbox/_index", "value": "Updated content"}'
+{baseDir}/scripts/ensue-api.sh update_memory '{"key_name": "public/toolbox/_index", "value": "更新内容"}'
 ```
 
-**Delete entry:**
+**删除条目：**
 ```bash
 {baseDir}/scripts/ensue-api.sh delete_memory '{"key_name": "public/notes/old-draft"}'
 ```
 
-## Toolbox Index
+## 工具箱索引
 
-Maintain `public/toolbox/_index` as master reference:
+维护 `public/toolbox/_index` 作为主参考：
 
 ```
-TOOLBOX INDEX
+工具箱索引
 =============
 
-Categories:
-  languages/      Programming languages
-  frameworks/     Libraries and frameworks
-  devtools/       Development utilities
-  infrastructure/ Deployment, hosting, CI/CD
-  productivity/   Workflow and productivity tools
-  data/           Databases, analytics, data tools
+类别：
+  languages/      编程语言
+  frameworks/     库和框架
+  devtools/       开发工具
+  infrastructure/ 部署、托管、CI/CD
+  productivity/   工作流和生产工具
+  data/           数据库、分析、数据工具
 
-Recent additions:
-  [tool] - [one-line description]
+最近添加：
+  [工具] - [单行描述]
 
-Browse: "show my toolbox" or "what tools do I have for [category]"
+浏览："显示我的工具箱"或"[类别] 有什么工具"
 ```
 
-## Intent Mapping
+## 意图映射
 
-| User says | Action |
-|-----------|--------|
-| "save this", "remember this" | Draft entry, confirm, save |
-| "what do I know about X" | Search and retrieve relevant entries |
-| "add [tool] to toolbox" | Create toolbox entry |
-| "list my [domain] concepts" | list_keys for that namespace |
-| "show my toolbox" | Show toolbox index |
-| "update [entry]" | Fetch, show diff, update |
-| "delete [entry]" | Confirm, delete |
-| "search for [topic]" | Semantic search across all knowledge |
+| 用户说 | 操作 |
+|--------|------|
+| "保存这个"、"记住这个" | 起草条目，确认，保存 |
+| "关于 X 我知道什么" | 搜索和检索相关条目 |
+| "将 [工具] 添加到工具箱" | 创建工具箱条目 |
+| "列出我的 [领域] 概念" | 列出该命名空间的键 |
+| "显示我的工具箱" | 显示工具箱索引 |
+| "更新 [条目]" | 获取，显示差异，更新 |
+| "删除 [条目]" | 确认，删除 |
+| "搜索 [主题]" | 跨所有知识进行语义搜索 |
 
-## Setup
+## 初始设置
 
-Requires `ENSUE_API_KEY` environment variable.
+需要 `ENSUE_API_KEY` 环境变量。
 
-Get your key at: https://www.ensue-network.ai/dashboard
+获取密钥：https://www.ensue-network.ai/dashboard
 
-Configure in clawdbot.json:
+在 clawdbot.json 中配置：
 ```json
 "skills": {
   "entries": {
@@ -259,8 +259,8 @@ Configure in clawdbot.json:
 }
 ```
 
-## Security
+## 安全性
 
-- **NEVER** log or display the API key
-- **NEVER** store credentials, tokens, or secrets in entries
-- **NEVER** include personal file paths or system details
+- **永远不要** 记录或显示 API 密钥
+- **永远不要** 在条目中存储凭据、令牌或机密
+- **永远不要** 包含个人文件路径或系统详细信息

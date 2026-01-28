@@ -1,19 +1,19 @@
 ---
 name: ga4-analytics
-description: "Google Analytics 4, Search Console, and Indexing API toolkit. Analyze website traffic, page performance, user demographics, real-time visitors, search queries, and SEO metrics. Use when the user asks to: check site traffic, analyze page views, see traffic sources, view user demographics, get real-time visitor data, check search console queries, analyze SEO performance, request URL re-indexing, inspect index status, compare date ranges, check bounce rates, view conversion data, or get e-commerce revenue. Requires a Google Cloud service account with GA4 and Search Console access."
+description: "Google Analytics 4、Search Console 和 Indexing API 工具包。分析网站流量、页面性能、用户人口统计、实时访客、搜索查询和 SEO 指标。当用户要求：检查网站流量、分析页面浏览量、查看流量来源、查看用户人口统计、获取实时访客数据、检查 Search Console 查询、分析 SEO 性能、请求 URL 重新索引、检查索引状态、比较日期范围、查看跳出率、查看转化数据或获取电商收入时使用。需要具有 GA4 和 Search Console 访问权限的 Google Cloud 服务账户。"
 ---
 
-# GA4 Analytics Toolkit
+# GA4 分析工具包
 
-## Setup
+## 设置
 
-Install dependencies:
+安装依赖项：
 
 ```bash
 cd scripts && npm install
 ```
 
-Configure credentials by creating a `.env` file in the project root:
+通过在项目根目录创建 `.env` 文件来配置凭据：
 
 ```
 GA4_PROPERTY_ID=123456789
@@ -23,20 +23,20 @@ SEARCH_CONSOLE_SITE_URL=https://your-domain.com
 GA4_DEFAULT_DATE_RANGE=30d
 ```
 
-**Prerequisites**: A Google Cloud project with the Analytics Data API, Search Console API, and Indexing API enabled. A service account with access to your GA4 property and Search Console.
+**先决条件**：需要启用 Analytics Data API、Search Console API 和 Indexing API 的 Google Cloud 项目。还需要对您的 GA4 属性和 Search Console 具有访问权限的服务账户。
 
-## Quick Start
+## 快速开始
 
-| User says | Function to call |
+| 用户说 | 要调用的函数 |
 |-----------|-----------------|
-| "Show me site traffic for the last 30 days" | `siteOverview("30d")` |
-| "What are my top search queries?" | `searchConsoleOverview("30d")` |
-| "Who's on the site right now?" | `liveSnapshot()` |
-| "Reindex these URLs" | `reindexUrls(["https://example.com/page1", ...])` |
-| "Compare this month vs last month" | `compareDateRanges({startDate: "30daysAgo", endDate: "today"}, {startDate: "60daysAgo", endDate: "31daysAgo"})` |
-| "What pages get the most traffic?" | `contentPerformance("30d")` |
+| "显示最近30天的网站流量" | `siteOverview("30d")` |
+| "我排名靠前的搜索查询是什么？" | `searchConsoleOverview("30d")` |
+| "网站上现在有哪些人？" | `liveSnapshot()` |
+| "重新索引这些 URL" | `reindexUrls(["https://example.com/page1", ...])` |
+| "比较本月与上月" | `compareDateRanges({startDate: "30daysAgo", endDate: "today"}, {startDate: "60daysAgo", endDate: "31daysAgo"})` |
+| "哪些页面获得最多流量？" | `contentPerformance("30d")` |
 
-Execute functions by importing from `scripts/src/index.ts`:
+通过从 `scripts/src/index.ts` 导入来执行函数：
 
 ```typescript
 import { siteOverview, searchConsoleOverview } from './scripts/src/index.js';
@@ -44,115 +44,115 @@ import { siteOverview, searchConsoleOverview } from './scripts/src/index.js';
 const overview = await siteOverview('30d');
 ```
 
-Or run directly with tsx:
+或直接使用 tsx 运行：
 
 ```bash
 npx tsx scripts/src/index.ts
 ```
 
-## Workflow Pattern
+## 工作流程模式
 
-Every analysis follows three phases:
+每个分析都遵循三个阶段：
 
-### 1. Analyze
-Run API functions. Each call hits the Google APIs and returns structured data.
+### 1. 分析
+运行 API 函数。每次调用都会访问 Google API 并返回结构化数据。
 
-### 2. Auto-Save
-All results automatically save as timestamped JSON files to `results/{category}/`. File naming pattern: `YYYYMMDD_HHMMSS__operation__extra_info.json`
+### 2. 自动保存
+所有结果会自动保存到 `results/{category}/` 目录下带时间戳的 JSON 文件。文件命名模式：`YYYYMMDD_HHMMSS__operation__extra_info.json`
 
-### 3. Summarize
-After analysis, read the saved JSON files and create a markdown summary in `results/summaries/` with data tables, trends, and recommendations.
+### 3. 总结
+分析后，读取保存的 JSON 文件并在 `results/summaries/` 中创建包含数据表、趋势和建议的 markdown 摘要。
 
-## High-Level Functions
+## 高层函数
 
-### GA4 Analytics
+### GA4 分析
 
-| Function | Purpose | What it gathers |
+| 函数 | 用途 | 收集内容 |
 |----------|---------|----------------|
-| `siteOverview(dateRange?)` | Comprehensive site snapshot | Page views, traffic sources, demographics, events |
-| `trafficAnalysis(dateRange?)` | Traffic deep-dive | Sources, sessions by source/medium, new vs returning |
-| `contentPerformance(dateRange?)` | Top pages analysis | Page views, landing pages, exit pages |
-| `userBehavior(dateRange?)` | Engagement patterns | Demographics, events, daily engagement metrics |
-| `compareDateRanges(range1, range2)` | Period comparison | Side-by-side metrics for two date ranges |
-| `liveSnapshot()` | Real-time data | Active users, current pages, current events |
+| `siteOverview(dateRange?)` | 综合网站快照 | 页面浏览量、流量来源、人口统计、事件 |
+| `trafficAnalysis(dateRange?)` | 流量深入分析 | 来源、按来源/媒介的会话数、新访客与回访访客 |
+| `contentPerformance(dateRange?)` | 热门页面分析 | 页面浏览量、着陆页、退出页 |
+| `userBehavior(dateRange?)` | 参与度模式 | 人口统计、事件、每日参与度指标 |
+| `compareDateRanges(range1, range2)` | 期间比较 | 两个日期范围的并排指标 |
+| `liveSnapshot()` | 实时数据 | 活跃用户、当前页面、当前事件 |
 
 ### Search Console
 
-| Function | Purpose | What it gathers |
+| 函数 | 用途 | 收集内容 |
 |----------|---------|----------------|
-| `searchConsoleOverview(dateRange?)` | SEO snapshot | Top queries, pages, device, country breakdown |
-| `keywordAnalysis(dateRange?)` | Keyword deep-dive | Queries with device breakdown |
-| `seoPagePerformance(dateRange?)` | Page SEO metrics | Top pages by clicks, country breakdown |
+| `searchConsoleOverview(dateRange?)` | SEO 快照 | 排名靠前的查询、页面、设备、国家分布 |
+| `keywordAnalysis(dateRange?)` | 关键词深入分析 | 带设备分布的查询 |
+| `seoPagePerformance(dateRange?)` | 页面 SEO 指标 | 按点击量排名靠前的页面、国家分布 |
 
-### Indexing
+### 索引
 
-| Function | Purpose |
+| 函数 | 用途 |
 |----------|---------|
-| `reindexUrls(urls)` | Request re-indexing for multiple URLs |
-| `checkIndexStatus(urls)` | Check if URLs are indexed |
+| `reindexUrls(urls)` | 请求多个 URL 重新索引 |
+| `checkIndexStatus(urls)` | 检查 URL 是否已索引 |
 
-### Utility
+### 工具函数
 
-| Function | Purpose |
+| 函数 | 用途 |
 |----------|---------|
-| `getAvailableFields()` | List all available GA4 dimensions and metrics |
+| `getAvailableFields()` | 列出所有可用的 GA4 维度和指标 |
 
-### Individual API Functions
+### 单独的 API 函数
 
-For granular control, import specific functions from the API modules. See [references/api-reference.md](references/api-reference.md) for the complete list of 30+ API functions with parameters, types, and examples.
+要进行细粒度控制，请从 API 模块导入特定函数。请参阅 [references/api-reference.md](references/api-reference.md) 获取包含参数、类型和示例的 30+ API 函数的完整列表。
 
-## Date Ranges
+## 日期范围
 
-All functions accept flexible date range formats:
+所有函数都接受灵活的日期范围格式：
 
-| Format | Example | Description |
+| 格式 | 示例 | 描述 |
 |--------|---------|-------------|
-| Shorthand | `"7d"`, `"30d"`, `"90d"` | Days ago to today |
-| Explicit | `{startDate: "2024-01-01", endDate: "2024-01-31"}` | Specific dates |
-| GA4 relative | `{startDate: "30daysAgo", endDate: "today"}` | GA4 relative format |
+| 简写 | `"7d"`、`"30d"`、`"90d"` | 从多少天前到今天 |
+| 显式 | `{startDate: "2024-01-01", endDate: "2024-01-31"}` | 特定日期 |
+| GA4 相对格式 | `{startDate: "30daysAgo", endDate: "today"}` | GA4 相对格式 |
 
-Default is `"30d"` (configurable via `GA4_DEFAULT_DATE_RANGE` in `.env`).
+默认值为 `"30d"`（可通过 `.env` 中的 `GA4_DEFAULT_DATE_RANGE` 配置）。
 
-## Results Storage
+## 结果存储
 
-Results auto-save to `results/` with this structure:
+结果自动保存到 `results/`，结构如下：
 
 ```
 results/
-├── reports/          # GA4 standard reports
-├── realtime/         # Real-time snapshots
-├── searchconsole/    # Search Console data
-├── indexing/         # Indexing API results
-└── summaries/        # Human-readable markdown summaries
+├── reports/          # GA4 标准报告
+├── realtime/         # 实时快照
+├── searchconsole/    # Search Console 数据
+├── indexing/         # Indexing API 结果
+└── summaries/        # 人类可读的 markdown 摘要
 ```
 
-### Managing Results
+### 管理结果
 
 ```typescript
 import { listResults, loadResult, getLatestResult } from './scripts/src/index.js';
 
-// List recent results
+// 列出最近的结果
 const files = listResults('reports', 10);
 
-// Load a specific result
+// 加载特定结果
 const data = loadResult(files[0]);
 
-// Get most recent result for an operation
+// 获取某个操作最近的结果
 const latest = getLatestResult('reports', 'site_overview');
 ```
 
-## Common Dimensions and Metrics
+## 常见维度和指标
 
-### Dimensions
-`pagePath`, `pageTitle`, `sessionSource`, `sessionMedium`, `country`, `deviceCategory`, `browser`, `date`, `eventName`, `landingPage`, `newVsReturning`
+### 维度
+`pagePath`、`pageTitle`、`sessionSource`、`sessionMedium`、`country`、`deviceCategory`、`browser`、`date`、`eventName`、`landingPage`、`newVsReturning`
 
-### Metrics
-`screenPageViews`, `activeUsers`, `sessions`, `newUsers`, `bounceRate`, `averageSessionDuration`, `engagementRate`, `conversions`, `totalRevenue`, `eventCount`
+### 指标
+`screenPageViews`、`activeUsers`、`sessions`、`newUsers`、`bounceRate`、`averageSessionDuration`、`engagementRate`、`conversions`、`totalRevenue`、`eventCount`
 
-## Tips
+## 提示
 
-1. **Specify date ranges** — "last 7 days" or "last 90 days" gives different insights than the default 30 days
-2. **Request summaries** — After pulling data, ask for a markdown summary with tables and insights
-3. **Compare periods** — Use `compareDateRanges()` to spot trends (this month vs last month)
-4. **Check real-time data** — `liveSnapshot()` shows who's on the site right now
-5. **Combine GA4 + Search Console** — Traffic data plus search query data gives the full picture
+1. **指定日期范围** — "最近7天"或"最近90天"与默认的30天会给出不同的见解
+2. **请求摘要** — 拉取数据后，请求带有表格和见解的 markdown 摘要
+3. **比较期间** — 使用 `compareDateRanges()` 发现趋势（本月与上月对比）
+4. **检查实时数据** — `liveSnapshot()` 显示网站上现在有哪些人
+5. **结合 GA4 + Search Console** — 流量数据加上搜索查询数据给出完整画面

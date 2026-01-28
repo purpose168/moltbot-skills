@@ -1,11 +1,11 @@
 {
   "owner": "borahm",
   "slug": "whoop",
-  "displayName": "WHOOP",
+  "displayName": "Whoop 数据查询",
   "latest": {
-    "version": "0.1.0",
-    "publishedAt": 1769169054224,
-    "commit": "https://github.com/clawdbot/skills/commit/3c294d451a2905d5728c78279f20c9018d7cd00c"
+    "version": "1.0.0",
+    "publishedAt": 1767711120734,
+    "commit": "https://github.com/clawdbot/skills/commit/f9c254b5c74c4f50602961af7c5d65dc219f9177"
   },
   "history": []
 }

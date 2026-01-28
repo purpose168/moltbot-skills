@@ -1,4 +1,4 @@
-// Package cli defines the command-line interface for mog.
+// Package cli 定义了 mog 的命令行接口。
 package cli
 
 import (
@@ -8,39 +8,39 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// ClientFactory is a function that creates a Graph client.
-// This allows dependency injection for testing.
+// ClientFactory 是一个创建 Graph 客户端的函数类型。
+// 这允许进行依赖注入以便于测试。
 type ClientFactory func() (graph.Client, error)
 
-// Root is the top-level CLI structure.
+// Root 是命令行工具的顶层结构体。
 type Root struct {
-	// Global flags
-	AIHelp  bool        `name:"ai-help" help:"Show detailed help for AI/LLM agents"`
-	JSON    bool        `help:"Output JSON to stdout (best for scripting)" xor:"format"`
-	Plain   bool        `help:"Output stable, parseable text to stdout (TSV; no colors)" xor:"format"`
-	Verbose bool        `help:"Show full IDs and extra details" short:"v"`
-	Force   bool        `help:"Skip confirmations for destructive commands"`
-	NoInput bool        `help:"Never prompt; fail instead (useful for CI)" name:"no-input"`
-	Version VersionFlag `name:"version" help:"Print version and exit"`
+	// 全局标志
+	AIHelp  bool        `name:"ai-help" help:"显示 AI/LLM 智能体的详细帮助信息"`
+	JSON    bool        `help:"输出 JSON 到标准输出 (最适合脚本处理)" xor:"format"`
+	Plain   bool        `help:"输出稳定的、可解析的文本到标准输出 (TSV格式; 无颜色)" xor:"format"`
+	Verbose bool        `help:"显示完整 ID 和额外详细信息" short:"v"`
+	Force   bool        `help:"跳过破坏性命令的确认提示"`
+	NoInput bool        `help:"从不提示; 直接失败 (适用于 CI 环境)" name:"no-input"`
+	Version VersionFlag `name:"version" help:"打印版本信息并退出"`
 
-	// Subcommands
-	Auth     AuthCmd     `cmd:"" help:"Authentication"`
-	Mail     MailCmd     `cmd:"" aliases:"email" help:"Mail operations"`
-	Calendar CalendarCmd `cmd:"" aliases:"cal" help:"Calendar operations"`
-	Drive    DriveCmd    `cmd:"" help:"OneDrive file operations"`
-	Contacts ContactsCmd `cmd:"" help:"Contact operations"`
-	Tasks    TasksCmd    `cmd:"" aliases:"todo" help:"Microsoft To-Do tasks"`
-	Excel    ExcelCmd    `cmd:"" help:"Excel spreadsheet operations"`
-	OneNote  OneNoteCmd  `cmd:"" aliases:"onenote" help:"OneNote operations"`
-	Word     WordCmd     `cmd:"" help:"Word document operations"`
-	PPT      PPTCmd      `cmd:"" aliases:"ppt,powerpoint" help:"PowerPoint operations"`
+	// 子命令
+	Auth     AuthCmd     `cmd:"" help:"身份验证"`
+	Mail     MailCmd     `cmd:"" aliases:"email" help:"邮件操作"`
+	Calendar CalendarCmd `cmd:"" aliases:"cal" help:"日历操作"`
+	Drive    DriveCmd    `cmd:"" help:"OneDrive 文件操作"`
+	Contacts ContactsCmd `cmd:"" help:"联系人操作"`
+	Tasks    TasksCmd    `cmd:"" aliases:"todo" help:"Microsoft To-Do 任务"`
+	Excel    ExcelCmd    `cmd:"" help:"Excel 电子表格操作"`
+	OneNote  OneNoteCmd  `cmd:"" aliases:"onenote" help:"OneNote 操作"`
+	Word     WordCmd     `cmd:"" help:"Word 文档操作"`
+	PPT      PPTCmd      `cmd:"" aliases:"ppt,powerpoint" help:"PowerPoint 操作"`
 
-	// ClientFactory allows injecting a custom client factory for testing.
-	// If nil, graph.NewClient is used.
+	// ClientFactory 允许注入自定义客户端工厂以用于测试。
+	// 如果为 nil，则使用 graph.NewClient。
 	ClientFactory ClientFactory `kong:"-"`
 }
 
-// GetClient returns a Graph client using the configured factory or default.
+// GetClient 使用配置的工厂或默认值返回 Graph 客户端。
 func (r *Root) GetClient() (graph.Client, error) {
 	if r.ClientFactory != nil {
 		return r.ClientFactory()
@@ -48,10 +48,10 @@ func (r *Root) GetClient() (graph.Client, error) {
 	return graph.NewClient()
 }
 
-// VersionFlag handles --version.
+// VersionFlag 处理 --version 参数。
 type VersionFlag string
 
-// BeforeApply prints version and exits.
+// BeforeApply 在参数应用前打印版本信息并退出。
 func (v VersionFlag) BeforeApply() error {
 	fmt.Println(v)
 	os.Exit(0)

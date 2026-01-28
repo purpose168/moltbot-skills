@@ -1,87 +1,135 @@
 /**
- * Streaming Speech-to-Text via Deepgram WebSocket
+ * 流式语音转文本模块
  * 
- * Provides real-time transcription as audio streams in,
- * significantly reducing latency compared to batch transcription.
+ * 通过Deepgram WebSocket实现实时语音转文本
+ * 相比传统的批量转录，流式STT可以显著降低延迟（约1秒）
+ * 
+ * 主要特点：
+ * - 实时转录：音频数据一边输入，结果一边输出
+ * - 临时结果：可以获取中间转录结果，提供即时反馈
+ * - 自动保活：定期发送心跳保持连接活跃
+ * - 自动重连：连接断开时自动尝试重新连接
  */
 
 import { EventEmitter } from "node:events";
 import WebSocket from "ws";
 import type { DiscordVoiceConfig } from "./config.js";
 
+/**
+ * 流式STT事件接口
+ */
 export interface StreamingSTTEvents {
+  /** 转录文本事件
+   * @param text - 转录的文本内容
+   * @param isFinal - 是否为最终结果
+   * @param confidence - 转录置信度
+   */
   transcript: (text: string, isFinal: boolean, confidence?: number) => void;
+  /** 错误事件 */
   error: (error: Error) => void;
+  /** 连接关闭事件 */
   close: () => void;
+  /** 连接就绪事件 */
   ready: () => void;
 }
 
+/**
+ * 流式STT提供商接口
+ * 继承自EventEmitter，支持事件监听
+ */
 export interface StreamingSTTProvider extends EventEmitter {
   on<K extends keyof StreamingSTTEvents>(event: K, listener: StreamingSTTEvents[K]): this;
   emit<K extends keyof StreamingSTTEvents>(event: K, ...args: Parameters<StreamingSTTEvents[K]>): boolean;
   
-  /** Send audio chunk to be transcribed */
+  /** 发送音频数据进行转录 */
   sendAudio(chunk: Buffer): void;
   
-  /** Signal end of audio stream */
+  /** 标记音频流结束 */
   finalize(): void;
   
-  /** Close the connection */
+  /** 关闭连接 */
   close(): void;
   
-  /** Check if connection is ready */
+  /** 检查连接是否就绪 */
   isReady(): boolean;
 }
 
 /**
- * Deepgram Streaming STT Provider
+ * Deepgram流式语音转文本提供商
  * 
- * Uses WebSocket connection for real-time transcription.
- * Supports interim results for ultra-low latency feedback.
+ * 使用WebSocket连接到Deepgram API进行实时转录
+ * 
+ * 工作流程：
+ * 1. 建立WebSocket连接到Deepgram
+ * 2. 持续发送音频数据
+ * 3. 接收实时转录结果（临时和最终）
+ * 4. 处理各种事件（语音开始、语句结束等）
  */
 export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTProvider {
+  /** WebSocket连接实例 */
   private ws: WebSocket | null = null;
+  /** Deepgram API密钥 */
   private apiKey: string;
+  /** 使用的模型名称 */
   private model: string;
+  /** 连接是否就绪 */
   private ready = false;
+  /** 连接是否已关闭 */
   private closed = false;
+  /** 重连尝试次数 */
   private reconnectAttempts = 0;
+  /** 最大重连尝试次数 */
   private maxReconnectAttempts = 3;
+  /** 心跳保活定时器 */
   private keepAliveInterval: ReturnType<typeof setInterval> | null = null;
+  /** 音频采样率 */
   private sampleRate: number;
+  /** 是否启用临时结果 */
   private interimResults: boolean;
+  /** 端点检测时间（毫秒），用于检测用户是否停止说话 */
   private endpointing: number;
+  /** 语句结束等待时间（毫秒） */
   private utteranceEndMs: number;
   
-  // Buffer for audio chunks received before connection is ready
+  /** 连接建立前缓冲的音频数据 */
   private pendingAudioChunks: Buffer[] = [];
-  private maxPendingChunks = 500; // ~5 seconds of audio at 48kHz
+  /** 最大缓冲块数（约5秒音频 @ 48kHz） */
+  private maxPendingChunks = 500;
 
+  /**
+   * 创建DeepgramStreamingSTT实例
+   * 
+   * @param config - Discord语音配置对象
+   * @param options - 可选的流式STT配置
+   */
   constructor(config: DiscordVoiceConfig, options?: {
     sampleRate?: number;
     interimResults?: boolean;
-    endpointing?: number;      // ms of silence to detect end of utterance
-    utteranceEndMs?: number;   // ms to wait after utterance end before finalizing
+    endpointing?: number;      // 毫秒，静音多长时间认为语句结束
+    utteranceEndMs?: number;   // 毫秒，语句结束后等待多长时间返回最终结果
   }) {
     super();
     this.apiKey = config.deepgram?.apiKey || process.env.DEEPGRAM_API_KEY || "";
     this.model = config.deepgram?.model || "nova-2";
     this.sampleRate = options?.sampleRate ?? 48000;
     this.interimResults = options?.interimResults ?? true;
-    this.endpointing = options?.endpointing ?? 300;  // 300ms silence detection
+    this.endpointing = options?.endpointing ?? 300;  // 300ms静音检测
     this.utteranceEndMs = options?.utteranceEndMs ?? 1000;
 
     if (!this.apiKey) {
-      throw new Error("Deepgram API key required for streaming STT");
+      throw new Error("流式STT需要Deepgram API密钥");
     }
 
     this.connect();
   }
 
+  /**
+   * 建立WebSocket连接
+   */
   private connect(): void {
     if (this.closed) return;
 
-    // Build Deepgram streaming URL with parameters
+    // 构建Deepgram流式URL及参数
     const params = new URLSearchParams({
       model: this.model,
       encoding: "linear16",
@@ -107,9 +155,9 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
       this.ready = true;
       this.reconnectAttempts = 0;
       
-      // Flush any pending audio chunks that were buffered during connection
+      // 发送连接建立前缓冲的音频数据
       if (this.pendingAudioChunks.length > 0) {
-        console.log(`[streaming-stt] Connection ready, flushing ${this.pendingAudioChunks.length} buffered audio chunks`);
+        console.log(`[streaming-stt] 连接就绪，发送 ${this.pendingAudioChunks.length} 个缓冲的音频块`);
         for (const chunk of this.pendingAudioChunks) {
           this.ws!.send(chunk);
         }
@@ -118,10 +166,9 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
       
       this.emit("ready");
       
-      // Start keep-alive pings every 10 seconds
+      // 每10秒发送心跳保活
       this.keepAliveInterval = setInterval(() => {
         if (this.ws?.readyState === WebSocket.OPEN) {
-          // Send keep-alive message (empty JSON object)
           this.ws.send(JSON.stringify({ type: "KeepAlive" }));
         }
       }, 10000);
@@ -132,7 +179,7 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
         const msg = JSON.parse(data.toString()) as DeepgramMessage;
         this.handleMessage(msg);
       } catch (err) {
-        // Ignore parse errors for non-JSON messages
+        // 忽略非JSON消息的解析错误
       }
     });
 
@@ -153,6 +200,14 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
     });
   }
 
+  /**
+   * 处理Deepgram消息
+   * 
+   * 消息类型：
+   * - Results: 转录结果（临时或最终）
+   * - UtteranceEnd: 语句结束
+   * - SpeechStarted: 语音开始
+   */
   private handleMessage(msg: DeepgramMessage): void {
     if (msg.type === "Results" && msg.channel?.alternatives?.[0]) {
       const alt = msg.channel.alternatives[0];
@@ -163,13 +218,16 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
         this.emit("transcript", text, isFinal, alt.confidence);
       }
     } else if (msg.type === "UtteranceEnd") {
-      // Utterance ended - can be used to trigger processing
-      // The final transcript should have already been emitted
+      // 语句结束 - 可以用于触发后续处理
+      // 最终转录结果应该已经发送
     } else if (msg.type === "SpeechStarted") {
-      // Speech detected - could use for barge-in detection
+      // 语音检测开始 - 可用于打断检测
     }
   }
 
+  /**
+   * 清除心跳定时器
+   */
   private clearKeepAlive(): void {
     if (this.keepAliveInterval) {
       clearInterval(this.keepAliveInterval);
@@ -177,26 +235,42 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
     }
   }
 
+  /**
+   * 发送音频数据进行转录
+   * 
+   * 如果连接尚未就绪，音频数据会被缓冲
+   * 缓冲达到上限时会丢弃最旧的数据
+   * 
+   * @param chunk - 音频数据块
+   */
   sendAudio(chunk: Buffer): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(chunk);
     } else if (!this.closed) {
-      // Buffer audio while connection is establishing
+      // 连接未就绪时缓冲音频数据
       this.pendingAudioChunks.push(chunk);
-      // Prevent unlimited buffering
+      // 防止无限缓冲
       if (this.pendingAudioChunks.length > this.maxPendingChunks) {
-        this.pendingAudioChunks.shift(); // Drop oldest chunk
+        this.pendingAudioChunks.shift(); // 丢弃最旧的块
       }
     }
   }
 
+  /**
+   * 标记音频流结束
+   * 
+   * 发送CloseStream消息以获取最终转录结果
+   */
   finalize(): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
-      // Send close stream message to get final results
+      // 发送关闭流消息以获取最终结果
       this.ws.send(JSON.stringify({ type: "CloseStream" }));
     }
   }
 
+  /**
+   * 关闭连接
+   */
   close(): void {
     this.closed = true;
     this.clearKeepAlive();
@@ -208,13 +282,18 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
     this.ready = false;
   }
 
+  /**
+   * 检查连接是否就绪
+   */
   isReady(): boolean {
     return this.ready && this.ws?.readyState === WebSocket.OPEN;
   }
 
   /**
-   * Wait for the connection to be ready (or fail)
-   * Returns true if ready, false if failed/closed
+   * 等待连接就绪（或失败）
+   * 
+   * @param timeoutMs - 超时时间（毫秒），默认5秒
+   * @returns 如果就绪返回true，失败或关闭返回false
    */
   waitForReady(timeoutMs = 5000): Promise<boolean> {
     if (this.isReady()) return Promise.resolve(true);
@@ -245,7 +324,9 @@ export class DeepgramStreamingSTT extends EventEmitter implements StreamingSTTPr
   }
 }
 
-// Deepgram message types
+/**
+ * Deepgram消息类型定义
+ */
 interface DeepgramMessage {
   type: "Results" | "Metadata" | "UtteranceEnd" | "SpeechStarted" | "Error";
   is_final?: boolean;
@@ -272,22 +353,36 @@ interface DeepgramMessage {
 }
 
 /**
- * Streaming STT Session Manager
+ * 流式STT会话管理器
  * 
- * Manages per-user streaming STT sessions with automatic
- * lifecycle handling (create on speech start, destroy on silence).
+ * 管理每个用户的流式STT会话
+ * 自动处理会话生命周期：
+ * - 语音开始时创建会话
+ * - 检测到静音时销毁会话
  */
 export class StreamingSTTManager {
+  /** Discord语音配置 */
   private config: DiscordVoiceConfig;
+  /** 用户会话映射 */
   private sessions: Map<string, DeepgramStreamingSTT> = new Map();
+  /** 待处理转录文本映射 */
   private pendingTranscripts: Map<string, string> = new Map();
   
+  /**
+   * 创建StreamingSTTManager实例
+   * 
+   * @param config - Discord语音配置对象
+   */
   constructor(config: DiscordVoiceConfig) {
     this.config = config;
   }
 
   /**
-   * Get or create a streaming session for a user
+   * 获取或创建用户的流式会话
+   * 
+   * @param userId - 用户ID
+   * @param onTranscript - 转录文本回调函数
+   * @returns Deepgram流式STT实例
    */
   getOrCreateSession(
     userId: string,
@@ -296,7 +391,7 @@ export class StreamingSTTManager {
     let session = this.sessions.get(userId);
     
     if (!session || !session.isReady()) {
-      // Clean up old session if exists
+      // 清理旧会话
       if (session) {
         session.close();
       }
@@ -308,12 +403,12 @@ export class StreamingSTTManager {
         utteranceEndMs: 1000,
       });
 
-      // Track partial transcripts for this user
+      // 跟踪该用户的临时转录
       this.pendingTranscripts.set(userId, "");
 
       session.on("transcript", (text, isFinal, confidence) => {
         if (isFinal) {
-          // Accumulate final transcripts
+          // 累加最终转录文本
           const pending = this.pendingTranscripts.get(userId) || "";
           const fullText = pending ? `${pending} ${text}` : text;
           this.pendingTranscripts.set(userId, fullText);
@@ -326,7 +421,7 @@ export class StreamingSTTManager {
       });
 
       session.on("error", (err) => {
-        console.error(`[streaming-stt] Error for user ${userId}:`, err.message);
+        console.error(`[streaming-stt] 用户 ${userId} 的会话错误:`, err.message);
       });
 
       this.sessions.set(userId, session);
@@ -336,19 +431,26 @@ export class StreamingSTTManager {
   }
 
   /**
-   * Send audio to user's session
-   * Audio is buffered if connection is still establishing
+   * 向用户的会话发送音频数据
+   * 
+   * 如果连接尚未就绪，数据会在内部缓冲
+   * 
+   * @param userId - 用户ID
+   * @param chunk - 音频数据块
    */
   sendAudio(userId: string, chunk: Buffer): void {
     const session = this.sessions.get(userId);
     if (session) {
-      // sendAudio now handles buffering internally if not ready
+      // sendAudio内部处理连接未就绪时的缓冲
       session.sendAudio(chunk);
     }
   }
 
   /**
-   * Finalize and get accumulated transcript for user
+   * 结束会话并获取累积的转录文本
+   * 
+   * @param userId - 用户ID
+   * @returns 累积的完整转录文本
    */
   finalizeSession(userId: string): string {
     const session = this.sessions.get(userId);
@@ -362,7 +464,9 @@ export class StreamingSTTManager {
   }
 
   /**
-   * Close a user's session
+   * 关闭用户的会话
+   * 
+   * @param userId - 用户ID
    */
   closeSession(userId: string): void {
     const session = this.sessions.get(userId);
@@ -374,7 +478,7 @@ export class StreamingSTTManager {
   }
 
   /**
-   * Close all sessions
+   * 关闭所有会话
    */
   closeAll(): void {
     for (const [userId, session] of this.sessions) {
@@ -386,11 +490,14 @@ export class StreamingSTTManager {
 }
 
 /**
- * Create streaming STT provider based on config
+ * 根据配置创建流式STT提供商
+ * 
+ * @param config - Discord语音配置对象
+ * @returns 流式STT管理器实例，如果配置不支持流式STT则返回null
  */
 export function createStreamingSTTProvider(config: DiscordVoiceConfig): StreamingSTTManager | null {
   if (config.sttProvider !== "deepgram") {
-    return null;  // Streaming only supported with Deepgram
+    return null;  // 流式STT仅支持Deepgram
   }
   
   return new StreamingSTTManager(config);

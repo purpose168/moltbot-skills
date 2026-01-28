@@ -1,148 +1,150 @@
 #!/bin/bash
-# explore-idea.sh - Explore business ideas using Claude Code
+# explore-idea.sh - 使用 Claude Code 探索商业创意
 #
-# Usage: explore-idea.sh "Your business idea"
-# With notifications: CLAWD_CHAT_NAME="Name" CLAWD_CHAT_ID="123" explore-idea.sh "Idea"
+# 用法: explore-idea.sh "您的商业创意"
+# 带通知: CLAWD_CHAT_NAME="名称" CLAWD_CHAT_ID="123" explore-idea.sh "创意"
 
 set -e
 
+# 参数验证
 if [ $# -eq 0 ]; then
-    echo "Usage: explore-idea.sh 'Your business idea'"
-    echo "Example: explore-idea.sh 'AI-powered calendar assistant'"
+    echo "用法: explore-idea.sh '您的商业创意'"
+    echo "示例: explore-idea.sh 'AI 驱动的日历助手'"
     exit 1
 fi
 
 IDEA="$1"
 TIMESTAMP=$(date +%s)
+# 将创意转换为 URL 友好的 slug 格式
 SLUG=$(echo "$IDEA" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-50)
 
-# Create output directory
+# 创建输出目录
 IDEAS_DIR="$HOME/clawd/ideas/$SLUG"
 mkdir -p "$IDEAS_DIR"
 
-# Chat context for notifications
+# 聊天的上下文用于通知
 CHAT_NAME="${CLAWD_CHAT_NAME:-}"
 CHAT_ID="${CLAWD_CHAT_ID:-}"
 SESSION_KEY="${CLAWD_SESSION_KEY:-main}"
 
-# Save metadata
+# 保存元数据
 cat > "$IDEAS_DIR/metadata.txt" << EOF
-Idea: $IDEA
-Date: $(date)
+创意: $IDEA
+日期: $(date)
 Slug: $SLUG
-Chat: $CHAT_NAME
-Chat ID: $CHAT_ID
-Session: $SESSION_KEY
-Status: In Progress
+聊天: $CHAT_NAME
+聊天 ID: $CHAT_ID
+会话: $SESSION_KEY
+状态: 进行中
 EOF
 
-# Notification command - sends file to "me" and queues notification
-NOTIFY_CMD="$HOME/clawd/scripts/notify-research-complete.sh '$IDEAS_DIR/research.md' 'Idea: $IDEA' '$SESSION_KEY'"
+# 通知命令 - 发送文件到"我"并排队通知
+NOTIFY_CMD="$HOME/clawd/scripts/notify-research-complete.sh '$IDEAS_DIR/research.md' '创意: $IDEA' '$SESSION_KEY'"
 
-# Write prompt to a file
+# 将提示写入文件
 PROMPT_FILE="$IDEAS_DIR/prompt.txt"
 cat > "$PROMPT_FILE" << PROMPT_END
-I have an idea I'd like you to explore in depth:
+我有一个想法想让你深入探索：
 
-**Idea:** $IDEA
+**创意:** $IDEA
 
-Please research and analyze this idea comprehensively:
+请全面研究和分析这个创意：
 
-## 1. Core Concept Analysis
-- Break down the core problem/opportunity
-- Key assumptions and hypotheses
-- What makes this interesting/unique?
+## 1. 核心概念分析
+- 分解核心问题/机会
+- 关键假设和 hypotheses
+- 什么让它有趣/独特？
 
-## 2. Market Research
-- Who would use this? (Target users/personas)
-- Market size and opportunity (TAM/SAM/SOM if applicable)
-- Existing solutions and competitors
-- Market gaps this could fill
+## 2. 市场研究
+- 谁会使用这个？（目标用户/角色）
+- 市场规模和机会（如果适用，TAM/SAM/SOM）
+- 现有解决方案和竞争对手
+- 这个可以填补的市场空白
 
-## 3. Technical Implementation
-- Possible tech stacks and approaches
-- MVP scope (what's the simplest valuable version?)
-- Technical challenges and considerations
-- Build vs buy decisions
-- Estimated development time
+## 3. 技术实施
+- 可能的技术栈和方法
+- MVP 范围（最简单的有价值版本是什么？）
+- 技术挑战和考虑因素
+- 构建与购买决策
+- 预估开发时间
 
-## 4. Business Model
-- How could this make money?
-- Pricing strategies and benchmarks
-- Unit economics considerations
-- Path to profitability
+## 4. 商业模式
+- 这个如何赚钱？
+- 定价策略和基准
+- 单位经济学考量
+- 盈利路径
 
-## 5. Go-to-Market Strategy
-- Launch strategy and positioning
-- Early adopter acquisition tactics
-- Growth channels to explore
-- Partnerships to consider
+## 5. 上市策略
+- 发布策略和定位
+- 早期采用者获取策略
+- 探索增长渠道
+- 考虑的合作伙伴
 
-## 6. Risks & Challenges
-- What could go wrong?
-- Competitive threats
-- Regulatory/legal considerations
-- Technical and operational risks
+## 6. 风险与挑战
+- 什么可能出错？
+- 竞争威胁
+- 监管/法律考量
+- 技术和运营风险
 
-## 7. Verdict & Recommendations
+## 7. 结论与建议
 
-Provide a clear verdict:
-- 🟢 **STRONG YES** - Clear opportunity, pursue aggressively
-- 🟡 **CONDITIONAL YES** - Promising but needs validation
-- 🟠 **PIVOT RECOMMENDED** - Core insight good, execution needs rethinking  
-- 🔴 **PASS** - Too many red flags
+提供明确的结论：
+- 🟢 **强烈建议** - 明确的机会，积极追求
+- 🟡 **有条件建议** - 有前景但需要验证
+- 🟠 **建议转型** - 核心洞察良好，执行需要重新思考
+- 🔴 **放弃** - 太多红旗信号
 
-Include:
-- Overall assessment with reasoning
-- Recommended first steps if pursuing
-- Key validation experiments to run
-- 30/60/90 day action plan
+包括：
+- 整体评估及推理
+- 如果追求，推荐的第一步
+- 要运行的关键验证实验
+- 30/60/90 天行动计划
 
 ---
 
-**IMPORTANT:** Save your complete analysis to this file:
+**重要：** 将您的完整分析保存到此文件：
 $IDEAS_DIR/research.md
 
-When you have saved the analysis, run this notification command:
+当您保存分析后，运行此通知命令：
 $NOTIFY_CMD
 
-Begin your exploration now.
+立即开始您的探索。
 PROMPT_END
 
-# Create a runner script that unsets env vars and runs claude
+# 创建一个运行脚本，取消设置环境变量并运行 claude
 RUNNER_SCRIPT="$IDEAS_DIR/run-claude.sh"
 cat > "$RUNNER_SCRIPT" << 'RUNNER_END'
 #!/bin/bash
-# Unset OAuth to use Claude Max
+# 取消设置 OAuth 以使用 Claude Max
 unset CLAUDE_CODE_OAUTH_TOKEN
 unset CLAUDE_CONFIG_DIR
 unset ANTHROPIC_BASE_URL
 
-# Read prompt and run claude
+# 读取提示并运行 claude
 PROMPT=$(cat "$1")
 cd ~/clawd
 claude --dangerously-skip-permissions --model opus "$PROMPT"
 echo ""
-echo "Session complete. Press any key to exit."
+echo "会话完成。按任意键退出。"
 read
 RUNNER_END
 chmod +x "$RUNNER_SCRIPT"
 
-# Start tmux session
+# 启动 tmux 会话
 TMUX_SESSION="idea-${SLUG:0:20}-$TIMESTAMP"
 
-echo "💡 Idea Exploration Starting"
+echo "💡 创意探索开始"
 echo "============================"
-echo "📋 Idea: $IDEA"
-echo "📁 Output: $IDEAS_DIR/research.md"
-echo "📺 Session: $TMUX_SESSION"
+echo "📋 创意: $IDEA"
+echo "📁 输出: $IDEAS_DIR/research.md"
+echo "📺 会话: $TMUX_SESSION"
 echo ""
 
 tmux new-session -d -s "$TMUX_SESSION" "$RUNNER_SCRIPT '$PROMPT_FILE'"
 
-echo "✅ Idea exploration started!"
+echo "✅ 创意探索已启动！"
 echo ""
-echo "Monitor progress:"
+echo "监控进度:"
 echo "  tmux attach -t $TMUX_SESSION"
 echo ""
-echo "You'll receive a notification when complete."
+echo "完成后您将收到通知。"

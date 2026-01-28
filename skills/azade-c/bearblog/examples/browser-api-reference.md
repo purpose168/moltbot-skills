@@ -1,21 +1,21 @@
-# Bear Blog Browser API Reference
+# Bear Blog 浏览器 API 参考
 
-Complete reference for interacting with Bear Blog via Clawdbot's browser tool.
+通过 Clawdbot 的浏览器工具与 Bear Blog 交互的完整参考。
 
-## Prerequisites
+## 前置条件
 
-1. Browser enabled: `DISPLAY=:99` in `~/.clawdbot/.env`
-2. Browser started: `POST http://127.0.0.1:18791/start`
-3. Logged in (session persists in cookies)
+1. 启用浏览器：`DISPLAY=:99` 在 `~/.clawdbot/.env` 中
+2. 启动浏览器：`POST http://127.0.0.1:18791/start`
+3. 已登录（会话保存在 Cookie 中）
 
-## Authentication
+## 身份验证
 
-### Login
+### 登录
 ```bash
-# Navigate to login
+# 导航到登录页面
 POST /navigate {"url": "https://bearblog.dev/accounts/login/"}
 
-# Fill credentials (use snapshot to get refs)
+# 填写凭据（使用快照获取引用）
 POST /act {"kind": "fill", "fields": [
   {"ref": "emailRef", "type": "text", "value": "email@example.com"}
 ]}
@@ -23,58 +23,58 @@ POST /act {"kind": "fill", "fields": [
   {"ref": "passwordRef", "type": "text", "value": "password"}
 ]}
 
-# Click submit
+# 点击提交
 POST /act {"kind": "click", "ref": "submitButtonRef"}
 ```
 
-## Post Operations
+## 文章操作
 
-### Create Post
+### 创建文章
 
-Bear Blog uses:
-- `div#header_content` (contenteditable) - attributes display & input (ref=e14)
-- `input#hidden_header_content` (hidden) - auto-filled on submit by JS
-- `textarea#body_content` - post content (ref=e15)
+Bear Blog 使用：
+- `div#header_content`（可编辑）— 属性显示和输入（ref=e14）
+- `input#hidden_header_content`（隐藏）— 提交时由 JS 自动填充
+- `textarea#body_content` — 文章内容（ref=e15）
 
-**Good news:** Playwright's `fill` works on `[contenteditable]` elements!
-You can create posts using **only `fill`**, no `evaluate` needed.
+**好消息：** Playwright 的 `fill` 适用于 `[contenteditable]` 元素！
+您可以**仅使用 `fill`** 创建文章，无需 `evaluate`。
 
 ```bash
-# Navigate to new post
-POST /navigate {"url": "https://bearblog.dev/<subdomain>/dashboard/posts/new/"}
+# 导航到新文章页面
+POST /navigate {"url": "https://bearblog.dev/<子域名>/dashboard/posts/new/"}
 
-# Get snapshot to confirm refs (usually e14=header, e15=body, e10=publish)
+# 获取快照以确认引用（通常 e14=头部，e15=主体，e10=发布）
 GET /snapshot
 
-# Fill header (contenteditable div) - newlines work!
+# 填写头部（可编辑 div）- 换行符有效！
 POST /act {
   "kind": "fill",
-  "fields": [{"ref": "e14", "type": "text", "value": "title: My Post\nlink: my-slug\ntags: tag1, tag2\nmake_discoverable: true"}]
+  "fields": [{"ref": "e14", "type": "text", "value": "title: 我的文章\nlink: 我的别名\ntags: 标签1, 标签2\nmake_discoverable: true"}]
 }
 
-# Fill body (textarea)
+# 填写主体（textarea）
 POST /act {
   "kind": "fill",
-  "fields": [{"ref": "e15", "type": "text", "value": "# Content\n\nMarkdown here..."}]
+  "fields": [{"ref": "e15", "type": "text", "value": "# 内容\n\n这里写 Markdown..."}]
 }
 
-# Click Publish
+# 点击发布
 POST /act {"kind": "click", "ref": "e10"}
 
-# Publish
+# 发布
 POST /act {
   "kind": "evaluate",
   "fn": "() => { document.getElementById('publish-button').click(); return 'published'; }"
 }
 ```
 
-### Edit Post
+### 编辑文章
 
 ```bash
-# Navigate to edit page
-POST /navigate {"url": "https://bearblog.dev/<subdomain>/dashboard/posts/<uid>/"}
+# 导航到编辑页面
+POST /navigate {"url": "https://bearblog.dev/<子域名>/dashboard/posts/<uid>/"}
 
-# Read current content
+# 读取当前内容
 POST /act {
   "kind": "evaluate",
   "fn": "() => ({
@@ -83,29 +83,29 @@ POST /act {
   })"
 }
 
-# Update content
+# 更新内容
 POST /act {
   "kind": "evaluate",
   "fn": "() => {
-    document.getElementById('body_content').value = 'Updated content...';
+    document.getElementById('body_content').value = '更新内容...';
     return 'updated';
   }"
 }
 
-# Save (click Publish)
+# 保存（点击发布）
 POST /act {
   "kind": "evaluate",
   "fn": "() => { document.getElementById('publish-button').click(); return 'saved'; }"
 }
 ```
 
-### List Posts
+### 列出文章
 
 ```bash
-# Navigate to posts list
-POST /navigate {"url": "https://bearblog.dev/<subdomain>/dashboard/posts/"}
+# 导航到文章列表
+POST /navigate {"url": "https://bearblog.dev/<子域名>/dashboard/posts/"}
 
-# Get all posts
+# 获取所有文章
 POST /act {
   "kind": "evaluate",
   "fn": "() => Array.from(document.querySelectorAll('a'))
@@ -114,13 +114,13 @@ POST /act {
 }
 ```
 
-### Delete Post
+### 删除文章
 
 ```bash
-# Navigate to post edit page
-POST /navigate {"url": "https://bearblog.dev/<subdomain>/dashboard/posts/<uid>/"}
+# 导航到文章编辑页面
+POST /navigate {"url": "https://bearblog.dev/<子域名>/dashboard/posts/<uid>/"}
 
-# Override confirm and click delete
+# 覆盖确认并点击删除
 POST /act {
   "kind": "evaluate",
   "fn": "() => {
@@ -133,7 +133,7 @@ POST /act {
 }
 ```
 
-### Save as Draft
+### 存为草稿
 
 ```bash
 POST /act {
@@ -142,10 +142,10 @@ POST /act {
 }
 ```
 
-### Unpublish
+### 取消发布
 
 ```bash
-# Find and click Unpublish button (only visible on published posts)
+# 查找并点击取消发布按钮（仅在已发布的文章上可见）
 POST /act {
   "kind": "evaluate",
   "fn": "() => {
@@ -157,35 +157,35 @@ POST /act {
 }
 ```
 
-## Header Attributes Reference
+## 头部属性参考
 
 ```
-title: Post Title
-link: custom-slug
-alias: old-url-redirect
-canonical_url: https://original-source.com/post
+title: 文章标题
+link: 自定义别名
+alias: 旧URL重定向
+canonical_url: https://原始来源.com/文章
 published_date: 2026-01-05 15:30
 is_page: false
-meta_description: SEO description
+meta_description: SEO 描述
 meta_image: https://example.com/image.jpg
 lang: en
-tags: tag1, tag2, tag3
+tags: 标签1, 标签2, 标签3
 make_discoverable: true
 ```
 
-## Tips
+## 提示
 
-1. **Use `fill` for everything**: Playwright supports `fill` on `[contenteditable]` - no `evaluate` needed!
-2. **Newlines work**: `fill` handles `\n` correctly in both contenteditable and textarea
-3. **Check refs after navigation**: Refs like e14, e15 are usually stable but verify with `GET /snapshot`
-4. **Confirmation dialogs**: Override `window.confirm` before clicking Delete (requires `evaluate`)
-5. **Screenshots**: Use `POST /screenshot` to debug visual state
-6. **Cache issues**: Browser may cache 404s - use `location.reload(true)` if needed
+1. **一切都使用 `fill`**：Playwright 支持 `[contenteditable]` 上的 `fill` - 无需 `evaluate`！
+2. **换行符有效**：`fill` 在可编辑区和 textarea 中都能正确处理 `\n`
+3. **导航后检查引用**：像 e14、e15 这样的引用通常稳定，但请用 `GET /snapshot` 验证
+4. **确认对话框**：在点击删除前通过 `evaluate` 覆盖 `window.confirm`
+5. **截图**：使用 `POST /screenshot` 调试视觉状态
+6. **缓存问题**：浏览器可能缓存 404 - 如需要使用 `location.reload(true)`
 
-## Common Issues
+## 常见问题
 
-- **Attributes not saving**: Make sure you're filling the contenteditable div (e14), not a hidden field
-- **Delete not working**: Must override `window.confirm` via `evaluate`
-- **Login loop**: Check cookies are persisting (browser profile)
-- **404 on subdomain URLs**: Use bearblog.dev/<subdomain>/dashboard/... format
-- **404 after publish**: Browser cache - wait a moment or hard refresh
+- **属性不保存**：确保您填写的是可编辑 div（e14），而不是隐藏字段
+- **删除不工作**：必须通过 `evaluate` 覆盖 `window.confirm`
+- **登录循环**：检查 Cookie 是否保持（浏览器配置）
+- **子域名 URL 404**：使用 bearblog.dev/<子域名>/dashboard/... 格式
+- **发布后 404**：浏览器缓存 - 等一会儿或硬刷新

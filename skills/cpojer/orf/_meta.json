@@ -1,7 +1,8 @@
 {
   "owner": "cpojer",
   "slug": "orf",
-  "displayName": "ORF",
+  "displayName": "ORF 奥地利新闻文摘",
+  "description": "按需获取奥地利 ORF 新闻（德语）。聚焦国内和国际政治，排除体育内容，生成 ZiB 演播室风格的 Nano Banana 图片。",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1769055824441,

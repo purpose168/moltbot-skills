@@ -1,76 +1,76 @@
-# CAD Agent
+# CAD Agent（CAD 代理）
 
-> Give your AI agent eyes for CAD work.
+> 让您的 AI 代理拥有 CAD 工作的"眼睛"。
 
-## Description
+## 描述
 
-CAD Agent is a rendering server that lets AI agents see what they're building. Send modeling commands → receive rendered images → iterate visually.
+CAD Agent 是一个渲染服务器，让 AI 代理能够看到它们正在构建的内容。发送建模命令 → 接收渲染图像 → 可视化迭代。
 
-**Use when:** designing 3D-printable parts, parametric CAD, mechanical design, build123d modeling
+**使用场景：** 设计 3D 可打印零件、参数化 CAD、机械设计、build123d 建模
 
-## Architecture
+## 架构
 
-**Critical:** All CAD logic runs inside the container. You (the agent) only:
-1. Send commands via HTTP
-2. View the returned images
-3. Decide what to do next
+**关键点：** 所有 CAD 逻辑都在容器内运行。您（代理）只需要：
+1. 通过 HTTP 发送命令
+2. 查看返回的图像
+3. 决定下一步做什么
 
 ```
-YOU (agent)                     CAD AGENT CONTAINER
+您（代理）                     CAD 代理容器
 ─────────────                   ───────────────────
-Send build123d code      →      Executes modeling
-                         ←      Returns JSON status
-Request render           →      VTK renders the model
-                         ←      Returns PNG image
-*Look at the image*
-Decide: iterate or done
+发送 build123d 代码     →      执行建模操作
+                         ←      返回 JSON 状态
+请求渲染                 →      VTK 渲染模型
+                         ←      返回 PNG 图像
+*查看图像*
+决定：迭代或完成
 ```
 
-**Never** do STL manipulation, mesh processing, or rendering outside the container. The container handles everything — you just command and observe.
+**永远不要**在容器外进行 STL 操作、网格处理或渲染。容器处理一切——您只需要命令和观察。
 
-## Setup
+## 设置
 
-### 1. Clone the Repository
+### 1. 克隆仓库
 
 ```bash
 git clone https://github.com/clawd-maf/cad-agent.git
 cd cad-agent
 ```
 
-### 2. Build the Docker Image
+### 2. 构建 Docker 镜像
 
 ```bash
 docker build -t cad-agent:latest .
 ```
 
-Or using docker-compose:
+或使用 docker-compose：
 
 ```bash
 docker-compose build
 ```
 
-### 3. Run the Server
+### 3. 运行服务器
 
 ```bash
-# Using docker-compose (recommended)
+# 使用 docker-compose（推荐）
 docker-compose up -d
 
-# Or using docker directly
+# 或直接使用 docker
 docker run -d --name cad-agent -p 8123:8123 cad-agent:latest serve
 ```
 
-### 4. Verify Installation
+### 4. 验证安装
 
 ```bash
 curl http://localhost:8123/health
-# Should return: {"status": "healthy", ...}
+# 应该返回: {"status": "healthy", ...}
 ```
 
-> **Docker-in-Docker caveat:** In nested container environments (e.g., Clawdbot sandbox), host networking may not work—`curl localhost:8123` will fail even though the server binds to `0.0.0.0:8123`. Use `docker exec cad-agent python3 -c "..."` commands instead. On a normal Docker host, localhost access works fine.
+> **Docker-in-Docker 注意事项：** 在嵌套容器环境中（例如 Clawdbot 沙盒），主机网络可能无法工作——即使服务器绑定到 `0.0.0.0:8123`，`curl localhost:8123` 也会失败。请改用 `docker exec cad-agent python3 -c "..."` 命令。在正常 Docker 主机上，localhost 访问正常。
 
-## Workflow
+## 工作流程
 
-### 1. Create Model
+### 1. 创建模型
 
 ```bash
 curl -X POST http://localhost:8123/model/create \
@@ -81,21 +81,21 @@ curl -X POST http://localhost:8123/model/create \
   }'
 ```
 
-### 2. Render & View
+### 2. 渲染和查看
 
 ```bash
-# Get multi-view (front/right/top/iso)
+# 获取多视图（前/右/顶/等轴）
 curl -X POST http://localhost:8123/render/multiview \
   -d '{"model_name": "my_part"}' -o views.png
 
-# Or 3D isometric
+# 或 3D 等轴视图
 curl -X POST http://localhost:8123/render/3d \
   -d '{"model_name": "my_part", "view": "isometric"}' -o iso.png
 ```
 
-**Look at the image.** Does it look right? If not, modify and re-render.
+**查看图像。** 看起来对吗？如果不对，修改并重新渲染。
 
-### 3. Iterate
+### 3. 迭代
 
 ```bash
 curl -X POST http://localhost:8123/model/modify \
@@ -104,71 +104,71 @@ curl -X POST http://localhost:8123/model/modify \
     "code": "result = result - Cylinder(5, 50).locate(Pos(20, 10, 0))"
   }'
 
-# Re-render to check
+# 重新渲染以检查
 curl -X POST http://localhost:8123/render/3d \
   -d '{"model_name": "my_part"}' -o updated.png
 ```
 
-### 4. Export
+### 4. 导出
 
 ```bash
 curl -X POST http://localhost:8123/export \
   -d '{"model_name": "my_part", "format": "stl"}' -o part.stl
 ```
 
-## Endpoints
+## API 端点
 
-| Endpoint | What it does |
+| 端点 | 功能 |
 |----------|--------------|
-| `POST /model/create` | Run build123d code, create model |
-| `POST /model/modify` | Modify existing model |
-| `GET /model/list` | List models in session |
-| `GET /model/{name}/measure` | Get dimensions |
-| `POST /render/3d` | 3D shaded render (VTK) |
-| `POST /render/2d` | 2D technical drawing |
-| `POST /render/multiview` | 4-view composite |
-| `POST /export` | Export STL/STEP/3MF |
-| `POST /analyze/printability` | Check if printable |
+| `POST /model/create` | 运行 build123d 代码，创建模型 |
+| `POST /model/modify` | 修改现有模型 |
+| `GET /model/list` | 列出会话中的模型 |
+| `GET /model/{name}/measure` | 获取尺寸 |
+| `POST /render/3d` | 3D 阴影渲染（VTK） |
+| `POST /render/2d` | 2D 工程图 |
+| `POST /render/multiview` | 四视图组合 |
+| `POST /export` | 导出 STL/STEP/3MF |
+| `POST /analyze/printability` | 检查是否可打印 |
 
-## build123d Cheatsheet
+## build123d 速查表
 
 ```python
 from build123d import *
 
-# Primitives
-Box(width, depth, height)
-Cylinder(radius, height)
-Sphere(radius)
+# 基本体素
+Box(宽, 深, 高)
+Cylinder(半径, 高)
+Sphere(半径)
 
-# Boolean
-a + b   # union
-a - b   # subtract
-a & b   # intersect
+# 布尔运算
+a + b   # 并集
+a - b   # 差集
+a & b   # 交集
 
-# Position
+# 定位
 part.locate(Pos(x, y, z))
 part.rotate(Axis.Z, 45)
 
-# Edges
+# 边处理
 fillet(part.edges(), radius)
 chamfer(part.edges(), length)
 ```
 
-## Important
+## 重要提醒
 
-- **Don't bypass the container.** No matplotlib, no external STL libraries, no mesh hacking.
-- **Renders are your eyes.** Always request a render after changes.
-- **Iterate visually.** The whole point is you can see what you're building.
+- **不要绕过容器。** 不要使用 matplotlib、外部 STL 库或网格操作。
+- **渲染是您的眼睛。** 更改后一定要请求渲染。
+- **可视化迭代。** 整个意义在于您可以看到正在构建的内容。
 
-## Design File Safety
+## 设计文件安全
 
-The project has safeguards against accidentally committing CAD outputs:
-- `.gitignore` blocks *.stl, *.step, *.3mf, etc.
-- Pre-commit hook rejects design files
-- User's designs stay local, never versioned
+该项目有防护措施，防止意外提交 CAD 输出：
+- `.gitignore` 阻止 *.stl、*.step、*.3mf 等文件
+- 预提交钩子拒绝设计文件
+- 用户的设计保留在本地，不进行版本控制
 
-## Links
+## 链接
 
-- [Repository](https://github.com/clawd-maf/cad-agent)
-- [build123d docs](https://build123d.readthedocs.io/)
+- [仓库](https://github.com/clawd-maf/cad-agent)
+- [build123d 文档](https://build123d.readthedocs.io/)
 - [VTK](https://vtk.org/)

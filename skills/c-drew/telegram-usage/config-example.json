@@ -1,17 +1,17 @@
 {
-  "comment": "Add this to ~/.clawdbot/clawdbot.json to configure the telegram-usage skill",
+  "comment": "将此配置添加到 ~/.clawdbot/clawdbot.json 中以配置 telegram-usage 技能",
   "channels": {
     "telegram": {
       "enabled": true,
-      "botToken": "YOUR_BOT_TOKEN_HERE",
+      "botToken": "在这里替换为你的机器人令牌",
       "customCommands": [
         {
           "command": "usage",
-          "description": "Show session usage stats"
+          "description": "显示会话使用统计"
         },
         {
           "command": "stats",
-          "description": "Display quota and token usage"
+          "description": "显示配额和令牌使用情况"
         }
       ]
     }

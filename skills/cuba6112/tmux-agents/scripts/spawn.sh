@@ -1,104 +1,104 @@
 #!/bin/bash
-# Spawn a coding agent in a tmux session
+# 在 tmux 会话中生成编码代理
 
 SESSION_NAME="${1:-agent-$(date +%s)}"
 TASK="$2"
 AGENT="${3:-claude}"
 
 if [ -z "$TASK" ]; then
-  echo "Usage: spawn.sh <session-name> <task> [agent]"
+  echo "用法: spawn.sh <会话名称> <任务> [代理]"
   echo ""
-  echo "Cloud Agents (uses API credits):"
-  echo "  claude        - Claude Code (default)"
+  echo "云端代理（使用 API 积分）:"
+  echo "  claude        - Claude Code（默认）"
   echo "  codex         - OpenAI Codex CLI"
   echo "  gemini        - Google Gemini CLI"
   echo ""
-  echo "Local Agents (free, uses Ollama):"
-  echo "  ollama-claude - Claude Code + local model"
-  echo "  ollama-codex  - Codex + local model"
+  echo "本地代理（免费，使用 Ollama）:"
+  echo "  ollama-claude - Claude Code + 本地模型"
+  echo "  ollama-codex  - Codex + 本地模型"
   echo ""
-  echo "Examples:"
-  echo "  spawn.sh fix-bug 'Fix login validation' claude"
-  echo "  spawn.sh experiment 'Refactor entire codebase' ollama-claude"
+  echo "示例:"
+  echo "  spawn.sh fix-bug '修复登录验证' claude"
+  echo "  spawn.sh experiment '重构整个代码库' ollama-claude"
   exit 1
 fi
 
-# Check if session already exists
+# 检查会话是否已存在
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-  echo "⚠️  Session '$SESSION_NAME' already exists"
-  echo "Use: tmux attach -t $SESSION_NAME"
+  echo "⚠️  会话 '$SESSION_NAME' 已存在"
+  echo "使用: tmux attach -t $SESSION_NAME"
   exit 1
 fi
 
-# Determine if using local or cloud
+# 确定是否使用本地模式
 LOCAL_MODE=false
 case "$AGENT" in
   ollama-*) LOCAL_MODE=true ;;
 esac
 
-# Create new detached session
+# 创建新的分离会话
 tmux new-session -d -s "$SESSION_NAME" -x 200 -y 50
 
-# Set up the environment
+# 设置环境
 tmux send-keys -t "$SESSION_NAME" "cd ~/clawd" Enter
 tmux send-keys -t "$SESSION_NAME" "clear" Enter
-tmux send-keys -t "$SESSION_NAME" "echo '🚀 Agent Session: $SESSION_NAME'" Enter
-tmux send-keys -t "$SESSION_NAME" "echo '🤖 Agent: $AGENT'" Enter
+tmux send-keys -t "$SESSION_NAME" "echo '🚀 代理会话: $SESSION_NAME'" Enter
+tmux send-keys -t "$SESSION_NAME" "echo '🤖 代理: $AGENT'" Enter
 if [ "$LOCAL_MODE" = true ]; then
-  tmux send-keys -t "$SESSION_NAME" "echo '🦙 Mode: LOCAL (Ollama - free!)'" Enter
+  tmux send-keys -t "$SESSION_NAME" "echo '🦙 模式: 本地 (Ollama - 免费!)'" Enter
 else
-  tmux send-keys -t "$SESSION_NAME" "echo '☁️  Mode: CLOUD (API credits)'" Enter
+  tmux send-keys -t "$SESSION_NAME" "echo '☁️  模式: 云端 (API 积分)'" Enter
 fi
-tmux send-keys -t "$SESSION_NAME" "echo '📋 Task: $TASK'" Enter
-tmux send-keys -t "$SESSION_NAME" "echo '⏰ Started: $(date)'" Enter
+tmux send-keys -t "$SESSION_NAME" "echo '📋 任务: $TASK'" Enter
+tmux send-keys -t "$SESSION_NAME" "echo '⏰ 开始时间: $(date)'" Enter
 tmux send-keys -t "$SESSION_NAME" "echo '-------------------------------------------'" Enter
 tmux send-keys -t "$SESSION_NAME" "echo ''" Enter
 
-# Launch the appropriate agent
+# 启动相应的代理
 case "$AGENT" in
   claude)
-    # Claude Code with auto-accept permissions (cloud)
+    # Claude Code 自动接受权限（云端）
     tmux send-keys -t "$SESSION_NAME" "claude --dangerously-skip-permissions \"$TASK\"" Enter
     ;;
   codex)
-    # OpenAI Codex CLI with auto-approve (cloud)
+    # OpenAI Codex CLI 自动批准（云端）
     tmux send-keys -t "$SESSION_NAME" "codex --auto-edit --full-auto \"$TASK\"" Enter
     ;;
   gemini)
-    # Google Gemini CLI (cloud)
+    # Google Gemini CLI（云端）
     tmux send-keys -t "$SESSION_NAME" "gemini \"$TASK\"" Enter
     ;;
   ollama-claude)
-    # Claude Code with local Ollama model (free!)
-    tmux send-keys -t "$SESSION_NAME" "echo 'Launching Claude Code with local Ollama model...'" Enter
+    # Claude Code 配合本地 Ollama 模型（免费！）
+    tmux send-keys -t "$SESSION_NAME" "echo '正在启动 Claude Code 配合本地 Ollama 模型...'" Enter
     tmux send-keys -t "$SESSION_NAME" "ollama launch claude" Enter
     sleep 2
     tmux send-keys -t "$SESSION_NAME" "\"$TASK\"" Enter
     ;;
   ollama-codex)
-    # Codex with local Ollama model (free!)
-    tmux send-keys -t "$SESSION_NAME" "echo 'Launching Codex with local Ollama model...'" Enter
+    # Codex 配合本地 Ollama 模型（免费！）
+    tmux send-keys -t "$SESSION_NAME" "echo '正在启动 Codex 配合本地 Ollama 模型...'" Enter
     tmux send-keys -t "$SESSION_NAME" "ollama launch codex" Enter
     sleep 2
     tmux send-keys -t "$SESSION_NAME" "\"$TASK\"" Enter
     ;;
   *)
-    # Custom command - pass task as argument
+    # 自定义命令 - 将任务作为参数传递
     tmux send-keys -t "$SESSION_NAME" "$AGENT \"$TASK\"" Enter
     ;;
 esac
 
-echo "✅ Session '$SESSION_NAME' spawned with $AGENT"
+echo "✅ 会话 '$SESSION_NAME' 已生成，使用 $AGENT"
 if [ "$LOCAL_MODE" = true ]; then
-  echo "🦙 Running locally — no API costs!"
+  echo "🦙 本地运行 — 无 API 成本!"
 else
-  echo "☁️  Using cloud API"
+  echo "☁️  使用云端 API"
 fi
 echo ""
-echo "📋 Task: $TASK"
+echo "📋 任务: $TASK"
 echo ""
-echo "Commands:"
-echo "  👀 Watch:   tmux attach -t $SESSION_NAME"
-echo "  📊 Check:   ./skills/tmux-agents/scripts/check.sh $SESSION_NAME"
-echo "  💬 Send:    tmux send-keys -t $SESSION_NAME 'message' Enter"
-echo "  🛑 Kill:    tmux kill-session -t $SESSION_NAME"
+echo "命令:"
+echo "  👀 观看:   tmux attach -t $SESSION_NAME"
+echo "  📊 检查:   ./skills/tmux-agents/scripts/check.sh $SESSION_NAME"
+echo "  💬 发送:    tmux send-keys -t $SESSION_NAME '消息' Enter"
+echo "  🛑 终止:    tmux kill-session -t $SESSION_NAME"

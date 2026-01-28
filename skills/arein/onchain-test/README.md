@@ -1,135 +1,135 @@
 # @cyberdrk/onchain
 
-CLI for crypto portfolio tracking, market data, and CEX history. Designed for both human use and AI agent integration.
+用于加密货币投资组合跟踪、市场数据和 CEX 历史记录的 CLI。专为人类使用和 AI 智能体集成而设计。
 
-## Installation
+## 安装
 
 ```bash
 npm install -g @cyberdrk/onchain
 ```
 
-Or run directly with npx:
+或直接使用 npx 运行：
 ```bash
 npx @cyberdrk/onchain price btc
 ```
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Check token prices
+# 检查代币价格
 onchain price btc
 onchain price eth sol matic
 
-# View wallet balances (auto-detects EVM/Solana)
+# 查看钱包余额（自动检测 EVM/Solana）
 onchain balance 0x1234...5678
 
-# CEX balances
+# CEX 余额
 onchain coinbase balance
 onchain binance balance
 
-# Market overview
+# 市场概览
 onchain markets
 
-# Prediction markets
+# 预测市场
 onchain polymarket trending
 ```
 
-## Commands
+## 命令
 
-### Market Data
+### 市场数据
 ```bash
-onchain price <token>           # Token price with 24h change
-onchain markets                 # Market overview with trending coins
+onchain price <token>           # 代币价格及 24 小时变化
+onchain markets                 # 市场概览及热门代币
 ```
 
-### Wallet Data
+### 钱包数据
 ```bash
-onchain balance <address>       # Token balances (EVM or Solana)
-onchain history <address>       # Transaction history
-onchain portfolio <address>     # Full portfolio with DeFi positions
+onchain balance <address>       # 代币余额（EVM 或 Solana）
+onchain history <address>       # 交易历史
+onchain portfolio <address>     # 完整投资组合及 DeFi 持仓
 ```
 
-### CEX Data
+### CEX 数据
 ```bash
-onchain coinbase balance        # Coinbase account balances
-onchain coinbase history        # Trade history
-onchain binance balance         # Binance account balances
-onchain binance history         # Trade history
+onchain coinbase balance        # Coinbase 账户余额
+onchain coinbase history        # 交易历史
+onchain binance balance         # Binance 账户余额
+onchain binance history         # 交易历史
 ```
 
-### Prediction Markets
+### 预测市场
 ```bash
-onchain polymarket trending     # Trending markets
-onchain polymarket search <q>   # Search markets
-onchain polymarket view <slug>  # Market details
+onchain polymarket trending     # 热门市场
+onchain polymarket search <q>   # 搜索市场
+onchain polymarket view <slug>  # 市场详情
 ```
 
-### Configuration
+### 配置
 ```bash
-onchain setup                   # Interactive API key setup
-onchain config                  # View current configuration
-onchain test                    # Test all configured providers
+onchain setup                   # 交互式 API 密钥设置
+onchain config                  # 查看当前配置
+onchain test                    # 测试所有配置的提供程序
 ```
 
-## Configuration
+## 配置
 
-Run `onchain setup` for interactive configuration, or set environment variables:
+运行 `onchain setup` 进行交互式配置，或设置环境变量：
 
-| Feature | Environment Variable | Provider |
+| 功能 | 环境变量 | 提供程序 |
 |---------|---------------------|----------|
-| EVM wallets | `DEBANK_API_KEY` | [DeBank Cloud](https://cloud.debank.com/) |
-| Solana wallets | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
+| EVM 钱包 | `DEBANK_API_KEY` | [DeBank Cloud](https://cloud.debank.com/) |
+| Solana 钱包 | `HELIUS_API_KEY` | [Helius](https://helius.xyz/) |
 | Coinbase | `COINBASE_API_KEY_ID` + `COINBASE_API_KEY_SECRET` | [Coinbase CDP](https://portal.cdp.coinbase.com/) |
 | Binance | `BINANCE_API_KEY` + `BINANCE_API_SECRET` | [Binance](https://www.binance.com/en/my/settings/api-management) |
-| Market data | `COINGECKO_API_KEY` | [CoinGecko](https://www.coingecko.com/en/api) (optional) |
-| Market fallback | `COINMARKETCAP_API_KEY` | [CoinMarketCap](https://coinmarketcap.com/api/) (optional) |
+| 市场数据 | `COINGECKO_API_KEY` | [CoinGecko](https://www.coingecko.com/en/api)（可选）|
+| 市场回退 | `COINMARKETCAP_API_KEY` | [CoinMarketCap](https://coinmarketcap.com/api/)（可选）|
 
-Config file locations:
-- Global: `~/.config/onchain/config.json5`
-- Local: `./.onchainrc.json5`
+配置文件位置：
+- 全局：`~/.config/onchain/config.json5`
+- 本地：`./.onchainrc.json5`
 
-## Global Options
+## 全局选项
 
 ```bash
---json              # Output as JSON (for scripting/agents)
---plain             # Disable colors and emoji
---no-color          # Disable colors only
---timeout <ms>      # Request timeout in milliseconds
+--json              # 输出为 JSON（用于脚本/智能体）
+--plain             # 禁用颜色和 emoji
+--no-color          # 仅禁用颜色
+--timeout <ms>      # 请求超时时间（毫秒）
 ```
 
-## Agent Integration
+## 智能体集成
 
-This CLI is designed for AI agent use with `--json` output:
+此 CLI 设计用于 AI 智能体，使用 `--json` 输出：
 
 ```bash
-# Get portfolio value
+# 获取投资组合价值
 onchain --json portfolio 0x123... | jq '.totalValueUsd'
 
-# Check if market is up
+# 检查市场是否上涨
 onchain --json markets | jq '.marketCapChange24h > 0'
 
-# Get specific token price
+# 获取特定代币价格
 onchain --json price eth | jq '{price: .priceUsd, change: .priceChange24h}'
 ```
 
-Exit codes: `0` for success, `1` for errors.
+退出码：`0` 表示成功，`1` 表示错误。
 
-## Supported Chains
+## 支持的链
 
-**EVM (via DeBank):** Ethereum, BNB Chain, Polygon, Arbitrum, Optimism, Avalanche, Base, zkSync Era, Linea, Scroll, Blast, Mantle, and 60+ more.
+**EVM（通过 DeBank）：** Ethereum、BNB Chain、Polygon、Arbitrum、Optimism、Avalanche、Base、zkSync Era、Linea、Scroll、Blast、Mantle 等 60+ 条链。
 
-**Solana (via Helius):** Full mainnet support including SPL tokens and NFTs.
+**Solana（通过 Helius）：** 完全支持 Solana 主网，包括 SPL 代币和 NFT。
 
-## Development
+## 开发
 
 ```bash
 pnpm install
-pnpm run dev price btc    # Run without building
-pnpm run build            # Build TypeScript
-pnpm run test             # Run tests
-pnpm run lint             # Lint code
+pnpm run dev price btc    # 不构建直接运行
+pnpm run build            # 构建 TypeScript
+pnpm run test             # 运行测试
+pnpm run lint             # 代码检查
 ```
 
-## License
+## 许可证
 
 MIT

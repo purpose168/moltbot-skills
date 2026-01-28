@@ -1,64 +1,64 @@
-# Idea Exploration Template
+# 创意探索模板
 
-Use this template when researching a new idea captured in IDEAS.md.
+在研究 IDEAS.md 中捕获的新创意时使用此模板。
 
 ---
 
-## Prompt
+## 提示
 
 ```
-I have an idea I'd like you to explore in depth:
+我有一个想法想让你深入探索：
 
-**Idea:** {IDEA_DESCRIPTION}
+**创意:** {IDEA_DESCRIPTION}
 
-Please research and analyze this idea comprehensively:
+请全面研究和分析这个创意：
 
-1. **Core Concept Analysis**
-   - Break down the core problem/opportunity
-   - Key assumptions and hypothesis
-   - What makes this interesting/unique?
+1. **核心概念分析**
+   - 分解核心问题/机会
+   - 关键假设和假设
+   - 什么让它有趣/独特？
 
-2. **Market Research**
-   - Who would use this?
-   - What's the market size/opportunity?
-   - Existing solutions and competitors
-   - Market gaps this could fill
+2. **市场研究**
+   - 谁会使用这个？
+   - 市场规模/机会是什么？
+   - 现有解决方案和竞争对手
+   - 这个可以填补的市场空白
 
-3. **Technical Implementation**
-   - Possible technical approaches
-   - Key technical challenges
-   - Required resources/skills
-   - MVP scope and complexity
+3. **技术实施**
+   - 可能的技术方法
+   - 关键技术挑战
+   - 所需的资源/技能
+   - MVP 范围和复杂性
 
-4. **Use Cases**
-   - Primary use cases (3-5)
-   - User personas
-   - User journey/flow
-   - Value proposition for each persona
+4. **用例**
+   - 主要用例（3-5 个）
+   - 用户角色
+   - 用户旅程/流程
+   - 每个角色的价值主张
 
-5. **Go-to-Market Strategy**
-   - Target customer segment
-   - Distribution channels
-   - Pricing models
-   - Launch strategy
+5. **上市策略**
+   - 目标客户群
+   - 分销渠道
+   - 定价模型
+   - 发布策略
 
-6. **Risks & Challenges**
-   - Technical risks
-   - Market risks
-   - Competitive risks
-   - Execution risks
+6. **风险与挑战**
+   - 技术风险
+   - 市场风险
+   - 竞争风险
+   - 执行风险
 
-7. **Next Steps**
-   - Should we pursue this?
-   - If yes: What's the minimal first step?
-   - What would validate/invalidate this idea?
-   - Timeline for a quick prototype
+7. **后续步骤**
+   - 我们应该追求这个吗？
+   - 如果是：最小第一步是什么？
+   - 什么会验证/否定这个创意？
+   - 快速原型的时间表
 
-Please be thorough but practical. Focus on actionable insights.
+请彻底但实用。重点关注可操作的洞察。
 
-**When you're done:**
-1. Save your research to: ~/clawd/ideas/{IDEA_SLUG}/research.md
-2. Run this command to notify that research is complete:
+**完成后:**
+1. 将您的研究保存到: ~/clawd/ideas/{IDEA_SLUG}/research.md
+2. 运行此命令通知研究完成：
    ```bash
    ~/clawd/scripts/notify-research-complete.sh "{IDEA_SLUG}" "{SESSION_ID}"
    ```
@@ -66,7 +66,7 @@ Please be thorough but practical. Focus on actionable insights.
 
 ---
 
-## Variables to Replace
+## 要替换的变量
 
-- `{IDEA_DESCRIPTION}`: The actual idea text
-- `{IDEA_SLUG}`: URL-friendly version (e.g., "ai-powered-calendar" from "AI-Powered Calendar Assistant")
+- `{IDEA_DESCRIPTION}`: 实际的创意文本
+- `{IDEA_SLUG}`: URL 友好的版本（例如，从 "AI-Powered Calendar Assistant" 得到 "ai-powered-calendar"）

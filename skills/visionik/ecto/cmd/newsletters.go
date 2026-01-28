@@ -7,7 +7,7 @@ import (
 
 var newslettersCmd = &cobra.Command{
 	Use:   "newsletters",
-	Short: "List newsletters",
+	Short: "列出新闻通讯",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -26,7 +26,7 @@ var newslettersCmd = &cobra.Command{
 		}
 
 		if len(resp.Newsletters) == 0 {
-			println("No newsletters found")
+			println("未找到新闻通讯")
 			return nil
 		}
 
@@ -39,7 +39,7 @@ var newslettersCmd = &cobra.Command{
 
 var newsletterCmd = &cobra.Command{
 	Use:   "newsletter <id>",
-	Short: "Get a single newsletter",
+	Short: "获取单个新闻通讯",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
@@ -59,19 +59,19 @@ var newsletterCmd = &cobra.Command{
 		}
 
 		printf("ID:          %s\n", newsletter.ID)
-		printf("Name:        %s\n", newsletter.Name)
-		printf("Slug:        %s\n", newsletter.Slug)
-		printf("Status:      %s\n", newsletter.Status)
+		printf("名称:        %s\n", newsletter.Name)
+		printf("别名:        %s\n", newsletter.Slug)
+		printf("状态:        %s\n", newsletter.Status)
 		if newsletter.Description != "" {
-			printf("Description: %s\n", newsletter.Description)
+			printf("描述:        %s\n", newsletter.Description)
 		}
 		return nil
 	},
 }
 
 func init() {
-	newslettersCmd.Flags().Bool("json", false, "Output as JSON")
-	newsletterCmd.Flags().Bool("json", false, "Output as JSON")
+	newslettersCmd.Flags().Bool("json", false, "以JSON格式输出")
+	newsletterCmd.Flags().Bool("json", false, "以JSON格式输出")
 
 	rootCmd.AddCommand(newslettersCmd)
 	rootCmd.AddCommand(newsletterCmd)

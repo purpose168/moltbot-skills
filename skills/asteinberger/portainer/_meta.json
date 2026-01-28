@@ -1,7 +1,7 @@
 {
   "owner": "asteinberger",
   "slug": "portainer",
-  "displayName": "Portainer",
+  "displayName": "Portainer 容器管理",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769330831658,

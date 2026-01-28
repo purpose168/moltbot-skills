@@ -1,6 +1,6 @@
 ---
 name: tmux-agents
-description: Manage background coding agents in tmux sessions. Spawn Claude Code or other agents, check progress, get results.
+description: 在 tmux 会话中管理后台编码代理。生成 Claude Code 或其他代理，检查进度，获取结果。
 version: 1.0.0
 author: Jose Munoz
 homepage: https://clawdhub.com/skills/tmux-agents
@@ -23,121 +23,121 @@ metadata:
         kind: brew
         formula: tmux
         bins: ["tmux"]
-        label: "Install tmux (brew)"
+        label: "安装 tmux (brew)"
 ---
 
-# Tmux Agents
+# Tmux 代理
 
-Run coding agents in persistent tmux sessions. They work in the background while you do other things.
+在持久的 tmux 会话中运行编码代理。它们在后台工作，而您可以同时做其他事情。
 
-## Available Agents
+## 可用代理
 
-### ☁️ Cloud Agents (API credits)
+### ☁️ 云端代理（API 积分）
 
-| Agent | Command | Best For |
-|-------|---------|----------|
-| **claude** | Claude Code | Complex coding, refactoring, full projects |
-| **codex** | OpenAI Codex | Quick edits, auto-approve mode |
-| **gemini** | Google Gemini | Research, analysis, documentation |
+| 代理 | 命令 | 最佳用途 |
+|------|------|---------|
+| **claude** | Claude Code | 复杂编码、重构、完整项目 |
+| **codex** | OpenAI Codex | 快速编辑、自动批准模式 |
+| **gemini** | Google Gemini | 研究、分析、文档 |
 
-### 🦙 Local Agents (FREE via Ollama)
+### 🦙 本地代理（通过 Ollama 免费）
 
-| Agent | Command | Best For |
-|-------|---------|----------|
-| **ollama-claude** | Claude Code + Ollama | Long experiments, heavy refactoring |
-| **ollama-codex** | Codex + Ollama | Extended coding sessions |
+| 代理 | 命令 | 最佳用途 |
+|------|------|---------|
+| **ollama-claude** | Claude Code + Ollama | 长时间实验、重构 |
+| **ollama-codex** | Codex + Ollama | 扩展编码会话 |
 
-Local agents use your Mac's GPU — no API costs, great for experimentation!
+本地代理使用您的 Mac 的 GPU — 无 API 成本，非常适合实验！
 
-## Quick Commands
+## 快速命令
 
-### Spawn a new agent session
+### 生成新的代理会话
 ```bash
-./skills/tmux-agents/scripts/spawn.sh <name> <task> [agent]
+./skills/tmux-agents/scripts/spawn.sh <名称> <任务> [代理]
 
-# Cloud (uses API credits)
-./skills/tmux-agents/scripts/spawn.sh fix-bug "Fix login validation" claude
-./skills/tmux-agents/scripts/spawn.sh refactor "Refactor the auth module" codex
-./skills/tmux-agents/scripts/spawn.sh research "Research caching strategies" gemini
+# 云端（使用 API 积分）
+./skills/tmux-agents/scripts/spawn.sh fix-bug "修复登录验证" claude
+./skills/tmux-agents/scripts/spawn.sh refactor "重构认证模块" codex
+./skills/tmux-agents/scripts/spawn.sh research "研究缓存策略" gemini
 
-# Local (FREE - uses Ollama)
-./skills/tmux-agents/scripts/spawn.sh experiment "Rewrite entire test suite" ollama-claude
-./skills/tmux-agents/scripts/spawn.sh big-refactor "Refactor all services" ollama-codex
+# 本地（免费 - 使用 Ollama）
+./skills/tmux-agents/scripts/spawn.sh experiment "重写整个测试套件" ollama-claude
+./skills/tmux-agents/scripts/spawn.sh big-refactor "重构所有服务" ollama-codex
 ```
 
-### List running sessions
+### 列出运行中的会话
 ```bash
 tmux list-sessions
-# or
+# 或
 ./skills/tmux-agents/scripts/status.sh
 ```
 
-### Check on a session
+### 检查会话
 ```bash
-./skills/tmux-agents/scripts/check.sh session-name
+./skills/tmux-agents/scripts/check.sh 会话名称
 ```
 
-### Attach to watch live
+### 附加以实时观看
 ```bash
-tmux attach -t session-name
-# Detach with: Ctrl+B, then D
+tmux attach -t 会话名称
+# 分离使用: Ctrl+B，然后 D
 ```
 
-### Send additional instructions
+### 发送额外指令
 ```bash
-tmux send-keys -t session-name "additional instruction here" Enter
+tmux send-keys -t 会话名称 "额外指令" Enter
 ```
 
-### Kill a session when done
+### 完成后终止会话
 ```bash
-tmux kill-session -t session-name
+tmux kill-session -t 会话名称
 ```
 
-## When to Use Local vs Cloud
+## 何时使用本地 vs 云端
 
-| Scenario | Recommendation |
-|----------|----------------|
-| Quick fix, time-sensitive | ☁️ Cloud (faster) |
-| Expensive task, budget matters | 🦙 Local |
-| Long experiment, might fail | 🦙 Local |
-| Production code review | ☁️ Cloud (smarter) |
-| Learning/exploring | 🦙 Local |
-| Heavy refactoring | 🦙 Local |
+| 场景 | 推荐 |
+|------|------|
+| 快速修复、时间敏感 | ☁️ 云端（更快） |
+| 昂贵任务、预算重要 | 🦙 本地 |
+| 长时间实验，可能失败 | 🦙 本地 |
+| 生产代码审查 | ☁️ 云端（更智能） |
+| 学习/探索 | 🦙 本地 |
+| 重构 | 🦙 本地 |
 
-## Parallel Agents
+## 并行代理
 
-Run multiple agents simultaneously:
+同时运行多个代理：
 
 ```bash
-# Mix and match cloud + local
-./scripts/spawn.sh backend "Implement user API" claude           # Cloud
-./scripts/spawn.sh frontend "Build login form" ollama-codex      # Local
-./scripts/spawn.sh docs "Write API documentation" gemini         # Cloud
-./scripts/spawn.sh tests "Write all unit tests" ollama-claude    # Local
+# 混合云端 + 本地
+./scripts/spawn.sh backend "实现用户 API" claude           # 云端
+./scripts/spawn.sh frontend "构建登录表单" ollama-codex      # 本地
+./scripts/spawn.sh docs "编写 API 文档" gemini         # 云端
+./scripts/spawn.sh tests "编写所有单元测试" ollama-claude    # 本地
 ```
 
-Check all at once:
+一次性检查所有：
 ```bash
 ./skills/tmux-agents/scripts/status.sh
 ```
 
-## Ollama Setup
+## Ollama 设置
 
-Local agents require Ollama with a coding model:
+本地代理需要 Ollama 和编码模型：
 
 ```bash
-# Pull recommended model
+# 拉取推荐模型
 ollama pull glm-4.7-flash
 
-# Configure tools (one-time)
+# 配置工具（一次性）
 ollama launch claude --model glm-4.7-flash --config
 ollama launch codex --model glm-4.7-flash --config
 ```
 
-## Tips
+## 提示
 
-- Sessions persist even if Clawdbot restarts
-- Use local agents for risky/experimental work
-- Use cloud for production-critical tasks
-- Check `tmux ls` to see all active work
-- Kill sessions when done to free resources
+- 即使 Clawdbot 重启，会话也会保留
+- 对风险/实验性工作使用本地代理
+- 对生产关键任务使用云端
+- 检查 `tmux ls` 查看所有正在进行的任务
+- 完成后终止会话以释放资源

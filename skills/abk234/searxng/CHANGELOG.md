@@ -1,38 +1,38 @@
-# Changelog
+# 更新日志
 
-All notable changes to the SearXNG skill will be documented in this file.
+SearXNG技能的所有重要更改都将记录在此文件中。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式基于[保持更新日志](https://keepachangelog.com/en/1.0.0/)，
+本项目遵循[语义化版本控制](https://semver.org/spec/v2.0.0.html)。
 
 ## [1.0.1] - 2026-01-26
 
-### Changed
-- **Security:** Changed default SEARXNG_URL from hardcoded private URL to generic `http://localhost:8080`
-- **Configuration:** Made SEARXNG_URL required configuration (no private default)
-- Updated all documentation to emphasize configuration requirement
-- Removed hardcoded private URL from all documentation
+### 更改
+- **安全性：** 将默认SEARXNG_URL从硬编码的私有URL更改为通用的 `http://localhost:8080`
+- **配置：** 将SEARXNG_URL设为必需配置（无私有默认值）
+- 更新所有文档以强调配置要求
+- 从所有文档中删除硬编码的私有URL
 
-### Security
-- Eliminated exposure of private SearXNG instance URL in published code
+### 安全性
+- 消除了在发布的代码中暴露私有SearXNG实例URL
 
 ## [1.0.0] - 2026-01-26
 
-### Added
-- Initial release
-- Web search via local SearXNG instance
-- Multiple search categories (general, images, videos, news, map, music, files, it, science)
-- Time range filters (day, week, month, year)
-- Rich table output with result snippets
-- JSON output mode for programmatic use
-- SSL self-signed certificate support
-- Configurable SearXNG instance URL via SEARXNG_URL env var
-- Comprehensive error handling
-- Rich CLI with argparse
+### 新增
+- 初始发布
+- 通过本地SearXNG实例进行网络搜索
+- 多种搜索类别（general、images、videos、news、map、music、files、it、science）
+- 时间范围筛选（day、week、month、year）
+- 带有结果片段的丰富表格输出
+- 用于程序化使用的JSON输出模式
+- SSL自签名证书支持
+- 通过SEARXNG_URL环境变量配置SearXNG实例URL
+- 全面的错误处理
+- 带有argparse的丰富CLI
 
-### Features
-- Privacy-focused (all searches local)
-- No API keys required
-- Multi-engine result aggregation
-- Beautiful formatted output
-- Language selection support
+### 特性
+- 隐私优先（所有搜索本地）
+- 无需API密钥
+- 多引擎结果聚合
+- 美观的格式化输出
+- 语言选择支持

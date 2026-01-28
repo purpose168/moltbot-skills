@@ -1,214 +1,150 @@
 ---
 name: gcal-pro
-description: Google Calendar integration for viewing, creating, and managing calendar events. Use when the user asks about their schedule, wants to add/edit/delete events, check availability, or needs a morning brief. Supports natural language like "What's on my calendar tomorrow?" or "Schedule lunch with Alex at noon Friday." Free tier provides read access; Pro tier ($12) adds create/edit/delete and morning briefs.
+description: Google Calendar 集成，用于查看、创建和管理日历事件。当用户询问日程、想要添加/编辑/删除事件、检查可用性或需要早晨简报时使用。支持自然语言，如"我明天的日历上有什么？"或"周五中午和 Alex 吃午餐"。免费层提供只读访问；Pro 层（$12）添加创建/编辑/删除和早晨简报功能。
 ---
 
 # gcal-pro
 
-Manage Google Calendar through natural conversation.
+通过自然对话管理 Google Calendar。
 
-## Quick Reference
+## 快速参考
 
-| Action | Command | Tier |
+| 操作 | 命令 | 层级 |
 |--------|---------|------|
-| View today | `python scripts/gcal_core.py today` | Free |
-| View tomorrow | `python scripts/gcal_core.py tomorrow` | Free |
-| View week | `python scripts/gcal_core.py week` | Free |
-| Search events | `python scripts/gcal_core.py search -q "meeting"` | Free |
-| List calendars | `python scripts/gcal_core.py calendars` | Free |
-| Find free time | `python scripts/gcal_core.py free` | Free |
-| Quick add | `python scripts/gcal_core.py quick -q "Lunch Friday noon"` | Pro |
-| Delete event | `python scripts/gcal_core.py delete --id EVENT_ID -y` | Pro |
-| Morning brief | `python scripts/gcal_core.py brief` | Pro |
+| 查看今天 | `python scripts/gcal_core.py today` | 免费 |
+| 查看明天 | `python scripts/gcal_core.py tomorrow` | 免费 |
+| 查看本周 | `python scripts/gcal_core.py week` | 免费 |
+| 搜索事件 | `python scripts/gcal_core.py search -q "会议"` | 免费 |
+| 列出日历 | `python scripts/gcal_core.py calendars` | 免费 |
+| 查找空闲时间 | `python scripts/gcal_core.py free` | 免费 |
+| 快速添加 | `python scripts/gcal_core.py quick -q "周五中午午餐"` | Pro |
+| 删除事件 | `python scripts/gcal_core.py delete --id 事件_ID -y` | Pro |
+| 早晨简报 | `python scripts/gcal_core.py brief` | Pro |
 
-## Setup
+## 设置
 
-**First-time setup required:**
+**需要首次设置：**
 
-1. User must create Google Cloud project and OAuth credentials
-2. Save `client_secret.json` to `~/.config/gcal-pro/`
-3. Run authentication:
+1. 用户必须创建 Google Cloud 项目和 OAuth 凭据
+2. 将 `client_secret.json` 保存到 `~/.config/gcal-pro/`
+3. 运行身份验证：
    ```bash
    python scripts/gcal_auth.py auth
    ```
-4. Browser opens → user grants calendar access → done
+4. 浏览器打开 → 用户授予日历访问权限 → 完成
 
-**Check auth status:**
+**检查身份验证状态：**
 ```bash
 python scripts/gcal_auth.py status
 ```
 
-## Tiers
+## 层级
 
-### Free Tier
-- View events (today, tomorrow, week, month)
-- Search events
-- List calendars
-- Find free time slots
+### 免费层
+- 查看事件（今天、明天、本周、月份）
+- 搜索事件
+- 列出日历
+- 查找空闲时段
 
-### Pro Tier ($12 one-time)
-- Everything in Free, plus:
-- Create events
-- Quick add (natural language)
-- Update/reschedule events
-- Delete events
-- Morning brief via cron
+### Pro 层（$12 一次性）
+- 免费层的所有功能，加上：
+- 创建事件
+- 快速添加（自然语言）
+- 更新/重新安排事件
+- 删除事件
+- 通过 cron 发送早晨简报
 
-## Usage Patterns
+## 使用模式
 
-### Viewing Schedule
+### 查看日程
 
-When user asks "What's on my calendar?" or "What do I have today?":
+当用户问"我日历上有什么？"或"今天有什么安排？"：
 
 ```bash
 cd /path/to/gcal-pro
 python scripts/gcal_core.py today
 ```
 
-For specific ranges:
-- "tomorrow" → `python scripts/gcal_core.py tomorrow`
-- "this week" → `python scripts/gcal_core.py week`
-- "meetings with Alex" → `python scripts/gcal_core.py search -q "Alex"`
+对于特定范围：
+- "明天" → `python scripts/gcal_core.py tomorrow`
+- "这周" → `python scripts/gcal_core.py week`
+- "和 Alex 的会议" → `python scripts/gcal_core.py search -q "Alex"`
 
-### Creating Events (Pro)
+### 创建事件（Pro）
 
-When user says "Add X to my calendar" or "Schedule Y":
+当用户说"添加到我的日历"或"安排 Y"：
 
-**Option 1: Quick add (natural language)**
+**选项 1：快速添加（自然语言）**
 ```bash
-python scripts/gcal_core.py quick -q "Lunch with Alex Friday at noon"
+python scripts/gcal_core.py quick -q "周五中午和 Alex 午餐"
 ```
 
-**Option 2: Structured create (via Python)**
+**选项 2：结构化创建（通过 Python）**
 ```python
 from scripts.gcal_core import create_event, parse_datetime
 
 create_event(
-    summary="Lunch with Alex",
-    start=parse_datetime("Friday noon"),
+    summary="和 Alex 午餐",
+    start=parse_datetime("周五中午"),
     location="Cafe Roma",
-    confirmed=True  # Set False to show confirmation prompt
+    confirmed=True  # 设置为 False 以显示确认提示
 )
 ```
 
-### Modifying Events (Pro)
+### 修改事件（Pro）
 
-**⚠️ CONFIRMATION REQUIRED for destructive actions!**
+**⚠️ 破坏性操作需要确认！**
 
-Before deleting or significantly modifying an event, ALWAYS confirm with the user:
+在删除或重大修改事件之前，务必先确认用户：
 
-1. Show event details
-2. Ask "Should I delete/reschedule this?"
-3. Only proceed with `confirmed=True` or `-y` flag after user confirms
+1. 显示事件详情
+2. 询问"我应该删除/重新安排这个吗？"
+3. 只有在用户确认后才使用 `confirmed=True` 或 `-y` 标志继续
 
-**Delete:**
+**删除：**
 ```bash
-# First, find the event
-python scripts/gcal_core.py search -q "dentist"
-# Shows event ID
+# 首先，找到事件
+python scripts/gcal_core.py search -q "牙医"
+# 显示事件 ID
 
-# Then delete (with user confirmation)
+# 然后删除（需要用户确认）
 python scripts/gcal_core.py delete --id abc123xyz -y
 ```
 
-### Finding Free Time
+### 查找空闲时间
 
-When user asks "When am I free?" or "Find time for a 1-hour meeting":
+当用户问"我什么时候有空？"或"找时间开1小时的会议"：
 
 ```bash
 python scripts/gcal_core.py free
 ```
 
-### Morning Brief (Pro + Cron)
+### 早晨简报（Pro + Cron）
 
-Set up via Clawdbot cron to send daily agenda:
+通过 Clawdbot cron 设置以发送每日议程：
 
 ```python
 from scripts.gcal_core import generate_morning_brief
 print(generate_morning_brief())
 ```
 
-**Cron setup example:**
-- Schedule: 8:00 AM daily
-- Action: Run `python scripts/gcal_core.py brief`
-- Delivery: Send output to user's messaging channel
+**Cron 设置示例：**
+- 计划：每天早上 8:00
+- 操作：运行 `python scripts/gcal_core.py brief`
+- 发送：将输出发送到用户的 messaging 渠道
 
-## Error Handling
+## 错误处理
 
-| Error | Cause | Solution |
+| 错误 | 原因 | 解决方案 |
 |-------|-------|----------|
-| "client_secret.json not found" | Setup incomplete | Complete Google Cloud setup |
-| "Token refresh failed" | Expired/revoked | Run `python scripts/gcal_auth.py auth --force` |
-| "requires Pro tier" | Free user attempting write | Prompt upgrade or explain limitation |
-| "Event not found" | Invalid event ID | Search for correct event first |
+| "client_secret.json 未找到" | 设置不完整 | 完成 Google Cloud 设置 |
+| "令牌刷新失败" | 已过期/被撤销 | 运行 `python scripts/gcal_auth.py auth --force` |
+| "需要 Pro 层" | 免费用户尝试写入 | 提示升级或解释限制 |
+| "事件未找到" | 无效的事件 ID | 先搜索正确的事件 |
 
-## Timezone Handling
+## 时区处理
 
-- All times are interpreted in user's local timezone (default: America/New_York)
-- When user specifies timezone (e.g., "2 PM EST"), honor it
-- Display times in user's local timezone
-- Store in ISO 8601 format with timezone
-
-## Response Formatting
-
-**For event lists, use this format:**
-
-```
-📅 **Monday, January 27**
-  • 9:00 AM — Team standup
-  • 12:00 PM — Lunch with Alex 📍 Cafe Roma
-  • 3:00 PM — Client call
-
-📅 **Tuesday, January 28**
-  • 10:00 AM — Dentist appointment 📍 123 Main St
-```
-
-**For confirmations:**
-
-```
-✓ Event created: "Lunch with Alex"
-  📅 Friday, Jan 31 at 12:00 PM
-  📍 Cafe Roma
-```
-
-**For morning brief:**
-
-```
-☀️ Good morning! Here's your day:
-📆 Monday, January 27, 2026
-
-You have 3 events today:
-  • 9:00 AM — Team standup
-  • 12:00 PM — Lunch with Alex
-  • 3:00 PM — Client call
-
-👀 Tomorrow: 2 events
-```
-
-## File Locations
-
-```
-~/.config/gcal-pro/
-├── client_secret.json   # OAuth app credentials (user provides)
-├── token.json           # User's access token (auto-generated)
-└── license.json         # Pro license (if purchased)
-```
-
-## Integration with Clawdbot
-
-This skill works with:
-- **Cron**: Schedule morning briefs
-- **Memory**: Store calendar preferences
-- **Messaging**: Deliver briefs via Telegram/WhatsApp/etc.
-
-## Upgrade Prompt
-
-When a Free user attempts a Pro action, respond:
-
-> ⚠️ Creating events requires **gcal-pro Pro** ($12 one-time).
-> 
-> Pro includes: Create, edit, delete events + morning briefs.
-> 
-> 👉 Upgrade: [gumroad-link]
-> 
-> For now, I can show you your schedule (free) — want to see today's events?
+- 所有时间都按用户的本地时区解释（默认：America/New_York）
+- 当用户指定时区（例如"下午2点 EST"）时，遵循它
+- 以用户的本地时区显示时间
+- 以带时区的 ISO 8601 格式存储

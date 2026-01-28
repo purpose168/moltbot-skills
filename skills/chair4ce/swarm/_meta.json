@@ -1,7 +1,8 @@
 {
   "owner": "chair4ce",
   "slug": "swarm",
-  "displayName": "Swarm - Parallel Task Execution",
+  "displayName": "Swarm（并行任务执行）",
+  "description": "使用轻量级 LLM 工作节点实现并行任务执行，大幅加速研究、批处理和多步骤任务",
   "latest": {
     "version": "0.2.0",
     "publishedAt": 1769385856753,

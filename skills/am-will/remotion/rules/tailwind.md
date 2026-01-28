@@ -1,11 +1,11 @@
 ---
 name: tailwind
-description: Using TailwindCSS in Remotion.
+description: 在 Remotion 中使用 TailwindCSS
 metadata:
 ---
 
-You can and should use TailwindCSS in Remotion, if TailwindCSS is installed in the project.
+如果项目中安装了 TailwindCSS，您可以在 Remotion 中使用它。
 
-Don't use `transition-*` or `animate-*` classes - always animate using the `useCurrentFrame()` hook.  
+不要使用 `transition-*` 或 `animate-*` 类 - 始终使用 `useCurrentFrame()` 钩子进行动画。
 
-Tailwind must be installed and enabled first in a Remotion project - fetch  https://www.remotion.dev/docs/tailwind using WebFetch for instructions.
+首先必须在 Remotion 项目中安装并启用 TailwindCSS - 使用 WebFetch 获取 https://www.remotion.dev/docs/tailwind 以获取安装说明。

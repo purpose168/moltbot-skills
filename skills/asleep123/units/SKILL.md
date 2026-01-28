@@ -1,61 +1,61 @@
 ---
 name: units
-description: Perform unit conversions and calculations using GNU Units.
+description: 使用 GNU Units 执行单位换算和计算。
 metadata: {"clawdbot":{"emoji":"📏","requires":{"bins":["units"]}}}
 ---
 
-# GNU Units Skill
+# GNU Units 技能
 
-Use GNU `units` to perform unit conversions and calculations via the command line. Can be installed using brew and apt under "units".
+使用 GNU `units` 通过命令行执行单位换算和计算。可通过 brew（macOS）或 apt（Linux）安装，安装包名称为 "units"。
 
-## Usage
+## 使用方法
 
-Use the `bash` tool to run the `units` command. Use the `-t` (terse) flag to get just the numeric result.
+使用 `bash` 工具运行 `units` 命令。使用 `-t`（简洁）标志仅获取数值结果。
 
 ```bash
-units -t 'from-unit' 'to-unit'
+units -t '源单位' '目标单位'
 ```
 
-### Examples
+### 示例
 
-**Basic Conversion:**
+**基本换算：**
 ```bash
 units -t '10 kg' 'lbs'
-# Output: 22.046226
+# 输出：22.046226
 ```
 
-**Compound Units:**
+**复合单位：**
 ```bash
 units -t '60 miles/hour' 'm/s'
-# Output: 26.8224
+# 输出：26.8224
 ```
 
-**Temperature (Non-linear):**
-Temperature requires specific syntax: `tempF(x)`, `tempC(x)`, `tempK(x)`.
+**温度（非线性换算）：**
+温度换算需要特定语法：`tempF(x)`、`tempC(x)`、`tempK(x)`
 ```bash
 units -t 'tempF(98.6)' 'tempC'
-# Output: 37
+# 输出：37
 ```
 
-**Time:**
+**时间换算：**
 ```bash
 units -t '2 weeks' 'seconds'
 ```
 
-**Rounding Output:**
-To round to specific decimal places (e.g. 3 places), use `-o "%.3f"`:
+**舍入输出：**
+要舍入到指定小数位数（例如 3 位），使用 `-o "%.3f"`：
 ```bash
 units -t -o "%.3f" '10 kg' 'lbs'
-# Output: 22.046
+# 输出：22.046
 ```
 
-**Definition Lookup:**
-To see what a unit definition is (without converting), omit the second argument (without `-t` is more verbose/useful for definitions):
+**查看单位定义：**
+要查看单位定义（不进行换算），省略第二个参数（不使用 `-t` 时输出更详细，适用于查看定义）：
 ```bash
 units '1 acre'
 ```
 
-## Notes
+## 注意事项
 
-- **Currency:** `units` supports currency (USD, EUR, etc.), but exchange rates may be out of date as they are static in the definitions file.
-- **Safety:** Always quote your units to prevent shell expansion issues (e.g. `units -t '1/2 inch' 'mm'`).
+- **货币：** `units` 支持货币（USD、EUR 等），但汇率可能已过期，因为它们是定义文件中的静态值。
+- **安全性：** 始终为单位加上引号，以防止 Shell 扩展问题（例如 `units -t '1/2 inch' 'mm'`）。

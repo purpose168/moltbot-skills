@@ -1,7 +1,8 @@
 {
   "owner": "cuba6112",
   "slug": "tmux-agents",
-  "displayName": "Tmux Agents",
+  "displayName": "Tmux 代理管理器",
+  "description": "在 tmux 会话中管理后台编码代理。支持 Claude Code、Codex、Gemini 云端代理和 Ollama 本地代理。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769349998354,

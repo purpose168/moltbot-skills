@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Tavily AI Search - Optimized search for LLMs and AI applications
-Requires: pip install tavily-python
+Tavily AI 搜索 - 为 LLM 和 AI 应用优化的搜索工具
+依赖: pip install tavily-python
 """
 
 import argparse
@@ -24,41 +24,41 @@ def search(
     exclude_domains: Optional[List[str]] = None,
 ) -> dict:
     """
-    Execute a Tavily search query.
+    执行 Tavily 搜索查询。
     
-    Args:
-        query: Search query string
-        api_key: Tavily API key (tvly-...)
-        search_depth: "basic" (fast) or "advanced" (comprehensive)
-        topic: "general" (default) or "news" (current events)
-        max_results: Number of results to return (1-10)
-        include_answer: Include AI-generated answer summary
-        include_raw_content: Include raw HTML content of sources
-        include_images: Include relevant images in results
-        include_domains: List of domains to specifically include
-        exclude_domains: List of domains to exclude
+    参数:
+        query: 搜索查询字符串
+        api_key: Tavily API 密钥 (tvly-...)
+        search_depth: "basic"（快速）或 "advanced"（综合）
+        topic: "general"（默认）或 "news"（当前事件）
+        max_results: 返回结果数量 (1-10)
+        include_answer: 包含 AI 生成的答案摘要
+        include_raw_content: 包含来源的原始 HTML 内容
+        include_images: 在结果中包含相关图片
+        include_domains: 要特别包含的域名列表
+        exclude_domains: 要排除的域名列表
     
-    Returns:
-        dict: Tavily API response
+    返回:
+        dict: Tavily API 响应
     """
     try:
         from tavily import TavilyClient
     except ImportError:
         return {
-            "error": "tavily-python package not installed. Run: pip install tavily-python",
+            "error": "未安装 tavily-python 软件包。运行: pip install tavily-python",
             "install_command": "pip install tavily-python"
         }
     
     if not api_key:
         return {
-            "error": "Tavily API key required. Get one at https://tavily.com",
-            "setup_instructions": "Set TAVILY_API_KEY environment variable or pass --api-key"
+            "error": "需要 Tavily API 密钥。在 https://tavily.com 获取",
+            "setup_instructions": "设置 TAVILY_API_KEY 环境变量或传递 --api-key 参数"
         }
     
     try:
         client = TavilyClient(api_key=api_key)
         
-        # Build search parameters
+        # 构建搜索参数
         search_params = {
             "query": query,
             "search_depth": search_depth,
@@ -95,100 +95,100 @@ def search(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Tavily AI Search - Optimized search for LLMs",
+        description="Tavily AI 搜索 - 为 LLM 优化的搜索工具",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  # Basic search
-  %(prog)s "What is quantum computing?"
+示例:
+  # 基本搜索
+  %(prog)s "什么是量子计算？"
   
-  # Advanced search with more results
-  %(prog)s "Climate change solutions" --depth advanced --max-results 10
+  # 带有更多结果的高级搜索
+  %(prog)s "气候变化的解决方案" --depth advanced --max-results 10
   
-  # News-focused search
-  %(prog)s "AI developments" --topic news
+  # 新闻焦点搜索
+  %(prog)s "AI 发展" --topic news
   
-  # Domain filtering
-  %(prog)s "Python tutorials" --include-domains python.org --exclude-domains w3schools.com
+  # 域名过滤
+  %(prog)s "Python 教程" --include-domains python.org --exclude-domains w3schools.com
   
-  # Include images in results
-  %(prog)s "Eiffel Tower" --images
+  # 在结果中包含图片
+  %(prog)s "埃菲尔铁塔" --images
   
-Environment Variables:
-  TAVILY_API_KEY    Your Tavily API key (get one at https://tavily.com)
+  环境变量:
+  TAVILY_API_KEY    您的 Tavily API 密钥（在 https://tavily.com 获取）
         """
     )
     
     parser.add_argument(
         "query",
-        help="Search query"
+        help="搜索查询"
     )
     
     parser.add_argument(
         "--api-key",
-        help="Tavily API key (or set TAVILY_API_KEY env var)"
+        help="Tavily API 密钥（或设置 TAVILY_API_KEY 环境变量）"
     )
     
     parser.add_argument(
         "--depth",
         choices=["basic", "advanced"],
         default="basic",
-        help="Search depth: 'basic' (fast) or 'advanced' (comprehensive)"
+        help="搜索深度: 'basic'（快速）或 'advanced'（综合）"
     )
     
     parser.add_argument(
         "--topic",
         choices=["general", "news"],
         default="general",
-        help="Search topic: 'general' or 'news' (current events)"
+        help="搜索主题: 'general' 或 'news'（当前事件）"
     )
     
     parser.add_argument(
         "--max-results",
         type=int,
         default=5,
-        help="Maximum number of results (1-10)"
+        help="最大结果数量 (1-10)"
     )
     
     parser.add_argument(
         "--no-answer",
         action="store_true",
-        help="Exclude AI-generated answer summary"
+        help="排除 AI 生成的答案摘要"
     )
     
     parser.add_argument(
         "--raw-content",
         action="store_true",
-        help="Include raw HTML content of sources"
+        help="包含来源的原始 HTML 内容"
     )
     
     parser.add_argument(
         "--images",
         action="store_true",
-        help="Include relevant images in results"
+        help="在结果中包含相关图片"
     )
     
     parser.add_argument(
         "--include-domains",
         nargs="+",
-        help="List of domains to specifically include"
+        help="要特别包含的域名列表"
     )
     
     parser.add_argument(
         "--exclude-domains",
         nargs="+",
-        help="List of domains to exclude"
+        help="要排除的域名列表"
     )
     
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Output raw JSON response"
+        help="输出原始 JSON 响应"
     )
     
     args = parser.parse_args()
     
-    # Get API key from args or environment
+    # 从参数或环境变量获取 API 密钥
     api_key = args.api_key or os.getenv("TAVILY_API_KEY")
     
     result = search(
@@ -208,29 +208,29 @@ Environment Variables:
         print(json.dumps(result, indent=2))
     else:
         if "error" in result:
-            print(f"Error: {result['error']}", file=sys.stderr)
+            print(f"错误: {result['error']}", file=sys.stderr)
             if "install_command" in result:
-                print(f"\nTo install: {result['install_command']}", file=sys.stderr)
+                print(f"\n安装命令: {result['install_command']}", file=sys.stderr)
             if "setup_instructions" in result:
-                print(f"\nSetup: {result['setup_instructions']}", file=sys.stderr)
+                print(f"\n设置说明: {result['setup_instructions']}", file=sys.stderr)
             sys.exit(1)
         
-        # Format human-readable output
-        print(f"Query: {result['query']}")
-        print(f"Response time: {result.get('response_time', 'N/A')}s")
-        print(f"Credits used: {result.get('usage', {}).get('credits', 'N/A')}\n")
+        # 格式化人类可读的输出
+        print(f"查询: {result['query']}")
+        print(f"响应时间: {result.get('response_time', 'N/A')}秒")
+        print(f"消耗积分: {result.get('usage', {}).get('credits', 'N/A')}\n")
         
         if result.get("answer"):
-            print("=== AI ANSWER ===")
+            print("=== AI 答案 ===")
             print(result["answer"])
             print()
         
         if result.get("results"):
-            print("=== RESULTS ===")
+            print("=== 结果 ===")
             for i, item in enumerate(result["results"], 1):
-                print(f"\n{i}. {item.get('title', 'No title')}")
+                print(f"\n{i}. {item.get('title', '无标题')}")
                 print(f"   URL: {item.get('url', 'N/A')}")
-                print(f"   Score: {item.get('score', 'N/A'):.3f}")
+                print(f"   评分: {item.get('score', 'N/A'):.3f}")
                 if item.get("content"):
                     content = item["content"]
                     if len(content) > 200:
@@ -238,8 +238,8 @@ Environment Variables:
                     print(f"   {content}")
         
         if result.get("images"):
-            print(f"\n=== IMAGES ({len(result['images'])}) ===")
-            for img_url in result["images"][:5]:  # Show first 5
+            print(f"\n=== 图片 ({len(result['images'])}) ===")
+            for img_url in result["images"][:5]:  # 显示前5张
                 print(f"   {img_url}")
 
 

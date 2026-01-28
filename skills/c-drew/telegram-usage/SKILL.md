@@ -1,48 +1,48 @@
 ---
 name: telegram-usage
-description: Display session usage statistics (quota, session time, tokens, context)
+description: "显示会话使用统计信息（配额、会话时间、令牌数量、上下文窗口使用情况）。当用户请求使用统计、配额信息或会话数据时使用。"
 metadata: {"clawdbot":{"emoji":"📊","requires":{"bins":["node"]}}}
 ---
 
-# Telegram Usage Stats
+# Telegram 使用统计技能
 
-Display comprehensive session usage statistics by running the handler script.
+通过运行处理脚本来显示全面的会话使用统计信息。
 
-## What it does
+## 功能说明
 
-Shows a quick status message with:
-- **Quota Remaining**: Percentage of API quota left with visual indicator
-- **Reset Timer**: Time remaining until quota resets
+显示简洁的状态消息，包括：
+- **剩余配额**：API 配额剩余百分比，带可视化指示器
+- **重置倒计时**：距离配额重置的剩余时间
 
-## How to use this skill
+## 使用方法
 
-When the user asks for usage statistics, quota info, or session data:
+当用户请求使用统计、配额信息或会话数据时：
 
 ```bash
 node /home/drew-server/clawd/skills/telegram-usage/handler.js
 ```
 
-This will output formatted HTML suitable for Telegram's parseMode.
+这将输出适合 Telegram parseMode 格式的 HTML 内容。
 
-## Output Format
+## 输出格式
 
-The response is formatted as a clean Telegram message with:
-- Section headers (bold)
-- Clear percentages and time remaining
-- Visual indicators (emoji)
-- All in one message for quick reference
+响应被格式化为简洁的 Telegram 消息，包括：
+- 小节标题（粗体显示）
+- 清晰的百分比和时间剩余显示
+- 可视化指示器（表情符号）
+- 所有信息整合在一条消息中，便于快速参考
 
-## Example Output
+## 输出示例
 
 ```
-📊 API Usage
+📊 API 使用统计
 
-🔋 Quota: 🟢 47%
-⏱️ Resets in: 53m
+🔋 配额：🟢 47%
+⏱️ 重置倒计时：53 分钟
 ```
 
-## Notes
+## 重要说明
 
-- Pulls real-time data from `clawdbot models status`
-- Updates on each invocation with current API quota values
-- Uses plain text formatting for Telegram compatibility
+- 实时数据来自 `clawdbot models status`
+- 每次调用时都会更新，获取当前 API 配额值
+- 使用纯文本格式以确保 Telegram 兼容性

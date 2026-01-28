@@ -10,28 +10,28 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// CalendarCmd handles calendar operations.
+// CalendarCmd 处理日历操作命令。
 type CalendarCmd struct {
-	List      CalendarListCmd      `cmd:"" help:"List events"`
-	Get       CalendarGetCmd       `cmd:"" help:"Get an event"`
-	Create    CalendarCreateCmd    `cmd:"" help:"Create an event"`
-	Update    CalendarUpdateCmd    `cmd:"" help:"Update an event"`
-	Delete    CalendarDeleteCmd    `cmd:"" help:"Delete an event"`
-	Calendars CalendarCalendarsCmd `cmd:"" help:"List calendars"`
-	Respond   CalendarRespondCmd   `cmd:"" help:"Respond to an event invitation"`
-	FreeBusy  CalendarFreeBusyCmd  `cmd:"" help:"Get free/busy information"`
-	ACL       CalendarACLCmd       `cmd:"" help:"List calendar permissions"`
+	List      CalendarListCmd      `cmd:"" help:"列出事件"`
+	Get       CalendarGetCmd       `cmd:"" help:"获取事件"`
+	Create    CalendarCreateCmd    `cmd:"" help:"创建事件"`
+	Update    CalendarUpdateCmd    `cmd:"" help:"更新事件"`
+	Delete    CalendarDeleteCmd    `cmd:"" help:"删除事件"`
+	Calendars CalendarCalendarsCmd `cmd:"" help:"列出日历"`
+	Respond   CalendarRespondCmd   `cmd:"" help:"回应事件邀请"`
+	FreeBusy  CalendarFreeBusyCmd  `cmd:"" help:"获取空闲/忙碌信息"`
+	ACL       CalendarACLCmd       `cmd:"" help:"列出日历权限"`
 }
 
-// CalendarListCmd lists events.
+// CalendarListCmd 列出事件。
 type CalendarListCmd struct {
-	Calendar string `help:"Calendar ID (default: primary)"`
-	From     string `help:"Start date (ISO format)" default:""`
-	To       string `help:"End date (ISO format)" default:""`
-	Max      int    `help:"Maximum events" default:"25"`
+	Calendar string `help:"日历 ID (默认: primary)"`
+	From     string `help:"开始日期 (ISO 格式)" default:""`
+	To       string `help:"结束日期 (ISO 格式)" default:""`
+	Max      int    `help:"最大事件数" default:"25"`
 }
 
-// Run executes calendar list.
+// Run 执行日历列表命令。
 func (c *CalendarListCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -40,7 +40,7 @@ func (c *CalendarListCmd) Run(root *Root) error {
 
 	ctx := context.Background()
 
-	// Default to today through +30 days
+	// 默认从今天开始，持续30天
 	from := time.Now()
 	to := from.AddDate(0, 0, 30)
 
@@ -49,7 +49,7 @@ func (c *CalendarListCmd) Run(root *Root) error {
 		if err != nil {
 			from, err = time.Parse(time.RFC3339, c.From)
 			if err != nil {
-				return fmt.Errorf("invalid --from date: %w", err)
+				return fmt.Errorf("无效的 --from 日期: %w", err)
 			}
 		}
 	}
@@ -59,7 +59,7 @@ func (c *CalendarListCmd) Run(root *Root) error {
 		if err != nil {
 			to, err = time.Parse(time.RFC3339, c.To)
 			if err != nil {
-				return fmt.Errorf("invalid --to date: %w", err)
+				return fmt.Errorf("无效的 --to 日期: %w", err)
 			}
 		}
 	}
@@ -92,7 +92,7 @@ func (c *CalendarListCmd) Run(root *Root) error {
 	}
 
 	if len(resp.Value) == 0 {
-		fmt.Println("No events found")
+		fmt.Println("未找到事件")
 		return nil
 	}
 
@@ -102,12 +102,12 @@ func (c *CalendarListCmd) Run(root *Root) error {
 	return nil
 }
 
-// CalendarGetCmd gets an event.
+// CalendarGetCmd 获取事件。
 type CalendarGetCmd struct {
-	ID string `arg:"" help:"Event ID"`
+	ID string `arg:"" help:"事件 ID"`
 }
 
-// Run executes calendar get.
+// Run 执行日历获取命令。
 func (c *CalendarGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -135,19 +135,19 @@ func (c *CalendarGetCmd) Run(root *Root) error {
 	return nil
 }
 
-// CalendarCreateCmd creates an event.
+// CalendarCreateCmd 创建事件。
 type CalendarCreateCmd struct {
-	Summary   string   `help:"Event title/summary" required:""`
-	From      string   `help:"Start time (ISO format)" required:""`
-	To        string   `help:"End time (ISO format)" required:""`
-	Location  string   `help:"Location"`
-	Description string `help:"Event description" name:"description"`
-	Attendees []string `help:"Attendee email addresses"`
-	AllDay    bool     `help:"All-day event" name:"all-day"`
-	Calendar  string   `help:"Calendar ID"`
+	Summary     string   `help:"事件标题/摘要" required:""`
+	From        string   `help:"开始时间 (ISO 格式)" required:""`
+	To          string   `help:"结束时间 (ISO 格式)" required:""`
+	Location    string   `help:"地点"`
+	Description string   `help:"事件描述" name:"description"`
+	Attendees   []string `help:"与会者电子邮件地址"`
+	AllDay      bool     `help:"全天事件" name:"all-day"`
+	Calendar    string   `help:"日历 ID"`
 }
 
-// Run executes calendar create.
+// Run 执行日历创建命令。
 func (c *CalendarCreateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -212,21 +212,21 @@ func (c *CalendarCreateCmd) Run(root *Root) error {
 		return outputJSON(created)
 	}
 
-	fmt.Printf("✓ Event created: %s (%s)\n", created.Subject, graph.FormatID(created.ID))
+	fmt.Printf("✓ 事件创建成功: %s (%s)\n", created.Subject, graph.FormatID(created.ID))
 	return nil
 }
 
-// CalendarUpdateCmd updates an event.
+// CalendarUpdateCmd 更新事件。
 type CalendarUpdateCmd struct {
-	ID       string `arg:"" help:"Event ID"`
-	Summary  string `help:"New title/summary"`
-	From     string `help:"New start time"`
-	To       string `help:"New end time"`
-	Location string `help:"New location"`
-	Description string `help:"New description" name:"description"`
+	ID          string `arg:"" help:"事件 ID"`
+	Summary     string `help:"新标题/摘要"`
+	From        string `help:"新开始时间"`
+	To          string `help:"新结束时间"`
+	Location    string `help:"新地点"`
+	Description string `help:"新描述" name:"description"`
 }
 
-// Run executes calendar update.
+// Run 执行日历更新命令。
 func (c *CalendarUpdateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -252,7 +252,7 @@ func (c *CalendarUpdateCmd) Run(root *Root) error {
 	}
 
 	if len(updates) == 0 {
-		return fmt.Errorf("no updates specified")
+		return fmt.Errorf("未指定更新内容")
 	}
 
 	ctx := context.Background()
@@ -263,16 +263,16 @@ func (c *CalendarUpdateCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ Event updated")
+	fmt.Println("✓ 事件更新成功")
 	return nil
 }
 
-// CalendarDeleteCmd deletes an event.
+// CalendarDeleteCmd 删除事件。
 type CalendarDeleteCmd struct {
-	ID string `arg:"" help:"Event ID"`
+	ID string `arg:"" help:"事件 ID"`
 }
 
-// Run executes calendar delete.
+// Run 执行日历删除命令。
 func (c *CalendarDeleteCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -286,14 +286,14 @@ func (c *CalendarDeleteCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ Event deleted")
+	fmt.Println("✓ 事件删除成功")
 	return nil
 }
 
-// CalendarCalendarsCmd lists calendars.
+// CalendarCalendarsCmd 列出日历。
 type CalendarCalendarsCmd struct{}
 
-// Run executes calendars list.
+// Run 执行日历列表命令。
 func (c *CalendarCalendarsCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -327,14 +327,14 @@ func (c *CalendarCalendarsCmd) Run(root *Root) error {
 	return nil
 }
 
-// CalendarRespondCmd responds to an event invitation.
+// CalendarRespondCmd 回应事件邀请。
 type CalendarRespondCmd struct {
-	ID       string `arg:"" help:"Event ID"`
-	Response string `arg:"" help:"Response: accept, decline, tentative"`
-	Comment  string `help:"Optional comment"`
+	ID       string `arg:"" help:"事件 ID"`
+	Response string `arg:"" help:"回应: accept, decline, tentative"`
+	Comment  string `help:"可选评论"`
 }
 
-// Run executes calendar respond.
+// Run 执行日历回应命令。
 func (c *CalendarRespondCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -350,7 +350,7 @@ func (c *CalendarRespondCmd) Run(root *Root) error {
 	case "tentative":
 		action = "tentativelyAccept"
 	default:
-		return fmt.Errorf("invalid response: %s (use accept, decline, or tentative)", c.Response)
+		return fmt.Errorf("无效的回应: %s (使用 accept, decline, 或 tentative)", c.Response)
 	}
 
 	body := map[string]interface{}{
@@ -368,23 +368,23 @@ func (c *CalendarRespondCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Responded: %s\n", c.Response)
+	fmt.Printf("✓ 回应成功: %s\n", c.Response)
 	return nil
 }
 
-// CalendarFreeBusyCmd gets free/busy information.
+// CalendarFreeBusyCmd 获取空闲/忙碌信息。
 type CalendarFreeBusyCmd struct {
-	Emails []string `arg:"" help:"Email addresses to check"`
-	Start  string   `help:"Start time (ISO format)" required:""`
-	End    string   `help:"End time (ISO format)" required:""`
+	Emails []string `arg:"" help:"要检查的电子邮件地址"`
+	Start  string   `help:"开始时间 (ISO 格式)" required:""`
+	End    string   `help:"结束时间 (ISO 格式)" required:""`
 }
 
-// CalendarACLCmd lists calendar permissions.
+// CalendarACLCmd 列出日历权限。
 type CalendarACLCmd struct {
-	Calendar string `arg:"" optional:"" help:"Calendar ID (default: primary)"`
+	Calendar string `arg:"" optional:"" help:"日历 ID (默认: primary)"`
 }
 
-// Run executes calendar freebusy.
+// Run 执行日历空闲/忙碌命令。
 func (c *CalendarFreeBusyCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -419,7 +419,7 @@ func (c *CalendarFreeBusyCmd) Run(root *Root) error {
 	return nil
 }
 
-// Event represents a calendar event.
+// Event 表示日历事件。
 type Event struct {
 	ID        string `json:"id"`
 	Subject   string `json:"subject"`
@@ -431,24 +431,24 @@ type Event struct {
 	Organizer *Org   `json:"organizer"`
 }
 
-// Time represents a datetime with timezone.
+// Time 表示带时区的日期时间。
 type Time struct {
 	DateTime string `json:"dateTime"`
 	TimeZone string `json:"timeZone"`
 }
 
-// Loc represents a location.
+// Loc 表示地点。
 type Loc struct {
 	DisplayName string `json:"displayName"`
 }
 
-// Body represents event body.
+// Body 表示事件正文。
 type Body struct {
 	ContentType string `json:"contentType"`
 	Content     string `json:"content"`
 }
 
-// Org represents an organizer.
+// Org 表示组织者。
 type Org struct {
 	EmailAddress struct {
 		Name    string `json:"name"`
@@ -456,14 +456,14 @@ type Org struct {
 	} `json:"emailAddress"`
 }
 
-// Calendar represents a calendar.
+// Calendar 表示日历。
 type Calendar struct {
 	ID                string `json:"id"`
 	Name              string `json:"name"`
 	IsDefaultCalendar bool   `json:"isDefaultCalendar"`
 }
 
-// CalendarPermission represents a calendar permission (ACL entry).
+// CalendarPermission 表示日历权限（ACL 条目）。
 type CalendarPermission struct {
 	ID                  string        `json:"id"`
 	Role                string        `json:"role"`
@@ -473,13 +473,13 @@ type CalendarPermission struct {
 	IsInsideOrganization bool         `json:"isInsideOrganization"`
 }
 
-// EmailAddress represents an email address in a permission.
+// EmailAddress 表示权限中的电子邮件地址。
 type EmailAddress struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
 }
 
-// Run executes calendar acl.
+// Run 执行日历权限命令。
 func (c *CalendarACLCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -509,14 +509,14 @@ func (c *CalendarACLCmd) Run(root *Root) error {
 	}
 
 	if len(resp.Value) == 0 {
-		fmt.Println("No permissions found")
+		fmt.Println("未找到权限")
 		return nil
 	}
 
-	fmt.Println("Calendar Permissions")
+	fmt.Println("日历权限")
 	fmt.Println()
 	for _, perm := range resp.Value {
-		email := "(no email)"
+		email := "(无邮箱)"
 		name := ""
 		if perm.EmailAddress != nil {
 			if perm.EmailAddress.Address != "" {
@@ -528,7 +528,7 @@ func (c *CalendarACLCmd) Run(root *Root) error {
 		}
 		removable := ""
 		if !perm.IsRemovable {
-			removable = " (locked)"
+			removable = " (锁定)"
 		}
 		if name != "" {
 			fmt.Printf("%-12s %s <%s>%s\n", perm.Role, name, email, removable)
@@ -539,18 +539,19 @@ func (c *CalendarACLCmd) Run(root *Root) error {
 			fmt.Printf("  ID: %s\n", perm.ID)
 		}
 	}
-	fmt.Printf("\n%d permission(s)\n", len(resp.Value))
+	fmt.Printf("\n%d 个权限\n", len(resp.Value))
 	return nil
 }
 
+// printEvent 打印事件摘要信息
 func printEvent(event Event, verbose bool) {
 	start := ""
 	if event.Start != nil {
 		t, _ := time.Parse("2006-01-02T15:04:05.0000000", event.Start.DateTime)
 		if event.IsAllDay {
-			start = t.Format("Jan 2")
+			start = t.Format("1月2日")
 		} else {
-			start = t.Format("Jan 2 15:04")
+			start = t.Format("1月2日 15:04")
 		}
 	}
 
@@ -562,28 +563,29 @@ func printEvent(event Event, verbose bool) {
 	fmt.Printf("%-16s %s%s\n", start, event.Subject, location)
 	fmt.Printf("  ID: %s\n", graph.FormatID(event.ID))
 	if verbose {
-		fmt.Printf("  Full: %s\n", event.ID)
+		fmt.Printf("  完整: %s\n", event.ID)
 	}
 }
 
+// printEventDetail 打印事件详细信息
 func printEventDetail(event Event, verbose bool) {
 	fmt.Printf("ID:       %s\n", graph.FormatID(event.ID))
 	if verbose {
-		fmt.Printf("Full ID:  %s\n", event.ID)
+		fmt.Printf("完整 ID:  %s\n", event.ID)
 	}
-	fmt.Printf("Subject:  %s\n", event.Subject)
+	fmt.Printf("主题:     %s\n", event.Subject)
 
 	if event.Start != nil {
-		fmt.Printf("Start:    %s\n", event.Start.DateTime)
+		fmt.Printf("开始:     %s\n", event.Start.DateTime)
 	}
 	if event.End != nil {
-		fmt.Printf("End:      %s\n", event.End.DateTime)
+		fmt.Printf("结束:     %s\n", event.End.DateTime)
 	}
 	if event.Location != nil && event.Location.DisplayName != "" {
-		fmt.Printf("Location: %s\n", event.Location.DisplayName)
+		fmt.Printf("地点:     %s\n", event.Location.DisplayName)
 	}
 	if event.Organizer != nil {
-		fmt.Printf("Organizer: %s <%s>\n",
+		fmt.Printf("组织者:   %s <%s>\n",
 			event.Organizer.EmailAddress.Name,
 			event.Organizer.EmailAddress.Address)
 	}

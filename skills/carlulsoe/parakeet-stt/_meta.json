@@ -1,7 +1,8 @@
 {
   "owner": "carlulsoe",
   "slug": "parakeet-stt",
-  "displayName": "Parakeet Stt",
+  "displayName": "Parakeet 语音转文字",
+  "description": "本地语音转文字，使用 NVIDIA Parakeet TDT 0.6B v3 模型（ONNX 格式，CPU 运行）。比 Whisper 快 30 倍，支持 25 种语言，自动检测，OpenAI 兼容 API。当需要转录音频文件、将语音转换为文字或在本地处理语音录音（不使用云 API）时使用。",
   "latest": {
     "version": "1.1.0",
     "publishedAt": 1768689710480,

@@ -1,36 +1,36 @@
 ---
 name: nest-devices
-description: Control Nest smart home devices (thermostat, cameras, doorbell) via the Device Access API. Use when asked to check or adjust home temperature, view camera feeds, check who's at the door, monitor rooms, or set up temperature schedules.
+description: 通过设备访问 API 控制 Nest 智能家居设备（恒温器、摄像头、门铃）。用于检查或调节室温、查看摄像头画面、查看谁在门口、监控房间或设置温度计划时。
 metadata:
   clawdbot:
     emoji: "🏠"
 ---
 
-# Nest Device Access
+# Nest 设备访问
 
-Control Nest devices via Google's Smart Device Management API.
+通过谷歌智能设备管理 API 控制 Nest 设备。
 
-## Setup
+## 设置
 
-### 1. Google Cloud & Device Access
+### 1. 谷歌云和设备访问
 
-1. Create a Google Cloud project at [console.cloud.google.com](https://console.cloud.google.com)
-2. Pay the $5 fee and create a Device Access project at [console.nest.google.com/device-access](https://console.nest.google.com/device-access)
-3. Create OAuth 2.0 credentials (Web application type)
-4. Add `https://www.google.com` as an authorized redirect URI
-5. Link your Nest account to the Device Access project
+1. 在 [console.cloud.google.com](https://console.cloud.google.com) 创建谷歌云项目
+2. 支付 5 美元费用并在 [console.nest.google.com/device-access](https://console.nest.google.com/device-access) 创建设备访问项目
+3. 创建 OAuth 2.0 凭证（Web 应用程序类型）
+4. 添加 `https://www.google.com` 作为授权的重定向 URI
+5. 将您的 Nest 账户链接到设备访问项目
 
-### 2. Get Refresh Token
+### 2. 获取刷新令牌
 
-Run the OAuth flow to get a refresh token:
+运行 OAuth 流程以获取刷新令牌：
 
 ```bash
-# 1. Open this URL in browser (replace CLIENT_ID and PROJECT_ID):
+# 1. 在浏览器中打开此 URL（替换 CLIENT_ID 和 PROJECT_ID）：
 https://nestservices.google.com/partnerconnections/PROJECT_ID/auth?redirect_uri=https://www.google.com&access_type=offline&prompt=consent&client_id=CLIENT_ID&response_type=code&scope=https://www.googleapis.com/auth/sdm.service
 
-# 2. Authorize and copy the 'code' parameter from the redirect URL
+# 2. 授权并从重定向 URL 复制 'code' 参数
 
-# 3. Exchange code for tokens:
+# 3. 用 code 交换令牌：
 curl -X POST https://oauth2.googleapis.com/token \
   -d "client_id=CLIENT_ID" \
   -d "client_secret=CLIENT_SECRET" \
@@ -39,14 +39,14 @@ curl -X POST https://oauth2.googleapis.com/token \
   -d "redirect_uri=https://www.google.com"
 ```
 
-### 3. Store Credentials
+### 3. 存储凭证
 
-Store in 1Password or environment variables:
+存储在 1Password 或环境变量中：
 
-**1Password** (recommended):
-Create an item with fields: `project_id`, `client_id`, `client_secret`, `refresh_token`
+**1Password**（推荐）：
+创建一个包含以下字段的项目：`project_id`、`client_id`、`client_secret`、`refresh_token`
 
-**Environment variables:**
+**环境变量：**
 ```bash
 export NEST_PROJECT_ID="your-project-id"
 export NEST_CLIENT_ID="your-client-id"
@@ -54,36 +54,36 @@ export NEST_CLIENT_SECRET="your-client-secret"
 export NEST_REFRESH_TOKEN="your-refresh-token"
 ```
 
-## Usage
+## 使用方法
 
-### List devices
+### 列出设备
 ```bash
 python3 scripts/nest.py list
 ```
 
-### Thermostat
+### 恒温器
 
 ```bash
-# Get status
+# 获取状态
 python3 scripts/nest.py get <device_id>
 
-# Set temperature (Celsius)
+# 设置温度（摄氏度）
 python3 scripts/nest.py set-temp <device_id> 21 --unit c --type heat
 
-# Set temperature (Fahrenheit)
+# 设置温度（华氏度）
 python3 scripts/nest.py set-temp <device_id> 70 --unit f --type heat
 
-# Change mode (HEAT, COOL, HEATCOOL, OFF)
+# 更改模式（HEAT、COOL、HEATCOOL、OFF）
 python3 scripts/nest.py set-mode <device_id> HEAT
 
-# Eco mode
+# 节能模式
 python3 scripts/nest.py set-eco <device_id> MANUAL_ECO
 ```
 
-### Cameras
+### 摄像头
 
 ```bash
-# Generate live stream URL (RTSP, valid ~5 min)
+# 生成实时流 URL（RTSP，有效期约 5 分钟）
 python3 scripts/nest.py stream <device_id>
 ```
 
@@ -94,50 +94,50 @@ from nest import NestClient
 
 client = NestClient()
 
-# List devices
+# 列出设备
 devices = client.list_devices()
 
-# Thermostat control
-client.set_heat_temperature(device_id, 21.0)  # Celsius
+# 恒温器控制
+client.set_heat_temperature(device_id, 21.0)  # 摄氏度
 client.set_thermostat_mode(device_id, 'HEAT')
 client.set_eco_mode(device_id, 'MANUAL_ECO')
 
-# Camera stream
+# 摄像头流
 result = client.generate_stream(device_id)
 rtsp_url = result['results']['streamUrls']['rtspUrl']
 ```
 
-## Configuration
+## 配置
 
-The script checks for credentials in this order:
+脚本按以下顺序检查凭证：
 
-1. **1Password**: Set `NEST_OP_VAULT` and `NEST_OP_ITEM` (or use defaults: vault "Alfred", item "Nest Device Access API")
-2. **Environment variables**: `NEST_PROJECT_ID`, `NEST_CLIENT_ID`, `NEST_CLIENT_SECRET`, `NEST_REFRESH_TOKEN`
+1. **1Password**：设置 `NEST_OP_VAULT` 和 `NEST_OP_ITEM`（或使用默认值：保管库 "Alfred"，项目 "Nest Device Access API"）
+2. **环境变量**：`NEST_PROJECT_ID`、`NEST_CLIENT_ID`、`NEST_CLIENT_SECRET`、`NEST_REFRESH_TOKEN`
 
-## Temperature Reference
+## 温度参考
 
-| Setting | Celsius | Fahrenheit |
-|---------|---------|------------|
-| Eco (away) | 15-17°C | 59-63°F |
-| Comfortable | 19-21°C | 66-70°F |
-| Warm | 22-23°C | 72-73°F |
-| Night | 17-18°C | 63-65°F |
+| 设置 | 摄氏度 | 华氏度 |
+|------|---------|--------|
+| 节能（外出）| 15-17°C | 59-63°F |
+| 舒适 | 19-21°C | 66-70°F |
+| 温暖 | 22-23°C | 72-73°F |
+| 夜间 | 17-18°C | 63-65°F |
 
 ---
 
-## Real-Time Events (Doorbell, Motion, etc.)
+## 实时事件（门铃、移动检测等）
 
-For instant alerts when someone rings the doorbell or motion is detected, you need to set up Google Cloud Pub/Sub with a webhook.
+当有人按门铃或检测到移动时需要即时提醒，您需要使用 webhook 设置谷歌云 Pub/Sub。
 
-### Prerequisites
+### 前置条件
 
-- Google Cloud CLI (`gcloud`) installed and authenticated
-- Cloudflare account (free tier works) for the tunnel
-- Clawdbot hooks enabled in config
+- 已安装并认证的谷歌云 CLI（`gcloud`）
+- Cloudflare 账户（免费套餐可用）用于隧道
+- 在配置中启用 Clawdbot 钩子
 
-### 1. Enable Clawdbot Hooks
+### 1. 启用 Clawdbot 钩子
 
-Add to your `clawdbot.json`:
+添加到您的 `clawdbot.json`：
 
 ```json
 {
@@ -148,17 +148,17 @@ Add to your `clawdbot.json`:
 }
 ```
 
-Generate a token: `openssl rand -hex 24`
+生成令牌：`openssl rand -hex 24`
 
-### 2. Create Pub/Sub Topic
+### 2. 创建 Pub/Sub 主题
 
 ```bash
 gcloud config set project YOUR_GCP_PROJECT_ID
 
-# Create topic
+# 创建主题
 gcloud pubsub topics create nest-events
 
-# Grant SDM permission to publish (both the service account and publisher group)
+# 授予 SDM 发布权限（服务账户和发布者组都需要）
 gcloud pubsub topics add-iam-policy-binding nest-events \
   --member="serviceAccount:sdm-prod@sdm-prod.iam.gserviceaccount.com" \
   --role="roles/pubsub.publisher"
@@ -168,31 +168,31 @@ gcloud pubsub topics add-iam-policy-binding nest-events \
   --role="roles/pubsub.publisher"
 ```
 
-### 3. Link Topic to Device Access
+### 3. 将主题链接到设备访问
 
-Go to [console.nest.google.com/device-access](https://console.nest.google.com/device-access) → Your Project → Edit → Set Pub/Sub topic to:
+转到 [console.nest.google.com/device-access](https://console.nest.google.com/device-access) → 您的项目 → 编辑 → 设置 Pub/Sub 主题为：
 
 ```
 projects/YOUR_GCP_PROJECT_ID/topics/nest-events
 ```
 
-### 4. Set Up Cloudflare Tunnel
+### 4. 设置 Cloudflare 隧道
 
 ```bash
-# Install cloudflared
+# 安装 cloudflared
 curl -L -o ~/.local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
 chmod +x ~/.local/bin/cloudflared
 
-# Authenticate (opens browser)
+# 认证（打开浏览器）
 ~/.local/bin/cloudflared tunnel login
 
-# Create named tunnel
+# 创建命名隧道
 ~/.local/bin/cloudflared tunnel create nest-webhook
 
-# Note the Tunnel ID (UUID) from output
+# 记下输出中的隧道 ID（UUID）
 ```
 
-Create `~/.cloudflared/config.yml`:
+创建 `~/.cloudflared/config.yml`：
 
 ```yaml
 tunnel: nest-webhook
@@ -204,15 +204,15 @@ ingress:
   - service: http_status:404
 ```
 
-Create DNS route:
+创建 DNS 路由：
 
 ```bash
 ~/.local/bin/cloudflared tunnel route dns nest-webhook nest.yourdomain.com
 ```
 
-### 5. Create Systemd Services
+### 5. 创建 Systemd 服务
 
-**Webhook server** (`/etc/systemd/system/nest-webhook.service`):
+**Webhook 服务器** (`/etc/systemd/system/nest-webhook.service`)：
 
 ```ini
 [Unit]
@@ -232,7 +232,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-**Cloudflare tunnel** (`/etc/systemd/system/cloudflared-nest.service`):
+**Cloudflare 隧道** (`/etc/systemd/system/cloudflared-nest.service`)：
 
 ```ini
 [Unit]
@@ -251,14 +251,14 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Enable and start:
+启用并启动：
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now nest-webhook cloudflared-nest
 ```
 
-### 6. Create Pub/Sub Push Subscription
+### 6. 创建 Pub/Sub 推送订阅
 
 ```bash
 gcloud pubsub subscriptions create nest-events-sub \
@@ -267,60 +267,60 @@ gcloud pubsub subscriptions create nest-events-sub \
   --ack-deadline=30
 ```
 
-### 7. Test
+### 7. 测试
 
 ```bash
-# Test webhook endpoint
+# 测试 webhook 端点
 curl https://nest.yourdomain.com/health
 
-# Simulate doorbell event
+# 模拟门铃事件
 curl -X POST http://localhost:8420/nest/events \
   -H "Content-Type: application/json" \
   -d '{"message":{"data":"eyJyZXNvdXJjZVVwZGF0ZSI6eyJuYW1lIjoiZW50ZXJwcmlzZXMvdGVzdC9kZXZpY2VzL0RPT1JCRUxMLTAxIiwiZXZlbnRzIjp7InNkbS5kZXZpY2VzLmV2ZW50cy5Eb29yYmVsbENoaW1lLkNoaW1lIjp7ImV2ZW50SWQiOiJ0ZXN0In19fX0="}}'
 ```
 
-### Supported Events
+### 支持的事件
 
-| Event | Behaviour |
-|-------|-----------|
-| `DoorbellChime.Chime` | 🔔 **Alerts** — sends photo to Telegram |
-| `CameraPerson.Person` | 🚶 **Alerts** — sends photo to Telegram |
-| `CameraMotion.Motion` | 📹 Logged only (no alert) |
-| `CameraSound.Sound` | 🔊 Logged only (no alert) |
-| `CameraClipPreview.ClipPreview` | 🎬 Logged only (no alert) |
+| 事件 | 行为 |
+|------|------|
+| `DoorbellChime.Chime` | 🔔 **提醒** — 发送照片到 Telegram |
+| `CameraPerson.Person` | 🚶 **提醒** — 发送照片到 Telegram |
+| `CameraMotion.Motion` | 📹 仅记录（不提醒）|
+| `CameraSound.Sound` | 🔊 仅记录（不提醒）|
+| `CameraClipPreview.ClipPreview` | 🎬 仅记录（不提醒）|
 
-> **Staleness filter:** Events older than 5 minutes are logged but never alerted. This prevents notification floods if queued Pub/Sub messages are delivered late.
+> **过期过滤：** 超过 5 分钟的事件仅记录但不提醒。这可以防止排队中的 Pub/Sub 消息延迟送达时产生通知洪泛。
 
-### Image Capture
+### 图像捕获
 
-When a doorbell or person event triggers an alert:
+当门铃或人员事件触发提醒时：
 
-1. **Primary:** SDM `GenerateImage` API — fast, event-specific snapshot
-2. **Fallback:** RTSP live stream frame capture via `ffmpeg` (requires `ffmpeg` installed)
+1. **主要方式：** SDM `GenerateImage` API — 快速，事件特定的快照
+2. **备用方式：** 通过 `ffmpeg` 捕获 RTSP 实时流帧（需要安装 `ffmpeg`）
 
-### Environment Variables
+### 环境变量
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `CLAWDBOT_GATEWAY_URL` | No | Gateway URL (default: `http://localhost:18789`) |
-| `CLAWDBOT_HOOKS_TOKEN` | Yes | Gateway hooks token for awareness notifications |
-| `OP_SVC_ACCT_TOKEN` | Yes | 1Password service account token for Nest API credentials |
-| `TELEGRAM_BOT_TOKEN` | Yes | Telegram bot token for sending alerts |
-| `TELEGRAM_CHAT_ID` | Yes | Telegram chat ID to receive alerts |
-| `PORT` | No | Webhook server port (default: `8420`) |
+| 变量 | 必需 | 描述 |
+|------|------|------|
+| `CLAWDBOT_GATEWAY_URL` | 否 | 网关 URL（默认：`http://localhost:18789`）|
+| `CLAWDBOT_HOOKS_TOKEN` | 是 | 用于感知通知的网关钩子令牌 |
+| `OP_SVC_ACCT_TOKEN` | 是 | 用于 Nest API 凭证的 1Password 服务账户令牌 |
+| `TELEGRAM_BOT_TOKEN` | 是 | 用于发送提醒的 Telegram 机器人令牌 |
+| `TELEGRAM_CHAT_ID` | 是 | 接收提醒的 Telegram 聊天 ID |
+| `PORT` | 否 | Webhook 服务器端口（默认：`8420`）|
 
-### Important Setup Notes
+### 重要的设置说明
 
-- **Verify the full Pub/Sub topic path** in Device Access Console matches your GCP project exactly: `projects/YOUR_GCP_PROJECT_ID/topics/nest-events`
-- **Use a push subscription**, not pull — the webhook expects HTTP POST delivery
-- **Test end-to-end** after setup: ring the doorbell and confirm a photo arrives. Don't rely on simulated POST requests alone.
+- **验证完整的 Pub/Sub 主题路径**在设备访问控制台中与您的 GCP 项目完全匹配：`projects/YOUR_GCP_PROJECT_ID/topics/nest-events`
+- **使用推送订阅**，而不是拉取 — webhook 期望 HTTP POST 传递
+- **端到端测试**后设置：按门铃并确认照片到达。不要仅依赖模拟的 POST 请求。
 
 ---
 
-## Limitations
+## 限制
 
-- Camera event images expire after ~5 minutes (RTSP fallback captures current frame instead)
-- Real-time events require Pub/Sub setup (see above)
-- Quick tunnels (without Cloudflare account) have no uptime guarantee
-- Some older Nest devices may not support all features
-- Motion and sound events are intentionally not alerted to avoid notification fatigue
+- 摄像头事件图像在约 5 分钟后过期（RTSP 备用捕获当前帧而非）
+- 实时事件需要 Pub/Sub 设置（见上文）
+- 快速隧道（无 Cloudflare 账户）无正常运行时间保证
+- 一些较旧的 Nest 设备可能不支持所有功能
+- 有意不提醒移动和声音事件以避免通知疲劳

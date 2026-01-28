@@ -1,79 +1,79 @@
-# HokiPoki CLI Command Reference
+# HokiPoki CLI 命令参考
 
-## Authentication
+## 身份验证
 
-| Command | Description |
-|---|---|
-| `hokipoki login` | Authenticate (opens browser) |
-| `hokipoki logout` | Remove local auth |
-| `hokipoki whoami` | Show current user |
+| 命令 | 功能描述 |
+|------|---------|
+| `hokipoki login` | 身份验证（打开浏览器） |
+| `hokipoki logout` | 清除本地身份验证 |
+| `hokipoki whoami` | 显示当前用户 |
 
-## Request (Requester)
+## 请求（请求者模式）
 
 ```
-hokipoki request --tool <tool> --task "<description>" [options]
+hokipoki request --tool <工具> --task "<任务描述>" [选项]
 ```
 
-| Option | Description |
-|---|---|
-| `--tool <tool>` | AI tool: `claude`, `codex`, `gemini` |
-| `--task <task>` | Task description |
-| `--files <files...>` | Specific files to include |
-| `--dir <dirs...>` | Directories to include recursively |
-| `--all` | Include entire repo (respects .gitignore) |
-| `--workspace <id>` | Route to specific team workspace |
-| `--no-auto-apply` | Save patch without applying |
-| `--json` | JSON output for programmatic use |
-| `--interactive` | Interactive mode (human terminal only, NOT for agent use) |
+| 选项 | 功能描述 |
+|------|---------|
+| `--tool <工具>` | AI 工具：`claude`、`codex`、`gemini` |
+| `--task <任务>` | 任务描述 |
+| `--files <文件...>` | 要包含的特定文件 |
+| `--dir <目录...>` | 要递归包含的目录 |
+| `--all` | 包含整个代码库（遵守 .gitignore 规则） |
+| `--workspace <标识符>` | 路由到特定的团队工作区 |
+| `--no-auto-apply` | 保存补丁但不应用 |
+| `--json` | JSON 格式输出，用于程序处理 |
+| `--interactive` | 交互模式（仅限人工终端使用，**不适合代理使用**） |
 
-## Provider
+## 提供者模式
 
 ```bash
-# Register (one-time)
+# 注册（一次性操作）
 hokipoki register --as-provider --tools claude codex gemini
 
-# Listen for requests
+# 监听请求
 hokipoki listen --tools claude codex
 ```
 
-## Status
+## 状态查询
 
 ```bash
-hokipoki status      # Account info, workspaces, history
-hokipoki dashboard   # Open web dashboard
+hokipoki status      # 账户信息、工作区、历史记录
+hokipoki dashboard   # 打开 Web 仪表板
 ```
 
-## Shell Completion
+## Shell 补全
 
 ```bash
-hokipoki completion --install   # One-time setup
-exec $SHELL                     # Restart shell
+hokipoki completion --install   # 一次性设置
+exec $SHELL                     # 重启 Shell
 ```
 
-## Token Locations
+## 令牌位置
 
-| Tool | Auth Command | Token Location |
-|---|---|---|
+| 工具 | 身份验证命令 | 令牌位置 |
+|------|------------|---------|
 | Claude | `claude setup-token` | `~/.hokipoki/` |
 | Codex | `codex login` | `~/.codex/auth.json` |
 | Gemini | `gemini` | `~/.gemini/oauth_creds.json` |
 
-Auto-refresh: `hokipoki listen` auto-triggers re-auth if a token is expired.
+**自动刷新**：`hokipoki listen` 会在令牌过期时自动触发重新认证。
 
-## Codex Sandbox Fix
+## Codex 沙盒修复
 
-Codex blocks `.git/` writes by default. Add to `~/.codex/config.toml`:
+Codex 默认情况下会阻止 `.git/` 写入。在 `~/.codex/config.toml` 中添加以下配置：
 
 ```toml
 [sandbox_workspace_write]
 writable_roots = [".git"]
 ```
 
-## Security Model
+## 安全模型
 
-- Encrypted P2P connections
-- LUKS-encrypted Docker containers
-- Ephemeral git servers with one-time tokens
-- No code retention after task completion
-- Container memory auto-wiped after each task
-- API keys never leave the provider's machine
+- 端到端加密的 P2P 连接
+- LUKS 加密的 Docker 容器
+- 一次性令牌的临时 git 服务器
+- 任务完成后不保留任何代码
+- 每次任务后自动清除容器内存
+- API 密钥永远不会离开提供者的机器

@@ -1,33 +1,33 @@
 ---
 name: yahoo-finance
-description: Get stock prices, quotes, fundamentals, earnings, options, dividends, and analyst ratings using Yahoo Finance. Uses yfinance library - no API key required.
+description: 使用 Yahoo Finance 获取股票价格、报价、基本面数据、收益、期权、股息和分析师评级。使用 yfinance 库 - 无需 API 密钥。
 ---
 
 # Yahoo Finance CLI
 
-A Python CLI for fetching comprehensive stock data from Yahoo Finance using yfinance.
+一个使用 yfinance 从 Yahoo Finance 获取综合股票数据的 Python CLI。
 
-## Requirements
+## 环境要求
 
 - Python 3.11+
-- uv (for inline script dependencies)
+- uv（用于内联脚本依赖项）
 
-## Installing uv
+## 安装 uv
 
-The script requires `uv` - an extremely fast Python package manager. Check if it's installed:
+脚本需要 `uv` - 一个极快的 Python 包管理器。检查是否已安装：
 
 ```bash
 uv --version
 ```
 
-If not installed, install it using one of these methods:
+如果未安装，请使用以下方法之一安装：
 
 ### macOS / Linux
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### macOS (Homebrew)
+### macOS（Homebrew）
 ```bash
 brew install uv
 ```
@@ -37,154 +37,154 @@ brew install uv
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### pip (any platform)
+### pip（任何平台）
 ```bash
 pip install uv
 ```
 
-After installation, restart your terminal or run:
+安装后，重启终端或运行：
 ```bash
-source ~/.bashrc  # or ~/.zshrc on macOS
+source ~/.bashrc  # 或 macOS 上的 ~/.zshrc
 ```
 
-## Installation
+## 安装
 
-The `yf` script uses PEP 723 inline script metadata - dependencies are auto-installed on first run.
+`yf` 脚本使用 PEP 723 内联脚本元数据 - 依赖项在首次运行时自动安装。
 
 ```bash
-# Make executable
+# 设为可执行
 chmod +x /path/to/skills/yahoo-finance/yf
 
-# Optionally symlink to PATH for global access
+# 可选：创建符号链接到 PATH 以便全局访问
 ln -sf /path/to/skills/yahoo-finance/yf /usr/local/bin/yf
 ```
 
-First run will install dependencies (yfinance, rich) to uv's cache. Subsequent runs are instant.
+首次运行会将依赖项（yfinance、rich）安装到 uv 的缓存中。后续运行是即时的。
 
-## Commands
+## 命令
 
-### Price (quick check)
+### 价格（快速查看）
 ```bash
-yf AAPL              # shorthand for price
+yf AAPL              # price 的简写
 yf price AAPL
 ```
 
-### Quote (detailed)
+### 报价（详细）
 ```bash
 yf quote MSFT
 ```
 
-### Fundamentals
+### 基本面数据
 ```bash
 yf fundamentals NVDA
 ```
-Shows: PE ratios, EPS, market cap, margins, ROE/ROA, analyst targets.
+显示：市盈率、每股收益、市值、利润率、净资产收益率/资产收益率、分析师目标价。
 
-### Earnings
+### 收益报告
 ```bash
 yf earnings TSLA
 ```
-Shows: Next earnings date, EPS estimates, earnings history with surprises.
+显示：下次收益日期、每股收益预估、带有惊喜的收益历史。
 
-### Company Profile
+### 公司简介
 ```bash
 yf profile GOOGL
 ```
-Shows: Sector, industry, employees, website, address, business description.
+显示：所属行业、员工数、网站、地址、业务描述。
 
-### Dividends
+### 股息
 ```bash
 yf dividends KO
 ```
-Shows: Dividend rate/yield, ex-date, payout ratio, recent dividend history.
+显示：股息率/收益率、除息日、派息比率、近期股息历史。
 
-### Analyst Ratings
+### 分析师评级
 ```bash
 yf ratings AAPL
 ```
-Shows: Buy/hold/sell distribution, mean rating, recent upgrades/downgrades.
+显示：买入/持有/卖出分布、平均评级、近期上调/下调。
 
-### Options Chain
+### 期权链
 ```bash
 yf options SPY
 ```
-Shows: Near-the-money calls and puts with strike, bid/ask, volume, OI, IV.
+显示：接近价位的看涨期权和看跌期权，包含执行价、买/卖价、成交量、未平仓合约、隐含波动率。
 
-### History
+### 历史数据
 ```bash
-yf history GOOGL 1mo     # 1 month history
-yf history TSLA 1y       # 1 year
-yf history BTC-USD 5d    # 5 days
+yf history GOOGL 1mo     # 1 个月历史
+yf history TSLA 1y       # 1 年
+yf history BTC-USD 5d    # 5 天
 ```
-Ranges: 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
+时间范围：1d、5d、1mo、3mo、6mo、1y、2y、5y、10y、ytd、max
 
-### Compare
+### 对比
 ```bash
 yf compare AAPL,MSFT,GOOGL
 yf compare RELIANCE.NS,TCS.NS,INFY.NS
 ```
-Side-by-side comparison with price, change, 52W range, market cap.
+并排对比，显示价格、涨跌幅、52 周范围、市值。
 
-### Search
+### 搜索
 ```bash
 yf search "reliance industries"
 yf search "bitcoin"
 yf search "s&p 500 etf"
 ```
 
-## Symbol Format
+## 股票代码格式
 
-- **US stocks:** AAPL, MSFT, GOOGL, TSLA
-- **Indian NSE:** RELIANCE.NS, TCS.NS, INFY.NS
-- **Indian BSE:** RELIANCE.BO, TCS.BO
-- **Crypto:** BTC-USD, ETH-USD
-- **Forex:** EURUSD=X, GBPUSD=X
-- **ETFs:** SPY, QQQ, VOO
+- **美国股票：** AAPL、MSFT、GOOGL、TSLA
+- **印度 NSE：** RELIANCE.NS、TCS.NS、INFY.NS
+- **印度 BSE：** RELIANCE.BO、TCS.BO
+- **加密货币：** BTC-USD、ETH-USD
+- **外汇：** EURUSD=X、GBPUSD=X
+- **ETF：** SPY、QQQ、VOO
 
-## Examples
+## 使用示例
 
 ```bash
-# Quick price check
+# 快速价格查看
 yf AAPL
 
-# Get valuation metrics
+# 获取估值指标
 yf fundamentals NVDA
 
-# Next earnings date + history
+# 下次收益日期 + 历史
 yf earnings TSLA
 
-# Options chain for SPY
+# SPY 期权链
 yf options SPY
 
-# Compare tech giants
+# 对比科技巨头
 yf compare AAPL,MSFT,GOOGL,META,AMZN
 
-# Find Indian stocks
+# 查找印度股票
 yf search "infosys"
 
-# Dividend info for Coca-Cola
+# 可口可乐股息信息
 yf dividends KO
 
-# Analyst ratings for Apple
+# 苹果分析师评级
 yf ratings AAPL
 ```
 
-## Troubleshooting
+## 故障排除
 
 ### "command not found: uv"
-Install uv using the instructions above.
+按照上面的说明安装 uv。
 
-### Rate limiting / connection errors
-Yahoo Finance may rate limit excessive requests. Wait a few minutes and try again.
+### 限速 / 连接错误
+Yahoo Finance 可能会对过量请求进行限速。等待几分钟后再试。
 
-### "No data" for a symbol
-- Verify the symbol exists: `yf search "company name"`
-- Some data (options, dividends) isn't available for all securities
+### 股票代码"无数据"
+- 验证股票代码是否存在：`yf search "公司名称"`
+- 某些数据（期权、股息）并非所有证券都有
 
-## Technical Notes
+## 技术说明
 
-- Uses PEP 723 inline script metadata for uv dependencies
-- Rich library provides colored, formatted tables
-- First run installs deps to uv cache (~5 seconds)
-- Subsequent runs are instant (cached environment)
-- Handles NaN/None values gracefully with fallbacks
+- 使用 PEP 723 内联脚本元数据实现 uv 依赖管理
+- Rich 库提供彩色、格式化的表格
+- 首次运行将依赖项安装到 uv 缓存（约 5 秒）
+- 后续运行是即时的（缓存环境）
+- 优雅地处理 NaN/None 值，提供回退方案

@@ -1,41 +1,41 @@
 ---
 name: youtube-analytics
-description: "YouTube Data API v3 analytics toolkit. Analyze YouTube channels, videos, and search results. Use when the user asks to: check YouTube channel stats, analyze video performance, compare channels, search for videos, get subscriber counts, view engagement metrics, find trending videos, get channel uploads, or analyze YouTube competition. Requires a YouTube Data API v3 key from Google Cloud Console."
+description: "YouTube Data API v3 分析工具包。分析 YouTube 频道、视频和搜索结果。当用户要求：检查 YouTube 频道统计、分析视频表现、比较频道、搜索视频、获取订阅者数量、查看参与度指标、查找热门视频、获取频道上传或分析 YouTube 竞争时使用。需要来自 Google Cloud Console 的 YouTube Data API v3 密钥。"
 ---
 
-# YouTube Analytics Toolkit
+# YouTube 分析工具包
 
-## Setup
+## 设置
 
-Install dependencies:
+安装依赖项：
 
 ```bash
 cd scripts && npm install
 ```
 
-Configure credentials by creating a `.env` file in the project root:
+通过在项目根目录创建 `.env` 文件来配置凭据：
 
 ```
 YOUTUBE_API_KEY=AIzaSy...your-api-key
 YOUTUBE_DEFAULT_MAX_RESULTS=50
 ```
 
-**Prerequisites**: A Google Cloud project with the YouTube Data API v3 enabled. Get your API key from the [Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+**先决条件**：需要启用 YouTube Data API v3 的 Google Cloud 项目。从 [Google Cloud Console](https://console.cloud.google.com/apis/credentials) 获取您的 API 密钥。
 
-## Quick Start
+## 快速开始
 
-| User says | Function to call |
+| 用户说 | 要调用的函数 |
 |-----------|-----------------|
-| "Analyze this YouTube channel" | `analyzeChannel(channelId)` |
-| "Compare these two channels" | `compareChannels([id1, id2])` |
-| "How is this video performing?" | `analyzeVideo(videoId)` |
-| "Search YouTube for [topic]" | `searchAndAnalyze(query)` |
-| "Get stats for this channel" | `getChannelStats(channelId)` |
-| "Get this video's view count" | `getVideoStats(videoId)` |
-| "Find channels about [topic]" | `searchChannels(query)` |
-| "Show recent uploads from this channel" | `getChannelVideos(channelId)` |
+| "分析这个 YouTube 频道" | `analyzeChannel(channelId)` |
+| "比较这两个频道" | `compareChannels([id1, id2])` |
+| "这个视频表现如何？" | `analyzeVideo(videoId)` |
+| "搜索 YouTube [主题]" | `searchAndAnalyze(query)` |
+| "获取这个频道的统计" | `getChannelStats(channelId)` |
+| "获取这个视频的浏览量" | `getVideoStats(videoId)` |
+| "查找关于 [主题] 的频道" | `searchChannels(query)` |
+| "显示这个频道最近的上传" | `getChannelVideos(channelId)` |
 
-Execute functions by importing from `scripts/src/index.ts`:
+通过从 `scripts/src/index.ts` 导入来执行函数：
 
 ```typescript
 import { analyzeChannel, searchAndAnalyze } from './scripts/src/index.js';
@@ -43,95 +43,95 @@ import { analyzeChannel, searchAndAnalyze } from './scripts/src/index.js';
 const analysis = await analyzeChannel('UCxxxxxxxx');
 ```
 
-Or run directly with tsx:
+或直接使用 tsx 运行：
 
 ```bash
 npx tsx scripts/src/index.ts
 ```
 
-## Workflow Pattern
+## 工作流程模式
 
-Every analysis follows three phases:
+每个分析都遵循三个阶段：
 
-### 1. Analyze
-Run API functions. Each call hits the YouTube Data API and returns structured data.
+### 1. 分析
+运行 API 函数。每次调用都会访问 YouTube Data API 并返回结构化数据。
 
-### 2. Auto-Save
-All results automatically save as JSON files to `results/{category}/`. File naming patterns:
-- Named results: `{sanitized_name}.json`
-- Auto-generated: `YYYYMMDD_HHMMSS__{operation}.json`
+### 2. 自动保存
+所有结果会自动保存到 `results/{category}/` 的 JSON 文件中。文件命名模式：
+- 命名结果：`{sanitized_name}.json`
+- 自动生成：`YYYYMMDD_HHMMSS__{operation}.json`
 
-### 3. Summarize
-After analysis, read the saved JSON files and create a markdown summary in `results/summaries/` with data tables, comparisons, and insights.
+### 3. 总结
+分析后，读取保存的 JSON 文件并在 `results/summaries/` 中创建包含数据表、比较和见解的 markdown 摘要。
 
-## High-Level Functions
+## 高层函数
 
-| Function | Purpose | What it gathers |
+| 函数 | 用途 | 收集内容 |
 |----------|---------|----------------|
-| `analyzeChannel(channelId)` | Full channel analysis | Channel info, recent videos, avg views per video |
-| `compareChannels(channelIds)` | Compare multiple channels | Side-by-side subscribers, views, video counts |
-| `analyzeVideo(videoId)` | Video performance analysis | Views, likes, comments, like rate, comment rate |
-| `searchAndAnalyze(query, maxResults?)` | Search + stats | Search results with full video statistics |
+| `analyzeChannel(channelId)` | 完整频道分析 | 频道信息、最近视频、每视频平均浏览量 |
+| `compareChannels(channelIds)` | 比较多个频道 | 订阅者、浏览量、视频数量的并排对比 |
+| `analyzeVideo(videoId)` | 视频表现分析 | 浏览量、点赞、评论、点赞率、评论率 |
+| `searchAndAnalyze(query, maxResults?)` | 搜索+统计 | 带有完整视频统计的搜索结果 |
 
-## Individual API Functions
+## 单独的 API 函数
 
-For granular control, import specific functions from the API modules. See [references/api-reference.md](references/api-reference.md) for the complete list of 13 API functions with parameters, types, and examples.
+要进行细粒度控制，请从 API 模块导入特定函数。请参阅 [references/api-reference.md](references/api-reference.md) 获取包含参数、类型和示例的 13 个 API 函数的完整列表。
 
-### Channel Functions
+### 频道函数
 
-| Function | Purpose |
+| 函数 | 用途 |
 |----------|---------|
-| `getChannel(channelId)` | Get full channel details |
-| `getChannelStats(channelId)` | Get simplified stats (subscribers, views, videoCount) |
-| `getMultipleChannels(channelIds)` | Batch fetch multiple channels |
+| `getChannel(channelId)` | 获取完整的频道详情 |
+| `getChannelStats(channelId)` | 获取简化的统计（订阅者、浏览量、视频数） |
+| `getMultipleChannels(channelIds)` | 批量获取多个频道 |
 
-### Video Functions
+### 视频函数
 
-| Function | Purpose |
+| 函数 | 用途 |
 |----------|---------|
-| `getVideo(videoId)` | Get full video details |
-| `getVideoStats(videoId)` | Get simplified stats (views, likes, comments) |
-| `getMultipleVideos(videoIds)` | Batch fetch multiple videos |
-| `getChannelVideos(channelId)` | Get recent uploads from a channel |
+| `getVideo(videoId)` | 获取完整的视频详情 |
+| `getVideoStats(videoId)` | 获取简化的统计（浏览量、点赞、评论） |
+| `getMultipleVideos(videoIds)` | 批量获取多个视频 |
+| `getChannelVideos(channelId)` | 获取频道最近的上传 |
 
-### Search Functions
+### 搜索函数
 
-| Function | Purpose |
+| 函数 | 用途 |
 |----------|---------|
-| `searchVideos(query, options?)` | Search for videos |
-| `searchChannels(query, options?)` | Search for channels |
+| `searchVideos(query, options?)` | 搜索视频 |
+| `searchChannels(query, options?)` | 搜索频道 |
 
-## Results Storage
+## 结果存储
 
-Results auto-save to `results/` with this structure:
+结果自动保存到 `results/`，结构如下：
 
 ```
 results/
-├── channels/       # Channel data and comparisons
-├── videos/         # Video data and analyses
-├── search/         # Search results
-└── summaries/      # Human-readable markdown summaries
+├── channels/       # 频道数据和比较
+├── videos/         # 视频数据和分析
+├── search/         # 搜索结果
+└── summaries/      # 人类可读的 markdown 摘要
 ```
 
-### Managing Results
+### 管理结果
 
 ```typescript
 import { listResults, loadResult, getLatestResult } from './scripts/src/index.js';
 
-// List recent results
+// 列出最近的结果
 const files = listResults('channels', 10);
 
-// Load a specific result
+// 加载特定结果
 const data = loadResult(files[0]);
 
-// Get most recent result for an operation
+// 获取某个操作最近的结果
 const latest = getLatestResult('channels', 'channel_analysis');
 ```
 
-## Tips
+## 提示
 
-1. **Use channel IDs** — Channel IDs start with `UC` (e.g., `UCxxxxxxxx`). You can find them in the channel URL or page source.
-2. **Request summaries** — After pulling data, ask for a markdown summary with tables and insights.
-3. **Compare channels** — Use `compareChannels()` to benchmark competitors side by side.
-4. **Batch requests** — Use `getMultipleChannels()` or `getMultipleVideos()` for efficient batch lookups.
-5. **Search + analyze** — `searchAndAnalyze()` combines search with full video stats in one call.
+1. **使用频道 ID** — 频道 ID 以 `UC` 开头（例如 `UCxxxxxxxx`）。您可以在频道 URL 或页面源代码中找到它们。
+2. **请求摘要** — 拉取数据后，请求带有表格和见解的 markdown 摘要。
+3. **比较频道** — 使用 `compareChannels()` 并排基准测试竞争对手。
+4. **批量请求** — 使用 `getMultipleChannels()` 或 `getMultipleVideos()` 进行高效的批量查询。
+5. **搜索+分析** — `searchAndAnalyze()` 将搜索与完整视频统计结合在一次调用中。

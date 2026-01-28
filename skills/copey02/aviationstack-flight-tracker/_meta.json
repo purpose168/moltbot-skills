@@ -1,7 +1,8 @@
 {
   "owner": "copey02",
   "slug": "aviationstack-flight-tracker",
-  "displayName": "Flight Tracker",
+  "displayName": "航班跟踪器",
+  "description": "使用 AviationStack API 实时跟踪航班，显示详细状态、登机口信息、延误情况和实时位置。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769364033237,

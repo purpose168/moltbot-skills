@@ -1,78 +1,85 @@
 ---
 name: assets
-description: Importing images, videos, audio, and fonts into Remotion
+description: 将图片、视频、音频和字体导入 Remotion
 metadata:
   tags: assets, staticFile, images, fonts, public
 ---
 
-# Importing assets in Remotion
+# 在 Remotion 中导入资源
 
-## The public folder
+## public 文件夹
 
-Place assets in the `public/` folder at your project root.
+将资源放置在项目根目录的 `public/` 文件夹中。
 
-## Using staticFile()
+## 使用 staticFile()
 
-You MUST use `staticFile()` to reference files from the `public/` folder:
+您必须使用 `staticFile()` 来引用 `public/` 文件夹中的文件：
 
 ```tsx
 import {Img, staticFile} from 'remotion';
 
 export const MyComposition = () => {
+  // 使用 staticFile() 返回编码后的 URL
   return <Img src={staticFile('logo.png')} />;
 };
 ```
 
-The function returns an encoded URL that works correctly when deploying to subdirectories.
+该函数返回编码后的 URL，在部署到子目录时能正常工作。
 
-## Using with components
+## 与组件一起使用
 
-**Images:**
+**图片：**
 
 ```tsx
 import {Img, staticFile} from 'remotion';
 
+{/* 使用 Img 组件显示图片 */}
 <Img src={staticFile('photo.png')} />;
 ```
 
-**Videos:**
+**视频：**
 
 ```tsx
 import {Video} from '@remotion/media';
 import {staticFile} from 'remotion';
 
+{/* 使用 Video 组件播放视频 */}
 <Video src={staticFile('clip.mp4')} />;
 ```
 
-**Audio:**
+**音频：**
 
 ```tsx
 import {Audio} from '@remotion/media';
 import {staticFile} from 'remotion';
 
+{/* 使用 Audio 组件播放音频 */}
 <Audio src={staticFile('music.mp3')} />;
 ```
 
-**Fonts:**
+**字体：**
 
 ```tsx
 import {staticFile} from 'remotion';
 
-const fontFamily = new FontFace('MyFont', `url(${staticFile('font.woff2')})`);
-await fontFamily.load();
-document.fonts.add(fontFamily);
+{/* 创建字体对象：从 staticFile() 加载字体文件 */}
+const fontFamily = new FontFace('MyFont', `url(${staticFile('font.woff2')})`));
+await fontFamily.load(); // 等待字体加载完成
+document.fonts.add(fontFamily); // 将字体添加到文档字体集合
 ```
 
-## Remote URLs
+## 远程 URL
 
-Remote URLs can be used directly without `staticFile()`:
+远程 URL 可以直接使用，无需 `staticFile()`：
 
 ```tsx
+{/* 直接使用远程图片 URL */}
 <Img src="https://example.com/image.png" />
+{/* 直接使用远程视频 URL */}
 <Video src="https://remotion.media/video.mp4" />
 ```
 
-## Important notes
+## 重要说明
 
-- Remotion components (`<Img>`, `<Video>`, `<Audio>`) ensure assets are fully loaded before rendering
-- Special characters in filenames (`#`, `?`, `&`) are automatically encoded
+- Remotion 组件（`<Img>`、`<Video>`、`<Audio>`）确保资源在渲染前完全加载
+- 文件名中的特殊字符（`#`、`?`、`&`）会自动编码

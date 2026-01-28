@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>just-fucking-cancel</title>
+  <title>订阅取消审核报告</title>
   <style>
     :root {
       --bg: #fff;
@@ -40,7 +40,7 @@
       color: var(--text);
     }
 
-    /* SHARE CARD - Receipt style */
+    /* 分享卡片 - 收据风格 */
     .share-card {
       background: transparent;
       color: var(--text);
@@ -77,7 +77,7 @@
       margin-top: 1rem;
     }
 
-    /* Rest of page header */
+    /* 页面元信息 */
     .page-meta {
       color: var(--muted);
       font-size: 0.875rem;
@@ -85,7 +85,7 @@
       text-align: center;
     }
 
-    /* Sections */
+    /* 部分区域 */
     .section { margin: 2rem 0; }
     .section.empty { display: none; }
     .section-header {
@@ -117,7 +117,7 @@
       font-size: 0.875rem;
     }
 
-    /* Badges */
+    /* 徽章样式 */
     .badge {
       padding: 4px 12px;
       border-radius: 4px;
@@ -131,7 +131,7 @@
     .badge-investigate { background: var(--investigate); color: white; }
     .badge-keep { background: #666; color: white; }
 
-    /* Table */
+    /* 表格样式 */
     table { border-collapse: collapse; width: 100%; }
     td, th { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
     th { background: var(--border); font-size: 0.85rem; }
@@ -140,7 +140,7 @@
     .checkbox { width: 30px; text-align: center; }
     input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
 
-    /* ROW STATES */
+    /* 行状态样式 */
     tr.pending {
       background: var(--pending);
     }
@@ -162,7 +162,7 @@
     tr.investigate td:first-child { border-left: 4px solid var(--investigate); }
     tr.keep td:first-child { border-left: 4px solid var(--keep); }
 
-    /* Category headers in tables */
+    /* 表格中的分类标题 */
     .category-header {
       background: var(--border);
       font-weight: bold;
@@ -173,12 +173,12 @@
     }
     .category-header td { border-left: none !important; }
 
-    /* Details/expand sections */
+    /* 详情/展开区域 */
     details { margin-top: 1rem; }
     summary { cursor: pointer; font-weight: 600; }
     summary:hover { color: var(--accent); }
 
-    /* Privacy toggle */
+    /* 隐私切换按钮 */
     .privacy-toggle {
       margin-left: 1rem;
       padding: 4px 10px;
@@ -198,7 +198,7 @@
       filter: none;
     }
 
-    /* Floating copy button */
+    /* 浮动复制按钮 */
     .floating-copy {
       position: fixed;
       bottom: 20px;
@@ -222,120 +222,132 @@
 </head>
 <body>
 
-<!-- SHARE CARD - Update after analysis -->
+<!-- 分享卡片 - 分析完成后更新 -->
 <div class="share-card">
-  <p class="scope">found N subscriptions · N transactions</p>
-  <p class="breakdown">Cancelled N · Keeping N</p>
-  <h1>just saved $XX,XXX/yr <span>($X,XXX/mo)</span></h1>
-  <p class="timestamp">last run DATE at TIME</p>
+  <p class="scope">发现 N 个订阅 · N 笔交易</p>
+  <p class="breakdown">已取消 N · 保留 N</p>
+  <h1>每年节省 $XX,XXX <span>（每月 $X,XXX）</span></h1>
+  <p class="timestamp">运行时间: DATE at TIME</p>
 </div>
 
 <p class="page-meta">
-  Subscription audit
-  <button class="privacy-toggle" onclick="togglePrivacy()">Hide names</button>
+  订阅审核
+  <button class="privacy-toggle" onclick="togglePrivacy()">隐藏名称</button>
 </p>
 
-<!-- CANCELLED - Done, strikethrough -->
+<!-- 已取消 - 完成，删除线 -->
 <div class="section" id="section-cancelled">
   <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-    <span class="badge badge-cancelled">Done</span>
-    <h2>Cancel</h2>
+    <span class="badge badge-cancelled">完成</span>
+    <h2>已取消</h2>
     <span class="section-count" data-section="cancelled"></span>
   </div>
   <table>
     <tr>
       <th style="width:30px"></th>
-      <th>Service</th>
-      <th>Monthly</th>
-      <th>Status</th>
+      <th>服务</th>
+      <th>每月</th>
+      <th>状态</th>
     </tr>
-    <!-- TEMPLATE: Cancelled items
+    <!-- 模板: 已取消的项目
     <tr class="cancelled" data-status="cancelled">
       <td>✓</td>
-      <td><strong class="service-name">Service Name</strong></td>
+      <td><strong class="service-name">服务名称</strong></td>
       <td class="amount">$XX</td>
-      <td class="status-cell">Cancelled DATE</td>
+      <td class="status-cell">已取消于 DATE</td>
     </tr>
     -->
   </table>
 </div>
 
-<!-- INVESTIGATE - Needs decision -->
+<!-- 调查中 - 需要决策 -->
 <div class="section" id="section-investigate">
   <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-    <span class="badge badge-investigate">Decide</span>
-    <h2>Needs Decision</h2>
+    <span class="badge badge-investigate">决策</span>
+    <h2>需要决策</h2>
     <span class="section-count" data-section="investigate"></span>
   </div>
   <table>
     <tr>
-      <th class="checkbox">Cancel?</th>
-      <th>Service</th>
-      <th>Monthly</th>
-      <th>Issue</th>
+      <th class="checkbox">取消?</th>
+      <th>服务</th>
+      <th>每月</th>
+      <th>问题</th>
     </tr>
-    <!-- TEMPLATE: Items needing decision
+    <!-- 模板: 需要决策的项目
     <tr class="investigate" data-status="investigate">
       <td class="checkbox"><input type="checkbox"></td>
-      <td><strong class="service-name">Service Name</strong></td>
+      <td><strong class="service-name">服务名称</strong></td>
       <td class="amount">$XX</td>
-      <td class="note">Why this needs review</td>
+      <td class="note">为什么需要审核</td>
     </tr>
     -->
   </table>
 </div>
 
-<!-- KEEPING - No checkbox needed -->
+<!-- 保留中 - 无需复选框 -->
 <div class="section" id="section-keep">
   <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
-    <span class="badge badge-keep">Keep</span>
-    <h2>Keeping</h2>
+    <span class="badge badge-keep">保留</span>
+    <h2>保留</h2>
     <span class="section-count" data-section="keep"></span>
   </div>
   <table>
     <tr>
-      <th>Service</th>
-      <th>Monthly</th>
-      <th>Reason</th>
+      <th>服务</th>
+      <th>每月</th>
+      <th>原因</th>
     </tr>
-    <!-- TEMPLATE: Category header (optional)
-    <tr class="category-header"><td colspan="3">Category Name</td></tr>
+    <!-- 模板: 分类标题（可选）
+    <tr class="category-header"><td colspan="3">分类名称</td></tr>
     -->
-    <!-- TEMPLATE: Keep items
+    <!-- 模板: 保留的项目
     <tr class="keep" data-status="keep">
-      <td><strong class="service-name">Service Name</strong></td>
+      <td><strong class="service-name">服务名称</strong></td>
       <td class="amount">$XX</td>
-      <td class="note">Why keeping</td>
+      <td class="note">保留原因</td>
     </tr>
     -->
   </table>
 </div>
 
-<!-- Floating copy button -->
-<button class="floating-copy" onclick="copyChecked()">Copy selected</button>
+<!-- 浮动复制按钮 -->
+<button class="floating-copy" onclick="copyChecked()">复制已选</button>
 
 <script>
+/**
+ * 切换隐私模式 - 模糊服务名称
+ */
 function togglePrivacy() {
   document.body.classList.toggle('privacy-mode');
   const btn = document.querySelector('.privacy-toggle');
-  btn.textContent = document.body.classList.contains('privacy-mode') ? 'Show names' : 'Hide names';
+  btn.textContent = document.body.classList.contains('privacy-mode') ? '显示名称' : '隐藏名称';
 }
 
+/**
+ * 更新各部分的项目数量统计
+ */
 function updateCounts() {
   document.querySelectorAll('[data-section]').forEach(el => {
     const section = el.dataset.section;
     const count = document.querySelectorAll(`[data-status="${section}"]`).length;
-    el.textContent = count > 0 ? `${count} items` : '';
+    el.textContent = count > 0 ? `${count} 项` : '';
   });
 }
 
+/**
+ * 更新浮动按钮的可见性和文本
+ */
 function updateFloatingButton() {
   const checked = document.querySelectorAll('input[type="checkbox"]:checked');
   const btn = document.querySelector('.floating-copy');
   btn.classList.toggle('visible', checked.length > 0);
-  btn.textContent = checked.length > 0 ? `Copy ${checked.length} selected` : 'Copy selected';
+  btn.textContent = checked.length > 0 ? `复制 ${checked.length} 项已选` : '复制已选';
 }
 
+/**
+ * 复制选中的项目到剪贴板
+ */
 function copyChecked() {
   const checked = document.querySelectorAll('input[type="checkbox"]:checked');
   const items = [];
@@ -346,11 +358,11 @@ function copyChecked() {
     if (name) items.push(`${name} (${amount})`);
   });
 
-  const text = `Cancel these: ${items.join(', ')}`;
+  const text = `取消这些: ${items.join(', ')}`;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector('.floating-copy');
     btn.classList.add('copied');
-    btn.textContent = 'Copied!';
+    btn.textContent = '已复制!';
     setTimeout(() => {
       btn.classList.remove('copied');
       updateFloatingButton();
@@ -358,6 +370,7 @@ function copyChecked() {
   });
 }
 
+// 复选框变更事件处理
 document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
   cb.addEventListener('change', function() {
     const row = this.closest('tr');
@@ -375,6 +388,9 @@ document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
   });
 });
 
+/**
+ * 隐藏空的部分区域
+ */
 function hideEmptySections() {
   document.querySelectorAll('.section').forEach(section => {
     const rows = section.querySelectorAll('tr[data-status]');
@@ -382,6 +398,7 @@ function hideEmptySections() {
   });
 }
 
+// 初始化执行
 updateCounts();
 updateFloatingButton();
 hideEmptySections();

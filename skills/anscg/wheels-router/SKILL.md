@@ -1,6 +1,6 @@
 ---
 name: wheels-router
-description: Plan public transit trips globally using Wheels Router (Hong Kong) and Transitous (worldwide)
+description: 使用 Wheels Router（香港）和 Transitous（全球）规划全球公共交通出行
 license: MIT
 compatibility: opencode
 metadata:
@@ -9,63 +9,63 @@ metadata:
   specialty: hong-kong
 ---
 
-## What I do
+## 功能介绍
 
-I help you plan public transit trips anywhere in the world by connecting to the Wheels Router MCP server.
+我通过连接 Wheels Router MCP 服务器帮助您规划全球公共交通出行。
 
-**For Hong Kong trips**, I use the Wheels Router API which provides:
-- Detailed routing with MTR, bus, tram, ferry, and walking
-- Real-time schedules and accurate fares
-- Platform information and exit details
-- Interchange discounts (轉乘優惠) when available
+**对于香港出行**，我使用 Wheels Router API，提供：
+- 包含港铁、巴士、电车、渡轮和步行的详细路线规划
+- 实时时刻表和准确票价
+- 站台信息和出口详情
+- 转乘优惠（如有）
 
-**For worldwide trips**, I use the Transitous API which covers:
-- Major cities globally with transit data
-- Basic routing with public transportation
-- Walking directions and transfers
+**对于全球出行**，我使用 Transitous API，覆盖：
+- 全球主要城市的交通数据
+- 公共交通的基本路线规划
+- 步行导航和换乘指引
 
-## When to use me
+## 使用场景
 
-Use this skill whenever you need to:
-- Plan a trip using public transportation
-- Find the best route between two locations
-- Check transit schedules and connections
-- Get fare estimates for Hong Kong transit
-- Search for locations before planning routes
+在以下情况使用此技能：
+- 使用公共交通规划出行
+- 查找两点之间的最佳路线
+- 检查交通时刻表和换乘
+- 获取香港交通票价估算
+- 在规划路线前搜索地点
 
-**Examples:**
-- "How do I get from Yau Tong MTR to Hong Kong Airport?"
-- "What's the best way to Central from Causeway Bay right now?"
-- "Plan a trip from Tokyo Station to Shibuya"
-- "Search for locations near Victoria Park"
+**示例：**
+- "如何从油塘港铁站前往香港机场？"
+- "从铜锣湾到中环现在最好的方式是什么？"
+- "规划从东京站到涩谷的出行"
+- "搜索维多利亚公园附近的地点"
 
-## How to connect
+## 连接方式
 
-### If you're using mcporter (clawdbot, etc.)
+### 如果您使用 mcporter（clawdbot 等）
 
-Follow your mcporter skill, if you don't have one follow below:
-Add to `config/mcporter.json`:
+如果您没有 mcporter 技能，请按照以下步骤操作：
+添加到 `config/mcporter.json`：
 
 ```json
 {
   "mcpServers": {
     "wheels-router": {
-      "description": "Plan public transit trips globally",
+      "description": "规划全球公共交通出行",
       "baseUrl": "https://mcp.justusewheels.com/mcp"
     }
   }
 }
 ```
 
-Then call tools directly:
+然后直接调用工具：
 ```bash
-npx mcporter call wheels-router.search_location query="Hong Kong Airport"
+npx mcporter call wheels-router.search_location query="香港机场"
 npx mcporter call wheels-router.plan_trip origin="22.28,114.24" destination="22.31,113.92"
 ```
 
-### For other MCP clients
+### 对于其他 MCP 客户端
 
-**Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+**Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`)：
 ```json
 {
   "mcpServers": {
@@ -77,7 +77,7 @@ npx mcporter call wheels-router.plan_trip origin="22.28,114.24" destination="22.
 }
 ```
 
-**Cursor/Windsurf/VS Code** (`.cursor/mcp.json` or similar):
+**Cursor/Windsurf/VS Code** (`.cursor/mcp.json` 或类似文件)：
 ```json
 {
   "mcpServers": {
@@ -89,42 +89,42 @@ npx mcporter call wheels-router.plan_trip origin="22.28,114.24" destination="22.
 }
 ```
 
-## Available tools
+## 可用工具
 
 ### `search_location`
 
-Search for places before planning trips. Always use this first if you don't have exact coordinates.
+在规划出行前搜索地点。如果您没有精确坐标，请始终先使用此工具。
 
-**Parameters:**
-- `query` (required): Place name or address (e.g., "Hong Kong Airport", "Yau Tong MTR Exit A2")
-- `limit` (optional): Number of results (1-10, default 5)
+**参数：**
+- `query`（必需）：地点名称或地址（例如："香港机场"、"油塘港铁站 A2 出口"）
+- `limit`（可选）：结果数量（1-10，默认 5）
 
-**Example:**
+**示例：**
 ```javascript
 search_location({
-  query: "Hong Kong International Airport",
+  query: "香港国际机场",
   limit: 3
 })
 ```
 
-**Returns:**
-- `display_name`: Full address
-- `lat`, `lon`: Coordinates for use in `plan_trip`
-- `type`, `class`: Location category
+**返回：**
+- `display_name`：完整地址
+- `lat`, `lon`：用于 `plan_trip` 的坐标
+- `type`, `class`：地点类别
 
 ### `plan_trip`
 
-Plan a transit route between two points.
+规划两点之间的交通路线。
 
-**Parameters:**
-- `origin` (required): Starting point as `"lat,lon"` or `"stop:ID"`
-- `destination` (required): Ending point as `"lat,lon"` or `"stop:ID"`
-- `depart_at` (optional): ISO 8601 departure time (e.g., `"2026-01-26T10:00:00+08:00"`)
-- `arrive_by` (optional): ISO 8601 arrival deadline
-- `modes` (optional): Comma-separated modes like `"mtr,bus,ferry"` (only specify if needed)
-- `max_results` (optional): Limit number of route options (1-5)
+**参数：**
+- `origin`（必需）：起点，格式为 `"lat,lon"` 或 `"stop:ID"`
+- `destination`（必需）：终点，格式为 `"lat,lon"` 或 `"stop:ID"`
+- `depart_at`（可选）：ISO 8601 出发时间（例如：`"2026-01-26T10:00:00+08:00"`）
+- `arrive_by`（可选）：ISO 8601 最晚到达时间
+- `modes`（可选）：逗号分隔的交通方式，如 `"mtr,bus,ferry"`（仅在需要时指定）
+- `max_results`（可选）：路线选项数量限制（1-5）
 
-**Example:**
+**示例：**
 ```javascript
 plan_trip({
   origin: "22.2836,114.2358",
@@ -134,45 +134,45 @@ plan_trip({
 })
 ```
 
-**Returns:**
-- `plans`: Array of route options
-  - `duration_seconds`: Total trip time
-  - `fares_min`, `fares_max`: Fare range in HKD (Hong Kong only)
-  - `legs`: Step-by-step directions
-    - `type`: "walk", "transit", "wait", "station_transfer"
-    - Transit legs include: route name, headsign, stops, platform info
-    - Walk legs include: distance, duration
+**返回：**
+- `plans`：路线选项数组
+  - `duration_seconds`：总行程时间
+  - `fares_min`, `fares_max`：票价范围（港币，仅限香港）
+  - `legs`：逐步指引
+    - `type`："walk"、"transit"、"wait"、"station_transfer"
+    - 交通路段包括：路线名称、终点站、站台信息
+    - 步行路段包括：距离、时长
 
-## Best practices
+## 最佳实践
 
-1. **Always search first**: Use `search_location` to find coordinates before calling `plan_trip`
-2. **Use coordinates**: Plan trips with `lat,lon` format for best results
-3. **Specify times**: Include `depart_at` or `arrive_by` for accurate schedules
-4. **Check multiple options**: Request 2-3 route options with `max_results`
-5. **Understand fares**: `fares_min` and `fares_max` show the range—interchange discounts are noted separately when available
+1. **始终先搜索**：使用 `search_location` 查找坐标后再调用 `plan_trip`
+2. **使用坐标**：使用 `lat,lon` 格式规划出行以获得最佳结果
+3. **指定时间**：包含 `depart_at` 或 `arrive_by` 以获得准确时刻表
+4. **检查多个选项**：使用 `max_results` 请求 2-3 个路线选项
+5. **了解票价**：`fares_min` 和 `fares_max` 显示票价范围 — 转乘优惠在有提供时会单独注明
 
-## Important notes
+## 重要说明
 
-- **Interchange discounts** (轉乘優惠): Only shown when explicitly present in Hong Kong routes, not all routes qualify
-- **Real-time data**: Hong Kong routes use live schedules; worldwide coverage may vary
-- **Time zones**: Use UTC or local timezone offsets (HKT is UTC+8)
-- **Coverage**: Best for Hong Kong; worldwide coverage varies by city
+- **转乘优惠**：仅在明确存在于香港路线时显示，并非所有路线都符合条件
+- **实时数据**：香港路线使用实时时刻表；全球覆盖范围可能有所不同
+- **时区**：使用 UTC 或本地时区偏移（香港时间 UTC+8）
+- **覆盖范围**：香港最佳；全球覆盖范围因城市而异
 
-## Example workflow
+## 示例工作流程
 
 ```javascript
-// 1. Search for locations
+// 1. 搜索地点
 const origins = await search_location({ 
-  query: "Yau Tong MTR Station", 
+  query: "油塘港铁站", 
   limit: 1 
 });
 
 const destinations = await search_location({ 
-  query: "Hong Kong Airport", 
+  query: "香港机场", 
   limit: 1 
 });
 
-// 2. Plan the trip
+// 2. 规划出行
 const routes = await plan_trip({
   origin: `${origins[0].lat},${origins[0].lon}`,
   destination: `${destinations[0].lat},${destinations[0].lon}`,
@@ -180,18 +180,19 @@ const routes = await plan_trip({
   max_results: 2
 });
 
-// 3. Present the best options to the user or present specific results but only if user asked specifically. By default just give them something like "[walk] > [3D] > [walk] > [Kwun Tong Line] > [walk]"- unless they ask for specifics.
+// 3. 向用户呈现最佳选项，或仅在用户特别要求时呈现具体结果。
+// 默认情况下，只需给出类似 "[步行] > [3D] > [步行] > [观塘线] > [步行]" 的信息
 ```
 
-## Error handling
+## 错误处理
 
-- **"Could not find location"**: Try a more specific search query
-- **"No routes found"**: Check if coordinates are valid and in a covered area
-- **"Invalid time format"**: Ensure ISO 8601 format with timezone
-- **Rate limits**: Be mindful of API usage, cache results when appropriate
+- **"无法找到地点"**：尝试更具体的搜索查询
+- **"未找到路线"**：检查坐标是否有效且在覆盖区域内
+- **"无效的时间格式"**：确保使用带时区的 ISO 8601 格式
+- **速率限制**：注意 API 使用，适时缓存结果
 
-## Coverage areas
+## 覆盖区域
 
-- ✅ **Full coverage**: Hong Kong (MTR, bus, tram, ferry, detailed fares)
-- ✅ **Good coverage**: Major global cities with Transitous data
-- ⚠️ **Limited coverage**: Smaller cities may have incomplete transit data
+- ✅ **完全覆盖**：香港（港铁、巴士、电车、渡轮、详细票价）
+- ✅ **良好覆盖**：具有 Transitous 数据的全球主要城市
+- ⚠️ **有限覆盖**：较小城市可能交通数据不完整

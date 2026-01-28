@@ -1,7 +1,8 @@
 {
   "owner": "clawd-maf",
   "slug": "cad-agent",
-  "displayName": "CAD Agent",
+  "displayName": "CAD 代理",
+  "description": "CAD 代理是一个渲染服务器，让 AI 代理能够看到它们正在构建的内容。发送建模命令，接收渲染图像，可视化迭代。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769435364320,

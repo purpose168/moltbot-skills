@@ -1,115 +1,115 @@
 ---
 name: gemini-stt
-description: Transcribe audio files using Google's Gemini API or Vertex AI
+description: 使用 Google Gemini API 或 Vertex AI 转录音频文件
 metadata: {"clawdbot":{"emoji":"🎤","os":["linux","darwin"]}}
 ---
 
-# Gemini Speech-to-Text Skill
+# Gemini 语音转文字技能
 
-Transcribe audio files using Google's Gemini API or Vertex AI. Default model is `gemini-2.0-flash-lite` for fastest transcription.
+使用 Google Gemini API 或 Vertex AI 转录音频文件。默认使用 `gemini-2.0-flash-lite` 模型以获得最快的转录速度。
 
-## Authentication (choose one)
+## 认证方式（选择其一）
 
-### Option 1: Vertex AI with Application Default Credentials (Recommended)
+### 方式 1：使用应用程序默认凭据的 Vertex AI（推荐）
 
 ```bash
 gcloud auth application-default login
 gcloud config set project YOUR_PROJECT_ID
 ```
 
-The script will automatically detect and use ADC when available.
+脚本会在有可用时自动检测并使用 ADC。
 
-### Option 2: Direct Gemini API Key
+### 方式 2：直接使用 Gemini API 密钥
 
-Set `GEMINI_API_KEY` in environment (e.g., `~/.env` or `~/.clawdbot/.env`)
+在环境变量中设置 `GEMINI_API_KEY`（例如 `~/.env` 或 `~/.clawdbot/.env`）
 
-## Requirements
+## 依赖要求
 
-- Python 3.10+ (no external dependencies)
-- Either GEMINI_API_KEY or gcloud CLI with ADC configured
+- Python 3.10+（无外部依赖）
+- 需要 GEMINI_API_KEY 或配置了 ADC 的 gcloud CLI
 
-## Supported Formats
+## 支持的格式
 
-- `.ogg` / `.opus` (Telegram voice messages)
+- `.ogg` / `.opus`（Telegram 语音消息）
 - `.mp3`
 - `.wav`
 - `.m4a`
 
-## Usage
+## 使用方法
 
 ```bash
-# Auto-detect auth (tries ADC first, then GEMINI_API_KEY)
+# 自动检测认证方式（优先尝试 ADC，然后是 GEMINI_API_KEY）
 python ~/.claude/skills/gemini-stt/transcribe.py /path/to/audio.ogg
 
-# Force Vertex AI
+# 强制使用 Vertex AI
 python ~/.claude/skills/gemini-stt/transcribe.py /path/to/audio.ogg --vertex
 
-# With a specific model
+# 使用特定模型
 python ~/.claude/skills/gemini-stt/transcribe.py /path/to/audio.ogg --model gemini-2.5-pro
 
-# Vertex AI with specific project and region
+# Vertex AI 指定项目和区域
 python ~/.claude/skills/gemini-stt/transcribe.py /path/to/audio.ogg --vertex --project my-project --region us-central1
 
-# With Clawdbot media
+# 用于 Clawdbot 媒体
 python ~/.claude/skills/gemini-stt/transcribe.py ~/.clawdbot/media/inbound/voice-message.ogg
 ```
 
-## Options
+## 选项参数
 
-| Option | Description |
-|--------|-------------|
-| `<audio_file>` | Path to the audio file (required) |
-| `--model`, `-m` | Gemini model to use (default: `gemini-2.0-flash-lite`) |
-| `--vertex`, `-v` | Force use of Vertex AI with ADC |
-| `--project`, `-p` | GCP project ID (for Vertex, defaults to gcloud config) |
-| `--region`, `-r` | GCP region (for Vertex, default: `us-central1`) |
+| 选项 | 描述 |
+|------|------|
+| `<audio_file>` | 音频文件路径（必需） |
+| `--model`, `-m` | 使用的 Gemini 模型（默认：`gemini-2.0-flash-lite`） |
+| `--vertex`, `-v` | 强制使用带有 ADC 的 Vertex AI |
+| `--project`, `-p` | GCP 项目 ID（Vertex 模式，默认为 gcloud 配置） |
+| `--region`, `-r` | GCP 区域（Vertex 模式，默认：`us-central1`） |
 
-## Supported Models
+## 支持的模型
 
-Any Gemini model that supports audio input can be used. Recommended models:
+任何支持音频输入的 Gemini 模型都可以使用。推荐的模型：
 
-| Model | Notes |
-|-------|-------|
-| `gemini-2.0-flash-lite` | **Default.** Fastest transcription speed. |
-| `gemini-2.0-flash` | Fast and cost-effective. |
-| `gemini-2.5-flash-lite` | Lightweight 2.5 model. |
-| `gemini-2.5-flash` | Balanced speed and quality. |
-| `gemini-2.5-pro` | Higher quality, slower. |
-| `gemini-3-flash-preview` | Latest flash model. |
-| `gemini-3-pro-preview` | Latest pro model, best quality. |
+| 模型 | 说明 |
+|------|------|
+| `gemini-2.0-flash-lite` | **默认。** 转录速度最快。 |
+| `gemini-2.0-flash` | 快速且经济实惠。 |
+| `gemini-2.5-flash-lite` | 轻量级 2.5 模型。 |
+| `gemini-2.5-flash` | 速度和质量平衡。 |
+| `gemini-2.5-pro` | 质量更高，速度较慢。 |
+| `gemini-3-flash-preview` | 最新的 flash 模型。 |
+| `gemini-3-pro-preview` | 最新的 pro 模型，质量最佳。 |
 
-See [Gemini API Models](https://ai.google.dev/gemini-api/docs/models) for the latest list.
+查看 [Gemini API 模型](https://ai.google.dev/gemini-api/docs/models) 获取最新列表。
 
-## How It Works
+## 工作原理
 
-1. Reads the audio file and base64 encodes it
-2. Auto-detects authentication:
-   - If ADC is available (gcloud), uses Vertex AI endpoint
-   - Otherwise, uses GEMINI_API_KEY with direct Gemini API
-3. Sends to the selected Gemini model with transcription prompt
-4. Returns the transcribed text
+1. 读取音频文件并进行 base64 编码
+2. 自动检测认证方式：
+   - 如果 ADC 可用（gcloud），使用 Vertex AI 端点
+   - 否则，使用带有 GEMINI_API_KEY 的直接 Gemini API
+3. 将音频发送到选定的 Gemini 模型并附上转录提示
+4. 返回转录的文本
 
-## Example Integration
+## 集成示例
 
-For Clawdbot voice message handling:
+用于 Clawdbot 语音消息处理：
 
 ```bash
-# Transcribe incoming voice message
+# 转录传入的语音消息
 TRANSCRIPT=$(python ~/.claude/skills/gemini-stt/transcribe.py "$AUDIO_PATH")
-echo "User said: $TRANSCRIPT"
+echo "用户说: $TRANSCRIPT"
 ```
 
-## Error Handling
+## 错误处理
 
-The script exits with code 1 and prints to stderr on:
-- No authentication available (neither ADC nor GEMINI_API_KEY)
-- File not found
-- API errors
-- Missing GCP project (when using Vertex)
+脚本在以下情况以退出码 1 退出并打印到 stderr：
+- 没有可用的认证（既没有 ADC 也没有 GEMINI_API_KEY）
+- 文件未找到
+- API 错误
+- 缺少 GCP 项目（使用 Vertex 时）
 
-## Notes
+## 注意事项
 
-- Uses Gemini 2.0 Flash Lite by default for fastest transcription
-- No external Python dependencies (uses stdlib only)
-- Automatically detects MIME type from file extension
-- Prefers Vertex AI with ADC when available (no API key management needed)
+- 默认使用 Gemini 2.0 Flash Lite 以获得最快的转录速度
+- 无需外部 Python 依赖（仅使用标准库）
+- 自动根据文件扩展名检测 MIME 类型
+- 当 ADC 可用时优先使用 Vertex AI（无需管理 API 密钥）

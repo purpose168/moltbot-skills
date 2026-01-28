@@ -13,64 +13,68 @@ import (
 	"github.com/visionik/sogcli/internal/smtp"
 )
 
-// InviteCmd handles meeting invitation operations.
+// InviteCmd 处理会议邀请操作
 type InviteCmd struct {
-	Send    InviteSendCmd    `cmd:"" help:"Send a meeting invitation"`
-	Reply   InviteReplyCmd   `cmd:"" help:"Reply to a meeting invitation"`
-	Cancel  InviteCancelCmd  `cmd:"" help:"Cancel a meeting"`
-	Parse   InviteParseCmd   `cmd:"" help:"Parse an .ics file"`
-	Preview InvitePreviewCmd `cmd:"" help:"Preview invite without sending"`
+	Send    InviteSendCmd    `cmd:"" help:"发送会议邀请"`
+	Reply   InviteReplyCmd   `cmd:"" help:"回复会议邀请"`
+	Cancel  InviteCancelCmd  `cmd:"" help:"取消会议"`
+	Parse   InviteParseCmd   `cmd:"" help:"解析.ics文件"`
+	Preview InvitePreviewCmd `cmd:"" help:"预览邀请而不发送"`
 }
 
-// InviteSendCmd sends a meeting invitation.
+// InviteSendCmd 发送会议邀请
 type InviteSendCmd struct {
-	Summary     string   `arg:"" help:"Meeting title/summary"`
-	Attendees   []string `arg:"" help:"Attendee email addresses"`
-	Start       string   `help:"Start time (YYYY-MM-DDTHH:MM or 'tomorrow 2pm')" required:""`
-	Duration    string   `help:"Duration (e.g., 1h, 30m, 1h30m)" default:"1h"`
-	End         string   `help:"End time (alternative to duration)"`
-	Location    string   `help:"Meeting location" short:"l"`
-	Description string   `help:"Meeting description" short:"d"`
-	Organizer   string   `help:"Organizer name"`
+	Summary     string   `arg:"" help:"会议标题/摘要"`
+	Attendees   []string `arg:"" help:"参与者邮箱地址"`
+	Start       string   `help:"开始时间（YYYY-MM-DDTHH:MM 或 'tomorrow 2pm'）" required:""`
+	Duration    string   `help:"持续时间（例如：1h, 30m, 1h30m）" default:"1h"`
+	End         string   `help:"结束时间（替代持续时间）"`
+	Location    string   `help:"会议地点" short:"l"`
+	Description string   `help:"会议描述" short:"d"`
+	Organizer   string   `help:"组织者姓名"`
 }
 
-// Run executes the invite send command.
+// Run 执行发送邀请命令
 func (c *InviteSendCmd) Run(root *Root) error {
+	// 加载配置
 	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
+		return fmt.Errorf("加载配置失败: %w", err)
 	}
 
+	// 获取账户信息
 	email := root.Account
 	if email == "" {
 		email = cfg.DefaultAccount
 	}
 	if email == "" {
-		return fmt.Errorf("no account specified")
+		return fmt.Errorf("未指定账户")
 	}
 
-	// Parse start time
+	// 解析开始时间
 	start, _, err := parseDateTime(c.Start)
 	if err != nil {
-		return fmt.Errorf("invalid start time: %w", err)
+		return fmt.Errorf("无效的开始时间: %w", err)
 	}
 
-	// Calculate end time
+	// 计算结束时间
 	var end time.Time
 	if c.End != "" {
+		// 如果指定了结束时间，则直接解析
 		end, _, err = parseDateTime(c.End)
 		if err != nil {
-			return fmt.Errorf("invalid end time: %w", err)
+			return fmt.Errorf("无效的结束时间: %w", err)
 		}
 	} else {
+		// 否则根据持续时间计算结束时间
 		dur, err := time.ParseDuration(c.Duration)
 		if err != nil {
-			return fmt.Errorf("invalid duration: %w", err)
+			return fmt.Errorf("无效的持续时间: %w", err)
 		}
 		end = start.Add(dur)
 	}
 
-	// Build invite
+	// 构建邀请
 	inv := &itip.Invite{
 		Method:      itip.MethodRequest,
 		UID:         itip.GenerateUID(getDomain(email)),
@@ -87,6 +91,7 @@ func (c *InviteSendCmd) Run(root *Root) error {
 		Created:  time.Now().UTC(),
 	}
 
+	// 添加参与者
 	for _, att := range c.Attendees {
 		inv.Attendees = append(inv.Attendees, itip.Participant{
 			Email: att,
@@ -94,56 +99,60 @@ func (c *InviteSendCmd) Run(root *Root) error {
 		})
 	}
 
-	// Generate iCalendar
+	// 生成iCalendar数据
 	icsData, err := itip.CreateInvite(inv)
 	if err != nil {
-		return fmt.Errorf("failed to create invite: %w", err)
+		return fmt.Errorf("创建邀请失败: %w", err)
 	}
 
-	// Send via SMTP
+	// 通过SMTP发送
 	if err := sendInviteEmail(cfg, email, inv, icsData); err != nil {
-		return fmt.Errorf("failed to send invite: %w", err)
+		return fmt.Errorf("发送邀请失败: %w", err)
 	}
 
+	// 根据输出格式返回结果
 	if root.JSON {
 		fmt.Printf(`{"uid":"%s","summary":"%s","start":"%s","end":"%s","attendees":%d}`+"\n",
 			inv.UID, inv.Summary, inv.Start.Format(time.RFC3339), inv.End.Format(time.RFC3339), len(inv.Attendees))
 		return nil
 	}
 
-	fmt.Printf("Sent meeting invite: %s\n", inv.Summary)
+	// 输出结果
+	fmt.Printf("发送会议邀请成功: %s\n", inv.Summary)
 	fmt.Printf("  UID: %s\n", inv.UID)
-	fmt.Printf("  When: %s - %s\n", inv.Start.Format("Mon Jan 2 15:04"), inv.End.Format("15:04"))
+	fmt.Printf("  时间: %s - %s\n", inv.Start.Format("Mon Jan 2 15:04"), inv.End.Format("15:04"))
 	if inv.Location != "" {
-		fmt.Printf("  Where: %s\n", inv.Location)
+		fmt.Printf("  地点: %s\n", inv.Location)
 	}
-	fmt.Printf("  Attendees: %s\n", strings.Join(c.Attendees, ", "))
+	fmt.Printf("  参与者: %s\n", strings.Join(c.Attendees, ", "))
 	return nil
 }
 
-// InviteReplyCmd replies to a meeting invitation.
+// InviteReplyCmd 回复会议邀请
 type InviteReplyCmd struct {
-	File    string `arg:"" help:".ics file or - for stdin"`
-	Status  string `help:"Response: accept, decline, tentative" required:"" enum:"accept,decline,tentative"`
-	Comment string `help:"Optional comment with response"`
+	File    string `arg:"" help:".ics文件或'-'表示从标准输入读取"`
+	Status  string `help:"回复状态: accept（接受）, decline（拒绝）, tentative（暂定）" required:"" enum:"accept,decline,tentative"`
+	Comment string `help:"回复时的可选评论"`
 }
 
-// Run executes the invite reply command.
+// Run 执行回复邀请命令
 func (c *InviteReplyCmd) Run(root *Root) error {
+	// 加载配置
 	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
+		return fmt.Errorf("加载配置失败: %w", err)
 	}
 
+	// 获取账户信息
 	email := root.Account
 	if email == "" {
 		email = cfg.DefaultAccount
 	}
 	if email == "" {
-		return fmt.Errorf("no account specified")
+		return fmt.Errorf("未指定账户")
 	}
 
-	// Read .ics file
+	// 读取.ics文件
 	var data []byte
 	if c.File == "-" {
 		data, err = io.ReadAll(os.Stdin)
@@ -151,16 +160,16 @@ func (c *InviteReplyCmd) Run(root *Root) error {
 		data, err = os.ReadFile(c.File)
 	}
 	if err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
+		return fmt.Errorf("读取文件失败: %w", err)
 	}
 
-	// Parse invite
+	// 解析邀请
 	inv, err := itip.ParseInvite(data)
 	if err != nil {
-		return fmt.Errorf("failed to parse invite: %w", err)
+		return fmt.Errorf("解析邀请失败: %w", err)
 	}
 
-	// Determine status
+	// 确定回复状态
 	var status itip.ParticipantStatus
 	switch c.Status {
 	case "accept":
@@ -171,7 +180,7 @@ func (c *InviteReplyCmd) Run(root *Root) error {
 		status = itip.StatusTentative
 	}
 
-	// Create reply
+	// 创建回复
 	resp := &itip.Response{
 		UID: inv.UID,
 		Attendee: itip.Participant{
@@ -184,70 +193,76 @@ func (c *InviteReplyCmd) Run(root *Root) error {
 		Sequence:  inv.Sequence,
 	}
 
+	// 生成回复数据
 	replyData, err := itip.CreateReply(resp)
 	if err != nil {
-		return fmt.Errorf("failed to create reply: %w", err)
+		return fmt.Errorf("创建回复失败: %w", err)
 	}
 
-	// Send reply to organizer
+	// 发送回复给组织者
 	if err := sendReplyEmail(cfg, email, inv, resp, replyData); err != nil {
-		return fmt.Errorf("failed to send reply: %w", err)
+		return fmt.Errorf("发送回复失败: %w", err)
 	}
 
-	fmt.Printf("Sent %s reply to: %s\n", c.Status, inv.Organizer.Email)
-	fmt.Printf("  Meeting: %s\n", inv.Summary)
+	fmt.Printf("发送 %s 回复给: %s\n", c.Status, inv.Organizer.Email)
+	fmt.Printf("  会议: %s\n", inv.Summary)
 	return nil
 }
 
-// InviteCancelCmd cancels a meeting.
+// InviteCancelCmd 取消会议
 type InviteCancelCmd struct {
-	UID       string   `arg:"" help:"Meeting UID to cancel"`
-	Attendees []string `arg:"" help:"Attendee emails to notify"`
+	UID       string   `arg:"" help:"要取消的会议UID"`
+	Attendees []string `arg:"" help:"要通知的参与者邮箱"`
 }
 
-// Run executes the invite cancel command.
+// Run 执行取消会议命令
 func (c *InviteCancelCmd) Run(root *Root) error {
+	// 加载配置
 	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
+		return fmt.Errorf("加载配置失败: %w", err)
 	}
 
+	// 获取账户信息
 	email := root.Account
 	if email == "" {
 		email = cfg.DefaultAccount
 	}
 	if email == "" {
-		return fmt.Errorf("no account specified")
+		return fmt.Errorf("未指定账户")
 	}
 
+	// 创建组织者信息
 	organizer := itip.Participant{Email: email}
 	var attendees []itip.Participant
 	for _, att := range c.Attendees {
 		attendees = append(attendees, itip.Participant{Email: att})
 	}
 
+	// 生成取消数据
 	cancelData, err := itip.CreateCancel(c.UID, organizer, attendees, 1)
 	if err != nil {
-		return fmt.Errorf("failed to create cancel: %w", err)
+		return fmt.Errorf("创建取消通知失败: %w", err)
 	}
 
-	// Send cancel to all attendees
+	// 发送取消通知给所有参与者
 	if err := sendCancelEmail(cfg, email, c.UID, c.Attendees, cancelData); err != nil {
-		return fmt.Errorf("failed to send cancel: %w", err)
+		return fmt.Errorf("发送取消通知失败: %w", err)
 	}
 
-	fmt.Printf("Sent cancellation for meeting: %s\n", c.UID)
-	fmt.Printf("  Notified: %s\n", strings.Join(c.Attendees, ", "))
+	fmt.Printf("发送会议取消通知: %s\n", c.UID)
+	fmt.Printf("  已通知: %s\n", strings.Join(c.Attendees, ", "))
 	return nil
 }
 
-// InviteParseCmd parses an .ics file.
+// InviteParseCmd 解析.ics文件
 type InviteParseCmd struct {
-	File string `arg:"" help:".ics file or - for stdin"`
+	File string `arg:"" help:".ics文件或'-'表示从标准输入读取"`
 }
 
-// Run executes the invite parse command.
+// Run 执行解析邀请命令
 func (c *InviteParseCmd) Run(root *Root) error {
+	// 读取.ics文件
 	var data []byte
 	var err error
 	if c.File == "-" {
@@ -256,14 +271,16 @@ func (c *InviteParseCmd) Run(root *Root) error {
 		data, err = os.ReadFile(c.File)
 	}
 	if err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
+		return fmt.Errorf("读取文件失败: %w", err)
 	}
 
+	// 解析邀请
 	inv, err := itip.ParseInvite(data)
 	if err != nil {
-		return fmt.Errorf("failed to parse: %w", err)
+		return fmt.Errorf("解析失败: %w", err)
 	}
 
+	// 根据输出格式返回结果
 	if root.JSON {
 		fmt.Printf(`{"method":"%s","uid":"%s","summary":"%s","start":"%s","end":"%s","organizer":"%s","attendees":%d}`+"\n",
 			inv.Method, inv.UID, inv.Summary,
@@ -272,24 +289,25 @@ func (c *InviteParseCmd) Run(root *Root) error {
 		return nil
 	}
 
-	fmt.Printf("Method:    %s\n", inv.Method)
+	// 输出解析结果
+	fmt.Printf("方法:    %s\n", inv.Method)
 	fmt.Printf("UID:       %s\n", inv.UID)
-	fmt.Printf("Summary:   %s\n", inv.Summary)
-	fmt.Printf("Start:     %s\n", inv.Start.Format("Mon Jan 2, 2006 15:04 MST"))
-	fmt.Printf("End:       %s\n", inv.End.Format("Mon Jan 2, 2006 15:04 MST"))
+	fmt.Printf("摘要:     %s\n", inv.Summary)
+	fmt.Printf("开始:     %s\n", inv.Start.Format("Mon Jan 2, 2006 15:04 MST"))
+	fmt.Printf("结束:     %s\n", inv.End.Format("Mon Jan 2, 2006 15:04 MST"))
 	if inv.Location != "" {
-		fmt.Printf("Location:  %s\n", inv.Location)
+		fmt.Printf("地点:    %s\n", inv.Location)
 	}
 	if inv.Description != "" {
-		fmt.Printf("Desc:      %s\n", inv.Description)
+		fmt.Printf("描述:    %s\n", inv.Description)
 	}
-	fmt.Printf("Organizer: %s", inv.Organizer.Email)
+	fmt.Printf("组织者: %s", inv.Organizer.Email)
 	if inv.Organizer.Name != "" {
 		fmt.Printf(" (%s)", inv.Organizer.Name)
 	}
 	fmt.Println()
 	if len(inv.Attendees) > 0 {
-		fmt.Println("Attendees:")
+		fmt.Println("参与者:")
 		for _, att := range inv.Attendees {
 			status := string(att.Status)
 			if status == "" {
@@ -305,18 +323,19 @@ func (c *InviteParseCmd) Run(root *Root) error {
 	return nil
 }
 
-// InvitePreviewCmd previews an invite without sending.
+// InvitePreviewCmd 预览邀请而不发送
 type InvitePreviewCmd struct {
-	Summary     string   `arg:"" help:"Meeting title/summary"`
-	Attendees   []string `arg:"" help:"Attendee email addresses"`
-	Start       string   `help:"Start time (YYYY-MM-DDTHH:MM)" required:""`
-	Duration    string   `help:"Duration (e.g., 1h, 30m)" default:"1h"`
-	Location    string   `help:"Meeting location" short:"l"`
-	Description string   `help:"Meeting description" short:"d"`
+	Summary     string   `arg:"" help:"会议标题/摘要"`
+	Attendees   []string `arg:"" help:"参与者邮箱地址"`
+	Start       string   `help:"开始时间（YYYY-MM-DDTHH:MM）" required:""`
+	Duration    string   `help:"持续时间（例如：1h, 30m）" default:"1h"`
+	Location    string   `help:"会议地点" short:"l"`
+	Description string   `help:"会议描述" short:"d"`
 }
 
-// Run executes the invite preview command.
+// Run 执行预览邀请命令
 func (c *InvitePreviewCmd) Run(root *Root) error {
+	// 获取账户信息
 	email := root.Account
 	if email == "" {
 		cfg, _ := config.Load()
@@ -328,17 +347,20 @@ func (c *InvitePreviewCmd) Run(root *Root) error {
 		email = "organizer@example.com"
 	}
 
+	// 解析开始时间
 	start, _, err := parseDateTime(c.Start)
 	if err != nil {
-		return fmt.Errorf("invalid start time: %w", err)
+		return fmt.Errorf("无效的开始时间: %w", err)
 	}
 
+	// 计算结束时间
 	dur, err := time.ParseDuration(c.Duration)
 	if err != nil {
-		return fmt.Errorf("invalid duration: %w", err)
+		return fmt.Errorf("无效的持续时间: %w", err)
 	}
 	end := start.Add(dur)
 
+	// 构建邀请
 	inv := &itip.Invite{
 		Method:      itip.MethodRequest,
 		UID:         itip.GenerateUID(getDomain(email)),
@@ -352,21 +374,25 @@ func (c *InvitePreviewCmd) Run(root *Root) error {
 		Created:     time.Now().UTC(),
 	}
 
+	// 添加参与者
 	for _, att := range c.Attendees {
 		inv.Attendees = append(inv.Attendees, itip.Participant{Email: att, RSVP: true})
 	}
 
+	// 生成iCalendar数据
 	icsData, err := itip.CreateInvite(inv)
 	if err != nil {
-		return fmt.Errorf("failed to create invite: %w", err)
+		return fmt.Errorf("创建邀请失败: %w", err)
 	}
 
+	// 输出iCalendar数据
 	fmt.Println(string(icsData))
 	return nil
 }
 
-// Helper functions
+// 辅助函数
 
+// getDomain 从邮箱地址中提取域名
 func getDomain(email string) string {
 	parts := strings.Split(email, "@")
 	if len(parts) == 2 {
@@ -375,17 +401,21 @@ func getDomain(email string) string {
 	return "sog.local"
 }
 
+// sendInviteEmail 通过SMTP发送会议邀请
 func sendInviteEmail(cfg *config.Config, from string, inv *itip.Invite, icsData []byte) error {
+	// 获取账户配置
 	acct, err := cfg.GetAccount(from)
 	if err != nil {
 		return err
 	}
 
+	// 获取SMTP密码
 	password, err := cfg.GetPasswordForProtocol(from, config.ProtocolSMTP)
 	if err != nil {
 		return err
 	}
 
+	// 连接SMTP服务器
 	client, err := smtp.Connect(smtp.Config{
 		Host:     acct.SMTP.Host,
 		Port:     acct.SMTP.Port,
@@ -399,13 +429,13 @@ func sendInviteEmail(cfg *config.Config, from string, inv *itip.Invite, icsData 
 	}
 	defer client.Close()
 
-	// Build recipient list
+	// 构建收件人列表
 	var to []string
 	for _, att := range inv.Attendees {
 		to = append(to, att.Email)
 	}
 
-	// Create message with calendar attachment
+	// 创建包含日历附件的邮件
 	msg := &smtp.Message{
 		From:    from,
 		To:      to,
@@ -420,20 +450,25 @@ func sendInviteEmail(cfg *config.Config, from string, inv *itip.Invite, icsData 
 		CalendarMethod: string(inv.Method),
 	}
 
+	// 发送邮件
 	return client.Send(context.Background(), msg)
 }
 
+// sendReplyEmail 通过SMTP发送会议邀请回复
 func sendReplyEmail(cfg *config.Config, from string, inv *itip.Invite, resp *itip.Response, replyData []byte) error {
+	// 获取账户配置
 	acct, err := cfg.GetAccount(from)
 	if err != nil {
 		return err
 	}
 
+	// 获取SMTP密码
 	password, err := cfg.GetPasswordForProtocol(from, config.ProtocolSMTP)
 	if err != nil {
 		return err
 	}
 
+	// 连接SMTP服务器
 	client, err := smtp.Connect(smtp.Config{
 		Host:     acct.SMTP.Host,
 		Port:     acct.SMTP.Port,
@@ -447,39 +482,46 @@ func sendReplyEmail(cfg *config.Config, from string, inv *itip.Invite, resp *iti
 	}
 	defer client.Close()
 
-	statusWord := "responded to"
+	// 确定回复状态文本
+	statusWord := "回复了"
 	switch resp.Status {
 	case itip.StatusAccepted:
-		statusWord = "accepted"
+		statusWord = "接受了"
 	case itip.StatusDeclined:
-		statusWord = "declined"
+		statusWord = "拒绝了"
 	case itip.StatusTentative:
-		statusWord = "tentatively accepted"
+		statusWord = "暂定接受了"
 	}
 
+	// 创建回复邮件
 	msg := &smtp.Message{
 		From:           from,
 		To:             []string{inv.Organizer.Email},
 		Subject:        fmt.Sprintf("Re: %s", inv.Summary),
-		Body:           fmt.Sprintf("%s has %s your meeting invitation: %s", from, statusWord, inv.Summary),
+		Body:           fmt.Sprintf("%s 已 %s 您的会议邀请: %s", from, statusWord, inv.Summary),
 		CalendarData:   replyData,
 		CalendarMethod: string(itip.MethodReply),
 	}
 
+	// 发送邮件
 	return client.Send(context.Background(), msg)
 }
 
+// sendCancelEmail 通过SMTP发送会议取消通知
 func sendCancelEmail(cfg *config.Config, from string, uid string, attendees []string, cancelData []byte) error {
+	// 获取账户配置
 	acct, err := cfg.GetAccount(from)
 	if err != nil {
 		return err
 	}
 
+	// 获取SMTP密码
 	password, err := cfg.GetPasswordForProtocol(from, config.ProtocolSMTP)
 	if err != nil {
 		return err
 	}
 
+	// 连接SMTP服务器
 	client, err := smtp.Connect(smtp.Config{
 		Host:     acct.SMTP.Host,
 		Port:     acct.SMTP.Port,
@@ -493,6 +535,7 @@ func sendCancelEmail(cfg *config.Config, from string, uid string, attendees []st
 	}
 	defer client.Close()
 
+	// 创建取消通知邮件
 	msg := &smtp.Message{
 		From:           from,
 		To:             attendees,
@@ -502,5 +545,6 @@ func sendCancelEmail(cfg *config.Config, from string, uid string, attendees []st
 		CalendarMethod: string(itip.MethodCancel),
 	}
 
+	// 发送邮件
 	return client.Send(context.Background(), msg)
 }

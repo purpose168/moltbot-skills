@@ -7,7 +7,7 @@ import (
 
 var siteCmd = &cobra.Command{
 	Use:   "site",
-	Short: "Get site information",
+	Short: "获取站点信息",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -25,10 +25,10 @@ var siteCmd = &cobra.Command{
 			return outputJSON(map[string]interface{}{"site": info})
 		}
 
-		printf("Title:       %s\n", info.Title)
-		printf("Description: %s\n", info.Description)
+		printf("标题:       %s\n", info.Title)
+		printf("描述:       %s\n", info.Description)
 		printf("URL:         %s\n", info.URL)
-		printf("Version:     %s\n", info.Version)
+		printf("版本:       %s\n", info.Version)
 		if info.Logo != "" {
 			printf("Logo:        %s\n", info.Logo)
 		}
@@ -38,7 +38,7 @@ var siteCmd = &cobra.Command{
 
 var settingsCmd = &cobra.Command{
 	Use:   "settings",
-	Short: "Get site settings",
+	Short: "获取站点设置",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := config.GetActiveClient(siteName)
 		if err != nil {
@@ -73,8 +73,8 @@ var settingsCmd = &cobra.Command{
 }
 
 func init() {
-	siteCmd.Flags().Bool("json", false, "Output as JSON")
-	settingsCmd.Flags().Bool("json", false, "Output as JSON")
+	siteCmd.Flags().Bool("json", false, "以JSON格式输出")
+	settingsCmd.Flags().Bool("json", false, "以JSON格式输出")
 
 	rootCmd.AddCommand(siteCmd)
 	rootCmd.AddCommand(settingsCmd)

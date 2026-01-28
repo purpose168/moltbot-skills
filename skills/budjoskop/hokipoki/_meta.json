@@ -1,7 +1,8 @@
 {
   "owner": "budjoskop",
   "slug": "hokipoki",
-  "displayName": "HokiPoki",
+  "displayName": "HokiPoki（AI 模型切换工具）",
+  "description": "通过 HokiPoki CLI 在不同 AI 模型（Claude、Codex、 Gemini）之间无缝切换，无需切换标签页",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769426690320,

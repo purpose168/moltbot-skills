@@ -1,4 +1,4 @@
-"""HTML formatting for Oura data."""
+"""Oura数据的HTML格式化工具。"""
 
 from typing import Any
 
@@ -8,52 +8,60 @@ from ouracli.format_utils import EXCLUDE_FIELDS, humanize_key, sort_dict_keys
 
 def format_html(data: Any, title: str | None = None) -> str:
     """
-    Format data as HTML with Chart.js visualizations.
+    将数据格式化为带有Chart.js可视化的HTML。
 
-    Args:
-        data: Data to format
-        title: Optional title for the page
+    参数:
+        data: 要格式化的数据
+        title: 页面的可选标题
 
-    Returns:
-        Complete HTML document as string
+    返回:
+        完整的HTML文档字符串
     """
+    # 存储Chart.js配置
     chart_configs = []
-    chart_counter = [0]  # Use list to allow mutation in nested function
+    # 使用列表来允许在嵌套函数中修改计数
+    chart_counter = [0]
 
     def format_html_item(item_data: Any, level: int = 2) -> str:
-        """Format a single data item as HTML."""
+        """将单个数据项格式化为HTML。"""
         html = []
 
         if isinstance(item_data, dict):
+            # 对字典键进行排序
             sorted_keys = sort_dict_keys(item_data)
 
-            # Separate simple and complex items
+            # 分离简单项和复杂项
             simple_kvs = []
             complex_items = []
 
             for key in sorted_keys:
+                # 跳过需要排除的字段
                 if key in EXCLUDE_FIELDS:
                     continue
 
                 value = item_data[key]
+                # 将键转换为人类可读格式
                 human_key = humanize_key(key)
 
                 if isinstance(value, dict):
+                    # 处理MET数据（包含items的特殊情况）
                     if key == "met" and "items" in value:
                         chart_counter[0] += 1
                         chart_id = f"chart{chart_counter[0]}"
+                        # 创建Chart.js配置
                         chart_configs.append(create_chartjs_config(value["items"], chart_id))
                         interval = value.get("interval", "N/A")
-                        interval_p = f"<p><strong>Interval:</strong> {interval} seconds</p>"
+                        interval_p = f"<p><strong>间隔:</strong> {interval} 秒</p>"
+                        # 创建图表容器
                         chart_div = (
-                            f'<div style="height: 400px; margin: 20px 0;">'
+                            f'<div style="height: 400px; margin: 20px 0;">'  
                             f'<canvas id="{chart_id}"></canvas></div>'
                         )
                         complex_items.append(
                             (f"<h{level}>{human_key}</h{level}>", interval_p + chart_div)
                         )
+                    # 处理扁平字典（渲染为表格）
                     elif not any(isinstance(v, (dict, list)) for v in value.values()):
-                        # Flat dict - render as table
                         table_rows = []
                         for subkey, subvalue in value.items():
                             if subkey not in EXCLUDE_FIELDS:
@@ -67,6 +75,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                                 "<table>" + "".join(table_rows) + "</table>",
                             )
                         )
+                    # 处理嵌套字典
                     else:
                         complex_items.append(
                             (
@@ -75,7 +84,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                             )
                         )
                 elif isinstance(value, list):
-                    # Check if this is heart rate time-series data
+                    # 检查是否为心率时间序列数据
                     if (
                         value
                         and isinstance(value[0], dict)
@@ -84,7 +93,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                     ):
                         from datetime import datetime
 
-                        # Group by day
+                        # 按天分组
                         by_day: dict[str, list] = {}
                         for reading in value:
                             timestamp_str = reading.get("timestamp", "")
@@ -100,7 +109,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                                 except (ValueError, AttributeError):
                                     continue
 
-                        # Create charts grouped by day
+                        # 为每天创建图表
                         charts_html = []
                         for day in sorted(by_day.keys()):
                             day_data = by_day[day]
@@ -111,7 +120,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                                 chart_configs.append(chart_config)
                                 charts_html.append(f"<h{level+1}>{day}</h{level+1}>")
                                 chart_div = (
-                                    f'<div style="height: 400px; margin: 20px 0;">'
+                                    f'<div style="height: 400px; margin: 20px 0;">'  
                                     f'<canvas id="{chart_id}"></canvas></div>'
                                 )
                                 charts_html.append(chart_div)
@@ -120,36 +129,39 @@ def format_html(data: Any, title: str | None = None) -> str:
                             complex_items.append(
                                 (f"<h{level}>{human_key}</h{level}>", "\n".join(charts_html))
                             )
+                    # 处理字典列表
                     elif value and isinstance(value[0], dict):
                         items_html = "".join([format_html_item(item, level + 1) for item in value])
                         complex_items.append((f"<h{level}>{human_key}</h{level}>", items_html))
+                    # 处理简单列表
                     else:
                         simple_kvs.append((human_key, ", ".join(map(str, value))))
+                # 处理简单值
                 else:
                     simple_kvs.append((human_key, value))
 
-            # Render simple KVs as table
+            # 将简单键值对渲染为表格
             if simple_kvs:
                 html.append("<table>")
                 for k, v in simple_kvs:
                     html.append(f"<tr><td>{k}</td><td>{v}</td></tr>")
                 html.append("</table>")
 
-            # Render complex items
+            # 渲染复杂项
             for heading, content in complex_items:
                 html.append(heading)
                 html.append(content)
 
         return "\n".join(html)
 
-    # Build HTML document
+    # 构建HTML文档
     html_parts = []
     html_parts.append("<!DOCTYPE html>")
-    html_parts.append('<html lang="en">')
+    html_parts.append('<html lang="zh-CN">')
     html_parts.append("<head>")
     html_parts.append('<meta charset="UTF-8">')
     html_parts.append('<meta name="viewport" content="width=device-width, initial-scale=1.0">')
-    html_parts.append(f'<title>{title or "Oura Data"}</title>')
+    html_parts.append(f'<title>{title or "Oura数据"}</title>')
     html_parts.append(
         '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>'
     )
@@ -207,33 +219,36 @@ def format_html(data: Any, title: str | None = None) -> str:
     html_parts.append("</head>")
     html_parts.append("<body>")
 
-    # Process data
+    # 处理数据
     if isinstance(data, dict):
+        # 检查是否为包含列表值的字典
         if all(isinstance(v, list) for v in data.values()):
             for key, values in data.items():
+                # 格式化部分标题
                 section_title = key.replace("_", " ").title()
                 html_parts.append(f"<h1>{section_title}</h1>")
 
                 if not values:
-                    html_parts.append("<p><em>No data</em></p>")
+                    html_parts.append("<p><em>无数据</em></p>")
                     continue
 
                 for item in values:
+                    # 如果包含day字段，将其作为子标题
                     if isinstance(item, dict) and "day" in item:
                         html_parts.append(f'<h2>{item["day"]}</h2>')
                     html_parts.append(format_html_item(item, level=3))
         else:
-            html_parts.append("<h1>Data</h1>")
+            html_parts.append("<h1>数据</h1>")
             html_parts.append(format_html_item(data, level=2))
     elif isinstance(data, list):
-        # Check if this is heart rate time-series data
+        # 检查是否为心率时间序列数据
         if data and isinstance(data[0], dict) and "bpm" in data[0] and "timestamp" in data[0]:
             from datetime import datetime
 
             if title:
                 html_parts.append(f"<h1>{title}</h1>")
 
-            # Group by day
+            # 按天分组
             by_day: dict[str, list] = {}
             for reading in data:
                 timestamp_str = reading.get("timestamp", "")
@@ -247,7 +262,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                     except (ValueError, AttributeError):
                         continue
 
-            # Create chart for each day
+            # 为每天创建图表
             for day in sorted(by_day.keys()):
                 day_data = by_day[day]
                 html_parts.append(f"<h2>{day}</h2>")
@@ -257,7 +272,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                 if chart_config:
                     chart_configs.append(chart_config)
                     chart_div = (
-                        f'<div style="height: 400px; margin: 20px 0;">'
+                        f'<div style="height: 400px; margin: 20px 0;">'  
                         f'<canvas id="{chart_id}"></canvas></div>'
                     )
                     html_parts.append(chart_div)
@@ -269,7 +284,7 @@ def format_html(data: Any, title: str | None = None) -> str:
                     html_parts.append(f'<h2>{item["day"]}</h2>')
                 html_parts.append(format_html_item(item, level=3))
 
-    # Add Chart.js initialization
+    # 添加Chart.js初始化代码
     if chart_configs:
         html_parts.append("<script>")
         html_parts.append('window.addEventListener("DOMContentLoaded", function() {')

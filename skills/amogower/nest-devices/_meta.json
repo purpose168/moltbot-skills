@@ -1,27 +1,39 @@
 {
-  "owner": "amogower",
-  "slug": "nest-devices",
-  "displayName": "Nest Devices",
-  "latest": {
-    "version": "2.0.1",
-    "publishedAt": 1769503256649,
-    "commit": "https://github.com/clawdbot/skills/commit/04812d7a81cd53bfc92127acf8ea5b48aaf93e37"
+  "owner": "amogower",                          // 技能所有者：amogower（GitHub 用户名）
+  "slug": "nest-devices",                       // 技能标识符：nest-devices（用于内部引用）
+  "displayName": "Nest 设备",                  // 显示名称：Nest 设备（在界面中显示的中文名称）
+  "latest": {                                   // 最新版本信息
+    "version": "2.0.1",                         // 当前版本号：2.0.1（语义化版本号：主版本.次版本.补丁版本）
+    "publishedAt": 1769503256649,               // 发布时间：2026-01-27 02:14:16（Unix 时间戳，毫秒）
+    "commit": "https://github.com/clawdbot/skills/commit/04812d7a81cd53bfc92127acf8ea5b48aaf93e37"  // 发布对应的 Git 提交链接
   },
-  "history": [
-    {
-      "version": "1.2.0",
-      "publishedAt": 1769419400857,
-      "commit": "https://github.com/clawdbot/skills/commit/a6e98b450420acf3d38b7109078848f6f46e8c21"
+  "history": [                                  // 版本历史记录数组
+    {                                           // 第一个历史版本
+      "version": "1.2.0",                       // 版本号：1.2.0
+      "publishedAt": 1769419400857,             // 发布时间：2026-01-26 01:03:20（Unix 时间戳，毫秒）
+      "commit": "https://github.com/clawdbot/skills/commit/a6e98b450420acf3d38b7109078848f6f46e8c21"  // 发布对应的 Git 提交链接
     },
-    {
-      "version": "1.1.0",
-      "publishedAt": 1769333123647,
-      "commit": "https://github.com/clawdbot/skills/commit/c247b2dad45ed165f1d2a8d791591c4e696b10ba"
+    {                                           // 第二个历史版本
+      "version": "1.1.0",                       // 版本号：1.1.0
+      "publishedAt": 1769333123647,             // 发布时间：2026-01-25 18:25:23（Unix 时间戳，毫秒）
+      "commit": "https://github.com/clawdbot/skills/commit/c247b2dad45ed165f1d2a8d791591c4e696b10ba"  // 发布对应的 Git 提交链接
     },
-    {
-      "version": "1.0.0",
-      "publishedAt": 1769296871088,
-      "commit": "https://github.com/clawdbot/skills/commit/5cd1a03f8b6210c8753e60f117315daa8941bde3"
+    {                                           // 第三个历史版本
+      "version": "1.0.0",                       // 版本号：1.0.0
+      "publishedAt": 1769296871088,             // 发布时间：2026-01-25 14:34:31（Unix 时间戳，毫秒）
+      "commit": "https://github.com/clawdbot/skills/commit/5cd1a03f8b6210c8753e60f117315daa8941bde3"  // 发布对应的 Git 提交链接
     }
   ]
 }
+
+// 配置说明：
+// 1. owner - 技能的所有者，用于归属识别和权限管理
+// 2. slug - 技能的简短标识符，用于命令行调用和内部引用
+// 3. displayName - 在用户界面中显示的本地化名称
+// 4. latest - 包含当前发布版本的详细信息
+//    - version: 遵循语义化版本规范 (主版本.次版本.补丁版本)
+//    - publishedAt: 发布时间戳，用于版本排序和显示
+//    - commit: 对应的 Git 提交链接，便于追踪变更历史
+// 5. history - 版本历史数组，用于支持多版本管理和回溯
+//    - 按发布时间倒序排列（最新版本在前）
+//    - 包含每次发布的版本号、发布时间和 Git 提交链接

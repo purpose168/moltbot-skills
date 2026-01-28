@@ -1,20 +1,20 @@
 #!/bin/bash
-# Search for takeaways near a location in Ireland
-# Usage: ./search-takeaways.sh [location_name] [cuisine] [radius_m]
+# 在爱尔兰查找某个位置附近的外卖店
+# 用法: ./search-takeaways.sh [位置名称] [菜系] [半径(米)]
 #
-# Examples:
+# 示例:
 #   ./search-takeaways.sh drogheda
 #   ./search-takeaways.sh dublin pizza 2000
 #   ./search-takeaways.sh cork chinese 3000
 
 set -e
 
-# Default values
+# 默认值
 LOCATION=$(echo "${1:-drogheda}" | tr '[:upper:]' '[:lower:]')
 CUISINE="${2:-takeaway}"
 RADIUS="${3:-3000}"
 
-# Get coordinates for location
+# 获取位置的坐标
 case "$LOCATION" in
   drogheda)  LAT=53.7179; LNG=-6.3561 ;;
   dublin)    LAT=53.3498; LNG=-6.2603 ;;
@@ -27,21 +27,21 @@ case "$LOCATION" in
   navan)     LAT=53.6528; LNG=-6.6814 ;;
   bray)      LAT=53.2009; LNG=-6.0987 ;;
   *)
-    echo "Unknown location: $LOCATION"
-    echo "Known locations: drogheda, dublin, cork, galway, limerick, waterford, dundalk, swords, navan, bray"
+    echo "未知位置: $LOCATION"
+    echo "已知位置: drogheda, dublin, cork, galway, limerick, waterford, dundalk, swords, navan, bray"
     exit 1
     ;;
 esac
 
-echo "🍕 Searching for '$CUISINE' near $LOCATION (${LAT}, ${LNG})..."
+echo "🍕 正在查找 $LOCATION 附近的 '$CUISINE' (${LAT}, ${LNG})..."
 echo ""
 
-# Check for API key
+# 检查 API 密钥
 if [ -z "$GOOGLE_PLACES_API_KEY" ]; then
-  echo "❌ GOOGLE_PLACES_API_KEY not set"
+  echo "❌ 未设置 GOOGLE_PLACES_API_KEY"
   exit 1
 fi
 
-# Run search
+# 运行搜索
 goplaces search "$CUISINE" --lat="$LAT" --lng="$LNG" --radius-m="$RADIUS" --limit=10 --open-now 2>/dev/null || \
 goplaces search "$CUISINE" --lat="$LAT" --lng="$LNG" --radius-m="$RADIUS" --limit=10

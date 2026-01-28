@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Get details for a specific W&B run.
+获取特定 W&B 运行的详细信息。
 
-Usage:
+用法:
     python run_details.py ENTITY/PROJECT RUN_ID [--metrics KEY1,KEY2] [--json]
 
-Examples:
+示例:
     python run_details.py myteam/training abc123
     python run_details.py myteam/training abc123 --metrics loss,accuracy
     python run_details.py myteam/training abc123 --json
@@ -18,11 +18,11 @@ import wandb
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Get W&B run details")
-    parser.add_argument("path", help="entity/project path")
-    parser.add_argument("run_id", help="Run ID")
-    parser.add_argument("--metrics", help="Comma-separated metric keys to fetch history")
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser = argparse.ArgumentParser(description="获取 W&B 运行详情")
+    parser.add_argument("path", help="实体/项目路径")
+    parser.add_argument("run_id", help="运行 ID")
+    parser.add_argument("--metrics", help="逗号分隔的指标键，用于获取历史记录")
+    parser.add_argument("--json", action="store_true", help="以 JSON 格式输出")
     args = parser.parse_args()
 
     api = wandb.Api()
@@ -30,7 +30,7 @@ def main():
     try:
         run = api.run(f"{args.path}/{args.run_id}")
     except Exception as e:
-        print(f"Error fetching run: {e}")
+        print(f"获取运行时出错: {e}")
         return 1
 
     result = {
@@ -45,7 +45,7 @@ def main():
         "tags": run.tags,
     }
     
-    # Fetch specific metrics history if requested
+    # 如果请求了特定指标，获取其历史记录
     if args.metrics:
         keys = [k.strip() for k in args.metrics.split(",")]
         try:
@@ -59,27 +59,27 @@ def main():
     else:
         status_icon = {"running": "🔄", "finished": "✅", "failed": "❌", "crashed": "💥", "canceled": "⏹️"}.get(run.state, "❓")
         print(f"{status_icon} {run.name}")
-        print(f"   State: {run.state}")
+        print(f"   状态: {run.state}")
         print(f"   ID: {run.id}")
-        print(f"   Created: {run.created_at}")
+        print(f"   创建时间: {run.created_at}")
         print(f"   URL: {run.url}")
         print()
         
         if run.tags:
-            print(f"   Tags: {', '.join(run.tags)}")
+            print(f"   标签: {', '.join(run.tags)}")
             print()
         
         if run.config:
-            print("   Config:")
-            for k, v in list(run.config.items())[:10]:  # Limit to 10
+            print("   配置:")
+            for k, v in list(run.config.items())[:10]:  # 限制显示 10 个
                 print(f"      {k}: {v}")
             if len(run.config) > 10:
-                print(f"      ... and {len(run.config) - 10} more")
+                print(f"      ... 还有 {len(run.config) - 10} 个")
             print()
         
         if run.summary:
-            print("   Summary (final metrics):")
-            for k, v in list(run.summary.items())[:15]:  # Limit to 15
+            print("   摘要（最终指标）:")
+            for k, v in list(run.summary.items())[:15]:  # 限制显示 15 个
                 if not k.startswith("_"):
                     print(f"      {k}: {v}")
             print()

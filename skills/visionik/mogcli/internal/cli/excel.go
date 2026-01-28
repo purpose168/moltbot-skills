@@ -11,27 +11,27 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// ExcelCmd handles Excel operations.
+// ExcelCmd 处理Excel操作。
 type ExcelCmd struct {
-	List     ExcelListCmd     `cmd:"" help:"List Excel workbooks"`
-	Metadata ExcelMetadataCmd `cmd:"" help:"List worksheets in a workbook"`
-	Get      ExcelGetCmd      `cmd:"" help:"Read data from a worksheet"`
-	Update   ExcelUpdateCmd   `cmd:"" help:"Write data to a worksheet"`
-	Append   ExcelAppendCmd   `cmd:"" help:"Append data to a table"`
-	Create   ExcelCreateCmd   `cmd:"" help:"Create a new workbook"`
-	AddSheet ExcelAddSheetCmd `cmd:"" help:"Add a worksheet" name:"add-sheet"`
-	Tables   ExcelTablesCmd   `cmd:"" help:"List tables in a workbook"`
-	Clear    ExcelClearCmd    `cmd:"" help:"Clear a range"`
-	Export   ExcelExportCmd   `cmd:"" help:"Export workbook"`
-	Copy     ExcelCopyCmd     `cmd:"" help:"Copy a workbook"`
+	List     ExcelListCmd     `cmd:"" help:"列出Excel工作簿"`
+	Metadata ExcelMetadataCmd `cmd:"" help:"列出工作簿中的工作表"`
+	Get      ExcelGetCmd      `cmd:"" help:"从工作表读取数据"`
+	Update   ExcelUpdateCmd   `cmd:"" help:"向工作表写入数据"`
+	Append   ExcelAppendCmd   `cmd:"" help:"向表格追加数据"`
+	Create   ExcelCreateCmd   `cmd:"" help:"创建新工作簿"`
+	AddSheet ExcelAddSheetCmd `cmd:"" help:"添加工作表" name:"add-sheet"`
+	Tables   ExcelTablesCmd   `cmd:"" help:"列出工作簿中的表格"`
+	Clear    ExcelClearCmd    `cmd:"" help:"清空区域"`
+	Export   ExcelExportCmd   `cmd:"" help:"导出工作簿"`
+	Copy     ExcelCopyCmd     `cmd:"" help:"复制工作簿"`
 }
 
-// ExcelListCmd lists workbooks.
+// ExcelListCmd 列出工作簿。
 type ExcelListCmd struct {
-	Max int `help:"Maximum results" default:"50"`
+	Max int `help:"最大结果数" default:"50"`
 }
 
-// Run executes excel list.
+// Run 执行excel list命令。
 func (c *ExcelListCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -61,11 +61,11 @@ func (c *ExcelListCmd) Run(root *Root) error {
 	}
 
 	if len(resp.Value) == 0 {
-		fmt.Println("No Excel workbooks found")
+		fmt.Println("未找到Excel工作簿")
 		return nil
 	}
 
-	fmt.Println("Excel Workbooks")
+	fmt.Println("Excel工作簿")
 	fmt.Println()
 	for _, wb := range resp.Value {
 		fmt.Printf("📊 %s  %s  %s\n", wb.Name, formatSize(wb.Size), wb.LastModifiedDateTime[:10])
@@ -74,16 +74,16 @@ func (c *ExcelListCmd) Run(root *Root) error {
 			fmt.Printf("   URL: %s\n", wb.WebURL)
 		}
 	}
-	fmt.Printf("\n%d workbook(s)\n", len(resp.Value))
+	fmt.Printf("\n%d 个工作簿\n", len(resp.Value))
 	return nil
 }
 
-// ExcelMetadataCmd gets workbook metadata.
+// ExcelMetadataCmd 获取工作簿元数据。
 type ExcelMetadataCmd struct {
-	ID string `arg:"" help:"Workbook ID or path"`
+	ID string `arg:"" help:"工作簿ID或路径"`
 }
 
-// Run executes excel metadata.
+// Run 执行excel metadata命令。
 func (c *ExcelMetadataCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -110,11 +110,11 @@ func (c *ExcelMetadataCmd) Run(root *Root) error {
 	}
 
 	if len(resp.Value) == 0 {
-		fmt.Println("No worksheets found")
+		fmt.Println("未找到工作表")
 		return nil
 	}
 
-	fmt.Println("Worksheets")
+	fmt.Println("工作表")
 	fmt.Println()
 	for _, sheet := range resp.Value {
 		visibility := ""
@@ -124,21 +124,21 @@ func (c *ExcelMetadataCmd) Run(root *Root) error {
 		fmt.Printf("📄 %s%s\n", sheet.Name, visibility)
 		fmt.Printf("   ID: %s\n", sheet.ID)
 		if sheet.Position >= 0 {
-			fmt.Printf("   Position: %d\n", sheet.Position)
+			fmt.Printf("   位置: %d\n", sheet.Position)
 		}
 	}
-	fmt.Printf("\n%d worksheet(s)\n", len(resp.Value))
+	fmt.Printf("\n%d 个工作表\n", len(resp.Value))
 	return nil
 }
 
-// ExcelGetCmd reads data.
+// ExcelGetCmd 读取数据。
 type ExcelGetCmd struct {
-	ID    string `arg:"" help:"Workbook ID"`
-	Sheet string `arg:"" optional:"" help:"Sheet name"`
-	Range string `arg:"" optional:"" help:"Cell range (e.g., A1:D10)"`
+	ID    string `arg:"" help:"工作簿ID"`
+	Sheet string `arg:"" optional:"" help:"工作表名称"`
+	Range string `arg:"" optional:"" help:"单元格区域（例如，A1:D10）"`
 }
 
-// Run executes excel get.
+// Run 执行excel get命令。
 func (c *ExcelGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -148,7 +148,7 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 	ctx := context.Background()
 	workbookID := graph.ResolveID(c.ID)
 
-	// If no sheet specified, get first sheet
+	// 如果未指定工作表，获取第一个工作表
 	sheetName := c.Sheet
 	if sheetName == "" {
 		sheets, err := getWorksheets(client, ctx, workbookID)
@@ -156,12 +156,12 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 			return err
 		}
 		if len(sheets) == 0 {
-			return fmt.Errorf("workbook has no worksheets")
+			return fmt.Errorf("工作簿没有工作表")
 		}
 		sheetName = sheets[0].Name
 	}
 
-	// If sheetName looks like a range (contains :), swap it
+	// 如果sheetName看起来像一个区域（包含:），交换它
 	if strings.Contains(sheetName, ":") && c.Range == "" {
 		c.Range = sheetName
 		sheets, err := getWorksheets(client, ctx, workbookID)
@@ -169,12 +169,12 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 			return err
 		}
 		if len(sheets) == 0 {
-			return fmt.Errorf("workbook has no worksheets")
+			return fmt.Errorf("工作簿没有工作表")
 		}
 		sheetName = sheets[0].Name
 	}
 
-	// Build path
+	// 构建路径
 	var path string
 	if c.Range != "" {
 		path = fmt.Sprintf("/me/drive/items/%s/workbook/worksheets('%s')/range(address='%s')",
@@ -199,17 +199,17 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 	}
 
 	if len(rangeData.Values) == 0 {
-		fmt.Println("No data in range")
+		fmt.Println("区域中没有数据")
 		return nil
 	}
 
 	rangeLabel := c.Range
 	if rangeLabel == "" {
-		rangeLabel = "(used range)"
+		rangeLabel = "(使用的区域)"
 	}
 	fmt.Printf("%s - %s\n\n", sheetName, rangeLabel)
 
-	// Calculate column widths
+	// 计算列宽
 	colWidths := make([]int, len(rangeData.Values[0]))
 	for _, row := range rangeData.Values {
 		for col, cell := range row {
@@ -223,7 +223,7 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 		}
 	}
 
-	// Print rows
+	// 打印行
 	for i, row := range rangeData.Values {
 		var cells []string
 		for col, cell := range row {
@@ -242,19 +242,19 @@ func (c *ExcelGetCmd) Run(root *Root) error {
 		}
 	}
 
-	fmt.Printf("\n%d row(s), %d column(s)\n", len(rangeData.Values), len(rangeData.Values[0]))
+	fmt.Printf("\n%d 行, %d 列\n", len(rangeData.Values), len(rangeData.Values[0]))
 	return nil
 }
 
-// ExcelUpdateCmd writes data.
+// ExcelUpdateCmd 写入数据。
 type ExcelUpdateCmd struct {
-	ID     string   `arg:"" help:"Workbook ID"`
-	Sheet  string   `arg:"" help:"Sheet name"`
-	Range  string   `arg:"" help:"Cell range"`
-	Values []string `arg:"" help:"Values to write (fills row by row)"`
+	ID     string   `arg:"" help:"工作簿ID"`
+	Sheet  string   `arg:"" help:"工作表名称"`
+	Range  string   `arg:"" help:"单元格区域"`
+	Values []string `arg:"" help:"要写入的值（逐行填充）"`
 }
 
-// Run executes excel update.
+// Run 执行excel update命令。
 func (c *ExcelUpdateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -262,10 +262,10 @@ func (c *ExcelUpdateCmd) Run(root *Root) error {
 	}
 
 	if len(c.Values) == 0 {
-		return fmt.Errorf("values are required")
+		return fmt.Errorf("需要提供值")
 	}
 
-	// Parse range to determine dimensions
+	// 解析区域以确定维度
 	values := parsePositionalValues(c.Range, c.Values)
 
 	body := map[string]interface{}{
@@ -285,21 +285,21 @@ func (c *ExcelUpdateCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "sheet": c.Sheet, "range": c.Range})
 	}
 
-	fmt.Println("✓ Updated")
-	fmt.Printf("  Sheet: %s\n", c.Sheet)
-	fmt.Printf("  Range: %s\n", c.Range)
-	fmt.Printf("  Cells: %d rows × %d columns\n", len(values), len(values[0]))
+	fmt.Println("✓ 更新成功")
+	fmt.Printf("  工作表: %s\n", c.Sheet)
+	fmt.Printf("  区域: %s\n", c.Range)
+	fmt.Printf("  单元格: %d 行 × %d 列\n", len(values), len(values[0]))
 	return nil
 }
 
-// ExcelAppendCmd appends data.
+// ExcelAppendCmd 追加数据。
 type ExcelAppendCmd struct {
-	ID     string   `arg:"" help:"Workbook ID"`
-	Table  string   `arg:"" help:"Table name"`
-	Values []string `arg:"" help:"Values to append (one row)"`
+	ID     string   `arg:"" help:"工作簿ID"`
+	Table  string   `arg:"" help:"表格名称"`
+	Values []string `arg:"" help:"要追加的值（一行）"`
 }
 
-// Run executes excel append.
+// Run 执行excel append命令。
 func (c *ExcelAppendCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -307,10 +307,10 @@ func (c *ExcelAppendCmd) Run(root *Root) error {
 	}
 
 	if len(c.Values) == 0 {
-		return fmt.Errorf("values are required")
+		return fmt.Errorf("需要提供值")
 	}
 
-	// For append, values become a single row
+	// 对于追加，值成为单行
 	values := [][]interface{}{make([]interface{}, len(c.Values))}
 	for i, v := range c.Values {
 		values[0][i] = v
@@ -333,33 +333,33 @@ func (c *ExcelAppendCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "table": c.Table, "rows": 1})
 	}
 
-	fmt.Println("✓ Appended")
-	fmt.Printf("  Table: %s\n", c.Table)
-	fmt.Printf("  Rows added: 1\n")
+	fmt.Println("✓ 追加成功")
+	fmt.Printf("  表格: %s\n", c.Table)
+	fmt.Printf("  添加的行数: 1\n")
 	return nil
 }
 
-// ExcelCreateCmd creates a workbook.
+// ExcelCreateCmd 创建工作簿。
 type ExcelCreateCmd struct {
-	Name   string `arg:"" help:"Workbook name"`
-	Folder string `help:"Destination folder ID"`
+	Name   string `arg:"" help:"工作簿名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes excel create.
+// Run 执行excel create命令。
 func (c *ExcelCreateCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
 		return err
 	}
 
-	// Ensure .xlsx extension
+	// 确保.xlsx扩展名
 	name := c.Name
 	if !strings.HasSuffix(strings.ToLower(name), ".xlsx") {
 		name += ".xlsx"
 	}
 
-	// Create empty workbook by uploading minimal xlsx content
-	// For simplicity, we'll create an empty file and let Graph handle it
+	// 通过上传最小的xlsx内容创建空工作簿
+	// 为简单起见，我们将创建一个空文件并让Graph处理它
 	ctx := context.Background()
 	var path string
 	if c.Folder != "" {
@@ -368,7 +368,7 @@ func (c *ExcelCreateCmd) Run(root *Root) error {
 		path = fmt.Sprintf("/me/drive/root:/%s:/content", name)
 	}
 
-	// Minimal xlsx content (empty workbook)
+	// 最小的xlsx内容（空工作簿）
 	emptyXlsx := getMinimalXlsx()
 
 	data, err := client.Put(ctx, path, emptyXlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -385,19 +385,19 @@ func (c *ExcelCreateCmd) Run(root *Root) error {
 		return outputJSON(item)
 	}
 
-	fmt.Println("✓ Workbook created")
-	fmt.Printf("  Name: %s\n", item.Name)
+	fmt.Println("✓ 工作簿创建成功")
+	fmt.Printf("  名称: %s\n", item.Name)
 	fmt.Printf("  ID: %s\n", graph.FormatID(item.ID))
 	return nil
 }
 
-// ExcelAddSheetCmd adds a worksheet.
+// ExcelAddSheetCmd 添加工作表。
 type ExcelAddSheetCmd struct {
-	ID   string `arg:"" help:"Workbook ID"`
-	Name string `help:"Sheet name"`
+	ID   string `arg:"" help:"工作簿ID"`
+	Name string `help:"工作表名称"`
 }
 
-// Run executes excel add-sheet.
+// Run 执行excel add-sheet命令。
 func (c *ExcelAddSheetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -426,18 +426,18 @@ func (c *ExcelAddSheetCmd) Run(root *Root) error {
 		return outputJSON(sheet)
 	}
 
-	fmt.Println("✓ Worksheet added")
-	fmt.Printf("  Name: %s\n", sheet.Name)
+	fmt.Println("✓ 工作表添加成功")
+	fmt.Printf("  名称: %s\n", sheet.Name)
 	fmt.Printf("  ID: %s\n", sheet.ID)
 	return nil
 }
 
-// ExcelTablesCmd lists tables.
+// ExcelTablesCmd 列出表格。
 type ExcelTablesCmd struct {
-	ID string `arg:"" help:"Workbook ID"`
+	ID string `arg:"" help:"工作簿ID"`
 }
 
-// Run executes excel tables.
+// Run 执行excel tables命令。
 func (c *ExcelTablesCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -464,34 +464,34 @@ func (c *ExcelTablesCmd) Run(root *Root) error {
 	}
 
 	if len(resp.Value) == 0 {
-		fmt.Println("No tables found in workbook")
+		fmt.Println("工作簿中未找到表格")
 		return nil
 	}
 
-	fmt.Println("Tables")
+	fmt.Println("表格")
 	fmt.Println()
 	for _, table := range resp.Value {
 		fmt.Printf("📋 %s\n", table.Name)
 		if table.ShowHeaders {
-			fmt.Printf("   Headers: Yes\n")
+			fmt.Printf("   标题: 是\n")
 		}
 		if table.ShowTotals {
-			fmt.Printf("   Totals: Yes\n")
+			fmt.Printf("   总计: 是\n")
 		}
 		fmt.Printf("   ID: %s\n", table.ID)
 	}
-	fmt.Printf("\n%d table(s)\n", len(resp.Value))
+	fmt.Printf("\n%d 个表格\n", len(resp.Value))
 	return nil
 }
 
-// ExcelClearCmd clears a range.
+// ExcelClearCmd 清空区域。
 type ExcelClearCmd struct {
-	ID    string `arg:"" help:"Workbook ID"`
-	Sheet string `arg:"" help:"Sheet name"`
-	Range string `arg:"" help:"Range to clear"`
+	ID    string `arg:"" help:"工作簿ID"`
+	Sheet string `arg:"" help:"工作表名称"`
+	Range string `arg:"" help:"要清空的区域"`
 }
 
-// Run executes excel clear.
+// Run 执行excel clear命令。
 func (c *ExcelClearCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -515,21 +515,21 @@ func (c *ExcelClearCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "sheet": c.Sheet, "range": c.Range})
 	}
 
-	fmt.Println("✓ Cleared")
-	fmt.Printf("  Sheet: %s\n", c.Sheet)
-	fmt.Printf("  Range: %s\n", c.Range)
+	fmt.Println("✓ 清空成功")
+	fmt.Printf("  工作表: %s\n", c.Sheet)
+	fmt.Printf("  区域: %s\n", c.Range)
 	return nil
 }
 
-// ExcelExportCmd exports a workbook.
+// ExcelExportCmd 导出工作簿。
 type ExcelExportCmd struct {
-	ID     string `arg:"" help:"Workbook ID"`
-	Out    string `help:"Output path" required:""`
-	Format string `help:"Export format (xlsx, csv)" default:"xlsx"`
-	Sheet  string `help:"Sheet name (for CSV export)"`
+	ID     string `arg:"" help:"工作簿ID"`
+	Out    string `help:"输出路径" required:""`
+	Format string `help:"导出格式（xlsx, csv）" default:"xlsx"`
+	Sheet  string `help:"工作表名称（用于CSV导出）"`
 }
 
-// Run executes excel export.
+// Run 执行excel export命令。
 func (c *ExcelExportCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -540,7 +540,7 @@ func (c *ExcelExportCmd) Run(root *Root) error {
 	workbookID := graph.ResolveID(c.ID)
 
 	if strings.ToLower(c.Format) == "csv" {
-		// For CSV, export sheet data
+		// 对于CSV，导出工作表数据
 		sheetName := c.Sheet
 		if sheetName == "" {
 			sheets, err := getWorksheets(client, ctx, workbookID)
@@ -548,12 +548,12 @@ func (c *ExcelExportCmd) Run(root *Root) error {
 				return err
 			}
 			if len(sheets) == 0 {
-				return fmt.Errorf("workbook has no worksheets")
+				return fmt.Errorf("工作簿没有工作表")
 			}
 			sheetName = sheets[0].Name
 		}
 
-		// Get used range
+		// 获取使用的区域
 		path := fmt.Sprintf("/me/drive/items/%s/workbook/worksheets('%s')/usedRange", workbookID, sheetName)
 		data, err := client.Get(ctx, path, nil)
 		if err != nil {
@@ -565,7 +565,7 @@ func (c *ExcelExportCmd) Run(root *Root) error {
 			return err
 		}
 
-		// Convert to CSV
+		// 转换为CSV
 		var csv strings.Builder
 		for _, row := range rangeData.Values {
 			var cells []string
@@ -579,12 +579,12 @@ func (c *ExcelExportCmd) Run(root *Root) error {
 			return err
 		}
 
-		fmt.Println("✓ Exported")
-		fmt.Printf("  Format: CSV\n")
-		fmt.Printf("  Sheet: %s\n", sheetName)
-		fmt.Printf("  Saved to: %s\n", c.Out)
+		fmt.Println("✓ 导出成功")
+		fmt.Printf("  格式: CSV\n")
+		fmt.Printf("  工作表: %s\n", sheetName)
+		fmt.Printf("  保存到: %s\n", c.Out)
 	} else {
-		// Download xlsx
+		// 下载xlsx
 		path := fmt.Sprintf("/me/drive/items/%s/content", workbookID)
 		data, err := client.Get(ctx, path, nil)
 		if err != nil {
@@ -595,22 +595,22 @@ func (c *ExcelExportCmd) Run(root *Root) error {
 			return err
 		}
 
-		fmt.Println("✓ Exported")
-		fmt.Printf("  Format: XLSX\n")
-		fmt.Printf("  Saved to: %s\n", c.Out)
+		fmt.Println("✓ 导出成功")
+		fmt.Printf("  格式: XLSX\n")
+		fmt.Printf("  保存到: %s\n", c.Out)
 	}
 
 	return nil
 }
 
-// ExcelCopyCmd copies a workbook.
+// ExcelCopyCmd 复制工作簿。
 type ExcelCopyCmd struct {
-	ID     string `arg:"" help:"Workbook ID"`
-	Name   string `arg:"" help:"New name"`
-	Folder string `help:"Destination folder ID"`
+	ID     string `arg:"" help:"工作簿ID"`
+	Name   string `arg:"" help:"新名称"`
+	Folder string `help:"目标文件夹ID"`
 }
 
-// Run executes excel copy.
+// Run 执行excel copy命令。
 func (c *ExcelCopyCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -638,12 +638,12 @@ func (c *ExcelCopyCmd) Run(root *Root) error {
 		return outputJSON(map[string]interface{}{"success": true, "name": c.Name})
 	}
 
-	fmt.Println("✓ Copy initiated")
-	fmt.Printf("  Name: %s\n", c.Name)
+	fmt.Println("✓ 复制已启动")
+	fmt.Printf("  名称: %s\n", c.Name)
 	return nil
 }
 
-// Worksheet represents an Excel worksheet.
+// Worksheet 表示Excel工作表。
 type Worksheet struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
@@ -651,13 +651,13 @@ type Worksheet struct {
 	Visibility string `json:"visibility"`
 }
 
-// RangeData represents range data.
+// RangeData 表示区域数据。
 type RangeData struct {
 	Address string          `json:"address"`
 	Values  [][]interface{} `json:"values"`
 }
 
-// Table represents an Excel table.
+// Table 表示Excel表格。
 type Table struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -665,6 +665,7 @@ type Table struct {
 	ShowTotals  bool   `json:"showTotals"`
 }
 
+// getWorksheets 获取工作簿中的所有工作表。
 func getWorksheets(client graph.Client, ctx context.Context, workbookID string) ([]Worksheet, error) {
 	path := fmt.Sprintf("/me/drive/items/%s/workbook/worksheets", workbookID)
 	data, err := client.Get(ctx, path, nil)
@@ -681,11 +682,12 @@ func getWorksheets(client graph.Client, ctx context.Context, workbookID string) 
 	return resp.Value, nil
 }
 
+// parsePositionalValues 解析位置值并根据区域维度组织它们。
 func parsePositionalValues(rangeAddr string, values []string) [][]interface{} {
-	// Parse range to determine dimensions (e.g., A1:B2 = 2 cols, 2 rows)
+	// 解析区域以确定维度（例如，A1:B2 = 2列，2行）
 	parts := strings.Split(rangeAddr, ":")
 	if len(parts) != 2 {
-		// Single cell
+		// 单个单元格
 		return [][]interface{}{{values[0]}}
 	}
 
@@ -711,6 +713,7 @@ func parsePositionalValues(rangeAddr string, values []string) [][]interface{} {
 	return result
 }
 
+// parseCell 解析单元格地址（例如，A1）并返回列和行索引。
 func parseCell(cell string) (col, row int) {
 	col = 0
 	row = 0
@@ -727,10 +730,10 @@ func parseCell(cell string) (col, row int) {
 	return col, row
 }
 
-// getMinimalXlsx returns a minimal valid xlsx file
+// getMinimalXlsx 返回最小有效的xlsx文件
 func getMinimalXlsx() []byte {
-	// This is a base64-decoded minimal xlsx file
-	// In practice, you might want to use a proper xlsx library
-	// For now, we'll rely on Graph API to handle empty content
+	// 这是一个base64解码的最小xlsx文件
+	// 实际上，您可能需要使用适当的xlsx库
+	// 现在，我们将依赖Graph API来处理空内容
 	return []byte{}
 }

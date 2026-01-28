@@ -1,20 +1,20 @@
-# 🎙️ ElevenLabs Speech-to-Text Skill
+# 🎙️ ElevenLabs 语音转文本技能
 
-A [Clawdbot](https://github.com/clawdbot/clawdbot) skill for transcribing audio files using ElevenLabs' Scribe v2 model.
+一个用于使用 ElevenLabs Scribe v2 模型转录音频文件的 [Clawdbot](https://github.com/clawdbot/clawdbot) 技能。
 
-## Features
+## 功能特点
 
-- 🌍 **90+ languages** supported with automatic detection
-- 👥 **Speaker diarization** — identify different speakers
-- 🎵 **Audio event tagging** — detect laughter, music, applause, etc.
-- 📝 **Word-level timestamps** — precise timing in JSON output
-- 🎧 **All major formats** — mp3, m4a, wav, ogg, webm, mp4, and more
+- 🌍 **支持 90+ 种语言** 并自动检测
+- 👥 **说话人分离** — 识别不同说话者
+- 🎵 **音频事件标记** — 检测笑声、音乐、掌声等
+- 📝 **词级时间戳** — JSON 输出中的精确时间
+- 🎧 **支持所有主流格式** — mp3、m4a、wav、ogg、webm、mp4 等
 
-## Installation
+## 安装
 
-### For Clawdbot
+### 对于 Clawdbot
 
-Add to your `clawdbot.json`:
+添加到您的 `clawdbot.json`：
 
 ```json5
 {
@@ -29,7 +29,7 @@ Add to your `clawdbot.json`:
 }
 ```
 
-### Standalone
+### 独立运行
 
 ```bash
 git clone https://github.com/clawdbotborges/elevenlabs-stt.git
@@ -37,45 +37,45 @@ cd elevenlabs-stt
 export ELEVENLABS_API_KEY="sk_your_api_key_here"
 ```
 
-## Usage
+## 使用方法
 
 ```bash
-# Basic transcription
+# 基本转录
 ./scripts/transcribe.sh audio.mp3
 
-# With speaker diarization
+# 说话人分离
 ./scripts/transcribe.sh meeting.mp3 --diarize
 
-# Specify language for better accuracy
+# 指定语言以提高准确性
 ./scripts/transcribe.sh voice_note.ogg --lang en
 
-# Full JSON with timestamps
+# 带时间戳的完整 JSON
 ./scripts/transcribe.sh podcast.mp3 --json
 
-# Tag audio events (laughter, music, etc.)
+# 标记音频事件（笑声、音乐等）
 ./scripts/transcribe.sh recording.wav --events
 ```
 
-## Options
+## 选项
 
-| Flag | Description |
+| 标志 | 描述 |
 |------|-------------|
-| `--diarize` | Enable speaker diarization |
-| `--lang CODE` | ISO language code (e.g., `en`, `pt`, `es`, `fr`) |
-| `--json` | Output full JSON response with word timestamps |
-| `--events` | Tag audio events like laughter, music, applause |
-| `-h, --help` | Show help message |
+| `--diarize` | 启用说话人分离 |
+| `--lang CODE` | ISO 语言代码（例如 `en`、`pt`、`es`、`fr`） |
+| `--json` | 输出带词级时间戳的完整 JSON 响应 |
+| `--events` | 标记音频事件（如笑声、音乐、掌声） |
+| `-h, --help` | 显示帮助信息 |
 
-## Examples
+## 示例
 
-### Transcribe a voice message
+### 转录语音消息
 
 ```bash
 ./scripts/transcribe.sh ~/Downloads/voice_note.ogg
-# Output: "Hey, just wanted to check in about the meeting tomorrow."
+# 输出: "嘿只是想确认一下明天的会议。"
 ```
 
-### Meeting with multiple speakers
+### 多人会议
 
 ```bash
 ./scripts/transcribe.sh meeting.mp3 --diarize --lang en --json
@@ -83,44 +83,44 @@ export ELEVENLABS_API_KEY="sk_your_api_key_here"
 
 ```json
 {
-  "text": "Welcome everyone. Let's start with updates.",
+  "text": "大家好。我们开始更新。",
   "words": [
-    {"text": "Welcome", "start": 0.0, "end": 0.5, "speaker": "speaker_0"},
-    {"text": "everyone", "start": 0.5, "end": 1.0, "speaker": "speaker_0"}
+    {"text": "大家", "start": 0.0, "end": 0.5, "speaker": "speaker_0"},
+    {"text": "好", "start": 0.5, "end": 1.0, "speaker": "speaker_0"}
   ]
 }
 ```
 
-### Process with jq
+### 使用 jq 处理
 
 ```bash
-# Get just the text
+# 仅获取文本
 ./scripts/transcribe.sh audio.mp3 --json | jq -r '.text'
 
-# Get word count
+# 获取词数
 ./scripts/transcribe.sh audio.mp3 --json | jq '.words | length'
 ```
 
-## Requirements
+## 要求
 
-- `curl` — for API requests
-- `jq` — for JSON parsing (optional, but recommended)
-- ElevenLabs API key with Speech-to-Text access
+- `curl` — 用于 API 请求
+- `jq` — 用于 JSON 解析（可选，但推荐）
+- 具有语音转文本访问权限的 ElevenLabs API 密钥
 
-## API Key
+## API 密钥
 
-Get your API key from [ElevenLabs](https://elevenlabs.io):
+从 [ElevenLabs](https://elevenlabs.io) 获取您的 API 密钥：
 
-1. Sign up or log in
-2. Go to Profile → API Keys
-3. Create a new key or copy existing one
+1. 注册或登录
+2. 转到个人资料 → API 密钥
+3. 创建新密钥或复制现有密钥
 
-## License
+## 许可证
 
 MIT
 
-## Links
+## 链接
 
-- [ElevenLabs Speech-to-Text](https://elevenlabs.io/speech-to-text)
-- [API Documentation](https://elevenlabs.io/docs/api-reference/speech-to-text)
+- [ElevenLabs 语音转文本](https://elevenlabs.io/speech-to-text)
+- [API 文档](https://elevenlabs.io/docs/api-reference/speech-to-text)
 - [Clawdbot](https://github.com/clawdbot/clawdbot)

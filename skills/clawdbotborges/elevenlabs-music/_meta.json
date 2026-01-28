@@ -1,7 +1,8 @@
 {
   "owner": "clawdbotborges",
   "slug": "elevenlabs-music",
-  "displayName": "ElevenLabs Music",
+  "displayName": "ElevenLabs 音乐生成",
+  "description": "使用 ElevenLabs Eleven Music API 从文本提示生成音乐。支持 AI 歌词、人声和多风格音乐创作。",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1769461281579,

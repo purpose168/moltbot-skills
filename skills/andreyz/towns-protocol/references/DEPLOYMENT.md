@@ -1,51 +1,51 @@
-# Deployment
+# 部署
 
-## Local Development
+## 本地开发
 
 ```bash
-# Start bot (default port 5123)
+# 启动机器人（默认端口 5123）
 bun run dev
 
-# Expose webhook via Tailscale Funnel
+# 通过 Tailscale Funnel 暴露 webhook
 tailscale funnel 5123
-# Creates URL like: https://your-machine.taild8e1b0.ts.net/
+# 创建类似这样的 URL: https://your-machine.taild8e1b0.ts.net/
 
-# Alternative: ngrok
+# 备选方案: ngrok
 ngrok http 5123
 ```
 
-## Setup Webhook in Developer Portal
+## 在开发者门户中设置 Webhook
 
-1. Go to https://app.towns.com/developer
-2. Select your bot
-3. Set Webhook URL to your tunnel URL + `/webhook`
-   - Example: `https://your-machine.taild8e1b0.ts.net/webhook`
-4. Save changes
+1. 转到 https://app.towns.com/developer
+2. 选择您的机器人
+3. 将 Webhook URL 设置为隧道 URL + `/webhook`
+   - 示例: `https://your-machine.taild8e1b0.ts.net/webhook`
+4. 保存更改
 
-## Testing Checklist
+## 测试清单
 
-- [ ] Bot server running (`bun run dev`)
-- [ ] Tunnel active (Tailscale/ngrok)
-- [ ] Webhook URL updated in Developer Portal
-- [ ] Bot installed in a Space (Settings → Integrations)
-- [ ] Bot added to the specific channel (Channel Settings → Integrations)
-- [ ] Check logs for incoming webhook events
+- [ ] 机器人服务器正在运行 (`bun run dev`)
+- [ ] 隧道活动（Tailscale/ngrok）
+- [ ] 在开发者门户中更新了 Webhook URL
+- [ ] 机器人在 Space 中安装（设置 → 集成）
+- [ ] 机器人添加到特定频道（频道设置 → 集成）
+- [ ] 检查传入 webhook 事件的日志
 
-## Render.com Deployment
+## Render.com 部署
 
-1. Create Web Service from Git repo
-2. Set build command: `bun install`
-3. Set start command: `bun run start`
-4. Set environment variables:
+1. 从 Git 仓库创建 Web 服务
+2. 设置构建命令: `bun install`
+3. 设置启动命令: `bun run start`
+4. 设置环境变量:
    - `APP_PRIVATE_DATA`
    - `JWT_SECRET`
-   - `DATABASE_URL` (if using database)
-   - `BASE_RPC_URL` (recommended: Alchemy/Infura)
-5. Set webhook URL in app.towns.com/developer to Render URL + `/webhook`
+   - `DATABASE_URL`（如果使用数据库）
+   - `BASE_RPC_URL`（推荐：Alchemy/Infura）
+5. 在 app.towns.com/developer 中将 webhook URL 设置为 Render URL + `/webhook`
 
-## Health Check Endpoint
+## 健康检查端点
 
-Add for deployment platforms that require health checks:
+为需要健康检查的部署平台添加：
 
 ```typescript
 import { Hono } from 'hono'
@@ -59,19 +59,19 @@ app.get('/health', (c) => c.json({
 }))
 ```
 
-## Graceful Shutdown
+## 优雅关闭
 
-Handle SIGTERM for clean shutdown (required for Render/Kubernetes):
+处理 SIGTERM 以实现干净关闭（Render/Kubernetes 需要）：
 
 ```typescript
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing...')
-  await pool.end()  // Close DB connections
+  console.log('收到 SIGTERM，正在关闭...')
+  await pool.end()  // 关闭数据库连接
   process.exit(0)
 })
 ```
 
-## Database Connection Pool
+## 数据库连接池
 
 ```typescript
 import { Pool } from 'pg'
@@ -83,14 +83,14 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000
 })
 
-// Health check on startup
+// 启动时健康检查
 await pool.query('SELECT 1')
 ```
 
-## Thread Ownership Pattern (Race-Safe)
+## 线程所有权模式（防止竞争）
 
 ```typescript
-// First writer wins
+// 第一个写入者获胜
 await pool.query(
   `INSERT INTO threads (thread_id, user_id)
    VALUES ($1, $2)
@@ -98,7 +98,7 @@ await pool.query(
   [threadId, userId]
 )
 
-// Check ownership
+// 检查所有权
 const result = await pool.query(
   'SELECT user_id FROM threads WHERE thread_id = $1',
   [threadId]

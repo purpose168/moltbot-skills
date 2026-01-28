@@ -11,26 +11,26 @@ import (
 	"github.com/visionik/mogcli/internal/graph"
 )
 
-// DriveCmd handles OneDrive operations.
+// DriveCmd 处理 OneDrive 操作命令。
 type DriveCmd struct {
-	Ls       DriveLsCmd       `cmd:"" help:"List files"`
-	Search   DriveSearchCmd   `cmd:"" help:"Search files"`
-	Get      DriveGetCmd      `cmd:"" help:"Get file metadata"`
-	Download DriveDownloadCmd `cmd:"" help:"Download a file"`
-	Upload   DriveUploadCmd   `cmd:"" help:"Upload a file"`
-	Mkdir    DriveMkdirCmd    `cmd:"" help:"Create a folder"`
-	Move     DriveMoveCmd     `cmd:"" help:"Move a file"`
-	Copy     DriveCopyCmd     `cmd:"" help:"Copy a file"`
-	Rename   DriveRenameCmd   `cmd:"" help:"Rename a file"`
-	Delete   DriveDeleteCmd   `cmd:"" aliases:"rm" help:"Delete a file"`
+	Ls       DriveLsCmd       `cmd:"" help:"列出文件"`
+	Search   DriveSearchCmd   `cmd:"" help:"搜索文件"`
+	Get      DriveGetCmd      `cmd:"" help:"获取文件元数据"`
+	Download DriveDownloadCmd `cmd:"" help:"下载文件"`
+	Upload   DriveUploadCmd   `cmd:"" help:"上传文件"`
+	Mkdir    DriveMkdirCmd    `cmd:"" help:"创建文件夹"`
+	Move     DriveMoveCmd     `cmd:"" help:"移动文件"`
+	Copy     DriveCopyCmd     `cmd:"" help:"复制文件"`
+	Rename   DriveRenameCmd   `cmd:"" help:"重命名文件"`
+	Delete   DriveDeleteCmd   `cmd:"" aliases:"rm" help:"删除文件"`
 }
 
-// DriveLsCmd lists files.
+// DriveLsCmd 列出文件。
 type DriveLsCmd struct {
-	Path string `arg:"" optional:"" help:"Folder path or ID" default:""`
+	Path string `arg:"" optional:"" help:"文件夹路径或 ID" default:""`
 }
 
-// Run executes drive ls.
+// Run 执行驱动器列表命令。
 func (c *DriveLsCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -41,7 +41,7 @@ func (c *DriveLsCmd) Run(root *Root) error {
 	path := "/me/drive/root/children"
 	if c.Path != "" {
 		if len(c.Path) > 20 {
-			// Looks like an ID
+			// 看起来像 ID
 			path = fmt.Sprintf("/me/drive/items/%s/children", graph.ResolveID(c.Path))
 		} else {
 			path = fmt.Sprintf("/me/drive/root:/%s:/children", c.Path)
@@ -78,13 +78,13 @@ func (c *DriveLsCmd) Run(root *Root) error {
 	return nil
 }
 
-// DriveSearchCmd searches files.
+// DriveSearchCmd 搜索文件。
 type DriveSearchCmd struct {
-	Query string `arg:"" help:"Search query"`
-	Max   int    `help:"Maximum results" default:"25"`
+	Query string `arg:"" help:"搜索查询"`
+	Max   int    `help:"最大结果数" default:"25"`
 }
 
-// Run executes drive search.
+// Run 执行驱动器搜索命令。
 func (c *DriveSearchCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -122,12 +122,12 @@ func (c *DriveSearchCmd) Run(root *Root) error {
 	return nil
 }
 
-// DriveGetCmd gets file metadata.
+// DriveGetCmd 获取文件元数据。
 type DriveGetCmd struct {
-	ID string `arg:"" help:"File ID"`
+	ID string `arg:"" help:"文件 ID"`
 }
 
-// Run executes drive get.
+// Run 执行驱动器获取命令。
 func (c *DriveGetCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -152,23 +152,23 @@ func (c *DriveGetCmd) Run(root *Root) error {
 	}
 
 	fmt.Printf("ID:       %s\n", graph.FormatID(item.ID))
-	fmt.Printf("Name:     %s\n", item.Name)
-	fmt.Printf("Size:     %s\n", formatSize(item.Size))
-	fmt.Printf("Created:  %s\n", item.CreatedDateTime)
-	fmt.Printf("Modified: %s\n", item.LastModifiedDateTime)
+	fmt.Printf("名称:     %s\n", item.Name)
+	fmt.Printf("大小:     %s\n", formatSize(item.Size))
+	fmt.Printf("创建:     %s\n", item.CreatedDateTime)
+	fmt.Printf("修改:     %s\n", item.LastModifiedDateTime)
 	if item.WebURL != "" {
 		fmt.Printf("URL:      %s\n", item.WebURL)
 	}
 	return nil
 }
 
-// DriveDownloadCmd downloads a file.
+// DriveDownloadCmd 下载文件。
 type DriveDownloadCmd struct {
-	ID  string `arg:"" help:"File ID"`
-	Out string `help:"Output path" required:""`
+	ID  string `arg:"" help:"文件 ID"`
+	Out string `help:"输出路径" required:""`
 }
 
-// Run executes drive download.
+// Run 执行驱动器下载命令。
 func (c *DriveDownloadCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -187,18 +187,18 @@ func (c *DriveDownloadCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Downloaded: %s\n", c.Out)
+	fmt.Printf("✓ 下载完成: %s\n", c.Out)
 	return nil
 }
 
-// DriveUploadCmd uploads a file.
+// DriveUploadCmd 上传文件。
 type DriveUploadCmd struct {
-	Path   string `arg:"" help:"Local file path"`
-	Folder string `help:"Destination folder ID"`
-	Name   string `help:"Rename file on upload"`
+	Path   string `arg:"" help:"本地文件路径"`
+	Folder string `help:"目标文件夹 ID"`
+	Name   string `help:"上传时重命名文件"`
 }
 
-// Run executes drive upload.
+// Run 执行驱动器上传命令。
 func (c *DriveUploadCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -223,8 +223,8 @@ func (c *DriveUploadCmd) Run(root *Root) error {
 		path = fmt.Sprintf("/me/drive/root:/%s:/content", name)
 	}
 
-	// For small files, use simple upload
-	// Note: This is simplified - large files need chunked upload
+	// 对于小文件，使用简单上传
+	// 注意：这是简化版 - 大文件需要分块上传
 	respData, err := client.Put(ctx, path, data, "application/octet-stream")
 	if err != nil {
 		return err
@@ -235,17 +235,17 @@ func (c *DriveUploadCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Uploaded: %s (%s)\n", item.Name, graph.FormatID(item.ID))
+	fmt.Printf("✓ 上传完成: %s (%s)\n", item.Name, graph.FormatID(item.ID))
 	return nil
 }
 
-// DriveMkdirCmd creates a folder.
+// DriveMkdirCmd 创建文件夹。
 type DriveMkdirCmd struct {
-	Name   string `arg:"" help:"Folder name"`
-	Parent string `help:"Parent folder ID"`
+	Name   string `arg:"" help:"文件夹名称"`
+	Parent string `help:"父文件夹 ID"`
 }
 
-// Run executes drive mkdir.
+// Run 执行驱动器创建文件夹命令。
 func (c *DriveMkdirCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -273,17 +273,17 @@ func (c *DriveMkdirCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Created folder: %s (%s)\n", item.Name, graph.FormatID(item.ID))
+	fmt.Printf("✓ 文件夹创建成功: %s (%s)\n", item.Name, graph.FormatID(item.ID))
 	return nil
 }
 
-// DriveMoveCmd moves a file.
+// DriveMoveCmd 移动文件。
 type DriveMoveCmd struct {
-	ID          string `arg:"" help:"File ID"`
-	Destination string `arg:"" help:"Destination folder ID"`
+	ID          string `arg:"" help:"文件 ID"`
+	Destination string `arg:"" help:"目标文件夹 ID"`
 }
 
-// Run executes drive move.
+// Run 执行驱动器移动命令。
 func (c *DriveMoveCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -304,17 +304,17 @@ func (c *DriveMoveCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ File moved")
+	fmt.Println("✓ 文件移动成功")
 	return nil
 }
 
-// DriveCopyCmd copies a file.
+// DriveCopyCmd 复制文件。
 type DriveCopyCmd struct {
-	ID   string `arg:"" help:"File ID"`
-	Name string `help:"New name for copy" required:""`
+	ID   string `arg:"" help:"文件 ID"`
+	Name string `help:"复制的新名称" required:""`
 }
 
-// Run executes drive copy.
+// Run 执行驱动器复制命令。
 func (c *DriveCopyCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -333,17 +333,17 @@ func (c *DriveCopyCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Copy initiated: %s\n", c.Name)
+	fmt.Printf("✓ 复制已启动: %s\n", c.Name)
 	return nil
 }
 
-// DriveRenameCmd renames a file.
+// DriveRenameCmd 重命名文件。
 type DriveRenameCmd struct {
-	ID   string `arg:"" help:"File ID"`
-	Name string `arg:"" help:"New name"`
+	ID   string `arg:"" help:"文件 ID"`
+	Name string `arg:"" help:"新名称"`
 }
 
-// Run executes drive rename.
+// Run 执行驱动器重命名命令。
 func (c *DriveRenameCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -362,16 +362,16 @@ func (c *DriveRenameCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Printf("✓ Renamed to: %s\n", c.Name)
+	fmt.Printf("✓ 重命名为: %s\n", c.Name)
 	return nil
 }
 
-// DriveDeleteCmd deletes a file.
+// DriveDeleteCmd 删除文件。
 type DriveDeleteCmd struct {
-	ID string `arg:"" help:"File ID"`
+	ID string `arg:"" help:"文件 ID"`
 }
 
-// Run executes drive delete.
+// Run 执行驱动器删除命令。
 func (c *DriveDeleteCmd) Run(root *Root) error {
 	client, err := root.GetClient()
 	if err != nil {
@@ -385,11 +385,11 @@ func (c *DriveDeleteCmd) Run(root *Root) error {
 		return err
 	}
 
-	fmt.Println("✓ File deleted")
+	fmt.Println("✓ 文件删除成功")
 	return nil
 }
 
-// DriveItem represents a OneDrive item.
+// DriveItem 表示 OneDrive 项目。
 type DriveItem struct {
 	ID                   string      `json:"id"`
 	Name                 string      `json:"name"`
@@ -401,16 +401,17 @@ type DriveItem struct {
 	File                 *FileInfo   `json:"file,omitempty"`
 }
 
-// FolderInfo represents folder information.
+// FolderInfo 表示文件夹信息。
 type FolderInfo struct {
 	ChildCount int `json:"childCount"`
 }
 
-// FileInfo represents file information.
+// FileInfo 表示文件信息。
 type FileInfo struct {
 	MimeType string `json:"mimeType"`
 }
 
+// formatSize 格式化文件大小为人类可读形式。
 func formatSize(bytes int64) string {
 	const unit = 1024
 	if bytes < unit {

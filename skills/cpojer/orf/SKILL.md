@@ -1,55 +1,55 @@
 ---
 name: orf-digest
-description: "On-demand ORF news digest in German. Use when the user says 'orf', 'pull orf', or 'orf 10'. Focus on Austrian politics (Inland) and international politics (Ausland) + major headlines; exclude sports. Send each item as its own message (Title + Age + Link). Then generate a Nano Banana image in a cartoon ZiB studio with the anchor presenting the news, plus subtle Easter eggs based on the selected stories."
+description: "按需获取奥地利 ORF 新闻文摘（德语）。当用户说 'orf'、'pull orf' 或 'orf 10' 时使用。聚焦奥地利政治（国内）和国际政治（国外）+ 重大头条；排除体育。每个项目作为单独消息发送（标题 + 时间 + 链接）。然后在卡通 ZiB 演播室中生成 Nano Banana 图片，主持人播报新闻，并基于所选故事添加微妙的彩蛋。"
 ---
 
-# ORF Digest (news.orf.at)
+# ORF 文摘 (news.orf.at)
 
-## Command format
+## 命令格式
 
-Interpret a user message that starts with `orf` as a request for an ORF News digest.
+将用户以 `orf` 开头的消息解释为 ORF 新闻文摘请求。
 
-Supported forms:
+支持的形式：
 
-- `orf` → default 5 items
-- `orf <n>` → n items (max 15)
-- `orf inland` / `orf ausland` → bias selection
-- `orf <n> inland|ausland` → both
+- `orf` → 默认 5 条
+- `orf <n>` → n 条（最多 15 条）
+- `orf inland` / `orf ausland` → 偏重选择
+- `orf <n> inland|ausland` → 两者都包含
 
-## Source + scope
+## 来源和范围
 
-- Primary source: `news.orf.at` (German)
-- Prefer: **Inland** politics, **Ausland** / international politics, and major headlines.
-- Exclude: sports (Sport).
+- 主要来源：`news.orf.at`（德语）
+- 优先：**国内**政治、**国外**/国际政治和重大头条。
+- 排除：体育（Sport）。
 
-## Output requirements
+## 输出要求
 
-- Do **not** send any extra commentary/preamble/epilogue.
-- Send results as **individual messages**.
-- Each item message must be exactly:
-  - first line: the headline (German)
-  - second line: `<age>` (e.g. `45m ago`, `6h ago`, `2d ago`)
-  - third line: the ORF link
-- After the item messages, send **one final message** with the generated image.
-  - The image must visually incorporate the pulled news on the wraparound studio video wall using **4–6 distinct story panels**.
-  - **Panel layout (must):**
-    - TOP: big bold topic label (2–3 words, ALL CAPS)
-    - MIDDLE: smaller 3–6 word mini-headline (news-style)
-    - BOTTOM: exactly 1–2 simple icons (no maps, no busy collages)
-  - **Readability:** keep text minimal and large enough to render cleanly.
-  - No logos/watermarks.
-  - If the chat provider requires non-empty text for media, use a minimal caption `.`.
+- **不要** 发送任何额外的评论/前言/结语。
+- 将结果作为**单独消息**发送。
+- 每个项目消息必须恰好是：
+  - 第一行：标题（德语）
+  - 第二行：`<时间>`（例如 `45分钟前`、`6小时前`、`2天前`）
+  - 第三行：ORF 链接
+- 在项目消息之后，发送**最后一条消息**即生成的图片。
+  - 图片必须在环绕演播室视频墙上直观地整合所拉取的新闻，使用 **4-6 个不同的故事面板**。
+  - **面板布局（必须）：**
+    - 顶部：大的粗体主题标签（2-3 个词，全部大写）
+    - 中部：较小的 3-6 词迷你标题（新闻风格）
+    - 底部：恰好 1-2 个简单图标（不要地图，不要繁忙拼贴）
+  - **可读性：** 保持文字最小且足够大，以便清晰渲染。
+  - 无徽标/水印。
+  - 如果聊天提供商需要媒体有非空文本，使用最小标题 `.`。
 
-## Procedure
+## 流程
 
-1. Parse `n` and optional `focus` (`inland`|`ausland`) from the user message.
-2. Run `python3 skills/orf-digest/scripts/orf.py --count <n> --focus <focus> --format json`.
-3. Send each returned item as its own message (3-line format).
-4. Generate the ZiB studio mood image via Nano Banana:
-   - Build prompt from items: `python3 skills/orf-digest/scripts/orf.py --count <n> --focus <focus> --format json | node skills/orf-digest/scripts/zib_prompt.mjs`
-   - Generate: `skills/orf-digest/scripts/generate_zib_nano_banana.sh ./tmp/orf-zib/zib.png`
-   - Send image as final message.
+1. 从用户消息中解析 `n` 和可选的 `focus`（`inland`|`ausland`）。
+2. 运行 `python3 skills/orf-digest/scripts/orf.py --count <n> --focus <focus> --format json`。
+3. 将每个返回的项目作为自己的消息发送（3 行格式）。
+4. 通过 Nano Banana 生成 ZiB 演播室氛围图片：
+   - 从项目构建提示：`python3 skills/orf-digest/scripts/orf.py --count <n> --focus <focus> --format json | node skills/orf-digest/scripts/zib_prompt.mjs`
+   - 生成：`skills/orf-digest/scripts/generate_zib_nano_banana.sh ./tmp/orf-zib/zib.png`
+   - 将图片作为最后一条消息发送。
 
-If fetching/parsing fails or returns 0 items:
-- Use the browser tool to open `https://news.orf.at/`, pick N non-sport headlines by judgment, and send them in the same 3-line format.
-- Still generate a ZiB studio image with a few generic political-news Easter eggs.
+如果获取/解析失败或返回 0 个项目：
+- 使用浏览器工具打开 `https://news.orf.at/`，通过判断选择 N 个非体育头条，并按相同的 3 行格式发送。
+- 仍然生成 ZiB 演播室图片，并带有一些通用的政治新闻彩蛋。

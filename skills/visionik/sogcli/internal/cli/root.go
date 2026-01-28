@@ -1,4 +1,4 @@
-// Package cli defines the command-line interface for sog.
+// Package cli 定义了 sog 的命令行接口。
 package cli
 
 import (
@@ -6,255 +6,256 @@ import (
 	"os"
 )
 
-// Root is the top-level CLI structure.
+// Root 是命令行工具的顶层结构体。
+// 包含所有全局标志和子命令的定义。
 type Root struct {
-	// Global flags (matching gog patterns)
-	AIHelp  bool        `name:"ai-help" help:"Show detailed help for AI/LLM agents"`
-	Account string      `help:"Account email to use" env:"SOG_ACCOUNT" short:"a"`
-	JSON    bool        `help:"Output JSON to stdout (best for scripting)" xor:"format"`
-	Plain   bool        `help:"Output stable, parseable text to stdout (TSV; no colors)" xor:"format"`
-	Color   string      `help:"Color output: auto|always|never" default:"auto" enum:"auto,always,never"`
-	Force   bool        `help:"Skip confirmations for destructive commands"`
-	NoInput bool        `help:"Never prompt; fail instead (useful for CI)" name:"no-input"`
-	Verbose bool        `help:"Enable verbose logging" short:"v"`
-	Version VersionFlag `name:"version" help:"Print version and exit"`
+	// 全局标志 (与 gog 模式匹配)
+	AIHelp  bool        `name:"ai-help" help:"显示 AI/LLM 智能体的详细帮助信息"`
+	Account string      `help:"要使用的账户邮箱" env:"SOG_ACCOUNT" short:"a"`
+	JSON    bool        `help:"输出 JSON 到标准输出 (最适合脚本处理)" xor:"format"`
+	Plain   bool        `help:"输出稳定的、可解析的文本到标准输出 (TSV格式; 无颜色)" xor:"format"`
+	Color   string      `help:"颜色输出: auto|always|never" default:"auto" enum:"auto,always,never"`
+	Force   bool        `help:"跳过破坏性命令的确认提示"`
+	NoInput bool        `help:"从不提示; 直接失败 (适用于 CI 环境)" name:"no-input"`
+	Verbose bool        `help:"启用详细日志" short:"v"`
+	Version VersionFlag `name:"version" help:"打印版本信息并退出"`
 
-	// Subcommands
-	Auth     AuthCmd     `cmd:"" help:"Manage accounts"`
-	Mail     MailCmd     `cmd:"" aliases:"m" help:"Read and send mail"`
-	Cal      CalCmd      `cmd:"" aliases:"c" help:"Calendar operations (CalDAV)"`
-	Contacts ContactsCmd `cmd:"" aliases:"con" help:"Contact operations (CardDAV)"`
-	Tasks    TasksCmd    `cmd:"" aliases:"t" help:"Task operations (CalDAV VTODO)"`
-	Drive    DriveCmd    `cmd:"" aliases:"files" help:"File operations (WebDAV)"`
-	Invite   InviteCmd   `cmd:"" aliases:"inv" help:"Meeting invitations (iTIP/iMIP)"`
-	Folders  FoldersCmd  `cmd:"" aliases:"f" help:"Manage folders"`
-	Drafts   DraftsCmd   `cmd:"" aliases:"d" help:"Manage drafts"`
-	Idle     IdleCmd     `cmd:"" help:"Watch for new mail (IMAP IDLE)"`
+	// 子命令
+	Auth     AuthCmd     `cmd:"" help:"管理账户"`
+	Mail     MailCmd     `cmd:"" aliases:"m" help:"阅读和发送邮件"`
+	Cal      CalCmd      `cmd:"" aliases:"c" help:"日历操作 (CalDAV)"`
+	Contacts ContactsCmd `cmd:"" aliases:"con" help:"联系人操作 (CardDAV)"`
+	Tasks    TasksCmd    `cmd:"" aliases:"t" help:"任务操作 (CalDAV VTODO)"`
+	Drive    DriveCmd    `cmd:"" aliases:"files" help:"文件操作 (WebDAV)"`
+	Invite   InviteCmd   `cmd:"" aliases:"inv" help:"会议邀请 (iTIP/iMIP)"`
+	Folders  FoldersCmd  `cmd:"" aliases:"f" help:"管理文件夹"`
+	Drafts   DraftsCmd   `cmd:"" aliases:"d" help:"管理草稿"`
+	Idle     IdleCmd     `cmd:"" help:"监听新邮件 (IMAP IDLE)"`
 }
 
-// VersionFlag handles --version.
+// VersionFlag 处理 --version 参数。
 type VersionFlag string
 
-// BeforeApply prints version and exits.
+// BeforeApply 在参数应用前打印版本信息并退出。
 func (v VersionFlag) BeforeApply() error {
 	fmt.Println(v)
 	os.Exit(0)
 	return nil
 }
 
-// AIHelpText contains the detailed help for AI/LLM agents.
-var AIHelpText = `# sog — Standards Ops Gadget
+// AIHelpText 包含 AI/LLM 智能体的详细帮助信息。
+var AIHelpText = `# sog — 标准运维工具
 
-CLI for IMAP/SMTP/CalDAV/CardDAV/WebDAV.
-Open-standards alternative to gog (Google) and mog (Microsoft).
+用于 IMAP/SMTP/CalDAV/CardDAV/WebDAV 的命令行工具。
+开放标准替代方案，类似于 gog (Google) 和 mog (Microsoft)。
 
-## Quick Start
+## 快速开始
 
 sog auth add you@fastmail.com --discover
 sog auth test
 sog mail list
 
-## Global Flags
+## 全局标志
 
---account, -a    Account email to use ($SOG_ACCOUNT)
---json           JSON output (for scripting)
---plain          TSV output (parseable)
---force          Skip confirmations
---no-input       Never prompt (CI mode)
---verbose, -v    Debug logging
---ai-help        This help text
+--account, -a    要使用的账户邮箱 ($SOG_ACCOUNT)
+--json           JSON 输出 (用于脚本)
+--plain          TSV 输出 (可解析)
+--force          跳过确认提示
+--no-input       从不提示 (CI 模式)
+--verbose, -v    调试日志
+--ai-help        显示此帮助信息
 
-## Authentication
+## 身份验证
 
-sog auth add <email> [flags]
-  --discover       Auto-discover servers from DNS
-  --imap-host      IMAP server hostname
-  --imap-port      IMAP port (default: 993)
-  --smtp-host      SMTP server hostname
-  --smtp-port      SMTP port (default: 587)
-  --caldav-url     CalDAV server URL
-  --carddav-url    CardDAV server URL
-  --webdav-url     WebDAV server URL
-  --password       Password (stored in keychain)
+sog auth add <邮箱> [标志]
+  --discover       从 DNS 自动发现服务器
+  --imap-host      IMAP 服务器主机名
+  --imap-port      IMAP 端口 (默认: 993)
+  --smtp-host      SMTP 服务器主机名
+  --smtp-port      SMTP 端口 (默认: 587)
+  --caldav-url     CalDAV 服务器 URL
+  --carddav-url    CardDAV 服务器 URL
+  --webdav-url     WebDAV 服务器 URL
+  --password       密码 (存储在密钥链中)
 
-sog auth list                    List accounts
-sog auth test [email]            Test connection
-sog auth remove <email>          Remove account
-sog auth password <email>        Set protocol-specific passwords
+sog auth list                    列出账户
+sog auth test [邮箱]             测试连接
+sog auth remove <邮箱>           移除账户
+sog auth password <邮箱>         设置协议特定的密码
   --imap, --smtp, --caldav, --carddav, --webdav
 
-## Mail (IMAP/SMTP)
+## 邮件 (IMAP/SMTP)
 
-sog mail list [folder]
-  --max N          Maximum messages (default: 20)
-  --unseen         Only unread messages
+sog mail list [文件夹]
+  --最大 N          最大消息数 (默认: 20)
+  --unseen         仅未读消息
 
 sog mail get <uid>
-  --headers        Headers only
-  --raw            Raw RFC822 format
+  --headers        仅标题
+  --raw            原始 RFC822 格式
 
-sog mail search <query>
-  IMAP SEARCH syntax: FROM, TO, SUBJECT, SINCE, BEFORE, etc.
-  Example: sog mail search "FROM john SINCE 1-Jan-2026"
+sog mail search <查询>
+  IMAP SEARCH 语法: FROM, TO, SUBJECT, SINCE, BEFORE 等
+  示例: sog mail search "FROM john SINCE 1-Jan-2026"
 
-sog mail send --to <email> --subject <text> [flags]
-  --to             Recipient(s)
-  --cc             CC recipient(s)
-  --bcc            BCC recipient(s)
-  --subject        Subject line
-  --body           Message body
-  --body-file      Read body from file (- for stdin)
+sog mail send --to <邮箱> --subject <文本> [标志]
+  --to             收件人
+  --cc             抄送收件人
+  --bcc            密送收件人
+  --subject        主题行
+  --body           消息正文
+  --body-file      从文件读取正文 (- 表示标准输入)
 
-sog mail reply <uid> --body <text>
-sog mail forward <uid> --to <email>
-sog mail move <uid> <folder>
-sog mail copy <uid> <folder>
-sog mail flag <uid> <flag>       Flags: seen, flagged, answered, deleted
-sog mail unflag <uid> <flag>
+sog mail reply <uid> --body <文本>
+sog mail forward <uid> --to <邮箱>
+sog mail move <uid> <文件夹>
+sog mail copy <uid> <文件夹>
+sog mail flag <uid> <标志>       标志: seen, flagged, answered, deleted
+sog mail unflag <uid> <标志>
 sog mail delete <uid>
 
-## Folders
+## 文件夹
 
 sog folders list
-sog folders create <name>
-sog folders delete <name>
-sog folders rename <old> <new>
+sog folders create <名称>
+sog folders delete <名称>
+sog folders rename <旧名称> <新名称>
 
-## Drafts
+## 草稿
 
 sog drafts list
-sog drafts create [flags]        Same flags as mail send
+sog drafts create [标志]        与邮件发送相同的标志
 sog drafts send <uid>
 sog drafts delete <uid>
 
-## Calendar (CalDAV)
+## 日历 (CalDAV)
 
-sog cal list [calendar]
-  --from           Start date (default: today)
-  --to             End date (default: +30d)
-  --max            Maximum events
+sog cal list [日历]
+  --from           开始日期 (默认: 今天)
+  --to             结束日期 (默认: +30天)
+  --最大            最大事件数
 
 sog cal get <uid>
-sog cal search <query>           Search in title/description/location
-sog cal today [calendar]
-sog cal week [calendar]
+sog cal search <查询>           在标题/描述/位置中搜索
+sog cal today [日历]
+sog cal week [日历]
 
-sog cal create <title> --start <datetime> [flags]
-  --start          Start time (YYYY-MM-DDTHH:MM or YYYY-MM-DD for all-day)
-  --end            End time
-  --duration       Duration (1h, 30m)
-  --location       Location
-  --description    Description
+sog cal create <标题> --start <日期时间> [标志]
+  --start          开始时间 (YYYY-MM-DDTHH:MM 或 YYYY-MM-DD 表示全天)
+  --结束            结束时间
+  --duration       持续时间 (1h, 30m)
+  --location       位置
+  --description    描述
 
-sog cal update <uid> [flags]     Same flags as create
+sog cal update <uid> [标志]     与创建相同的标志
 sog cal delete <uid>
-sog cal calendars                List calendars
+sog cal calendars               列出日历
 
-## Contacts (CardDAV)
+## 联系人 (CardDAV)
 
-sog contacts list [address-book]
-  --max            Maximum contacts
+sog contacts list [地址簿]
+  --最大            最大联系人数量
 
 sog contacts get <uid>
-sog contacts search <query>      Search name/email/phone
+sog contacts search <查询>      搜索姓名/邮箱/电话
 
-sog contacts create <name> [flags]
-  -e, --email      Email address(es)
-  -p, --phone      Phone number(s)
-  --org            Organization
-  --title          Job title
-  --note           Note
+sog contacts create <名称> [标志]
+  -e, --邮箱       邮箱地址
+  -p, --电话       电话号码
+  --org            组织
+  --title          职位
+  --note           备注
 
-sog contacts update <uid> [flags]  Same flags as create
+sog contacts update <uid> [标志]  与创建相同的标志
 sog contacts delete <uid>
-sog contacts books               List address books
+sog contacts books               列出地址簿
 
-## Tasks (CalDAV VTODO)
+## 任务 (CalDAV VTODO)
 
-sog tasks list [list]
-  --all            Include completed tasks
+sog tasks list [列表]
+  --all            包含已完成的任务
 
-sog tasks add <title> [flags]
-  --due            Due date (YYYY-MM-DD)
-  -p, --priority   Priority (1-9, 1=highest)
-  -d, --description Description
+sog tasks add <标题> [标志]
+  --due            截止日期 (YYYY-MM-DD)
+  -p, --priority   优先级 (1-9, 1=最高)
+  -d, --description 描述
 
 sog tasks get <uid>
-sog tasks update <uid> [flags]   Same flags as add
-sog tasks done <uid>             Mark complete
-sog tasks undo <uid>             Mark incomplete
+sog tasks update <uid> [标志]   与添加相同的标志
+sog tasks done <uid>            标记为完成
+sog tasks undo <uid>            标记为未完成
 sog tasks delete <uid>
-sog tasks clear                  Delete all completed tasks
-sog tasks due <date>             Tasks due by date
-sog tasks overdue                Overdue tasks
-sog tasks lists                  List task lists
+sog tasks clear                  删除所有已完成的任务
+sog tasks due <日期>             截止到日期的任务
+sog tasks overdue                逾期任务
+sog tasks lists                  列出任务列表
 
-## Files (WebDAV)
+## 文件 (WebDAV)
 
-sog drive ls [path]
-  -l               Long format with details
-  --all            Show hidden files
+sog drive ls [路径]
+  -l               带详细信息的长格式
+  --all            显示隐藏文件
 
-sog drive get <path>             Get file metadata
-sog drive download <remote> [local]
-sog drive upload <local> [remote]
-sog drive mkdir <path>
-sog drive delete <path>
-sog drive move <src> <dst>
-sog drive copy <src> <dst>
-sog drive cat <path>             Output file to stdout
+sog drive get <路径>             获取文件元数据
+sog drive download <远程路径> [本地路径]
+sog drive upload <本地路径> [远程路径]
+sog drive mkdir <路径>
+sog drive delete <路径>
+sog drive move <源路径> <目标路径>
+sog drive copy <源路径> <目标路径>
+sog drive cat <路径>             将文件输出到标准输出
 
-## Meeting Invites (iTIP/iMIP)
+## 会议邀请 (iTIP/iMIP)
 
-sog invite send <summary> <attendees>... --start <datetime> [flags]
-  --start          Start time
-  --duration       Duration (default: 1h)
-  --location       Location
-  --description    Description
+sog invite send <摘要> <参会人>... --start <日期时间> [标志]
+  --start          开始时间
+  --duration       持续时间 (默认: 1h)
+  --location       位置
+  --description    描述
 
-sog invite reply <file> --status <accept|decline|tentative>
-  --comment        Optional comment
+sog invite reply <文件> --status <accept|decline|tentative>
+  --comment        可选评论
 
-sog invite cancel <uid> <attendees>...
-sog invite parse <file>          Parse .ics file
-sog invite preview <summary> <attendees>... --start <datetime>
+sog invite cancel <uid> <参会人>...
+sog invite parse <文件>          解析 .ics 文件
+sog invite preview <摘要> <参会人>... --start <日期时间>
 
 ## IMAP IDLE
 
-sog idle [folder]                Watch for new mail (push notifications)
-  --timeout        Timeout in seconds
+sog idle [文件夹]                监听新邮件 (推送通知)
+  --timeout        超时时间（秒）
 
-## Output Formats
+## 输出格式
 
-Default: Human-readable colored output
---json:  One JSON object per line (JSONL)
---plain: Tab-separated values (TSV)
+默认: 人类可读的有颜色输出
+--json:  每行一个 JSON 对象 (JSONL)
+--plain: 制表符分隔的值 (TSV)
 
-## Environment Variables
+## 环境变量
 
-SOG_ACCOUNT      Default account email
+SOG_ACCOUNT      默认账户邮箱
 
-## Examples
+## 示例
 
-# List recent emails
+# 列出最近的邮件
 sog mail list --max 10
 
-# Send an email
+# 发送邮件
 sog mail send --to user@example.com --subject "Hello" --body "Hi there"
 
-# Today's calendar
+# 今天的日历
 sog cal today
 
-# Create a meeting with invite
-sog invite send "Team Sync" alice@example.com bob@example.com \
+# 创建带邀请的会议
+sog invite send "团队同步" alice@example.com bob@example.com \
   --start "2026-01-25T14:00" --duration 30m --location "Zoom"
 
-# Add a task
-sog tasks add "Review PR" --due 2026-01-26 -p 1
+# 添加任务
+sog tasks add "审查 PR" --due 2026-01-26 -p 1
 
-# Upload a file
+# 上传文件
 sog drive upload report.pdf /documents/
 
-# Search contacts
+# 搜索联系人
 sog contacts search "John"
 `

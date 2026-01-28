@@ -1,46 +1,46 @@
 ---
 name: elevenlabs-stt
-description: Transcribe audio files using ElevenLabs Speech-to-Text (Scribe v2).
+description: 使用 ElevenLabs 语音转文本（Scribe v2）转录音频文件。支持 90+ 种语言和说话人分离。
 homepage: https://elevenlabs.io/speech-to-text
 metadata: {"clawdbot":{"emoji":"🎙️","requires":{"bins":["curl"],"env":["ELEVENLABS_API_KEY"]},"primaryEnv":"ELEVENLABS_API_KEY"}}
 ---
 
-# ElevenLabs Speech-to-Text
+# ElevenLabs 语音转文本
 
-Transcribe audio files using ElevenLabs' Scribe v2 model. Supports 90+ languages with speaker diarization.
+使用 ElevenLabs 的 Scribe v2 模型转录音频文件。支持 90+ 种语言和说话人分离。
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Basic transcription
+# 基本转录
 {baseDir}/scripts/transcribe.sh /path/to/audio.mp3
 
-# With speaker diarization
+# 说话人分离
 {baseDir}/scripts/transcribe.sh /path/to/audio.mp3 --diarize
 
-# Specify language (improves accuracy)
+# 指定语言（提高准确性）
 {baseDir}/scripts/transcribe.sh /path/to/audio.mp3 --lang en
 
-# Full JSON output with timestamps
+# 带时间戳的完整 JSON 输出
 {baseDir}/scripts/transcribe.sh /path/to/audio.mp3 --json
 ```
 
-## Options
+## 选项
 
-| Flag | Description |
+| 标志 | 描述 |
 |------|-------------|
-| `--diarize` | Identify different speakers |
-| `--lang CODE` | ISO language code (e.g., en, pt, es) |
-| `--json` | Output full JSON with word timestamps |
-| `--events` | Tag audio events (laughter, music, etc.) |
+| `--diarize` | 识别不同说话者 |
+| `--lang CODE` | ISO 语言代码（例如 en、pt、es） |
+| `--json` | 输出带词级时间戳的完整 JSON |
+| `--events` | 标记音频事件（笑声、音乐等） |
 
-## Supported Formats
+## 支持的格式
 
-All major audio/video formats: mp3, m4a, wav, ogg, webm, mp4, etc.
+所有主流音频/视频格式：mp3、m4a、wav、ogg、webm、mp4 等
 
-## API Key
+## API 密钥
 
-Set `ELEVENLABS_API_KEY` environment variable, or configure in clawdbot.json:
+设置 `ELEVENLABS_API_KEY` 环境变量，或在 clawdbot.json 中配置：
 
 ```json5
 {
@@ -54,15 +54,15 @@ Set `ELEVENLABS_API_KEY` environment variable, or configure in clawdbot.json:
 }
 ```
 
-## Examples
+## 示例
 
 ```bash
-# Transcribe a WhatsApp voice note
+# 转录 WhatsApp 语音笔记
 {baseDir}/scripts/transcribe.sh ~/Downloads/voice_note.ogg
 
-# Meeting recording with multiple speakers
+# 多人的会议录音
 {baseDir}/scripts/transcribe.sh meeting.mp3 --diarize --lang en
 
-# Get JSON for processing
+# 获取 JSON 以便处理
 {baseDir}/scripts/transcribe.sh podcast.mp3 --json > transcript.json
 ```

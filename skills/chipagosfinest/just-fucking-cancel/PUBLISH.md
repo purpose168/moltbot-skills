@@ -1,56 +1,56 @@
-# Publishing just-fucking-cancel to ClawdHub
+# 将 just-fucking-cancel 发布到 ClawdHub
 
-## Attribution
-- **Original**: https://github.com/rohunvora/just-fucking-cancel by @rohunvora
-- **Adapted for ClawdBot**: @chipagosfinest
-- **Mostly written by**: Claude (Anthropic)
+## 署名信息
+- **原始作者**: https://github.com/rohunvora/just-fucking-cancel by @rohunvora
+- **为 ClawdBot 适配**: @chipagosfinest
+- **主要由 Claude 编写**: (Anthropic)
 
-## Publish Command
+## 发布命令
 
 ```bash
-# 1. Install ClawdHub CLI (if not already)
+# 1. 安装 ClawdHub CLI（如果尚未安装）
 npm i -g clawdhub
 
-# 2. Login to ClawdHub
+# 2. 登录 ClawdHub
 clawdhub login
 
-# 3. Publish the skill
+# 3. 发布技能
 cd /path/to/clawdbot-railway
 clawdhub publish ./skills/just-fucking-cancel \
   --slug just-fucking-cancel \
   --name "just-fucking-cancel" \
   --version 1.0.0 \
-  --changelog "Initial release - subscription audit and cancellation skill.
+  --changelog "初始发布 - 订阅审核与取消技能。
 
-Originally created by rohunvora (https://github.com/rohunvora/just-fucking-cancel).
-Adapted for ClawdBot by @chipagosfinest.
-Mostly written by Claude.
+最初由 rohunvora 创建 (https://github.com/rohunvora/just-fucking-cancel)。
+由 @chipagosfinest 为 ClawdBot 适配。
+主要由 Claude 编写。
 
-Features:
-- Analyze bank CSV exports to find recurring charges
-- Interactive categorization (Cancel/Investigate/Keep)
-- HTML audit report with privacy toggle
-- Browser automation for cancellations
-- 50+ common service cancel URLs
+功能特点：
+- 分析银行 CSV 导出文件以查找定期扣费
+- 交互式分类（取消/调查/保留）
+- 带隐私切换功能的 HTML 审核报告
+- 浏览器自动化实现取消操作
+- 50+ 常见服务的取消链接
 
-DM @chipagosfinest on X if you need anything."
+如有需要，请在 X 上联系 @chipagosfinest。"
 ```
 
-## After Publishing
+## 发布后
 
-The skill will be available at:
+该技能将可在以下地址访问：
 ```
 https://clawdhub.com/chipagosfinest/just-fucking-cancel
 ```
 
-Add to any clawdbot.json:
+添加到任何 clawdbot.json 中：
 ```json
 "just-fucking-cancel": {
   "location": "https://clawdhub.com/chipagosfinest/just-fucking-cancel"
 }
 ```
 
-Or install via CLI:
+或通过 CLI 安装：
 ```bash
 clawdhub install chipagosfinest/just-fucking-cancel
 ```

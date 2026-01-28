@@ -1,39 +1,39 @@
 ---
 name: seo-dataforseo
-description: "SEO keyword research using the DataForSEO API. Perform keyword analysis, YouTube keyword research, competitor analysis, SERP analysis, and trend tracking. Use when the user asks to: research keywords, analyze search volume/CPC/competition, find keyword suggestions, check keyword difficulty, analyze competitors, get trending topics, do YouTube SEO research, or optimize landing page keywords. Requires a DataForSEO API account and credentials in .env file."
+description: "使用 DataForSEO API 进行 SEO 关键词研究。执行关键词分析、YouTube 关键词研究、竞争对手分析、SERP 分析和趋势跟踪。当用户要求：研究关键词、分析搜索量/CPC/竞争、查找关键词建议、检查关键词难度、分析竞争对手、获取热门话题、进行 YouTube SEO 研究或优化着陆页关键词时使用。需要 DataForSEO API 账户和 .env 文件中的凭据。"
 ---
 
-# SEO Keyword Research (DataForSEO)
+# SEO 关键词研究（DataForSEO）
 
-## Setup
+## 设置
 
-Install dependencies:
+安装依赖项：
 
 ```bash
 pip install -r scripts/requirements.txt
 ```
 
-Configure credentials by creating a `.env` file in the project root:
+通过在项目根目录创建 `.env` 文件来配置凭据：
 
 ```
 DATAFORSEO_LOGIN=your_email@example.com
 DATAFORSEO_PASSWORD=your_api_password
 ```
 
-Get credentials from: https://app.dataforseo.com/api-access
+从以下位置获取凭据：https://app.dataforseo.com/api-access
 
-## Quick Start
+## 快速开始
 
-| User says | Function to call |
+| 用户说 | 要调用的函数 |
 |-----------|-----------------|
-| "Research keywords for [topic]" | `keyword_research("topic")` |
-| "YouTube keyword data for [idea]" | `youtube_keyword_research("idea")` |
-| "Analyze competitor [domain.com]" | `competitor_analysis("domain.com")` |
-| "What's trending?" | `trending_topics()` |
-| "Keyword analysis for [list]" | `full_keyword_analysis(["kw1", "kw2"])` |
-| "Landing page keywords for [topic]" | `landing_page_keyword_research(["kw1"], "competitor.com")` |
+| "研究 [主题] 的关键词" | `keyword_research("topic")` |
+| "[想法] 的 YouTube 关键词数据" | `youtube_keyword_research("idea")` |
+| "分析竞争对手 [domain.com]" | `competitor_analysis("domain.com")` |
+| "现在有什么热门？" | `trending_topics()` |
+| "[列表] 的关键词分析" | `full_keyword_analysis(["kw1", "kw2"])` |
+| "[主题] 的着陆页关键词" | `landing_page_keyword_research(["kw1"], "competitor.com")` |
 
-Execute functions by importing from `scripts/main.py`:
+通过从 `scripts/main.py` 导入来执行函数：
 
 ```python
 import sys
@@ -44,101 +44,101 @@ from main import *
 result = keyword_research("AI website builders")
 ```
 
-## Workflow Pattern
+## 工作流程模式
 
-Every research task follows three phases:
+每个研究任务都遵循三个阶段：
 
-### 1. Research
-Run API functions. Each function call hits the DataForSEO API and returns structured data.
+### 1. 研究
+运行 API 函数。每次函数调用都会访问 DataForSEO API 并返回结构化数据。
 
-### 2. Auto-Save
-All results automatically save as timestamped JSON files to `results/{category}/`. File naming pattern: `YYYYMMDD_HHMMSS__operation__keyword__extra_info.json`
+### 2. 自动保存
+所有结果会自动保存到 `results/{category}/` 目录下带时间戳的 JSON 文件。文件命名模式：`YYYYMMDD_HHMMSS__operation__keyword__extra_info.json`
 
-### 3. Summarize
-After research, read the saved JSON files and create a markdown summary in `results/summary/` with data tables, ranked opportunities, and strategic recommendations.
+### 3. 总结
+研究后，读取保存的 JSON 文件并在 `results/summary/` 中创建包含数据表、排名机会和战略建议的 markdown 摘要。
 
-## High-Level Functions
+## 高层函数
 
-These are the primary functions in `scripts/main.py`. Each orchestrates multiple API calls for a complete research workflow.
+这些是 `scripts/main.py` 中的主要函数。每个函数协调多个 API 调用以完成完整的研究工作流程。
 
-| Function | Purpose | What it gathers |
+| 函数 | 用途 | 收集内容 |
 |----------|---------|----------------|
-| `keyword_research(keyword)` | Single keyword deep-dive | Overview, suggestions, related keywords, difficulty |
-| `youtube_keyword_research(keyword)` | YouTube content research | Overview, suggestions, YouTube SERP rankings, YouTube trends |
-| `landing_page_keyword_research(keywords, competitor_domain)` | Landing page SEO | Overview, intent, difficulty, SERP analysis, competitor keywords |
-| `full_keyword_analysis(keywords)` | Strategic content planning | Overview, difficulty, intent, keyword ideas, historical volume, Google Trends |
-| `competitor_analysis(domain, keywords)` | Competitor intelligence | Domain keywords, Google Ads keywords, competitor domains |
-| `trending_topics(location_name)` | Current trends | Currently trending searches |
+| `keyword_research(keyword)` | 单个关键词深入分析 | 概述、建议、相关关键词、难度 |
+| `youtube_keyword_research(keyword)` | YouTube 内容研究 | 概述、建议、YouTube SERP 排名、YouTube 趋势 |
+| `landing_page_keyword_research(keywords, competitor_domain)` | 着陆页 SEO | 概述、意图、难度、SERP 分析、竞争对手关键词 |
+| `full_keyword_analysis(keywords)` | 战略内容规划 | 概述、难度、意图、关键词创意、历史搜索量、Google 趋势 |
+| `competitor_analysis(domain, keywords)` | 竞争对手情报 | 域名关键词、Google Ads 关键词、竞争对手域名 |
+| `trending_topics(location_name)` | 当前趋势 | 当前热门搜索 |
 
-### Parameters
+### 参数
 
-All functions accept an optional `location_name` parameter (default: "United States"). Most functions also have boolean flags to skip specific sub-analyses (e.g., `include_suggestions=False`).
+所有函数都接受可选的 `location_name` 参数（默认值："United States"）。大多数函数也有布尔标志来跳过特定的子分析（例如 `include_suggestions=False`）。
 
-### Individual API Functions
+### 单独的 API 函数
 
-For granular control, import specific functions from the API modules. See [references/api-reference.md](references/api-reference.md) for the complete list of 25 API functions with parameters, limits, and examples.
+要进行细粒度控制，请从 API 模块导入特定函数。请参阅 [references/api-reference.md](references/api-reference.md) 获取包含参数、限制和示例的 25 个 API 函数的完整列表。
 
-## Results Storage
+## 结果存储
 
-Results auto-save to `results/` with this structure:
+结果自动保存到 `results/`，结构如下：
 
 ```
 results/
-├── keywords_data/    # Search volume, CPC, competition
-├── labs/             # Suggestions, difficulty, intent
-├── serp/             # Google/YouTube rankings
-├── trends/           # Google Trends data
-└── summary/          # Human-readable markdown summaries
+├── keywords_data/    # 搜索量、CPC、竞争
+├── labs/             # 建议、难度、意图
+├── serp/             # Google/YouTube 排名
+├── trends/           # Google 趋势数据
+└── summary/          # 人类可读的 markdown 摘要
 ```
 
-### Managing Results
+### 管理结果
 
 ```python
 from core.storage import list_results, load_result, get_latest_result
 
-# List recent results
+# 列出最近的结果
 files = list_results(category="labs", limit=10)
 
-# Load a specific result
+# 加载特定结果
 data = load_result(files[0])
 
-# Get most recent result for an operation
+# 获取某个操作最近的结果
 latest = get_latest_result(category="labs", operation="keyword_suggestions")
 ```
 
-### Utility Functions
+### 工具函数
 
 ```python
 from main import get_recent_results, load_latest
 
-# List recent files across all categories
+# 列出所有类别的最近文件
 files = get_recent_results(limit=10)
 
-# Load latest result for a category
+# 加载某个类别的最新结果
 data = load_latest("labs", "keyword_suggestions")
 ```
 
-## Creating Summaries
+## 创建摘要
 
-After running research, create a markdown summary document in `results/summary/`. Include:
+运行研究后，在 `results/summary/` 中创建 markdown 摘要文档。包括：
 
-- **Data tables** with volumes, CPC, competition, difficulty
-- **Ranked lists** of opportunities (sorted by volume or opportunity score)
-- **SERP analysis** showing what currently ranks
-- **Recommendations** for content strategy, titles, tags
+- **数据表** - 包含搜索量、CPC、竞争、难度
+- **排名列表** - 机会排名（按搜索量或机会分数排序）
+- **SERP 分析** - 显示当前排名靠前的内容
+- **建议** - 内容策略、标题、标签建议
 
-Name the summary file descriptively (e.g., `results/summary/ai-tools-keyword-research.md`).
+为摘要文件命名时要具有描述性（例如 `results/summary/ai-tools-keyword-research.md`）。
 
-## Tips
+## 提示
 
-1. **Be specific** — "Get keyword suggestions for 'AI website builders'" works better than "research AI stuff"
-2. **Request summaries** — Always create a summary document after research, named specifically
-3. **Batch related keywords** — Pass multiple related keywords at once for comparison
-4. **Specify the goal** — "for a YouTube video" vs "for a landing page" changes which data matters most
-5. **Ask for competition analysis** — "Show me what videos are ranking" helps identify content gaps
+1. **要具体** — "获取 'AI website builders' 的关键词建议" 比 "研究 AI 东西" 效果更好
+2. **请求摘要** — 研究后始终创建摘要文档，并命名具体
+3. **批量相关关键词** — 一次传递多个相关关键词进行比较
+4. **指定目标** — "用于 YouTube 视频" 与 "用于着陆页" 会改变哪些数据最重要
+5. **要求竞争分析** — "显示哪些视频正在排名" 有助于识别内容空白
 
-## Defaults
+## 默认值
 
-- **Location**: United States (code 2840)
-- **Language**: English
-- **API Limits**: 700 keywords for volume/overview, 1000 for difficulty/intent, 5 for trends, 200 for keyword ideas
+- **位置**：美国（代码 2840）
+- **语言**：英语
+- **API 限制**：700 个关键词用于搜索量/概述，1000 个用于难度/意图，5 个用于趋势，200 个用于关键词创意

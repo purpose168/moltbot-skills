@@ -1,4 +1,4 @@
-"""ASCII/Braille chart generation for terminal output."""
+"""终端输出的 ASCII/Braille 图表生成。"""
 
 from ouracli.chart_utils import bucket_regular_data, bucket_timeseries_data
 
@@ -7,20 +7,20 @@ def create_heartrate_bar_chart_ascii(
     heartrate_data: list[dict], width: int = 72, height: int = 10
 ) -> str:
     """
-    Create an ASCII bar chart from heart rate data using Braille characters.
+    使用 Braille 字符从心率数据创建 ASCII 条形图。
 
-    Args:
-        heartrate_data: List of dicts with 'timestamp' and 'bpm' keys
-        width: Width of chart in characters (default 72 = 144 buckets)
-        height: Height of chart in characters (default 10)
+    参数:
+        heartrate_data: 包含 'timestamp' 和 'bpm' 键的字典列表
+        width: 图表宽度（字符数，默认 72 = 144 个桶）
+        height: 图表高度（字符数，默认 10）
 
-    Returns:
-        ASCII bar chart as string
+    返回:
+        ASCII 条形图字符串
     """
     if not heartrate_data:
-        return "No heart rate data"
+        return "无心率数据"
 
-    # Get actual min/max from raw data for Y-axis labels
+    # 从原始数据中获取实际的最小值/最大值用于 Y 轴标签
     all_bpms: list[float] = [
         float(reading.get("bpm"))  # type: ignore[arg-type]
         for reading in heartrate_data
@@ -29,12 +29,12 @@ def create_heartrate_bar_chart_ascii(
     actual_min: float = (min(all_bpms) - 10) if all_bpms else 0.0
     actual_max: float = max(all_bpms) if all_bpms else 100.0
 
-    # Create 144 buckets (24 hours * 6 = one bucket per 10 minutes)
+    # 创建 144 个桶（24 小时 * 6 = 每 10 分钟一个桶）
     bucket_averages = bucket_timeseries_data(
         heartrate_data, "timestamp", "bpm", bucket_minutes=10, buckets_per_day=144
     )
 
-    # Replace None with 0 for ASCII chart
+    # 将 None 替换为 0 用于 ASCII 图表
     buckets = [v if v is not None else 0 for v in bucket_averages]
 
     return _create_ascii_bar_chart_from_buckets(
@@ -44,21 +44,21 @@ def create_heartrate_bar_chart_ascii(
 
 def create_ascii_bar_chart(met_items: list[float], width: int = 72, height: int = 10) -> str:
     """
-    Create an ASCII bar chart from MET data using Braille characters for higher resolution.
+    使用 Braille 字符从 MET 数据创建 ASCII 条形图，以获得更高的分辨率。
 
-    Args:
-        met_items: List of MET values (typically 1440 items for a full day)
-        width: Width of chart in characters (default 72 = 144 buckets = 10 min/bucket)
-        height: Height of chart in characters (default 10)
+    参数:
+        met_items: MET 值列表（通常为一整天的 1440 个项目）
+        width: 图表宽度（字符数，默认 72 = 144 个桶 = 每桶 10 分钟）
+        height: 图表高度（字符数，默认 10）
 
-    Returns:
-        ASCII bar chart as string
+    返回:
+        ASCII 条形图字符串
     """
     if not met_items:
-        return "No MET data"
+        return "无 MET 数据"
 
-    # Group items into buckets - use 2x width since we'll pack 2 bars per character
-    # 1440 items -> 144 buckets = 10 items per bucket (10 minutes each)
+    # 将项目分组到桶中 - 使用 2x 宽度，因为我们将在每个字符中打包 2 个条形
+    # 1440 个项目 -> 144 个桶 = 每个桶 10 个项目（每 10 分钟）
     num_buckets = width * 2
     buckets = bucket_regular_data(met_items, target_buckets=num_buckets, aggregation="max")
 
@@ -74,96 +74,96 @@ def _create_ascii_bar_chart_from_buckets(
     actual_max: float | None = None,
 ) -> str:
     """
-    Internal function to create ASCII bar chart from pre-bucketed data.
+    从预分桶数据创建 ASCII 条形图的内部函数。
 
-    Args:
-        buckets: List of values (should be width * 2 for dual-column packing)
-        width: Width in characters
-        height: Height in characters
-        unit: Unit label (e.g., "MET" or "BPM")
-        actual_min: Actual minimum value from source data (for Y-axis labels)
-        actual_max: Actual maximum value from source data (for Y-axis labels)
+    参数:
+        buckets: 值列表（应为双列打包的 width * 2）
+        width: 字符宽度
+        height: 字符高度
+        unit: 单位标签（例如 "MET" 或 "BPM"）
+        actual_min: 源数据的实际最小值（用于 Y 轴标签）
+        actual_max: 源数据的实际最大值（用于 Y 轴标签）
 
-    Returns:
-        ASCII bar chart as string
+    返回:
+        ASCII 条形图字符串
     """
-    # Braille patterns for vertical bars
-    # Dots are arranged: 1,2,3,7 (left column), 4,5,6,8 (right column)
+    # 垂直条形的 Braille 模式
+    # 点排列：1,2,3,7（左列），4,5,6,8（右列）
     #   1 • • 4
     #   2 • • 5
     #   3 • • 6
     #   7 • • 8
-    # Bit positions: 0=1, 1=2, 2=3, 3=4, 4=5, 5=6, 6=7, 7=8
+    # 位位置：0=1, 1=2, 2=3, 3=4, 4=5, 5=6, 6=7, 7=8
     braille_base = 0x2800
 
-    # Left column patterns (dots 1,2,3,7) from bottom to top
+    # 左列模式（点 1,2,3,7）从底部到顶部
     left_patterns = [
-        0b00000000,  # 0: no dots
-        0b01000000,  # 1: dot 7 (bit 6)
-        0b01000100,  # 2: dots 3,7 (bits 2,6)
-        0b01000110,  # 3: dots 2,3,7 (bits 1,2,6)
-        0b01000111,  # 4: dots 1,2,3,7 (bits 0,1,2,6)
+        0b00000000,  # 0: 无点
+        0b01000000,  # 1: 点 7（位 6）
+        0b01000100,  # 2: 点 3,7（位 2,6）
+        0b01000110,  # 3: 点 2,3,7（位 1,2,6）
+        0b01000111,  # 4: 点 1,2,3,7（位 0,1,2,6）
     ]
 
-    # Right column patterns (dots 4,5,6,8) from bottom to top
+    # 右列模式（点 4,5,6,8）从底部到顶部
     right_patterns = [
-        0b00000000,  # 0: no dots
-        0b10000000,  # 1: dot 8 (bit 7)
-        0b10100000,  # 2: dots 6,8 (bits 5,7)
-        0b10110000,  # 3: dots 5,6,8 (bits 4,5,7)
-        0b10111000,  # 4: dots 4,5,6,8 (bits 3,4,5,7)
+        0b00000000,  # 0: 无点
+        0b10000000,  # 1: 点 8（位 7）
+        0b10100000,  # 2: 点 6,8（位 5,7）
+        0b10110000,  # 3: 点 5,6,8（位 4,5,7）
+        0b10111000,  # 4: 点 4,5,6,8（位 3,4,5,7）
     ]
 
-    # Find max value for scaling (use actual if provided, otherwise bucketed)
+    # 查找缩放的最大值（使用提供的实际值，否则使用桶数据）
     max_val = actual_max if actual_max is not None else (max(buckets) if buckets else 1.0)
     if max_val == 0:
         max_val = 1.0
 
-    # Find min value (use actual if provided, otherwise from non-zero buckets)
+    # 查找最小值（使用提供的实际值，否则使用非零桶）
     if actual_min is not None:
         min_val = actual_min
     else:
         non_zero_vals = [v for v in buckets if v > 0]
         min_val = min(non_zero_vals) if non_zero_vals else 0
 
-    # Each character has 4 dots of resolution, so total resolution is height * 4
+    # 每个字符有 4 个点的分辨率，所以总分辨率是 height * 4
     total_dots = height * 4
 
-    # Calculate Y-axis labels (show 5 evenly distributed labels)
+    # 计算 Y 轴标签（显示 5 个均匀分布的标签）
     y_labels = {}
-    num_labels = min(5, height)  # Show up to 5 labels
+    num_labels = min(5, height)  # 最多显示 5 个标签
 
     for i in range(num_labels):
-        # Distribute labels evenly from top (max) to bottom (min)
+        # 从顶部（最大值）到底部（最小值）均匀分布标签
         row = int(i * (height - 1) / (num_labels - 1))
-        # Calculate value at this row linearly from max to min
+        # 从最大值到最小值线性计算此行的值
         fraction = i / (num_labels - 1)
         value_at_row = max_val - fraction * (max_val - min_val)
-        # Round to appropriate precision based on value range
+        # 根据值范围选择适当的精度
         if max_val - min_val > 20:
-            y_labels[row] = f"{value_at_row:.0f}"  # Integer for large ranges
+            y_labels[row] = f"{value_at_row:.0f}"  # 大范围内使用整数
         else:
-            y_labels[row] = f"{value_at_row:.1f}"  # One decimal for small ranges
+            y_labels[row] = f"{value_at_row:.1f}"  # 小范围内使用一位小数
 
-    # Find max label width for alignment
+    # 查找最大标签宽度以对齐
     max_label_width = max(len(label) for label in y_labels.values()) if y_labels else 0
 
-    # Create chart lines from top to bottom
+    # 从上到下创建图表行
     lines = []
     for row in range(height):
-        # Add Y-axis label if this row has one
+        # 如果此行有标签，添加 Y 轴标签
         if row in y_labels:
             label = y_labels[row].rjust(max_label_width)
             line = f"{label} │ "
         else:
             line = " " * max_label_width + " │ "
 
-        # Process buckets in pairs (left and right columns)
+        # 成对处理桶（左列和右列）
         for i in range(0, len(buckets), 2):
             left_val = buckets[i] if i < len(buckets) else 0
             right_val = buckets[i + 1] if i + 1 < len(buckets) else 0
 
-            # Calculate dots for left bar (scale from min to max)
+            # 计算左条形的点（从最小值缩放到最大值）
             value_range = max_val - min_val
             if value_range > 0 and left_val > 0:
                 left_dots_filled = int(((left_val - min_val) / value_range) * total_dots)
@@ -181,7 +181,7 @@ def _create_ascii_bar_chart_from_buckets(
                 dots_in_row = left_dots_filled - row_bottom
                 left_pattern = left_patterns[dots_in_row]
 
-            # Calculate dots for right bar (scale from min to max)
+            # 计算右条形的点（从最小值缩放到最大值）
             if value_range > 0 and right_val > 0:
                 right_dots_filled = int(((right_val - min_val) / value_range) * total_dots)
             else:
@@ -195,30 +195,30 @@ def _create_ascii_bar_chart_from_buckets(
                 dots_in_row = right_dots_filled - row_bottom
                 right_pattern = right_patterns[dots_in_row]
 
-            # Combine left and right patterns
+            # 组合左右模式
             combined_pattern = left_pattern | right_pattern
             char = chr(braille_base + combined_pattern)
             line += char
         lines.append(line)
 
-    # Add a baseline with Y-axis alignment
+    # 添加带有 Y 轴对齐的基线
     baseline = " " * max_label_width + " └" + "─" * width
     lines.append(baseline)
 
-    # Add hour labels (0-23) with Y-axis alignment
-    # Each hour = 6 buckets (60 min / 10 min per bucket)
-    # With 2 buckets per character = 3 characters per hour
-    # Build hour labels with proper spacing (each hour gets 3 chars)
+    # 添加小时标签（0-23）并与 Y 轴对齐
+    # 每小时 = 6 个桶（60 分钟 / 10 分钟每桶）
+    # 每个字符 2 个桶 = 每小时 3 个字符
+    # 构建带有适当间距的小时标签（每小时 3 个字符）
     hour_parts = []
     for hour in range(24):
         if hour < 10:
-            # Single digit: " X " (space, digit, space)
+            # 单个数字：" X "（空格，数字，空格）
             hour_parts.append(f" {hour} ")
         else:
-            # Double digit: "XX " (digit, digit, space)
+            # 双数字："XX "（数字，数字，空格）
             hour_parts.append(f"{hour} ")
 
-    # Trim to exactly 72 characters and add Y-axis padding
+    # 修剪到正好 72 个字符并添加 Y 轴填充
     hour_line = " " * (max_label_width + 3) + "".join(hour_parts)[:width]
     lines.append(hour_line)
 

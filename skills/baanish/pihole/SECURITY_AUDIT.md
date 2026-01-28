@@ -1,170 +1,171 @@
-# Pi-hole Skill Security Audit
-## Date: 2026-01-14
+# Pi-hole 技能安全审计
+## 日期: 2026-01-14
 
-### Executive Summary
-The Pi-hole skill has been audited and refactored to support Pi-hole v6 API with proper security measures. All critical issues have been addressed.
+### 执行摘要
 
----
-
-## Critical Issues Fixed
-
-### 1. ✅ API Version Mismatch (RESOLVED)
-**Issue:** Script used Pi-hole v5 API endpoints (`/admin/api.php`) which are deprecated in v6.
-
-**Fix:** Updated to use v6 API endpoints:
-- `/api/auth` - Get session token
-- `/api/dns/blocking` - Enable/disable blocking
-- `/api/queries` - Query log
-- `/api/stats/summary` - Statistics
+Pi-hole 技能已经过审计，并已重构以支持 Pi-hole v6 API 及适当的安全措施。所有关键问题均已解决。
 
 ---
 
-### 2. ✅ Session Authentication (RESOLVED)
-**Issue:** Script attempted direct API token authentication which fails in v6.
+## 已解决的关键问题
 
-**Fix:** Implemented proper session flow:
-1. Authenticate via POST `/api/auth` with app password
-2. Receive session token
-3. Use session token via `sid:` header for subsequent requests
-4. Session expires after 30 minutes (1800 seconds)
+### 1. ✅ API 版本不匹配（已解决）
+**问题**：脚本使用 Pi-hole v5 API 端点（`/admin/api.php`），这些在 v6 中已弃用。
+
+**修复**：更新为使用 v6 API 端点：
+- `/api/auth` - 获取会话令牌
+- `/api/dns/blocking` - 启用/禁用拦截
+- `/api/queries` - 查询日志
+- `/api/stats/summary` - 统计信息
 
 ---
 
-### 3. ✅ SSL Certificate Handling (RESOLVED)
-**Issue:** Self-signed certificates would cause curl failures.
+### 2. ✅ 会话身份验证（已解决）
+**问题**：脚本尝试直接 API 令牌身份验证，这在 v6 中会失败。
 
-**Fix:** Added `insecure` flag support:
+**修复**：实现正确的会话流程：
+1. 通过 POST `/api/auth` 使用应用密码进行身份验证
+2. 接收会话令牌
+3. 通过 `sid:` 标头对后续请求使用会话令牌
+4. 会话在 30 分钟后过期（1800 秒）
+
+---
+
+### 3. ✅ SSL 证书处理（已解决）
+**问题**：自签名证书会导致 curl 失败。
+
+**修复**：添加 `insecure` 标志支持：
 ```bash
-# In clawdbot.json skills.entries.pihole:
+# 在 clawdbot.json skills.entries.pihole 中：
 {
   "apiUrl": "https://pi-hole.local/api",
   "apiToken": "...",
-  "insecure": true  # Add -k flag to curl
+  "insecure": true  # 为 curl 添加 -k 标志
 }
 ```
 
 ---
 
-### 4. ✅ Error Handling (RESOLVED)
-**Issue:** `set -euo pipefail` causes silent exits on errors.
+### 4. ✅ 错误处理（已解决）
+**问题**：`set -euo pipefail` 导致错误时静默退出。
 
-**Fix:** Changed to `set -o pipefail` only and added proper error checking:
-- All API responses validated with `jq -e`
-- Graceful error messages with response data
-- Return codes set appropriately
+**修复**：改为 `set -o pipefail` 并添加适当的错误检查：
+- 所有 API 响应通过 `jq -e` 验证
+- 带有响应数据的优雅错误消息
+- 适当设置返回码
 
 ---
 
-### 5. ✅ Token Exposure (MITIGATED)
-**Issue:** API token visible in process list via curl command arguments.
+### 5. ✅ 令牌暴露（已缓解）
+**问题**：API 令牌通过 curl 命令参数在进程列表中可见。
 
-**Fix:** Token passed via environment variable and JSON body, not CLI args:
+**修复**：令牌通过环境变量和 JSON body 传递，而非 CLI 参数：
 ```bash
-# Old (exposed):
+# 之前（暴露）：
 curl -H "X-Auth-Token: $TOKEN"
 
-# New (safer):
+# 新（更安全）：
 curl -d "{\"password\":\"$TOKEN\"}"
 ```
 
 ---
 
-### 6. ✅ Input Validation (MAINTAINED & IMPROVED)
-**Maintained validations:**
-- Numeric input validation (duration, limits)
-- Domain format validation (regex)
+### 6. ✅ 输入验证（维护和改进）
+**维护的验证**：
+- 数值输入验证（持续时间、限制）
+- 域名格式验证（正则表达式）
 
-**New validations:**
-- API response validation before parsing
-- Session token validation
-- JSON structure validation
-
----
-
-## Medium Priority Issues (No Action Required)
-
-### 1. Session Token Caching (OPTIONAL ENHANCEMENT)
-**Current:** New session obtained on every API call.
-
-**Consideration:** Could cache session token for 25 minutes to reduce API calls.
-
-**Trade-off:** Adds complexity, marginal performance gain.
-
-**Decision:** Skip for now - simpler is better.
+**新增验证**：
+- API 响应解析前的验证
+- 会话令牌验证
+- JSON 结构验证
 
 ---
 
-### 2. Domain Regex Pattern (MINOR)
-**Current:** Basic domain validation.
+## 中等问题（无需操作）
 
-**Enhancement:** Could use more comprehensive RFC-compliant validation.
+### 1. 会话令牌缓存（可选增强）
+**当前**：每次 API 调用都获取新会话。
 
-**Decision:** Current pattern is sufficient for use case.
+**考虑**：可以缓存会话令牌 25 分钟以减少 API 调用。
 
----
+**权衡**：增加复杂性，边缘性能提升。
 
-## Security Best Practices Applied
-
-### 1. HTTPS with Certificate Validation (Preferred)
-- Default behavior validates SSL certificates
-- Insecure mode available via config flag
-- User must explicitly enable `insecure: true`
-
-### 2. Timeout Protection
-- All curl requests have `--max-time 30`
-- Prevents hanging on unresponsive servers
-
-### 3. No Silent Failures
-- All errors produce user-facing messages
-- Debug info available for troubleshooting
-
-### 4. Principle of Least Privilege
-- No file system operations
-- No command injection
-- Only reads from config, writes to stdout
+**决策**：暂时跳过 - 简单更好。
 
 ---
 
-## API Security Notes
+### 2. 域名正则表达式模式（轻微）
+**当前**：基本域名验证。
 
-### Authentication Flow
-1. **Password-based auth:** API token (app password) sent in JSON body
-2. **Session-based:** Temporary token returned via `/api/auth`
-3. **Session lifetime:** 30 minutes (1800 seconds)
-4. **Session header:** `sid:` header used for subsequent calls
+**增强**：可以使用更全面的符合 RFC 的验证。
 
-### Security Considerations
-- ✅ Token not in URL (in body)
-- ✅ HTTPS encrypts traffic (if configured)
-- ✅ Session tokens expire
-- ⚠️  Password in config file (standard for this use case)
-- ⚠️  No rate limiting (relies on Pi-hole's built-in limits)
+**决策**：当前模式对于用例来说已经足够。
 
 ---
 
-## Remaining Limitations
+## 应用的安全最佳实践
 
-### 1. Whitelist Functionality (API Limitation)
-**Issue:** Pi-hole v6 API does not provide domain whitelist operations.
+### 1. HTTPS 证书验证（首选）
+- 默认行为验证 SSL 证书
+- 可通过配置标志使用不安全模式
+- 用户必须明确启用 `insecure: true`
 
-**Workaround:** Users must whitelist via Pi-hole admin UI.
+### 2. 超时保护
+- 所有 curl 请求都有 `--max-time 30`
+- 防止服务器无响应时挂起
 
-**Future:** Monitor Pi-hole v6 API updates for whitelist endpoints.
+### 3. 无静默失败
+- 所有错误产生面向用户的消息
+- 调试信息可用于故障排除
+
+### 4. 最小权限原则
+- 无文件系统操作
+- 无命令注入
+- 只从配置读取，写入 stdout
 
 ---
 
-### 2. No Multi-Server Support
-**Current:** Single Pi-hole instance configuration.
+## API 安全说明
 
-**Enhancement:** Could support multiple Pi-hole instances.
+### 身份验证流程
+1. **基于密码的身份验证**：API 令牌（应用密码）在 JSON body 中发送
+2. **基于会话的**：临时令牌通过 `/api/auth` 返回
+3. **会话生命周期**：30 分钟（1800 秒）
+4. **会话标头**：`sid:` 标头用于后续调用
 
-**Decision:** Single instance is typical use case.
+### 安全考虑
+- ✅ 令牌不在 URL 中（在 body 中）
+- ✅ HTTPS 加密流量（如果配置）
+- ✅ 会话令牌会过期
+- ⚠️  配置文件中的密码（这是此用例的标准）
+- ⚠️  无速率限制（依赖于 Pi-hole 的内置限制）
 
 ---
 
-## Recommendations for Users
+## 剩余限制
 
-### 1. Use HTTPS with Valid Certificates (Production)
+### 1. 白名单功能（API 限制）
+**问题**：Pi-hole v6 API 不提供域名白名单操作。
+
+**解决方法**：用户必须通过 Pi-hole 管理界面白名单。
+
+**未来**：监控 Pi-hole v6 API 更新以获取白名单端点。
+
+---
+
+### 2. 无多服务器支持
+**当前**：单个 Pi-hole 实例配置。
+
+**增强**：可以支持多个 Pi-hole 实例。
+
+**决策**：单实例是典型用例。
+
+---
+
+## 对用户的建议
+
+### 1. 使用 HTTPS 和有效证书（生产环境）
 ```json
 {
   "apiUrl": "https://pi-hole.example.com/api",
@@ -173,54 +174,54 @@ curl -d "{\"password\":\"$TOKEN\"}"
 }
 ```
 
-### 2. Restrict API Access
-- Use firewall rules to limit API access
-- Only allow known IP addresses
-- Consider using API-specific credentials
+### 2. 限制 API 访问
+- 使用防火墙规则限制 API 访问
+- 只允许已知 IP 地址
+- 考虑使用特定的 API 凭据
 
-### 3. Rotate API Tokens Regularly
-- Change Pi-hole app password periodically
-- Update clawdbot.json configuration
-
----
-
-## Testing Checklist
-
-- ✅ Status check (enabled/disabled)
-- ✅ Enable blocking
-- ✅ Disable blocking
-- ✅ Disable with timer (5 minutes, custom duration)
-- ✅ Show blocked queries
-- ✅ Show statistics
-- ✅ HTTPS with valid certificates
-- ✅ HTTPS with self-signed certificates (insecure mode)
-- ✅ Error handling (invalid token, network errors)
-- ✅ Input validation (invalid duration, domain format)
+### 3. 定期轮换 API 令牌
+- 定期更改 Pi-hole 应用密码
+- 更新 clawdbot.json 配置
 
 ---
 
-## Conclusion
+## 测试清单
 
-The Pi-hole skill is **production-ready** with:
-- ✅ All critical security issues resolved
-- ✅ Pi-hole v6 API support
-- ✅ Proper error handling and validation
-- ✅ Self-signed certificate support
-- ✅ Session-based authentication
-- ✅ No known vulnerabilities
-
-**Status:** Ready for publishing to ClawdHub.
+- ✅ 状态检查（启用/禁用）
+- ✅ 启用拦截
+- ✅ 禁用拦截
+- ✅ 带定时器禁用（5 分钟、自定义时长）
+- ✅ 显示被拦截的查询
+- ✅ 显示统计信息
+- ✅ 使用有效证书的 HTTPS
+- ✅ 使用自签名证书的 HTTPS（不安全模式）
+- ✅ 错误处理（无效令牌、网络错误）
+- ✅ 输入验证（无效持续时间、域名格式）
 
 ---
 
-## Appendix: v5 vs v6 API Comparison
+## 结论
 
-| Feature | v5 API | v6 API | Status |
+Pi-hole 技能**已准备就绪**，具备：
+- ✅ 所有关键安全问题已解决
+- ✅ Pi-hole v6 API 支持
+- ✅ 适当的错误处理和验证
+- ✅ 自签名证书支持
+- ✅ 基于会话的身份验证
+- ✅ 无已知漏洞
+
+**状态**：准备好发布到 ClawdHub。
+
+---
+
+## 附录：v5 vs v6 API 对比
+
+| 功能 | v5 API | v6 API | 状态 |
 |---------|----------|----------|--------|
-| Auth | Query param token | Session-based | ✅ Updated |
-| Status | `?status` | `/api/dns/blocking` | ✅ Updated |
-| Enable | `?enable` | POST `/dns/blocking` | ✅ Updated |
-| Disable | `?disable=N` | POST `/dns/blocking` | ✅ Updated |
-| Stats | `?summaryRaw` | `/api/stats/summary` | ✅ Updated |
-| Blocked | `?recentBlocked` | `/api/queries` | ✅ Updated |
-| Whitelist | `?add=...` | Not available | ⚠️  Removed (API limitation) |
+| 身份验证 | 查询参数令牌 | 基于会话 | ✅ 已更新 |
+| 状态 | `?status` | `/api/dns/blocking` | ✅ 已更新 |
+| 启用 | `?enable` | POST `/dns/blocking` | ✅ 已更新 |
+| 禁用 | `?disable=N` | POST `/dns/blocking` | ✅ 已更新 |
+| 统计 | `?summaryRaw` | `/api/stats/summary` | ✅ 已更新 |
+| 被拦截 | `?recentBlocked` | `/api/queries` | ✅ 已更新 |
+| 白名单 | `?add=...` | 不可用 | ⚠️  已移除（API 限制） |

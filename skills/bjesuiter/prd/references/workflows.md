@@ -1,110 +1,285 @@
-# Workflow Patterns for PRD Skills
+# PRD 技能的工作流模式
 
-## Sequential Workflow Pattern
+## 顺序工作流模式
 
-When a skill involves multi-step processes with dependencies, use sequential workflows.
+当技能涉及具有依赖关系的多步骤流程时，使用顺序工作流。
 
-### Structure
+### 结构
 ```
-## Workflow Decision Tree
-## Step 1: [First Step]
-## Step 2: [Second Step]
+## 工作流决策树
+## 步骤 1：[第一步]
+## 步骤 2：[第二步]
 ## ...
 ```
 
-### Example: PRD Creation Workflow
+### 示例：PRD 创建工作流
 ```
-## Step 1: Ask Clarifying Questions
-Gather context before writing...
+## 步骤 1：提出澄清性问题
+在编写之前收集上下文...
 
-## Step 2: Generate Markdown PRD
-Save to `tasks/prd-[feature-name].md`...
+## 步骤 2：生成 Markdown PRD
+保存到 `tasks/prd-[特性名称].md`...
 
-## Step 3: Convert to prd.json
+## 步骤 3：转换为 prd.json
 ...
 
-## Step 4: Run Agentic Loop
+## 步骤 4：运行代理循环
 ...
 ```
 
-## Conditional Logic Pattern
+## 条件逻辑模式
 
-Use branching logic when different paths depend on user choices.
+当不同路径依赖于用户选择时，使用分支逻辑。
 
-### Structure
+### 结构
 ```markdown
-## Decision: [What is the user trying to do?]
+## 决策：用户想要做什么？
 
-- **Option A**: [Description] → See [Section A]
-- **Option B**: [Description] → See [Section B]
+- **选项 A**：[描述] → 参见 [A 部分]
+- **选项 B**：[描述] → 参见 [B 部分]
 ```
 
-### Example
+### 示例
 ```markdown
-## Decision: What type of PRD do you need?
+## 决策：您需要什么类型的 PRD？
 
-- **Quick PRD**: Single file with basic structure → See [Quick Template]
-- **Detailed PRD**: Multi-section with full specs → See [Detailed Template]
-- **AI-Ready PRD**: Optimized for autonomous agents → See [AI-Ready Format]
+- **快速 PRD**：单一文件基本结构 → 参见 [快速模板]
+- **详细 PRD**：多章节完整规范 → 参见 [详细模板]
+- **AI 准备好的 PRD**：为自主代理优化 → 参见 [AI 准备格式]
 ```
 
-## Iteration Pattern
+## 迭代模式
 
-For processes that repeat until a condition is met.
+用于重复执行直到满足条件的流程。
 
-### Structure
+### 结构
 ```markdown
-## Repeat Until: [Stop Condition]
+## 重复直到：[停止条件]
 
-1. [Step 1]
-2. [Step 2]
+1. [步骤 1]
+2. [步骤 2]
 ...
 
-**Stop when:** [Condition description]
+**停止时间：** [条件描述]
 ```
 
-### Example (Agentic Loop)
+### 示例（代理循环）
 ```markdown
-## Repeat Until: All stories have passes=true
+## 重复直到：所有故事的 passes=true
 
-1. Read prd.json, find first incomplete story
-2. Implement the story
-3. Run checks (typecheck, tests)
-4. If checks pass, mark passes=true
-5. Append to progress.txt
+1. 读取 prd.json，找到第一个未完成的故事
+2. 实现该故事
+3. 运行检查（类型检查、测试）
+4. 如果检查通过，将 passes 标记为 true
+5. 追加到 progress.txt
 
-**Stop when:** `jq '.userStories[].passes' | grep -q "false"` is false
+**停止时间：** `jq '.userStories[].passes' | grep -q "false"` 为 false
 ```
 
-## Progressive Disclosure Pattern
+## 渐进式披露模式
 
-Show overview first, link to details.
+首先显示概览，再链接到详细信息。
 
 ```markdown
-## Creating Documents
+## 创建文档
 
-Use docx-js for new documents. See [DOCX-JS.md](DOCX-JS.md) for details.
+对于新文档使用 docx-js。详细信息参见 [DOCX-JS.md](DOCX-JS.md)。
 
-## Editing Documents
+## 编辑文档
 
-For simple edits, modify XML directly.
-- **Tracked changes**: See [REDLINING.md](REDLINING.md)
-- **OOXML details**: See [OOXML.md](OOXML.md)
+对于简单编辑，直接修改 XML。
+- **跟踪更改**：参见 [REDLINING.md](REDLINING.md)
+- **OOXML 详细信息**：参见 [OOXML.md](OOXML.md)
 ```
 
-## Validation Pattern
+## 验证模式
 
-Include validation steps throughout.
+全程包含验证步骤。
 
 ```markdown
-## Step 1: Create Schema
+## 步骤 1：创建模式
 
-1. Define table structure
-2. **Validate**: Run migration, verify no errors
+1. 定义表结构
+2. **验证**：运行迁移，验证无错误
 
-## Step 2: Add Backend Logic
+## 步骤 2：添加后端逻辑
 
-1. Create server action
-2. **Validate**: Typecheck passes
-3. **Validate**: Integration test passes
+1. 创建服务器操作
+2. **验证**：类型检查通过
+3. **验证**：集成测试通过
+```
+
+## PRD 特定工作流
+
+### PRD 创建工作流
+
+```markdown
+## PRD 创建流程
+
+### 阶段 1：需求收集
+1. 与用户讨论功能需求
+2. 识别关键用户故事
+3. 确定优先级
+
+### 阶段 2：结构设计
+1. 创建故事列表
+2. 定义验收标准
+3. 排序故事（考虑依赖关系）
+
+### 阶段 3：文档生成
+1. 生成 Markdown 文档
+2. 转换为 prd.json 格式
+3. 保存到 agents/prd.json
+
+### 阶段 4：验证
+1. 验证 JSON 格式正确
+2. 检查故事完整性
+3. 确认依赖关系合理
+```
+
+### 故事实现工作流
+
+```markdown
+## 故事实现流程
+
+### 步骤 1：加载 PRD
+1. 读取 agents/prd.json
+2. 找到第一个 passes=false 的故事
+3. 验证前置依赖已满足
+
+### 步骤 2：理解需求
+1. 阅读故事标题和描述
+2. 分析验收标准
+3. 识别技术要求
+
+### 步骤 3：实现
+1. 按照验收标准实现功能
+2. 编写或更新测试
+3. 确保类型检查通过
+
+### 步骤 4：验证
+1. 逐项检查验收标准
+2. 运行相关测试
+3. 手动测试关键路径
+
+### 步骤 5：更新状态
+1. 将 passes 设为 true
+2. 添加完成笔记
+3. 继续下一个故事
+```
+
+### 验证工作流
+
+```markdown
+## 验证流程
+
+### 持续验证
+- 每个步骤后进行小验证
+- 立即修复发现的问题
+- 记录验证结果
+
+### 阶段验证
+- 故事完成后进行全面验证
+- 包括单元测试和集成测试
+- 验证边界情况
+
+### 最终验证
+- 所有故事完成后验证
+- 运行完整的测试套件
+- 确认所有验收标准满足
+```
+
+## 代码审查工作流
+
+```markdown
+## 代码审查流程
+
+### 审查触发
+- 故事实现完成后自动触发
+- 或开发者主动请求审查
+
+### 审查项目
+- [ ] 代码风格一致
+- [ ] 类型定义完整
+- [ ] 错误处理到位
+- [ ] 测试覆盖充分
+- [ ] 文档已更新
+
+### 审查输出
+- 通过：标记故事 passes=true
+- 有条件通过：列出需要修复的问题
+- 未通过：详细说明问题所在
+```
+
+## 错误处理工作流
+
+```markdown
+## 错误处理流程
+
+### 错误检测
+- 编译错误
+- 测试失败
+- 运行时异常
+- 验证不通过
+
+### 错误分类
+1. **阻塞性错误**：阻止继续开发
+2. **严重错误**：影响核心功能
+3. **轻微错误**：边缘情况问题
+4. **警告**：最佳实践问题
+
+### 处理策略
+- 阻塞性错误：立即修复
+- 严重错误：优先修复
+- 轻微错误：记录在案，稍后处理
+- 警告：选择性处理
+
+### 错误记录
+在故事的 notes 字段中记录：
+- 错误描述
+- 发生位置
+- 解决方案
+- 当前状态
+```
+
+## 进度跟踪工作流
+
+```markdown
+## 进度跟踪流程
+
+### 定期更新
+- 每次故事状态变化时更新
+- 记录完成时间和验证结果
+- 维护 progress.txt
+
+### 进度报告
+- 每日汇总完成的故事数
+- 标记进行中的故事
+- 识别阻塞点
+
+### 进度分析
+- 计算完成百分比
+- 估算剩余时间
+- 识别风险和延迟
+```
+
+## 协作工作流
+
+```markdown
+## 协作模式
+
+### 代理间协作
+- 多个代理可以同时工作
+- 通过 prd.json 同步状态
+- 避免并发修改同一故事
+
+### 人机协作
+- 代理处理常规任务
+- 用户做出关键决策
+- 定期同步进展
+
+### 反馈循环
+- 实现完成后请求审查
+- 根据反馈调整实现
+- 迭代直到验收通过
 ```

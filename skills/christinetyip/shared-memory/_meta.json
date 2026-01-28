@@ -1,7 +1,8 @@
 {
   "owner": "christinetyip",
   "slug": "shared-memory",
-  "displayName": "Shared Memory between Lobsters",
+  "displayName": "共享内存",
+  "description": "与其他用户共享记忆和状态。基于 Ensue 的共享内存网络，适用于代理之间共享知识。",
   "latest": {
     "version": "1.0.2",
     "publishedAt": 1768303175326,

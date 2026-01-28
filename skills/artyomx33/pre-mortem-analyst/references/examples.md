@@ -1,187 +1,187 @@
-# Pre-Mortem Examples - Artem's World
+# 预死案例 - Artem 的实践
 
-## Example 1: GolfTab Launch at First Course
+## 案例一：在第一个球场启动 GolfTab
 
-### Scenario
-"It's 4 months from now. GolfTab launched at our first golf course and it's been a disaster. The course is threatening to cancel. What happened?"
+### 场景
+"现在是4个月后。GolfTab 在我们的第一个高尔夫球场启动，这是一场灾难。球场威胁要取消。发生了什么？"
 
-### Why It Failed
+### 为什么失败
 
-👥 **PEOPLE:**
-• **Kitchen staff refused to use it** - H/H
-  Prevention: Staff training BEFORE launch, champion in kitchen
-  Warning sign: Kitchen complaints in week 1
+👥 **人：**
+• **厨房员工拒绝使用它** - H/H
+  预防：启动前员工培训，厨房有 champion
+  警告信号：第1周厨房投诉
 
-• **Pro shop wasn't bought in** - M/H
-  Prevention: Include in planning, show their benefits
-  Warning sign: Not promoting to golfers
+• **专卖店没有买入** - M/H
+  预防：包括在规划中，展示他们的好处
+  警告信号：不向高尔夫球手推广
 
-⚙️ **PROCESS:**
-• **Orders got lost during busy periods** - H/H
-  Prevention: Load testing, backup paper system
-  Warning sign: More than 3 lost orders in first week
+⚙️ **过程：**
+• **繁忙期间订单丢失** - H/H
+  预防：负载测试，备用纸质系统
+  警告信号：第1周丢失订单超过3个
 
-• **Delivery timing was unreliable** - M/H
-  Prevention: GPS integration, buffer times built in
-  Warning sign: Complaints about cold food
+• **送达时机不可靠** - M/H
+  预防：GPS集成，内置缓冲时间
+  警告信号：关于冷食的投诉
 
-💻 **TECHNOLOGY:**
-• **WiFi dead zones on back 9** - H/H
-  Prevention: WiFi survey before launch, offline mode
-  Warning sign: Failed orders from holes 10-18
+💻 **技术：**
+• **后9洞WiFi死角** - H/H
+  预防：启动前WiFi调查，离线模式
+  警告信号：来自10-18洞的失败订单
 
-• **App crashed on busy Saturday** - M/H
-  Prevention: Stress testing, auto-scaling
-  Warning sign: Slow response times under load
+• **繁忙周六应用崩溃** - M/H
+  预防：压力测试，自动扩展
+  警告信号：负载下响应时间慢
 
-🌍 **EXTERNAL:**
-• **Weather kept golfers away** - L/M
-  Prevention: Nothing (accept risk), launch in good season
-  Warning sign: N/A - external
+🌍 **外部：**
+• **天气让高尔夫球手远离** - L/M
+  预防：无（接受风险），在好季节启动
+  警告信号：不适用 - 外部
 
-### Top 3 Priorities
-1. WiFi coverage survey and offline mode - DO BEFORE LAUNCH
-2. Kitchen staff training and champion - DO BEFORE LAUNCH
-3. Load testing at 2x expected volume - DO BEFORE LAUNCH
+### 前3个优先事项
+1. WiFi覆盖调查和离线模式 - **启动前做**
+2. 厨房员工培训和 champion - **启动前做**
+3. 2倍预期容量的负载测试 - **启动前做**
 
-### Monitoring Dashboard
-□ Daily: Lost orders count (threshold: 0)
-□ Daily: Average delivery time (threshold: <15 min)
-□ Weekly: Staff satisfaction pulse (threshold: >7/10)
-□ Weekly: Customer complaints (threshold: <5)
-
----
-
-## Example 2: TISA Eindhoven Year 1
-
-### Scenario
-"It's September 2026. TISA Eindhoven opened but only has 15 students instead of target 50. We're burning cash. What happened?"
-
-### Why It Failed
-
-👥 **PEOPLE:**
-• **Couldn't find qualified bilingual teachers** - H/H
-  Prevention: Start recruiting 12 months early, consider transfers
-  Warning sign: <3 candidates per position by month -6
-
-• **Artem too stretched, Leiden suffered** - H/H
-  Prevention: Hire Eindhoven director FIRST, full delegation
-  Warning sign: Leiden KPIs declining
-
-• **Local director wasn't the right fit** - M/H
-  Prevention: 3-month probation, clear success metrics
-  Warning sign: Enrollment conversations not converting
-
-⚙️ **PROCESS:**
-• **Marketing started too late** - H/H
-  Prevention: 12-month marketing runway, build waitlist early
-  Warning sign: <30 inquiries by month -6
-
-• **Enrollment process was confusing** - M/M
-  Prevention: Mystery shop own process, simplify ruthlessly
-  Warning sign: Abandoned applications >20%
-
-• **No local partnerships secured** - H/M
-  Prevention: ASML/tech company MOUs before announcing
-  Warning sign: No corporate interest by month -9
-
-💻 **TECHNOLOGY:**
-• **Systems not ready for remote management** - M/M
-  Prevention: Leiden → Eindhoven remote workflow tested
-  Warning sign: Communication gaps emerging
-
-🌍 **EXTERNAL:**
-• **Competitor opened same year** - M/H
-  Prevention: Competitive intel, differentiation clarity
-  Warning sign: Same families touring competitor
-
-• **Regulatory delays** - H/H
-  Prevention: Submit permits 18 months early, buffer timeline
-  Warning sign: Permit status not "approved" by month -6
-
-### Top 3 Priorities
-1. Start teacher recruitment NOW (12+ months lead time)
-2. Hire Eindhoven director as first key hire
-3. Submit regulatory applications immediately
-
-### Monitoring Dashboard
-□ Monthly: Inquiries received (target: 10+/month)
-□ Monthly: Teacher candidates in pipeline (target: 3+/position)
-□ Quarterly: Permit status (must be "approved" 6 months before)
-□ Monthly: Artem time on Eindhoven vs Leiden (<30% Eindhoven)
+### 监控仪表板
+□ 每日：丢失订单计数（阈值：0）
+□ 每日：平均送达时间（阈值：<15分钟）
+□ 每周：员工满意度 pulse（阈值：>7/10）
+□ 每周：客户投诉（阈值：<5）
 
 ---
 
-## Example 3: TeddySnaps Premium Launch
+## 案例二：TISA 埃因霍温第一年
 
-### Scenario
-"It's 6 months after launching TeddySnaps Premium. Only 5% of parents subscribed, and there's negative chatter in parent WhatsApp groups. What happened?"
+### 场景
+"现在是2026年9月。TISA 埃因霍温开放了，但只有15名学生而不是目标50。我们正在烧钱。发生了什么？"
 
-### Why It Failed
+### 为什么失败
 
-👥 **PEOPLE:**
-• **Staff treated premium kids differently** - H/H
-  Prevention: Training + policy: photo quantity equal for all
-  Warning sign: Parent complaints about inequality
+👥 **人：**
+• **找不到合格的双语教师** - H/H
+  预防：提前12个月开始招聘，考虑调动
+  警告信号：-6个月时每个职位<3个候选人
 
-• **Parents felt judged for not subscribing** - M/H
-  Prevention: Frame as "extra" not "premium", no visible tiers
-  Warning sign: Social media/WhatsApp sentiment
+• **Artem 过度拉伸，莱顿受影响** - H/H
+  预防：先雇佣埃因霍温校长，完全授权
+  警告信号：莱顿KPI下降
 
-⚙️ **PROCESS:**
-• **Free tier became too limited** - H/H
-  Prevention: Free tier must still feel valuable
-  Warning sign: Free user satisfaction dropping
+• **本地校长不合适** - M/H
+  预防：3个月试用期，清晰成功指标
+  警告信号：注册对话不转化
 
-• **Price point wrong** - M/H
-  Prevention: Survey parents, test pricing before launch
-  Warning sign: Trial → paid conversion below 20%
+⚙️ **过程：**
+• **营销开始太晚** - H/H
+  预防：12个月营销跑道，早期建立候补名单
+  警告信号：-6个月时<30个询问
 
-💻 **TECHNOLOGY:**
-• **Premium features had bugs** - M/M
-  Prevention: Extended beta with 10 families
-  Warning sign: Bug reports from premium users
+• **注册流程混乱** - M/M
+  预防：神秘购物自己的流程，残酷简化
+  警告信号：放弃申请 >20%
 
-🌍 **EXTERNAL:**
-• **Competitor launched free alternative** - M/M
-  Prevention: Moat = face recognition + integration with TeddyKids
-  Warning sign: Parents mentioning competitor
+• **没有本地合作伙伴 secured** - H/M
+  预防：宣布前与ASML/科技公司签署MOU
+  警告信号：-9个月时没有公司兴趣
 
-### Top 3 Priorities
-1. Parent survey on pricing before launch
-2. Clear policy: Photo opportunities equal for all children
-3. Beta test with 10 families for 30 days
+💻 **技术：**
+• **系统未准备好远程管理** - M/M
+  预防：莱顿 → 埃因霍温远程工作流程测试
+  警告信号：出现沟通差距
+
+🌍 **外部：**
+• **竞争对手同年开放** - M/H
+  预防：竞争情报，差异化清晰度
+  警告信号：相同家庭参观竞争对手
+
+• **监管延迟** - H/H
+  预防：提前18个月提交许可证，时间线缓冲
+  警告信号：-6个月时许可证状态不是"已批准"
+
+### 前3个优先事项
+1. **现在**开始教师招聘（12+个月提前期）
+2. 作为第一个关键招聘雇佣埃因霍温校长
+3. 立即提交监管申请
+
+### 监控仪表板
+□ 每月：收到的询问（目标：10+/月）
+□ 每月：管道中的教师候选人（目标：3+/职位）
+□ 季度：许可证状态（必须在-6个月前"已批准"）
+□ 每月：Artem 在埃因霍温 vs 莱顿的时间（<30% 埃因霍温）
 
 ---
 
-## Quick Pre-Mortem Template
+## 案例三：TeddySnaps 高级版启动
+
+### 场景
+"启动 TeddySnaps 高级版6个月后。只有5%的家长订阅，家长WhatsApp群里有负面讨论。发生了什么？"
+
+### 为什么失败
+
+👥 **人：**
+• **员工区别对待高级孩子** - H/H
+  预防：培训 + 政策：所有孩子照片数量相等
+  警告信号：家长投诉不平等
+
+• **家长因不订阅感到被评判** - M/H
+  预防：框定为"额外"而非"高级"，无可见层级
+  警告信号：社交媒体/WhatsApp情绪
+
+⚙️ **过程：**
+• **免费层变得太有限** - H/H
+  预防：免费层必须仍然感觉有价值
+  警告信号：免费用户满意度下降
+
+• **价格点错误** - M/H
+  预防：调查家长，启动前测试定价
+  警告信号：试用 → 付费转换低于20%
+
+💻 **技术：**
+• **高级功能有错误** - M/M
+  预防：与10个家庭扩展测试
+  警告信号：来自高级用户的错误报告
+
+🌍 **外部：**
+• **竞争对手推出免费替代品** - M/M
+  预防：护城河 = 人脸识别 + 与TeddyKids集成
+  警告信号：家长提及竞争对手
+
+### 前3个优先事项
+1. 启动前家长价格调查
+2. 清晰政策：所有孩子照片机会平等
+3. 与10个家庭测试30天
+
+---
+
+## 快速预死模板
 
 ```
-PROJECT: [Name]
-SCENARIO: "It's [date]. [Project] has failed. [Specific failure description]."
+项目：[名称]
+场景："现在是[日期]。[项目]失败了。[具体失败描述]。"
 
-WHY IT FAILED:
+为什么失败：
 
-👥 PEOPLE:
+👥 人：
 • 
 • 
 
-⚙️ PROCESS:
+⚙️ 过程：
 • 
 • 
 
-💻 TECHNOLOGY:
+💻 技术：
 • 
 
-🌍 EXTERNAL:
+🌍 外部：
 • 
 
-TOP 3 ACTIONS:
+前3个行动：
 1. 
 2. 
 3. 
 
-WARNING SIGNS TO MONITOR:
+要监控的警告信号：
 □ 
 □ 
 □ 

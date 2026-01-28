@@ -1,66 +1,78 @@
 /**
- * YouTube Analytics Toolkit - Main Entry Point
- *
- * Simple interface for YouTube Data API v3 analysis.
- * All results are automatically saved to the /results directory with timestamps.
- *
- * Usage:
+ * YouTube 分析工具包 - 主入口点
+ * 
+ * YouTube Data API v3 分析的简单接口。
+ * 所有结果都会自动保存到 /results 目录，并带有时间戳。
+ * 
+ * 使用方法:
  *   import { getChannelStats, searchVideos } from './index.js';
  *   const stats = await getChannelStats('UCxxxxxxxx');
  */
 
-// Re-export all API functions
+// 重新导出所有 API 函数
 export * from './api/channels.js';
 export * from './api/videos.js';
 export * from './api/search.js';
 
-// Re-export core utilities
+// 重新导出核心工具函数
 export { getClient, getApiKey, resetClient } from './core/client.js';
 export { saveResult, loadResult, listResults, getLatestResult } from './core/storage.js';
 export { getSettings, validateSettings } from './config/settings.js';
 
-// Import for orchestration functions
+// 导入用于编排函数
 import { getChannel, getChannelStats, getMultipleChannels } from './api/channels.js';
 import { getVideo, getVideoStats, getMultipleVideos, getChannelVideos } from './api/videos.js';
 import { searchVideos } from './api/search.js';
 import { saveResult } from './core/storage.js';
 
 // ============================================================================
-// HIGH-LEVEL ORCHESTRATION FUNCTIONS
+// 高层编排函数
 // ============================================================================
 
 /**
- * Channel analysis result
+ * 频道分析结果接口
  */
 export interface ChannelAnalysis {
+  /** 频道详情 */
   channel: Awaited<ReturnType<typeof getChannel>>;
+  /** 最近发布的视频 */
   recentVideos: Awaited<ReturnType<typeof getChannelVideos>>;
+  /** 统计信息 */
   stats: {
+    /** 订阅者数量 */
     subscribers: number;
+    /** 总浏览量 */
     totalViews: number;
+    /** 视频数量 */
     videoCount: number;
+    /** 每视频平均浏览量 */
     avgViewsPerVideo: number;
   };
 }
 
 /**
- * Comprehensive channel analysis - get channel info, recent videos, and calculated stats
- *
- * @param channelId - YouTube channel ID
- * @returns Channel data with recent videos and calculated metrics
+ * 综合频道分析 - 获取频道信息、最近视频和计算统计指标
+ * 
+ * @param channelId YouTube 频道 ID
+ * @returns 频道数据，包含最近视频和计算后的指标
  */
 export async function analyzeChannel(channelId: string): Promise<ChannelAnalysis> {
-  console.log('\n📺 Analyzing channel...');
+  console.log('\n📺 正在分析频道...');
 
-  console.log('  → Getting channel info...');
+  console.log('  → 获取频道信息...');
   const channel = await getChannel(channelId, { save: false });
 
-  console.log('  → Getting recent videos...');
+  console.log('  → 获取最近视频...');
   const recentVideos = await getChannelVideos(channelId, { maxResults: 50, save: false });
 
-  // Calculate average views
-  const totalVideoViews = recentVideos.reduce((sum, v) => sum + parseInt(v.statistics.viewCount, 10), 0);
-  const avgViewsPerVideo = recentVideos.length > 0 ? Math.round(totalVideoViews / recentVideos.length) : 0;
+  // 计算平均浏览量
+  const totalVideoViews = recentVideos.reduce(
+    (sum, v) => sum + parseInt(v.statistics.viewCount, 10), 
+    0
+  );
+  const avgViewsPerVideo = recentVideos.length > 0 
+    ? Math.round(totalVideoViews / recentVideos.length) 
+    : 0;
 
   const result: ChannelAnalysis = {
     channel,
@@ -73,21 +85,21 @@ export async function analyzeChannel(channelId: string): Promise<ChannelAnalysis
     },
   };
 
-  // Save with channel name as filename
+  // 使用频道名作为文件名保存
   saveResult(result, 'channels', 'channel_analysis', channel.title);
 
-  console.log('✅ Channel analysis complete\n');
+  console.log('✅ 频道分析完成\n');
   return result;
 }
 
 /**
- * Compare multiple YouTube channels
- *
- * @param channelIds - Array of channel IDs to compare
- * @returns Comparison data for all channels
+ * 比较多个 YouTube 频道
+ * 
+ * @param channelIds 要比较的频道 ID 数组
+ * @returns 所有频道的比较数据
  */
 export async function compareChannels(channelIds: string[]) {
-  console.log(`\n📊 Comparing ${channelIds.length} channels...`);
+  console.log(`\n📊 正在比较 ${channelIds.length} 个频道...`);
 
   const channels = await getMultipleChannels(channelIds, { save: false });
 
@@ -102,7 +114,7 @@ export async function compareChannels(channelIds: string[]) {
       : 0,
   }));
 
-  // Sort by subscribers descending
+  // 按订阅者数量降序排序
   comparison.sort((a, b) => b.subscribers - a.subscribers);
 
   const result = {
@@ -117,32 +129,39 @@ export async function compareChannels(channelIds: string[]) {
 
   saveResult(result, 'channels', 'channel_comparison');
 
-  console.log('✅ Channel comparison complete\n');
+  console.log('✅ 频道比较完成\n');
   return result;
 }
 
 /**
- * Video analysis result
+ * 视频分析结果接口
  */
 export interface VideoAnalysis {
+  /** 视频详情 */
   video: Awaited<ReturnType<typeof getVideo>>;
+  /** 参与度指标 */
   engagement: {
+    /** 浏览量 */
     views: number;
+    /** 点赞数 */
     likes: number;
+    /** 评论数 */
     comments: number;
+    /** 点赞率 (百分比) */
     likeRate: number;
+    /** 评论率 (百分比) */
     commentRate: number;
   };
 }
 
 /**
- * Analyze a single video's performance
- *
- * @param videoId - YouTube video ID
- * @returns Video data with engagement metrics
+ * 分析单个视频的表现
+ * 
+ * @param videoId YouTube 视频 ID
+ * @returns 视频数据和参与度指标
  */
 export async function analyzeVideo(videoId: string): Promise<VideoAnalysis> {
-  console.log('\n🎬 Analyzing video...');
+  console.log('\n🎬 正在分析视频...');
 
   const video = await getVideo(videoId, { save: false });
 
@@ -161,24 +180,24 @@ export async function analyzeVideo(videoId: string): Promise<VideoAnalysis> {
     },
   };
 
-  // Save with video title as filename
+  // 使用视频标题作为文件名保存
   saveResult(result, 'videos', 'video_analysis', video.title);
 
-  console.log('✅ Video analysis complete\n');
+  console.log('✅ 视频分析完成\n');
   return result;
 }
 
 /**
- * Search and analyze top videos for a keyword
- *
- * @param query - Search query
- * @param maxResults - Number of results (default 10)
- * @returns Search results with video stats
+ * 搜索并分析关键词的热门视频
+ * 
+ * @param query 搜索查询
+ * @param maxResults 结果数量（默认: 10）
+ * @returns 搜索结果和视频统计信息
  */
 export async function searchAndAnalyze(query: string, maxResults = 10) {
-  console.log(`\n🔍 Searching for "${query}"...`);
+  console.log(`\n🔍 正在搜索 "${query}"...`);
 
-  console.log('  → Searching videos...');
+  console.log('  → 搜索视频...');
   const searchResults = await searchVideos(query, { maxResults, save: false });
 
   const videoIds = searchResults.items
@@ -189,7 +208,7 @@ export async function searchAndAnalyze(query: string, maxResults = 10) {
     return { query, videos: [] };
   }
 
-  console.log(`  → Getting stats for ${videoIds.length} videos...`);
+  console.log(`  → 获取 ${videoIds.length} 个视频的统计信息...`);
   const videos = await getMultipleVideos(videoIds, { save: false });
 
   const result = {
@@ -208,35 +227,35 @@ export async function searchAndAnalyze(query: string, maxResults = 10) {
   const sanitizedQuery = query.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
   saveResult(result, 'search', 'search_analysis', sanitizedQuery);
 
-  console.log('✅ Search analysis complete\n');
+  console.log('✅ 搜索分析完成\n');
   return result;
 }
 
-// Print help when run directly
+// 直接运行时打印帮助信息
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   console.log(`
-YouTube Analytics Toolkit
+YouTube 分析工具包
 =========================
 
-Channel functions:
-  - getChannel(channelId)              Get channel details
-  - getChannelStats(channelId)         Get simplified stats (subscribers, views, videoCount)
-  - getMultipleChannels(channelIds)    Get multiple channels at once
-  - analyzeChannel(channelId)          Full channel analysis with recent videos
-  - compareChannels(channelIds)        Compare multiple channels
+频道函数:
+  - getChannel(channelId)              获取频道详情
+  - getChannelStats(channelId)         获取简化统计（订阅者、浏览量、视频数）
+  - getMultipleChannels(channelIds)    一次性获取多个频道
+  - analyzeChannel(channelId)          完整频道分析（含最近视频）
+  - compareChannels(channelIds)        比较多个频道
 
-Video functions:
-  - getVideo(videoId)                  Get video details
-  - getVideoStats(videoId)             Get simplified stats (views, likes, comments)
-  - getMultipleVideos(videoIds)        Get multiple videos at once
-  - getChannelVideos(channelId)        Get videos from a channel
-  - analyzeVideo(videoId)              Full video analysis with engagement metrics
+视频函数:
+  - getVideo(videoId)                  获取视频详情
+  - getVideoStats(videoId)             获取简化统计（浏览量、点赞、评论）
+  - getMultipleVideos(videoIds)        一次性获取多个视频
+  - getChannelVideos(channelId)        获取频道的视频列表
+  - analyzeVideo(videoId)              完整视频分析（含参与度指标）
 
-Search functions:
-  - searchVideos(query, options?)      Search for videos
-  - searchChannels(query, options?)    Search for channels
-  - searchAndAnalyze(query)            Search and get full stats
+搜索函数:
+  - searchVideos(query, options?)      搜索视频
+  - searchChannels(query, options?)    搜索频道
+  - searchAndAnalyze(query)            搜索并获取完整统计
 
-All results are automatically saved to /results directory.
+所有结果都会自动保存到 /results 目录。
 `);
 }

@@ -1,34 +1,34 @@
-# AgentMail API Reference
+# AgentMail API 参考
 
-Base URL: `https://api.agentmail.to/v0`
+基础 URL：`https://api.agentmail.to/v0`
 
-## Authentication
+## 身份验证
 
-All requests require Bearer token authentication:
+所有请求都需要 Bearer token 身份验证：
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-## Inboxes
+## 收件箱
 
-### Create Inbox
+### 创建收件箱
 
 ```http
 POST /v0/inboxes
 ```
 
-**Request:**
+**请求：**
 ```json
 {
-  "username": "my-agent",           // Optional: custom username
-  "domain": "agentmail.to",         // Optional: defaults to agentmail.to
-  "display_name": "My Agent",       // Optional: friendly name
-  "client_id": "unique-id"          // Optional: for idempotency
+  "username": "my-agent",           // 可选：自定义用户名
+  "domain": "agentmail.to",         // 可选：默认为 agentmail.to
+  "display_name": "My Agent",       // 可选：友好名称
+  "client_id": "unique-id"          // 可选：用于幂等性
 }
 ```
 
-**Response:**
+**响应：**
 ```json
 {
   "pod_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -40,13 +40,13 @@ POST /v0/inboxes
 }
 ```
 
-### List Inboxes
+### 列出收件箱
 
 ```http
 GET /v0/inboxes?limit=10&page_token=eyJwYWdlIjoxfQ==
 ```
 
-**Response:**
+**响应：**
 ```json
 {
   "count": 2,
@@ -56,43 +56,43 @@ GET /v0/inboxes?limit=10&page_token=eyJwYWdlIjoxfQ==
 }
 ```
 
-### Get Inbox
+### 获取收件箱
 
 ```http
 GET /v0/inboxes/{inbox_id}
 ```
 
-## Messages
+## 消息
 
-### Send Message
+### 发送消息
 
 ```http
 POST /v0/inboxes/{inbox_id}/messages
 ```
 
-**Request:**
+**请求：**
 ```json
 {
-  "to": ["recipient@example.com"],          // Required: string or array
-  "cc": ["cc@example.com"],                 // Optional: string or array
-  "bcc": ["bcc@example.com"],               // Optional: string or array
-  "reply_to": "reply@example.com",          // Optional: string or array
-  "subject": "Email subject",               // Optional: string
-  "text": "Plain text body",                 // Optional: string
-  "html": "<p>HTML body</p>",               // Optional: string
-  "labels": ["sent", "important"],          // Optional: array
-  "attachments": [{                         // Optional: array of objects
+  "to": ["recipient@example.com"],          // 必需：字符串或数组
+  "cc": ["cc@example.com"],                 // 可选：字符串或数组
+  "bcc": ["bcc@example.com"],               // 可选：字符串或数组
+  "reply_to": "reply@example.com",          // 可选：字符串或数组
+  "subject": "电子邮件主题",               // 可选：字符串
+  "text": "纯文本正文",                     // 可选：字符串
+  "html": "<p>HTML 正文</p>",               // 可选：字符串
+  "labels": ["sent", "important"],          // 可选：数组
+  "attachments": [{                         // 可选：对象数组
     "filename": "document.pdf",
-    "content": "base64-encoded-content",
+    "content": "base64编码内容",
     "content_type": "application/pdf"
   }],
-  "headers": {                              // Optional: custom headers
+  "headers": {                              // 可选：自定义标头
     "X-Custom-Header": "value"
   }
 }
 ```
 
-**Response:**
+**响应：**
 ```json
 {
   "message_id": "msg_123abc",
@@ -100,38 +100,38 @@ POST /v0/inboxes/{inbox_id}/messages
 }
 ```
 
-### List Messages
+### 列出消息
 
 ```http
 GET /v0/inboxes/{inbox_id}/messages?limit=10&page_token=token
 ```
 
-### Get Message
+### 获取消息
 
 ```http
 GET /v0/inboxes/{inbox_id}/messages/{message_id}
 ```
 
-## Threads
+## 会话
 
-### List Threads
+### 列出会话
 
 ```http
 GET /v0/inboxes/{inbox_id}/threads?limit=10
 ```
 
-### Get Thread
+### 获取会话
 
 ```http
 GET /v0/inboxes/{inbox_id}/threads/{thread_id}
 ```
 
-**Response:**
+**响应：**
 ```json
 {
   "thread_id": "thd_789ghi",
   "inbox_id": "support@example.com",
-  "subject": "Question about my account",
+  "subject": "关于我的账户的问题",
   "participants": ["jane@example.com", "support@example.com"],
   "labels": ["customer-support"],
   "message_count": 3,
@@ -141,52 +141,52 @@ GET /v0/inboxes/{inbox_id}/threads/{thread_id}
 }
 ```
 
-## Webhooks
+## Webhook
 
-### Create Webhook
+### 创建 Webhook
 
 ```http
 POST /v0/webhooks
 ```
 
-**Request:**
+**请求：**
 ```json
 {
   "url": "https://your-domain.com/webhook",
   "client_id": "webhook-identifier",
   "enabled": true,
-  "event_types": ["message.received"],      // Optional: defaults to all events
-  "inbox_ids": ["inbox1@domain.com"]        // Optional: filter by specific inboxes
+  "event_types": ["message.received"],      // 可选：默认为所有事件
+  "inbox_ids": ["inbox1@domain.com"]        // 可选：按特定收件箱筛选
 }
 ```
 
-### List Webhooks
+### 列出 Webhook
 
 ```http
 GET /v0/webhooks
 ```
 
-### Update Webhook
+### 更新 Webhook
 
 ```http
 PUT /v0/webhooks/{webhook_id}
 ```
 
-### Delete Webhook
+### 删除 Webhook
 
 ```http
 DELETE /v0/webhooks/{webhook_id}
 ```
 
-## Error Responses
+## 错误响应
 
-All errors follow this format:
+所有错误都遵循此格式：
 
 ```json
 {
   "error": {
     "type": "validation_error",
-    "message": "Invalid email address",
+    "message": "无效的电子邮件地址",
     "details": {
       "field": "to",
       "code": "INVALID_EMAIL"
@@ -195,23 +195,23 @@ All errors follow this format:
 }
 ```
 
-Common error codes:
-- `400` - Bad Request (validation errors)
-- `401` - Unauthorized (invalid API key)
-- `404` - Not Found (resource doesn't exist)
-- `429` - Too Many Requests (rate limited)
-- `500` - Internal Server Error
+常见错误代码：
+- `400` - 错误请求（验证错误）
+- `401` - 未经授权（无效的 API 密钥）
+- `404` - 未找到（资源不存在）
+- `429` - 请求过多（速率限制）
+- `500` - 内部服务器错误
 
-## Rate Limits
+## 速率限制
 
-AgentMail is designed for high-volume use with generous limits:
-- API requests: 1000/minute per API key
-- Email sending: 10,000/day (upgradeable)
-- Webhook deliveries: Real-time, no limits
+AgentMail 专为高容量使用而设计，限制宽松：
+- API 请求：每个 API 密钥每分钟 1000 次
+- 电子邮件发送：每天 10,000 封（可升级）
+- Webhook 传递：实时，无限制
 
 ## Python SDK
 
-The Python SDK provides a convenient wrapper around the REST API:
+Python SDK 提供了对 REST API 的便捷包装：
 
 ```python
 from agentmail import AgentMail
@@ -219,12 +219,12 @@ import os
 
 client = AgentMail(api_key=os.getenv("AGENTMAIL_API_KEY"))
 
-# All operations return structured objects
+# 所有操作都返回结构化对象
 inbox = client.inboxes.create(username="my-agent")
 message = client.inboxes.messages.send(
     inbox_id=inbox.inbox_id,
     to="user@example.com",
-    subject="Hello",
-    text="Message body"
+    subject="您好",
+    text="消息正文"
 )
 ```

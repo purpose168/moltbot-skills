@@ -1,9 +1,20 @@
-"""DataForSEO Labs API - Keyword research, suggestions, difficulty, and competitive analysis."""
+"""DataForSEO Labs API - 关键词研究、建议、难度和竞争分析。
+
+此模块提供与 DataForSEO Labs API 的交互。
+用于获取高级关键词分析数据，包括：
+- 关键词建议和创意
+- 关键词难度评分
+- 搜索意图分类
+- 相关关键词
+- 历史搜索量
+- 竞争对手分析
+"""
+
 import sys
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-# Add parent directory to path for imports
+# 将父目录添加到导入路径
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dataforseo_client.rest import ApiException
@@ -21,20 +32,31 @@ def get_keyword_overview(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get comprehensive keyword data including search volume, CPC, competition, and search intent.
+    获取综合关键词数据，包括搜索量、CPC、竞争度和搜索意图。
 
-    Args:
-        keywords: List of keywords (max 700)
-        location_name: Target location
-        language_name: Target language
-        include_serp_info: Include SERP features data
-        save: Whether to save results
+    此函数是关键词分析的核心，返回关键词的综合指标。
 
-    Returns:
-        Dict containing comprehensive keyword metrics
+    参数:
+        keywords: 关键词列表（最多 700 个）
+        location_name: 目标位置
+        language_name: 目标语言
+        include_serp_info: 包含 SERP 功能数据
+        save: 是否保存结果
 
-    Example:
-        >>> result = get_keyword_overview(["best python courses", "python for beginners"])
+    返回:
+        包含综合关键词指标的字典
+
+    数据字段:
+        - keyword: 关键词
+        - search_volume: 月均搜索量
+        - cpc: 每次点击成本（美元）
+        - competition: 竞争度指数
+        - keyword_difficulty: 关键词难度 (0-100)
+        - search_intent: 搜索意图
+        - serp_features: SERP 功能列表
+
+    示例:
+        >>> result = get_keyword_overview(["最佳 python 课程", "python 入门"])
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -62,7 +84,7 @@ def get_keyword_overview(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -76,24 +98,26 @@ def get_keyword_suggestions(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get keyword suggestions based on a seed keyword.
+    基于种子关键词获取关键词建议。
 
-    Suggestions match the seed with additional words before, after, or within the phrase.
+    建议会在种子关键词的前后或中间添加额外的词，
+    形成长尾关键词变体。
 
-    Args:
-        keyword: Seed keyword (min 3 characters)
-        location_name: Target location
-        language_name: Target language
-        include_seed_keyword: Include metrics for the seed keyword
-        include_serp_info: Include SERP data for each keyword
-        limit: Maximum results (max 1000)
-        save: Whether to save results
+    参数:
+        keyword: 种子关键词（最少 3 个字符）
+        location_name: 目标位置
+        language_name: 目标语言
+        include_seed_keyword: 包含种子关键词的指标
+        include_serp_info: 包含每个关键词的 SERP 数据
+        limit: 最大结果数（最多 1000 个）
+        save: 是否保存结果
 
-    Returns:
-        Dict containing keyword suggestions with metrics
+    返回:
+        包含带指标的关键词建议的字典
 
-    Example:
-        >>> result = get_keyword_suggestions("python tutorial")
+    示例:
+        >>> result = get_keyword_suggestions("python 教程")
+        >>> # 返回: "免费 python 教程", "python 教程下载" 等
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -123,7 +147,7 @@ def get_keyword_suggestions(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -137,25 +161,26 @@ def get_keyword_ideas(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get keyword ideas that fall into the same category as seed keywords.
+    获取与种子关键词属于同一类别的关键词创意。
 
-    Goes beyond semantic similarity to suggest relevant keywords by mapping
-    seed terms against category taxonomies.
+    此函数超越语义相似性，通过将种子词与类别分类法
+    进行映射来建议相关关键词。
 
-    Args:
-        keywords: Seed keywords (max 200)
-        location_name: Target location
-        language_name: Target language
-        include_serp_info: Include SERP data
-        closely_variants: Use phrase-match (True) vs broad-match (False)
-        limit: Maximum results (max 1000)
-        save: Whether to save results
+    参数:
+        keywords: 种子关键词列表（最多 200 个）
+        location_name: 目标位置
+        language_name: 目标语言
+        include_serp_info: 包含 SERP 数据
+        closely_variants: 短语匹配 (True) vs 广泛匹配 (False)
+        limit: 最大结果数（最多 1000 个）
+        save: 是否保存结果
 
-    Returns:
-        Dict containing keyword ideas with metrics
+    返回:
+        包含带指标的关键词创意的字典
 
-    Example:
-        >>> result = get_keyword_ideas(["youtube marketing", "video seo"])
+    示例:
+        >>> result = get_keyword_ideas(["youtube 营销", "视频 seo"])
+        >>> # 获取同一类别的相关关键词
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -185,7 +210,7 @@ def get_keyword_ideas(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -200,25 +225,30 @@ def get_related_keywords(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get related keywords from Google's "searches related to" feature.
+    从 Google 的"相关搜索"功能获取相关关键词。
 
-    Uses depth-first search algorithm on SERP "related searches" element.
+    使用深度优先搜索算法分析 SERP "相关搜索"元素。
 
-    Args:
-        keyword: Seed keyword
-        location_name: Target location
-        language_name: Target language
-        depth: Search depth 0-4 (0=seed only, 4=max ~4680 results)
-        include_seed_keyword: Include seed keyword metrics
-        include_serp_info: Include SERP data
-        limit: Maximum results (max 1000)
-        save: Whether to save results
+    参数:
+        keyword: 种子关键词
+        location_name: 目标位置
+        language_name: 目标语言
+        depth: 搜索深度 0-4
+            - 0: 仅种子关键词
+            - 1: 直接相关
+            - 2: 二级相关（最多约 200 个结果）
+            - 3: 三级相关（最多约 1000 个结果）
+            - 4: 最大深度（最多约 4680 个结果）
+        include_seed_keyword: 包含种子关键词指标
+        include_serp_info: 包含 SERP 数据
+        limit: 最大结果数（最多 1000 个）
+        save: 是否保存结果
 
-    Returns:
-        Dict containing related keywords with metrics
+    返回:
+        包含带指标的相关关键词的字典
 
-    Example:
-        >>> result = get_related_keywords("video editing software", depth=2)
+    示例:
+        >>> result = get_related_keywords("视频编辑软件", depth=2)
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -249,7 +279,7 @@ def get_related_keywords(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -260,21 +290,29 @@ def get_bulk_keyword_difficulty(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get keyword difficulty scores for multiple keywords.
+    获取多个关键词的难度分数。
 
-    Difficulty score (0-100) indicates how hard it is to rank in top-10 organic results.
+    难度分数 (0-100) 表示在自然搜索结果前 10 名中
+    排名的难易程度。
 
-    Args:
-        keywords: List of keywords (max 1000)
-        location_name: Target location
-        language_name: Target language
-        save: Whether to save results
+    参数:
+        keywords: 关键词列表（最多 1000 个）
+        location_name: 目标位置
+        language_name: 目标语言
+        save: 是否保存结果
 
-    Returns:
-        Dict containing keyword difficulty scores
+    返回:
+        包含关键词难度分数的字典
 
-    Example:
-        >>> result = get_bulk_keyword_difficulty(["seo tools", "keyword research"])
+    难度等级:
+        - 0-20: 容易
+        - 21-40: 中等
+        - 41-60: 较难
+        - 61-80: 困难
+        - 81-100: 非常困难
+
+    示例:
+        >>> result = get_bulk_keyword_difficulty(["seo 工具", "关键词研究"])
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -301,7 +339,7 @@ def get_bulk_keyword_difficulty(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -313,22 +351,30 @@ def get_historical_search_volume(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get historical search volume and trend data for keywords.
+    获取关键词的历史搜索量和趋势数据。
 
-    Returns monthly search volume data since 2019.
+    返回自 2019 年以来的月度搜索量数据，
+    可用于分析季节性趋势和搜索量变化。
 
-    Args:
-        keywords: List of keywords (max 700)
-        location_name: Target location
-        language_name: Target language
-        include_serp_info: Include SERP features
-        save: Whether to save results
+    参数:
+        keywords: 关键词列表（最多 700 个）
+        location_name: 目标位置
+        language_name: 目标语言
+        include_serp_info: 包含 SERP 功能
+        save: 是否保存结果
 
-    Returns:
-        Dict containing historical search volume with monthly breakdowns
+    返回:
+        包含历史搜索量和月度细分的字典
 
-    Example:
-        >>> result = get_historical_search_volume(["ai tools", "chatgpt"])
+    数据字段:
+        - keyword: 关键词
+        - monthly_searches: 月度搜索量数组
+        - year: 年份
+        - month: 月份
+        - search_volume: 该月搜索量
+
+    示例:
+        >>> result = get_historical_search_volume(["ai 工具", "chatgpt"])
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -356,7 +402,7 @@ def get_historical_search_volume(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -367,21 +413,26 @@ def get_search_intent(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get search intent classification for keywords.
+    获取关键词的搜索意图分类。
 
-    Classifies keywords as informational, navigational, transactional, or commercial.
+    将关键词分类为以下类型：
+    - 信息性 (Informational): 用户寻求信息或答案
+    - 导航性 (Navigational): 用户寻找特定网站或品牌
+    - 交易性 (Transactional): 用户有意进行购买
+    - 商业调查 (Commercial): 用户比较不同选项
 
-    Args:
-        keywords: List of keywords (max 1000)
-        location_name: Target location
-        language_name: Target language
-        save: Whether to save results
+    参数:
+        keywords: 关键词列表（最多 1000 个）
+        location_name: 目标位置
+        language_name: 目标语言
+        save: 是否保存结果
 
-    Returns:
-        Dict containing search intent classifications
+    返回:
+        包含搜索意图分类的字典
 
-    Example:
-        >>> result = get_search_intent(["buy python course", "what is python"])
+    示例:
+        >>> result = get_search_intent(["购买 python 课程", "什么是 python"])
+        >>> # 返回: ["transactional", "informational"]
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -408,7 +459,7 @@ def get_search_intent(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -420,20 +471,28 @@ def get_domain_keywords(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Get keywords that a domain ranks for in organic search.
+    获取域名在自然搜索中排名的关键词。
 
-    Args:
-        target_domain: Domain to analyze (e.g., "example.com")
-        location_name: Target location
-        language_name: Target language
-        limit: Maximum results
-        save: Whether to save results
+    参数:
+        target_domain: 要分析的域名（例如 "example.com"）
+        location_name: 目标位置
+        language_name: 目标语言
+        limit: 最大结果数
+        save: 是否保存结果
 
-    Returns:
-        Dict containing keywords the domain ranks for
+    返回:
+        包含域名排名关键词的字典
 
-    Example:
-        >>> result = get_domain_keywords("competitor.com")
+    数据字段:
+        - keyword: 关键词
+        - rank: 排名位置
+        - previous_rank: 上一期排名
+        - change: 排名变化
+        - traffic: 预估流量
+        - keyword_difficulty: 关键词难度
+
+    示例:
+        >>> result = get_domain_keywords("竞争对手.com")
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -460,7 +519,7 @@ def get_domain_keywords(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise
 
 
@@ -472,20 +531,27 @@ def get_competitors(
     save: bool = True
 ) -> Dict[str, Any]:
     """
-    Find domains that compete for the same keywords.
+    查找为相同关键词竞争的域名。
 
-    Args:
-        keywords: Keywords to find competitors for
-        location_name: Target location
-        language_name: Target language
-        limit: Maximum competitors to return
-        save: Whether to save results
+    分析关键词在搜索结果中的排名域名，找出主要竞争对手。
 
-    Returns:
-        Dict containing competitor domains and their metrics
+    参数:
+        keywords: 要查找竞争对手的关键词
+        location_name: 目标位置
+        language_name: 目标语言
+        limit: 返回的最大竞争对手数
+        save: 是否保存结果
 
-    Example:
-        >>> result = get_competitors(["video editing software", "best video editor"])
+    返回:
+        包含竞争对手域名及其指标的字典
+
+    数据字段:
+        - domain: 竞争对手域名
+        - common_keywords: 共同关键词数
+        - overlap_score: 重叠分数
+
+    示例:
+        >>> result = get_competitors(["视频编辑软件", "最佳视频编辑器"])
     """
     client = get_client()
     location = location_name or settings.DEFAULT_LOCATION_NAME
@@ -513,5 +579,5 @@ def get_competitors(
         return result
 
     except ApiException as e:
-        print(f"API Exception: {e}")
+        print(f"API 异常: {e}")
         raise

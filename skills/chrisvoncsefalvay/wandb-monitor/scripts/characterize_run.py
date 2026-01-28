@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """
-Characterize a W&B training run.
+特征化 W&B 训练运行。
 
-Usage:
+对 W&B 训练运行进行全面的健康分析和特征提取。
+
+用法:
     characterize_run.py ENTITY/PROJECT/RUN_ID
-    characterize_run.py PROJECT/RUN_ID          # uses default entity
+    characterize_run.py PROJECT/RUN_ID          # 使用默认实体
     characterize_run.py RUN_ID --project PROJECT [--entity ENTITY]
 
-Analyzes:
-    - Loss curve trend
-    - Gradient norm health
-    - Eval metrics (if present)
-    - System metrics (GPU temp/util)
-    - Stall detection
-    - Progress estimation
+分析内容:
+    - 损失曲线趋势分析
+    - 梯度范数健康检查
+    - 评估指标提取（如果存在）
+    - 系统指标（GPU 温度/利用率）
+    - 停滞检测
+    - 进度估计
 """
 
 import argparse
@@ -25,7 +27,16 @@ import wandb
 
 
 def get_metric(row: dict, *keys: str) -> Optional[float]:
-    """Get first available metric from a list of possible key names."""
+    """
+    从可能的键名列表中获取第一个可用的指标值。
+    
+    参数:
+        row: 包含指标数据的字典
+        keys: 要尝试的键名列表，按优先级排序
+    
+    返回:
+        找到的指标值，如果都未找到则返回 None
+    """
     for key in keys:
         if key in row and row[key] is not None:
             return row[key]
@@ -33,7 +44,23 @@ def get_metric(row: dict, *keys: str) -> Optional[float]:
 
 
 def analyze_loss(history: list[dict]) -> dict:
-    """Analyze loss curve from training history."""
+    """
+    分析训练历史中的损失曲线。
+    
+    参数:
+        history: 包含训练历史记录的字典列表
+    
+    返回:
+        包含损失分析结果的字典，包括：
+        - status: 分析状态 ("ok" 或 "no_data")
+        - count: 损失值数量
+        - start: 初始损失值
+        - current: 当前损失值
+        - min/max: 最小/最大损失值
+        - pct_change: 百分比变化
+        - decreasing: 是否在下降
+        - recent: 最近 10 个损失值
+    """
     losses = []
     for row in history:
         loss = get_metric(row, "train/loss", "loss", "train_loss", "training_loss")
@@ -52,7 +79,7 @@ def analyze_loss(history: list[dict]) -> dict:
         "max": max(losses),
     }
     
-    # Trend analysis
+    # 趋势分析
     if len(losses) >= 10:
         first_10 = sum(losses[:10]) / 10
         last_10 = sum(losses[-10:]) / 10
@@ -70,7 +97,20 @@ def analyze_loss(history: list[dict]) -> dict:
 
 
 def analyze_gradients(history: list[dict]) -> dict:
-    """Analyze gradient norms for health issues."""
+    """
+    分析梯度范数以检测健康问题。
+    
+    参数:
+        history: 包含训练历史记录的字典列表
+    
+    返回:
+        包含梯度分析结果的字典，包括：
+        - status: 分析状态
+        - count: 梯度样本数量
+        - mean/min/max/current: 梯度统计值
+        - health: 健康状态 ("healthy", "exploding", "spiky", "vanishing")
+        - health_msg: 健康状态描述消息
+    """
     grads = []
     for row in history:
         grad = get_metric(row, "train/grad_norm", "grad_norm", "gradient_norm")
@@ -89,25 +129,36 @@ def analyze_gradients(history: list[dict]) -> dict:
         "current": grads[-1],
     }
     
-    # Health check
+    # 健康检查
     if max(grads) > 10:
         result["health"] = "exploding"
-        result["health_msg"] = f"⚠️ EXPLODING - max grad norm {max(grads):.2f} > 10"
+        result["health_msg"] = f"⚠️ 爆炸 - 最大梯度范数 {max(grads):.2f} > 10"
     elif max(grads) > 5:
         result["health"] = "spiky"
-        result["health_msg"] = f"⚠️ SPIKY - max grad norm {max(grads):.2f}, possible instability"
+        result["health_msg"] = f"⚠️ 波动 - 最大梯度范数 {max(grads):.2f}，可能存在不稳定性"
     elif result["mean"] < 0.0001:
         result["health"] = "vanishing"
-        result["health_msg"] = f"⚠️ VANISHING - mean grad norm {result['mean']:.6f}"
+        result["health_msg"] = f"⚠️ 消失 - 平均梯度范数 {result['mean']:.6f}"
     else:
         result["health"] = "healthy"
-        result["health_msg"] = f"✅ Healthy (range {min(grads):.4f} - {max(grads):.4f})"
+        result["health_msg"] = f"✅ 健康（范围 {min(grads):.4f} - {max(grads):.4f}）"
     
     return result
 
 
 def analyze_evals(history: list[dict]) -> dict:
-    """Extract eval metrics if present."""
+    """
+    提取评估指标（如果存在）。
+    
+    参数:
+        history: 包含训练历史记录的字典列表
+    
+    返回:
+        包含评估指标分析结果的字典，包括：
+        - status: 分析状态
+        - loss: 损失指标（current, best, count, recent）
+        - accuracy: 准确率指标（current, best, count, recent）
+    """
     eval_losses = []
     eval_accs = []
     
@@ -144,9 +195,21 @@ def analyze_evals(history: list[dict]) -> dict:
 
 
 def check_stall(run) -> dict:
-    """Check if run appears stalled."""
+    """
+    检查运行是否停滞。
+    
+    参数:
+        run: W&B 运行对象
+    
+    返回:
+        包含停滞检查结果的字典，包括：
+        - status: 状态 ("ok", "stalled", "warning", "unknown")
+        - heartbeat_at: 心跳记录时间
+        - mins_since: 距离上次心跳的分钟数
+        - msg: 状态描述消息
+    """
     if not run.heartbeat_at:
-        return {"status": "unknown", "msg": "No heartbeat recorded"}
+        return {"status": "unknown", "msg": "无心跳记录"}
     
     hb = datetime.fromisoformat(run.heartbeat_at.replace("Z", "+00:00"))
     now = datetime.now(timezone.utc)
@@ -160,21 +223,35 @@ def check_stall(run) -> dict:
     
     if mins_since > 30:
         result["status"] = "stalled"
-        result["msg"] = f"🚨 STALLED - no heartbeat in {mins_since:.0f} minutes"
+        result["msg"] = f"🚨 停滞 - {mins_since:.0f} 分钟无心跳"
     elif mins_since > 10:
         result["status"] = "warning"
-        result["msg"] = f"⚠️ Slow heartbeat - {mins_since:.1f} minutes ago"
+        result["msg"] = f"⚠️ 心跳缓慢 - {mins_since:.1f} 分钟前"
     else:
-        result["msg"] = f"✅ Active (heartbeat {mins_since:.1f}m ago)"
+        result["msg"] = f"✅ 活跃（{mins_since:.1f}分钟前心跳）"
     
     return result
 
 
 def get_progress(run, history: list[dict]) -> dict:
-    """Get training progress and estimate completion."""
+    """
+    获取训练进度并估计完成时间。
+    
+    参数:
+        run: W&B 运行对象
+        history: 包含训练历史记录的字典列表
+    
+    返回:
+        包含进度信息的字典，包括：
+        - epoch/step: 当前轮次/步数
+        - runtime_hours: 运行时间（小时）
+        - total_epochs/max_steps: 总轮次/最大步数
+        - epoch_progress_pct/step_progress_pct: 进度百分比
+        - est_total_hours/est_remaining_hours: 预计总时间/剩余时间
+    """
     result = {}
     
-    # Get epoch/step from history or summary
+    # 从历史记录或摘要获取轮次/步数
     summary = run.summary._json_dict
     
     epoch = get_metric(summary, "train/epoch", "epoch")
@@ -185,11 +262,11 @@ def get_progress(run, history: list[dict]) -> dict:
     if step is not None:
         result["step"] = int(step)
     
-    # Runtime
+    # 运行时间
     runtime = summary.get("_runtime", 0)
     result["runtime_hours"] = runtime / 3600
     
-    # Try to estimate completion
+    # 尝试估计完成时间
     config = run.config
     total_epochs = config.get("num_train_epochs", config.get("num_epochs"))
     max_steps = config.get("max_steps", -1)
@@ -210,75 +287,85 @@ def get_progress(run, history: list[dict]) -> dict:
 
 
 def print_report(run, loss: dict, grads: dict, evals: dict, stall: dict, progress: dict):
-    """Print the full characterization report."""
+    """
+    打印完整的特征化报告。
+    
+    参数:
+        run: W&B 运行对象
+        loss: 损失分析结果
+        grads: 梯度分析结果
+        evals: 评估指标分析结果
+        stall: 停滞检查结果
+        progress: 进度信息
+    """
     state_emoji = {"running": "🟢", "finished": "✅", "failed": "🔴", "crashed": "💀", "canceled": "⏹️"}
     
     print(f"\n{'='*70}")
     print(f"{state_emoji.get(run.state, '❓')} {run.project}/{run.name}")
     print(f"{'='*70}")
-    print(f"   State: {run.state.upper()}")
+    print(f"   状态: {run.state.upper()}")
     print(f"   ID: {run.id}")
-    print(f"   Started: {run.created_at}")
+    print(f"   开始时间: {run.created_at}")
     
-    # Stall check
-    print(f"\n🔄 HEARTBEAT")
+    # 停滞检查
+    print(f"\n🔄 心跳")
     print(f"   {stall['msg']}")
     
-    # Progress
-    print(f"\n⏱️ PROGRESS")
-    print(f"   Runtime: {progress.get('runtime_hours', 0):.2f}h")
+    # 进度
+    print(f"\n⏱️ 进度")
+    print(f"   运行时间: {progress.get('runtime_hours', 0):.2f}小时")
     if "epoch" in progress:
-        epoch_str = f"Epoch: {progress['epoch']:.2f}"
+        epoch_str = f"轮次: {progress['epoch']:.2f}"
         if "total_epochs" in progress:
             epoch_str += f" / {progress['total_epochs']} ({progress['epoch_progress_pct']:.1f}%)"
         print(f"   {epoch_str}")
     if "step" in progress:
-        step_str = f"Step: {progress['step']}"
+        step_str = f"步数: {progress['step']}"
         if "max_steps" in progress:
             step_str += f" / {progress['max_steps']} ({progress['step_progress_pct']:.1f}%)"
         print(f"   {step_str}")
     if "est_remaining_hours" in progress:
-        print(f"   Est. remaining: {progress['est_remaining_hours']:.1f}h")
+        print(f"   预计剩余: {progress['est_remaining_hours']:.1f}小时")
     
-    # Loss
-    print(f"\n📉 LOSS CURVE")
+    # 损失
+    print(f"\n📉 损失曲线")
     if loss["status"] == "no_data":
-        print("   No loss data logged")
+        print("   无损失数据记录")
     else:
-        print(f"   Samples: {loss['count']}")
-        print(f"   Start: {loss['start']:.4f} → Current: {loss['current']:.4f}")
-        print(f"   Min: {loss['min']:.4f} | Max: {loss['max']:.4f}")
+        print(f"   样本数: {loss['count']}")
+        print(f"   开始: {loss['start']:.4f} → 当前: {loss['current']:.4f}")
+        print(f"   最小: {loss['min']:.4f} | 最大: {loss['max']:.4f}")
         if "pct_change" in loss:
             direction = "📉" if loss.get("decreasing") else "📈"
             status = "✅" if loss.get("decreasing") else "⚠️"
-            print(f"   {status} Change: {loss['pct_change']:+.1f}% {direction}")
+            print(f"   {status} 变化: {loss['pct_change']:+.1f}% {direction}")
         if "recent" in loss:
             recent_str = " → ".join([f"{l:.4f}" for l in loss["recent"][-5:]])
-            print(f"   Recent: {recent_str}")
+            print(f"   最近: {recent_str}")
     
-    # Gradients
-    print(f"\n📊 GRADIENT NORM")
+    # 梯度
+    print(f"\n📊 梯度范数")
     if grads["status"] == "no_data":
-        print("   No gradient data logged")
+        print("   无梯度数据记录")
     else:
         print(f"   {grads['health_msg']}")
-        print(f"   Mean: {grads['mean']:.4f} | Current: {grads['current']:.4f}")
-        print(f"   Range: {grads['min']:.4f} - {grads['max']:.4f}")
+        print(f"   平均值: {grads['mean']:.4f} | 当前: {grads['current']:.4f}")
+        print(f"   范围: {grads['min']:.4f} - {grads['max']:.4f}")
     
-    # Evals
-    print(f"\n🎯 EVAL METRICS")
+    # 评估指标
+    print(f"\n🎯 评估指标")
     if evals["status"] == "no_data":
-        print("   No eval metrics logged (yet)")
+        print("   无评估指标记录（尚未）")
     else:
         if "loss" in evals:
             el = evals["loss"]
-            print(f"   Eval Loss: {el['current']:.4f} (best: {el['best']:.4f}, n={el['count']})")
+            print(f"   评估损失: {el['current']:.4f}（最佳: {el['best']:.4f}，n={el['count']}）")
         if "accuracy" in evals:
             ea = evals["accuracy"]
-            print(f"   Eval Acc: {ea['current']:.4f} (best: {ea['best']:.4f}, n={ea['count']})")
+            print(f"   评估准确率: {ea['current']:.4f}（最佳: {ea['best']:.4f}，n={ea['count']}）")
     
-    # Config highlights
-    print(f"\n⚙️ CONFIG")
+    # 配置亮点
+    print(f"\n⚙️ 配置")
     config = run.config
     config_keys = [
         "model_name", "model_name_or_path", "base_model",
@@ -295,20 +382,20 @@ def print_report(run, loss: dict, grads: dict, evals: dict, stall: dict, progres
             print(f"   {key}: {config[key]}")
             shown += 1
     
-    # Overall assessment
+    # 整体评估
     print(f"\n{'='*70}")
-    print("📋 SUMMARY")
+    print("📋 摘要")
     
     issues = []
     if stall["status"] == "stalled":
-        issues.append("Run appears stalled")
+        issues.append("运行似乎已停滞")
     if grads["status"] == "ok" and grads["health"] != "healthy":
-        issues.append(f"Gradient issues ({grads['health']})")
+        issues.append(f"梯度问题 ({grads['health']})")
     if loss["status"] == "ok" and not loss.get("decreasing", True):
-        issues.append("Loss not decreasing")
+        issues.append("损失未下降")
     
     if not issues:
-        print("   ✅ Run looks healthy")
+        print("   ✅ 运行看起来健康")
     else:
         for issue in issues:
             print(f"   ⚠️ {issue}")
@@ -317,14 +404,15 @@ def print_report(run, loss: dict, grads: dict, evals: dict, stall: dict, progres
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Characterize a W&B training run")
-    parser.add_argument("run_path", help="Run path: ENTITY/PROJECT/RUN_ID or PROJECT/RUN_ID or RUN_ID")
-    parser.add_argument("--project", "-p", help="Project name (if not in run_path)")
-    parser.add_argument("--entity", "-e", help="Entity name (if not in run_path)")
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    """主函数：解析参数并执行运行特征化分析。"""
+    parser = argparse.ArgumentParser(description="特征化 W&B 训练运行")
+    parser.add_argument("run_path", help="运行路径: ENTITY/PROJECT/RUN_ID 或 PROJECT/RUN_ID 或 RUN_ID")
+    parser.add_argument("--project", "-p", help="项目名称（如果不在 run_path 中）")
+    parser.add_argument("--entity", "-e", help="实体名称（如果不在 run_path 中）")
+    parser.add_argument("--json", action="store_true", help="以 JSON 格式输出")
     args = parser.parse_args()
     
-    # Parse run path
+    # 解析运行路径
     parts = args.run_path.split("/")
     if len(parts) == 3:
         entity, project, run_id = parts
@@ -336,31 +424,31 @@ def main():
         project = args.project
         run_id = parts[0]
     else:
-        print(f"Invalid run path: {args.run_path}", file=sys.stderr)
+        print(f"无效的运行路径: {args.run_path}", file=sys.stderr)
         sys.exit(1)
     
     if not project:
-        print("Project required. Use ENTITY/PROJECT/RUN_ID or --project", file=sys.stderr)
+        print("需要指定项目。使用 ENTITY/PROJECT/RUN_ID 或 --project", file=sys.stderr)
         sys.exit(1)
     
-    # Build full path
+    # 构建完整路径
     if entity:
         full_path = f"{entity}/{project}/{run_id}"
     else:
         full_path = f"{project}/{run_id}"
     
-    # Fetch run
+    # 获取运行数据
     api = wandb.Api()
     try:
         run = api.run(full_path)
     except wandb.errors.CommError as e:
-        print(f"Error fetching run: {e}", file=sys.stderr)
+        print(f"获取运行时出错: {e}", file=sys.stderr)
         sys.exit(1)
     
-    # Fetch history
+    # 获取历史记录
     history = list(run.scan_history())
     
-    # Analyze
+    # 执行分析
     loss = analyze_loss(history)
     grads = analyze_gradients(history)
     evals = analyze_evals(history)

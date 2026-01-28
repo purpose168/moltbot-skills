@@ -1,37 +1,37 @@
 ---
 name: openssl
-description: Generate secure random strings, passwords, and cryptographic tokens using OpenSSL. Use when creating passwords, API keys, secrets, or any secure random data.
+description: 使用 OpenSSL 生成安全随机字符串、密码和加密令牌。适用于创建密码、API 密钥、密钥或任何安全随机数据。
 ---
 
-# OpenSSL Secure Generation
+# OpenSSL 安全生成
 
-Generate cryptographically secure random data using `openssl rand`.
+使用 `openssl rand` 生成加密安全的随机数据。
 
-## Password/Secret Generation
+## 密码/密钥生成
 
 ```bash
-# 32 random bytes as base64 (43 chars, URL-safe with tr)
+# 32 字节随机数据转为 base64（43 个字符，使用 tr 可转为 URL 安全格式）
 openssl rand -base64 32 | tr '+/' '-_' | tr -d '='
 
-# 24 random bytes as hex (48 chars)
+# 24 字节随机数据转为十六进制（48 个字符）
 openssl rand -hex 24
 
-# alphanumeric password (32 chars)
+# 字母数字密码（32 个字符）
 openssl rand -base64 48 | tr -dc 'a-zA-Z0-9' | head -c 32
 ```
 
-## Common Lengths
+## 常用长度
 
-| Use Case | Command |
+| 用途 | 命令 |
 |----------|---------|
-| Password (strong) | `openssl rand -base64 24` |
-| API key | `openssl rand -hex 32` |
-| Session token | `openssl rand -base64 48` |
-| Short PIN (8 digits) | `openssl rand -hex 4 | xxd -r -p | od -An -tu4 | tr -d ' ' | head -c 8` |
+| 密码（强） | `openssl rand -base64 24` |
+| API 密钥 | `openssl rand -hex 32` |
+| 会话令牌 | `openssl rand -base64 48` |
+| 短 PIN（8 位数字） | `openssl rand -hex 4 | xxd -r -p | od -An -tu4 | tr -d ' ' | head -c 8` |
 
-## Notes
+## 注意事项
 
-- `-base64` outputs ~1.33x the byte count in characters
-- `-hex` outputs 2x the byte count in characters
-- Pipe through `tr -dc` to filter character sets
-- Always use at least 16 bytes (128 bits) for secrets
+- `-base64` 输出的字符数约为字节数的 1.33 倍
+- `-hex` 输出的字符数为字节数的 2 倍
+- 通过管道传输到 `tr -dc` 来过滤字符集
+- 密钥至少使用 16 字节（128 位）

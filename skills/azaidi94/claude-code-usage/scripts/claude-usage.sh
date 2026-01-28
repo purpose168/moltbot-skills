@@ -1,13 +1,15 @@
 #!/bin/bash
-# Claude Code Usage Checker
-# Queries Anthropic OAuth API for Claude Code rate limits
+# Claude Code 使用情况检查脚本
+# 查询 Anthropic OAuth API 获取 Claude Code 速率限制
 
 set -euo pipefail
 
+# 缓存文件路径（默认: /tmp/claude-usage-cache）
 CACHE_FILE="${CACHE_FILE:-/tmp/claude-usage-cache}"
-CACHE_TTL="${CACHE_TTL:-60}"  # 1 minute default
+# 缓存 TTL（默认: 60 秒 = 1 分钟）
+CACHE_TTL="${CACHE_TTL:-60}"
 
-# Parse arguments
+# 解析参数
 FORCE_REFRESH=0
 FORMAT="text"
 
@@ -27,31 +29,31 @@ while [[ $# -gt 0 ]]; do
       ;;
     --help|-h)
       cat << 'EOF'
-Usage: claude-usage.sh [OPTIONS]
+用法: claude-usage.sh [选项]
 
-Check Claude Code OAuth usage limits (session & weekly).
+检查 Claude Code OAuth 使用限制（会话和每周）。
 
-Options:
-  --fresh, --force    Force refresh (ignore cache)
-  --json              Output as JSON
-  --cache-ttl SEC     Cache TTL in seconds (default: 60)
-  --help, -h          Show this help
+选项:
+  --fresh, --force    强制刷新（忽略缓存）
+  --json              输出为 JSON 格式
+  --cache-ttl SEC     缓存 TTL（秒），默认: 60
+  --help, -h          显示此帮助信息
 
-Examples:
-  claude-usage.sh                    # Use cache if fresh
-  claude-usage.sh --fresh            # Force API call
-  claude-usage.sh --json             # JSON output
+示例:
+  claude-usage.sh                    # 如果缓存新鲜则使用缓存
+  claude-usage.sh --fresh            # 强制调用 API
+  claude-usage.sh --json             # JSON 输出
 EOF
       exit 0
       ;;
     *)
-      echo "Unknown option: $1" >&2
+      echo "未知选项: $1" >&2
       exit 1
       ;;
   esac
 done
 
-# Function to convert seconds to human readable
+# 函数：将秒数转换为人类可读格式
 secs_to_human() {
   local secs=$1
   if [ "$secs" -lt 0 ]; then secs=0; fi
@@ -60,37 +62,37 @@ secs_to_human() {
   local mins=$(((secs % 3600) / 60))
 
   if [ "$days" -gt 0 ]; then
-    echo "${days}d ${hours}h"
+    echo "${days}天 ${hours}小时"
   elif [ "$hours" -gt 0 ]; then
-    echo "${hours}h ${mins}m"
+    echo "${hours}小时 ${mins}分钟"
   else
-    echo "${mins}m"
+    echo "${mins}分钟"
   fi
 }
 
-# Check cache (unless force refresh)
+# 检查缓存（除非强制刷新）
 if [ "$FORCE_REFRESH" -eq 0 ] && [ -f "$CACHE_FILE" ]; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
     age=$(($(date +%s) - $(stat -f%m "$CACHE_FILE")))
   else
     age=$(($(date +%s) - $(stat -c%Y "$CACHE_FILE")))
   fi
-  
+
   if [ "$age" -lt "$CACHE_TTL" ]; then
     cat "$CACHE_FILE"
     exit 0
   fi
 fi
 
-# Get OAuth token from keychain (macOS)
+# 从钥匙串获取 OAuth 令牌（macOS）
 if [[ "$OSTYPE" == "darwin"* ]]; then
   CREDS=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null || echo "")
 else
-  # Linux: check common credential stores
+  # Linux: 检查常见的凭据存储
   if command -v secret-tool >/dev/null 2>&1; then
     CREDS=$(secret-tool lookup application "Claude Code" 2>/dev/null || echo "")
   else
-    echo "Error: Credential storage not found (macOS keychain or secret-tool required)" >&2
+    echo "错误: 找不到凭据存储（需要 macOS 钥匙串或 secret-tool）" >&2
     exit 1
   fi
 fi
@@ -99,11 +101,12 @@ if [ -z "$CREDS" ]; then
   if [ "$FORMAT" = "json" ]; then
     echo '{"error":"no_credentials","session":null,"weekly":null}'
   else
-    echo "❌ No Claude Code credentials found"
+    echo "❌ 找不到 Claude Code 凭据"
   fi
   exit 1
 fi
 
+# 提取令牌信息
 TOKEN=$(echo "$CREDS" | grep -o '"accessToken":"[^"]*"' | sed 's/"accessToken":"//;s/"//')
 REFRESH_TOKEN=$(echo "$CREDS" | grep -o '"refreshToken":"[^"]*"' | sed 's/"refreshToken":"//;s/"//')
 EXPIRES_AT=$(echo "$CREDS" | grep -o '"expiresAt":[0-9]*' | sed 's/"expiresAt"://')
@@ -112,21 +115,21 @@ if [ -z "$TOKEN" ]; then
   if [ "$FORMAT" = "json" ]; then
     echo '{"error":"no_token","session":null,"weekly":null}'
   else
-    echo "❌ Could not extract access token"
+    echo "❌ 无法提取访问令牌"
   fi
   exit 1
 fi
 
-# Check if token is expired and refresh if needed
+# 检查令牌是否过期，如果需要则刷新
 if [ -n "$EXPIRES_AT" ]; then
   NOW_MS=$(($(date +%s) * 1000))
   if [ "$NOW_MS" -gt "$EXPIRES_AT" ]; then
-    # Token expired - trigger Claude CLI to auto-refresh
+    # 令牌已过期 - 触发 Claude CLI 自动刷新
     if command -v claude >/dev/null 2>&1; then
-      # Run a simple query to trigger token refresh
+      # 运行简单查询以触发令牌刷新
       echo "2+2" | claude >/dev/null 2>&1 || true
-      
-      # Reload credentials from keychain after refresh
+
+      # 刷新后从钥匙串重新加载凭据
       if [[ "$OSTYPE" == "darwin"* ]]; then
         CREDS=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null || echo "")
       else
@@ -134,7 +137,7 @@ if [ -n "$EXPIRES_AT" ]; then
           CREDS=$(secret-tool lookup application "Claude Code" 2>/dev/null || echo "")
         fi
       fi
-      
+
       if [ -n "$CREDS" ]; then
         TOKEN=$(echo "$CREDS" | grep -o '"accessToken":"[^"]*"' | sed 's/"accessToken":"//;s/"//')
       fi
@@ -142,14 +145,14 @@ if [ -n "$EXPIRES_AT" ]; then
       if [ "$FORMAT" = "json" ]; then
         echo '{"error":"token_expired","session":null,"weekly":null}'
       else
-        echo "❌ OAuth token expired. Run 'claude' CLI to refresh."
+        echo "❌ OAuth 令牌已过期。运行 'claude' CLI 刷新。"
       fi
       exit 1
     fi
   fi
 fi
 
-# Fetch usage from API
+# 从 API 获取使用情况
 RESP=$(curl -s "https://api.anthropic.com/api/oauth/usage" \
   -H "Authorization: Bearer $TOKEN" \
   -H "anthropic-beta: oauth-2025-04-20" 2>/dev/null)
@@ -158,23 +161,23 @@ if [ -z "$RESP" ]; then
   if [ "$FORMAT" = "json" ]; then
     echo '{"error":"api_error","session":null,"weekly":null}'
   else
-    echo "❌ API request failed"
+    echo "❌ API 请求失败"
   fi
   exit 1
 fi
 
-# Parse session (5-hour)
+# 解析会话（5小时）
 SESSION=$(echo "$RESP" | grep -o '"five_hour":{[^}]*}' | grep -o '"utilization":[0-9]*' | sed 's/.*://')
 SESSION_RESET=$(echo "$RESP" | grep -o '"five_hour":{[^}]*}' | grep -o '"resets_at":"[^"]*"' | sed 's/"resets_at":"//;s/"//')
 
-# Parse weekly (7-day)
+# 解析每周（7天）
 WEEKLY=$(echo "$RESP" | grep -o '"seven_day":{[^}]*}' | grep -o '"utilization":[0-9]*' | sed 's/.*://')
 WEEKLY_RESET=$(echo "$RESP" | grep -o '"seven_day":{[^}]*}' | grep -o '"resets_at":"[^"]*"' | sed 's/"resets_at":"//;s/"//')
 
 SESSION=${SESSION:-0}
 WEEKLY=${WEEKLY:-0}
 
-# Calculate time until reset
+# 计算距离重置的剩余时间
 NOW=$(date +%s)
 
 if [ -n "$SESSION_RESET" ]; then
@@ -185,7 +188,7 @@ if [ -n "$SESSION_RESET" ]; then
   fi
   SESSION_LEFT=$(secs_to_human $((SESSION_TS - NOW)))
 else
-  SESSION_LEFT="unknown"
+  SESSION_LEFT="未知"
 fi
 
 if [ -n "$WEEKLY_RESET" ]; then
@@ -196,10 +199,10 @@ if [ -n "$WEEKLY_RESET" ]; then
   fi
   WEEKLY_LEFT=$(secs_to_human $((WEEKLY_TS - NOW)))
 else
-  WEEKLY_LEFT="unknown"
+  WEEKLY_LEFT="未知"
 fi
 
-# Output format
+# 输出格式
 if [ "$FORMAT" = "json" ]; then
   OUTPUT=$(cat <<EOF
 {
@@ -218,23 +221,23 @@ if [ "$FORMAT" = "json" ]; then
 EOF
 )
 else
-  # Beautiful text output with emojis
+  # 美观的文本输出，带 Emoji
   SESSION_BAR=""
   WEEKLY_BAR=""
-  
-  # Session progress bar
+
+  # 会话进度条
   SESSION_FILLED=$((SESSION / 10))
   SESSION_EMPTY=$((10 - SESSION_FILLED))
   for ((i=0; i<SESSION_FILLED; i++)); do SESSION_BAR="${SESSION_BAR}█"; done
   for ((i=0; i<SESSION_EMPTY; i++)); do SESSION_BAR="${SESSION_BAR}░"; done
-  
-  # Weekly progress bar
+
+  # 每周进度条
   WEEKLY_FILLED=$((WEEKLY / 10))
   WEEKLY_EMPTY=$((10 - WEEKLY_FILLED))
   for ((i=0; i<WEEKLY_FILLED; i++)); do WEEKLY_BAR="${WEEKLY_BAR}█"; done
   for ((i=0; i<WEEKLY_EMPTY; i++)); do WEEKLY_BAR="${WEEKLY_BAR}░"; done
-  
-  # Determine emoji based on usage level
+
+  # 根据使用量级别确定 Emoji
   if [ "$SESSION" -gt 80 ]; then
     SESSION_EMOJI="🔴"
   elif [ "$SESSION" -gt 50 ]; then
@@ -242,7 +245,7 @@ else
   else
     SESSION_EMOJI="🟢"
   fi
-  
+
   if [ "$WEEKLY" -gt 80 ]; then
     WEEKLY_EMOJI="🔴"
   elif [ "$WEEKLY" -gt 50 ]; then
@@ -250,19 +253,19 @@ else
   else
     WEEKLY_EMOJI="🟢"
   fi
-  
+
   OUTPUT=$(cat <<EOF
-🦞 Claude Code Usage
+🦞 Claude Code 使用情况
 
-⏱️  Session (5h): $SESSION_EMOJI $SESSION_BAR $SESSION%
-   Resets in: $SESSION_LEFT
+⏱️  会话 (5h): $SESSION_EMOJI $SESSION_BAR $SESSION%
+   重置时间: $SESSION_LEFT
 
-📅 Weekly (7d): $WEEKLY_EMOJI $WEEKLY_BAR $WEEKLY%
-   Resets in: $WEEKLY_LEFT
+📅 每周 (7d): $WEEKLY_EMOJI $WEEKLY_BAR $WEEKLY%
+   重置时间: $WEEKLY_LEFT
 EOF
 )
 fi
 
-# Cache the output
+# 缓存输出
 echo "$OUTPUT" > "$CACHE_FILE"
 echo "$OUTPUT"

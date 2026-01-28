@@ -1,51 +1,51 @@
-# SearXNG Search Skill for Clawdbot
+# Clawdbot 的 SearXNG 搜索技能
 
-Privacy-respecting web search using your local SearXNG instance.
+使用您的本地SearXNG实例进行尊重隐私的网络搜索。
 
-## Prerequisites
+## 先决条件
 
-**This skill requires a running SearXNG instance.**
+**此技能需要一个正在运行的SearXNG实例。**
 
-If you don't have SearXNG set up yet:
+如果您还没有设置SearXNG：
 
-1. **Docker (easiest)**:
+1. **Docker（最简单）**：
    ```bash
    docker run -d -p 8080:8080 searxng/searxng
    ```
 
-2. **Manual installation**: Follow the [official guide](https://docs.searxng.org/admin/installation.html)
+2. **手动安装**：遵循[官方指南](https://docs.searxng.org/admin/installation.html)
 
-3. **Public instances**: Use any public SearXNG instance (less private)
+3. **公共实例**：使用任何公共SearXNG实例（隐私较少）
 
-## Features
+## 特性
 
-- 🔒 **Privacy-focused**: Uses your local SearXNG instance
-- 🌐 **Multi-engine**: Aggregates results from multiple search engines
-- 📰 **Multiple categories**: Web, images, news, videos, and more
-- 🎨 **Rich output**: Beautiful table formatting with result snippets
-- 🚀 **Fast JSON mode**: Programmatic access for scripts and integrations
+- 🔒 **隐私优先**：使用您的本地SearXNG实例
+- 🌐 **多引擎**：聚合多个搜索引擎的结果
+- 📰 **多种类别**：网络、图片、新闻、视频等
+- 🎨 **丰富的输出**：带有结果片段的精美表格格式
+- 🚀 **快速JSON模式**：用于脚本和集成的程序化访问
 
-## Quick Start
+## 快速开始
 
-### Basic Search
+### 基本搜索
 ```
-Search "python asyncio tutorial"
-```
-
-### Advanced Usage
-```
-Search "climate change" with 20 results
-Search "cute cats" in images category
-Search "breaking news" in news category from last day
+搜索 "python 异步教程"
 ```
 
-## Configuration
+### 高级用法
+```
+搜索 "气候变化" 显示20个结果
+搜索 "可爱猫咪" 在图片类别
+搜索 "突发新闻" 在新闻类别中，从昨天开始
+```
 
-**You must configure your SearXNG instance URL before using this skill.**
+## 配置
 
-### Set Your SearXNG Instance
+**在使用此技能之前，您必须配置您的SearXNG实例URL。**
 
-Configure the `SEARXNG_URL` environment variable in your Clawdbot config:
+### 设置您的SearXNG实例
+
+在您的Clawdbot配置中配置 `SEARXNG_URL` 环境变量：
 
 ```json
 {
@@ -55,114 +55,114 @@ Configure the `SEARXNG_URL` environment variable in your Clawdbot config:
 }
 ```
 
-Or export it in your shell:
+或在您的shell中导出：
 ```bash
 export SEARXNG_URL=https://your-searxng-instance.com
 ```
 
-## Direct CLI Usage
+## 直接 CLI 使用
 
-You can also use the skill directly from the command line:
+您也可以直接从命令行使用此技能：
 
 ```bash
-# Basic search
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "query"
+# 基本搜索
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "查询"
 
-# More results
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "query" -n 20
+# 更多结果
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "查询" -n 20
 
-# Category search
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "query" --category images
+# 类别搜索
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "查询" --category images
 
-# JSON output (for scripts)
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "query" --format json
+# JSON输出（用于脚本）
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "查询" --format json
 
-# Time-filtered news
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "latest AI news" --category news --time-range day
+# 按时间过滤的新闻
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "最新AI新闻" --category news --time-range day
 ```
 
-## Available Categories
+## 可用类别
 
-- `general` - General web search (default)
-- `images` - Image search
-- `videos` - Video search
-- `news` - News articles
-- `map` - Maps and locations
-- `music` - Music and audio
-- `files` - File downloads
-- `it` - IT and programming
-- `science` - Scientific papers and resources
+- `general` - 一般网络搜索（默认）
+- `images` - 图片搜索
+- `videos` - 视频搜索
+- `news` - 新闻文章
+- `map` - 地图和位置
+- `music` - 音乐和音频
+- `files` - 文件下载
+- `it` - IT和编程
+- `science` - 科学论文和资源
 
-## Time Ranges
+## 时间范围
 
-Filter results by recency:
-- `day` - Last 24 hours
-- `week` - Last 7 days
-- `month` - Last 30 days
-- `year` - Last year
+按时间筛选结果：
+- `day` - 最近24小时
+- `week` - 最近7天
+- `month` - 最近30天
+- `year` - 最近一年
 
-## Examples
+## 示例
 
-### Web Search
+### 网络搜索
 ```bash
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "rust programming language"
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "rust 编程语言"
 ```
 
-### Image Search
+### 图片搜索
 ```bash
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "sunset photography" --category images -n 10
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "日落摄影" --category images -n 10
 ```
 
-### Recent News
+### 最新新闻
 ```bash
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "tech news" --category news --time-range day
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "科技新闻" --category news --time-range day
 ```
 
-### JSON Output for Scripts
+### 用于脚本的JSON输出
 ```bash
-uv run ~/clawd/skills/searxng/scripts/searxng.py search "python tips" --format json | jq '.results[0]'
+uv run ~/clawd/skills/searxng/scripts/searxng.py search "python 技巧" --format json | jq '.results[0]'
 ```
 
-## SSL/TLS Notes
+## SSL/TLS 说明
 
-The skill is configured to work with self-signed certificates (common for local SearXNG instances). If you need strict SSL verification, edit the script and change `verify=False` to `verify=True` in the httpx request.
+此技能配置为与自签名证书配合使用（本地SearXNG实例常见）。如果您需要严格的SSL验证，请编辑脚本并将httpx请求中的 `verify=False` 改为 `verify=True`。
 
-## Troubleshooting
+## 故障排除
 
-### Connection Issues
+### 连接问题
 
-If you get connection errors:
+如果您遇到连接错误：
 
-1. **Check your SearXNG instance is running:**
+1. **检查您的SearXNG实例是否正在运行：**
    ```bash
    curl -k $SEARXNG_URL
-   # Or: curl -k http://localhost:8080 (default)
+   # 或者：curl -k http://localhost:8080（默认值）
    ```
 
-2. **Verify the URL in your config**
-3. **Check SSL certificate issues**
+2. **验证配置中的URL**
+3. **检查SSL证书问题**
 
-### No Results
+### 无结果
 
-If searches return no results:
+如果搜索没有返回结果：
 
-1. Check your SearXNG instance configuration
-2. Ensure search engines are enabled in SearXNG settings
-3. Try different search categories
+1. 检查您的SearXNG实例配置
+2. 确保在SearXNG设置中启用了搜索引擎
+3. 尝试不同的搜索类别
 
-## Privacy Benefits
+## 隐私优势
 
-- **No tracking**: All searches go through your local instance
-- **No data collection**: Results are aggregated locally
-- **Engine diversity**: Combines results from multiple search providers
-- **Full control**: You manage the SearXNG instance
+- **无跟踪**：所有搜索都通过您的本地实例
+- **无数据收集**：结果在本地聚合
+- **引擎多样性**：结合多个搜索提供商的结果
+- **完全控制**：您管理SearXNG实例
 
-## About SearXNG
+## 关于 SearXNG
 
-SearXNG is a free, open-source metasearch engine that respects your privacy. It aggregates results from multiple search engines while not storing your search data.
+SearXNG是一个免费的、开源的元搜索引擎，尊重您的隐私。它在不存储您的搜索数据的情况下聚合多个搜索引擎的结果。
 
-Learn more: https://docs.searxng.org/
+了解更多：https://docs.searxng.org/
 
-## License
+## 许可证
 
-This skill is part of the Clawdbot ecosystem and follows the same license terms.
+此技能是Clawdbot生态系统的一部分，遵循相同的许可条款。
