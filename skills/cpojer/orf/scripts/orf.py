@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+ORF 新闻 RSS 获取器
+获取奥地利 ORF 新闻，排除体育内容，按政治重要性排序
+"""
+
 import argparse
 import datetime as dt
 import json
@@ -8,13 +13,14 @@ import xml.etree.ElementTree as ET
 
 
 FEEDS = {
-    # ORF provides RSS feeds; see https://rss.orf.at/
-    # We'll merge them and dedupe by link.
+    # ORF 提供 RSS 订阅源；请参阅 https://rss.orf.at/
+    # 我们将合并它们并按链接去重
     "news": "https://rss.orf.at/news.xml",
     "oesterreich": "https://rss.orf.at/oesterreich.xml",
     "sport": "https://rss.orf.at/sport.xml",
 }
 
+# 体育关键词列表，用于检测体育新闻
 SPORT_HINTS = [
     "sport",
     "bundesliga",
@@ -32,6 +38,7 @@ SPORT_HINTS = [
 
 
 def fetch(url: str) -> bytes:
+    """从 URL 获取 RSS 内容"""
     req = urllib.request.Request(
         url,
         headers={
@@ -44,11 +51,12 @@ def fetch(url: str) -> bytes:
 
 
 def parse_rss(xml_bytes: bytes) -> list[dict]:
+    """解析 RSS XML 并提取新闻项目"""
     root = ET.fromstring(xml_bytes)
     items: list[dict] = []
 
-    # ORF uses RSS 1.0 (RDF) with namespaces.
-    # We avoid hardcoding the full namespace URIs by scanning for elements named "item".
+    # ORF 使用 RSS 1.0 (RDF) 命名空间
+    # 我们通过扫描名为 "item" 的元素来避免硬编码完整的命名空间 URI
     for el in root.iter():
         if not str(el.tag).endswith("item"):
             continue
@@ -70,6 +78,7 @@ def parse_rss(xml_bytes: bytes) -> list[dict]:
 
 
 def parse_date(dt_str: str):
+    """解析日期字符串为 datetime 对象"""
     if not dt_str:
         return None
 
@@ -79,15 +88,16 @@ def parse_date(dt_str: str):
     except Exception:
         pass
 
-    # ISO8601 (ORF RSS 1.0 uses dc:date)
+    # ISO8601 (ORF RSS 1.0 使用 dc:date)
     try:
-        # e.g. 2026-01-14T12:03:32+01:00
+        # 例如: 2026-01-14T12:03:32+01:00
         return dt.datetime.fromisoformat(dt_str)
     except Exception:
         return None
 
 
 def age_text(published, now: dt.datetime) -> str:
+    """将发布时间转换为相对时间文本"""
     if published is None:
         return ""
 
@@ -95,21 +105,22 @@ def age_text(published, now: dt.datetime) -> str:
     seconds = max(0, int(delta.total_seconds()))
 
     if seconds < 60:
-        return "just now"
+        return "刚刚"
 
     minutes = seconds // 60
     if minutes < 60:
-        return f"{minutes}m ago"
+        return f"{minutes}分钟前"
 
     hours = minutes // 60
     if hours < 48:
-        return f"{hours}h ago"
+        return f"{hours}小时前"
 
     days = hours // 24
-    return f"{days}d ago"
+    return f"{days}天前"
 
 
 def is_sportish(title: str, link: str) -> bool:
+    """检测是否为体育新闻"""
     t = (title or "").lower()
     l = (link or "").lower()
     if "/sport" in l:
@@ -118,6 +129,7 @@ def is_sportish(title: str, link: str) -> bool:
 
 
 def score_item(title: str, focus: str) -> int:
+    """根据内容相关性为新闻项目评分"""
     import re
 
     t = (title or "").lower()
@@ -126,7 +138,7 @@ def score_item(title: str, focus: str) -> int:
     def has(patterns: list[str]) -> bool:
         return any(re.search(p, t) for p in patterns)
 
-    # Default: politics + major news.
+    # 默认：政治 + 重大新闻
     politics = [
         r"\bregierung\b",
         r"\bparlament\b",
@@ -157,7 +169,7 @@ def score_item(title: str, focus: str) -> int:
     if has(politics) or has(international):
         score += 5
 
-    # Slight boost for focus.
+    # 根据关注点轻微提升分数
     if focus == "inland" and has([r"\bösterreich\b|\boesterreich\b", r"\bwien\b", r"\bparlament\b", r"\bregierung\b"]):
         score += 3
     if focus == "ausland" and has(international):
@@ -167,10 +179,11 @@ def score_item(title: str, focus: str) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Fetch ORF RSS items (German), exclude sports, rank for politics.")
-    ap.add_argument("--count", type=int, default=5)
-    ap.add_argument("--focus", choices=["auto", "inland", "ausland"], default="auto")
-    ap.add_argument("--format", choices=["json", "text"], default="json")
+    """主函数：获取并处理 ORF 新闻"""
+    ap = argparse.ArgumentParser(description="获取 ORF RSS 项目（德语），排除体育，按政治重要性排序。")
+    ap.add_argument("--count", type=int, default=5, help="返回的项目数量（默认: 5）")
+    ap.add_argument("--focus", choices=["auto", "inland", "ausland"], default="auto", help="关注区域：国内(inland)、国外(ausland)或自动(auto)")
+    ap.add_argument("--format", choices=["json", "text"], default="json", help="输出格式")
     args = ap.parse_args()
 
     count = max(1, min(int(args.count), 15))
@@ -178,8 +191,8 @@ def main() -> int:
 
     now = dt.datetime.now(dt.timezone.utc)
 
-    # Merge feeds; always exclude the sport feed.
-    # Always include news; include regional Austria feed only when the user explicitly focuses on inland.
+    # 合并订阅源；始终排除体育订阅源
+    # 始终包含 news；仅当用户明确关注国内时才包含区域奥地利订阅源
     feed_urls = [FEEDS["news"]] + ([FEEDS["oesterreich"]] if focus == "inland" else [])
 
     merged: list[dict] = []
@@ -210,7 +223,7 @@ def main() -> int:
             }
         )
 
-    # Prefer high score; tie-break with recency.
+    # 优先高分；平局时按时间顺序
     def sort_key(it: dict):
         published = it.get("published") or ""
         return (it.get("score", 0), published)
