@@ -1,7 +1,8 @@
 {
   "owner": "darinkishore",
   "slug": "voice-transcribe",
-  "displayName": "Voice Transcribe",
+  "displayName": "语音转录",
+  "description": "使用 OpenAI 的 gpt-4o-mini-transcribe 模型转录音频文件。支持词汇提示和文本替换。",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1767653277006,

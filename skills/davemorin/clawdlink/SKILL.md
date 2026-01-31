@@ -1,6 +1,6 @@
 ---
 name: clawdlink
-description: Encrypted Clawdbot-to-Clawdbot messaging. Send messages to friends' Clawdbots with end-to-end encryption.
+description: 加密的 Clawdbot 到 Clawdbot 消息传递。向朋友的 Clawdbot 发送端到端加密的消息。
 triggers:
   - clawdlink
   - friend link
@@ -15,112 +15,112 @@ triggers:
 
 # ClawdLink
 
-Encrypted peer-to-peer messaging between Clawdbots via central relay.
+通过中央中继在 Clawdbot 之间进行加密的点对点消息传递。
 
-## Installation
+## 安装
 
 ```bash
 cd ~/clawd/skills/clawdlink
 npm install
-node scripts/install.js      # Adds to HEARTBEAT.md
-node cli.js setup "Your Name"
+node scripts/install.js      # 添加到 HEARTBEAT.md
+node cli.js setup "您的姓名"
 ```
 
-## Quick Start for Clawdbot
+## Clawdbot 快速开始
 
-Use the handler for JSON output:
+使用 handler 获取 JSON 输出：
 
 ```bash
-node handler.js <action> [args...]
+node handler.js <操作> [参数...]
 ```
 
-### Core Actions
+### 核心操作
 
-| Action | Usage |
+| 操作 | 用法 |
 |--------|-------|
-| `check` | Poll for messages and requests |
-| `send` | `send "Matt" "Hello!" [--urgent] [--context=work]` |
+| `check` | 轮询消息和请求 |
+| `send` | `send "Matt" "你好!" [--urgent] [--context=work]` |
 | `add` | `add "clawdlink://..."` |
 | `accept` | `accept "Matt"` |
-| `link` | Get your friend link |
-| `friends` | List friends |
-| `status` | Get status |
+| `link` | 获取您的朋友链接 |
+| `friends` | 列出好友 |
+| `status` | 获取状态 |
 
-### Preference Actions
+### 首选项操作
 
-| Action | Usage |
+| 操作 | 用法 |
 |--------|-------|
-| `preferences` | Show all preferences |
+| `preferences` | 显示所有首选项 |
 | `quiet-hours` | `quiet-hours on` / `quiet-hours 22:00 08:00` |
 | `batch` | `batch on` / `batch off` |
 | `tone` | `tone casual` / `tone formal` / `tone brief` |
 
-## Delivery Preferences
+## 消息投递首选项
 
-Users control how they receive messages:
+用户控制他们如何接收消息：
 
-### Quiet Hours
+### 安静时段
 ```bash
 node handler.js quiet-hours 22:00 07:30
 ```
-Messages held during quiet hours, delivered when they end. Urgent messages still come through.
+安静时段期间保留消息，结束时投递。紧急消息仍会送达。
 
-### Batch Delivery
+### 批量投递
 ```bash
 node handler.js batch on
 node handler.js preferences set schedule.batchDelivery.times '["09:00","18:00"]'
 ```
-Non-urgent messages batched and delivered at set times.
+非紧急消息批量投递并在设定时间送达。
 
-### Communication Tone
+### 沟通语气
 ```bash
 node handler.js tone casual
 ```
-Options: `natural`, `casual`, `formal`, `brief`
+选项: `natural`, `casual`, `formal`, `brief`
 
-### Per-Friend Settings
+### 特定好友设置
 ```bash
 node handler.js preferences set friends."Sophie Bakalar".priority high
 node handler.js preferences set friends."Sophie Bakalar".alwaysDeliver true
 ```
 
-## Message Metadata
+## 消息元数据
 
-When sending, include context:
+发送时，包含上下文：
 
 ```bash
-node handler.js send "Sophie" "Need to discuss budget" --urgent --context=work
+node handler.js send "Sophie" "需要讨论预算" --urgent --context=work
 ```
 
-Options:
-- `--urgent` — Bypasses quiet hours and batching
-- `--fyi` — Low priority, always batchable
-- `--context=work|personal|social` — Helps with batching decisions
+选项:
+- `--urgent` — 绕过安静时段和批量投递
+- `--fyi` — 低优先级，始终可批量
+- `--context=work|personal|social` — 有助于批量决策
 
-## Conversation Patterns
+## 对话模式
 
-### Setting preferences
-**User:** "Set quiet hours from 10pm to 8am"
-**Action:** `node handler.js quiet-hours 22:00 08:00`
+### 设置首选项
+**用户:** "将安静时段设置为晚上 10 点到早上 8 点"
+**操作:** `node handler.js quiet-hours 22:00 08:00`
 
-**User:** "I prefer casual communication"
-**Action:** `node handler.js tone casual`
+**用户:** "我更喜欢随意的沟通"
+**操作:** `node handler.js tone casual`
 
-**User:** "Batch my ClawdLink messages and deliver at 9am and 6pm"
-**Action:** 
+**用户:** "批量我的 ClawdLink 消息并在早上 9 点和下午 6 点送达"
+**操作:** 
 ```bash
 node handler.js batch on
 node handler.js preferences set schedule.batchDelivery.times '["09:00","18:00"]'
 ```
 
-**User:** "Always let messages from Sophie through"
-**Action:** `node handler.js preferences set friends."Sophie".alwaysDeliver true`
+**用户:** "总是让来自 Sophie 的消息通过"
+**操作:** `node handler.js preferences set friends."Sophie".alwaysDeliver true`
 
-### Sending with context
-**User:** "Tell Matt I need the files urgently"
-**Action:** `node handler.js send "Matt" "I need the files" --urgent --context=work`
+### 发送带上下文的消息
+**用户:** "告诉 Matt 我急需文件"
+**操作:** `node handler.js send "Matt" "我需要文件" --urgent --context=work`
 
-## Preferences Schema
+## 首选项架构
 
 ```json
 {
@@ -144,28 +144,28 @@ node handler.js preferences set schedule.batchDelivery.times '["09:00","18:00"]'
 }
 ```
 
-## Data Storage
+## 数据存储
 
 `~/.clawdbot/clawdlink/`
-- `identity.json` — Keypair
-- `config.json` — Display name
-- `friends.json` — Friends with shared secrets
-- `preferences.json` — Delivery preferences
-- `held_messages.json` — Messages waiting for delivery
-- `pending_requests.json` — Friend requests
+- `identity.json` — 密钥对
+- `config.json` — 显示名称
+- `friends.json` — 带有共享密钥的好友
+- `preferences.json` — 投递首选项
+- `held_messages.json` — 等待投递的消息
+- `pending_requests.json` — 待处理的好友请求
 
-## Auto-Polling
+## 自动轮询
 
-`heartbeat.js` runs on each Clawdbot heartbeat:
-- Polls relay for messages/requests
-- Applies delivery preferences
-- Holds messages during quiet hours
-- Delivers batched messages at scheduled times
-- Outputs formatted text when there's something to deliver
+`heartbeat.js` 在每个 Clawdbot 心跳时运行：
+- 轮询中继获取消息/请求
+- 应用投递首选项
+- 在安静时段保留消息
+- 在计划时间投递批量消息
+- 有内容送达时输出格式化文本
 
-## Security
+## 安全性
 
-- **E2E encrypted** — XChaCha20-Poly1305
-- **Ed25519 signatures** — Sender verification
-- **X25519 key exchange** — Shared secrets
-- **7-day TTL** — Messages auto-expire
+- **端到端加密** — XChaCha20-Poly1305
+- **Ed25519 签名** — 发送者验证
+- **X25519 密钥交换** — 共享密钥
+- **7 天 TTL** — 消息自动过期

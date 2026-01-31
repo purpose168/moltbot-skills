@@ -1,8 +1,8 @@
-# base-skill
+# 基础技能
 
-This is a minimal Clawdbot skill.
+这是一个最小化的 Clawdbot 技能。
 
-- Trigger: user asks if the base skill works
-- Expected response: `hello world`
+- 触发条件：用户询问基础技能是否工作
+- 预期响应：`hello world`
 
-See `SKILL.md` for the authoritative procedure.
+请参阅 `SKILL.md` 文件获取权威流程说明。

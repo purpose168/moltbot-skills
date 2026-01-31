@@ -1,7 +1,8 @@
 {
   "owner": "daveonkels",
   "slug": "clinkding",
-  "displayName": "Clinkding - Linkding Bookmark Integration",
+  "displayName": "Clinkding - Linkding 书签集成",
+  "description": "管理 linkding 书签收藏。支持保存网址、搜索、标签、组织和检索个人书签。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1767669857493,

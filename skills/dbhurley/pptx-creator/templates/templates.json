@@ -1,8 +1,8 @@
 {
   "templates": {
     "minimal": {
-      "name": "Minimal",
-      "description": "Minimal theme with Helvetica Neue font",
+      "name": "极简",
+      "description": "极简主题，使用 Helvetica Neue 字体",
       "colors": {
         "background": "FFFFFF",
         "title": "1a1a1a",
@@ -12,8 +12,8 @@
       }
     },
     "corporate": {
-      "name": "Corporate",
-      "description": "Corporate theme with Arial font",
+      "name": "企业",
+      "description": "企业主题，使用 Arial 字体",
       "colors": {
         "background": "FFFFFF",
         "title": "003366",
@@ -23,8 +23,8 @@
       }
     },
     "creative": {
-      "name": "Creative",
-      "description": "Creative theme with Avenir Next font",
+      "name": "创意",
+      "description": "创意主题，使用 Avenir Next 字体",
       "colors": {
         "background": "FAFAFA",
         "title": "2d2d2d",
@@ -34,8 +34,8 @@
       }
     },
     "dark": {
-      "name": "Dark Mode",
-      "description": "Dark Mode theme with SF Pro Display font",
+      "name": "深色模式",
+      "description": "深色模式主题，使用 SF Pro Display 字体",
       "colors": {
         "background": "1a1a2e",
         "title": "ffffff",
@@ -45,8 +45,8 @@
       }
     },
     "executive": {
-      "name": "Executive",
-      "description": "Executive theme with Georgia font",
+      "name": "高管",
+      "description": "高管主题，使用 Georgia 字体",
       "colors": {
         "background": "FFFFFF",
         "title": "1e3a5f",
@@ -56,8 +56,8 @@
       }
     },
     "startup": {
-      "name": "Startup Pitch",
-      "description": "Startup Pitch theme with Poppins font",
+      "name": "创业推介",
+      "description": "创业推介主题，使用 Poppins 字体",
       "colors": {
         "background": "FFFFFF",
         "title": "2d3436",

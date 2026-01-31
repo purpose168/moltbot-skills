@@ -1,322 +1,322 @@
 ---
 name: self-improvement
-description: "Captures learnings, errors, and corrections to enable continuous improvement. Use when: (1) A command or operation fails unexpectedly, (2) User corrects Claude ('No, that's wrong...', 'Actually...'), (3) User requests a capability that doesn't exist, (4) An external API or tool fails, (5) Claude realizes its knowledge is outdated or incorrect, (6) A better approach is discovered for a recurring task. Also review learnings before major tasks."
+description: "捕获学习、错误和修正以实现持续改进。在以下情况下使用：(1) 命令或操作意外失败，(2) 用户纠正 Claude（'不，那是错的...'，'实际上...'），(3) 用户请求不存在的功能，(4) 外部 API 或工具失败，(5) Claude 意识到其知识过时或不正确，(6) 为重复任务发现更好的方法。在主要任务前也应回顾学习内容。"
 ---
 
-# Self-Improvement Skill
+# 自我改进技能
 
-Log learnings and errors to markdown files for continuous improvement. Coding agents can later process these into fixes, and important learnings get promoted to project memory.
+将学习和错误记录到 markdown 文件中以实现持续改进。编码代理稍后可以将这些处理为修复，重要的学习内容会被提升到项目记忆中。
 
-## Quick Reference
+## 快速参考
 
-| Situation | Action |
-|-----------|--------|
-| Command/operation fails | Log to `.learnings/ERRORS.md` |
-| User corrects you | Log to `.learnings/LEARNINGS.md` with category `correction` |
-| User wants missing feature | Log to `.learnings/FEATURE_REQUESTS.md` |
-| API/external tool fails | Log to `.learnings/ERRORS.md` with integration details |
-| Knowledge was outdated | Log to `.learnings/LEARNINGS.md` with category `knowledge_gap` |
-| Found better approach | Log to `.learnings/LEARNINGS.md` with category `best_practice` |
-| Similar to existing entry | Link with `**See Also**`, consider priority bump |
-| Broadly applicable learning | Promote to `CLAUDE.md` and/or `AGENTS.md` |
+| 情况 | 操作 |
+|------|------|
+| 命令/操作失败 | 记录到 `.learnings/ERRORS.md` |
+| 用户纠正你 | 记录到 `.learnings/LEARNINGS.md`，类别为 `correction` |
+| 用户想要缺失的功能 | 记录到 `.learnings/FEATURE_REQUESTS.md` |
+| API/外部工具失败 | 记录到 `.learnings/ERRORS.md`，包含集成详情 |
+| 知识过时 | 记录到 `.learnings/LEARNINGS.md`，类别为 `knowledge_gap` |
+| 发现更好的方法 | 记录到 `.learnings/LEARNINGS.md`，类别为 `best_practice` |
+| 与现有条目相似 | 使用 `**参见**` 链接，考虑提高优先级 |
+| 广泛适用的学习 | 提升到 `CLAUDE.md` 和/或 `AGENTS.md` |
 
-## Setup
+## 设置
 
-Create `.learnings/` directory in project root if it doesn't exist:
+如果 `.learnings/` 目录不存在，在项目根目录创建：
 
 ```bash
 mkdir -p .learnings
 ```
 
-Copy templates from `assets/` or create files with headers.
+从 `assets/` 复制模板或创建带有标题的文件。
 
-## Logging Format
+## 日志格式
 
-### Learning Entry
+### 学习条目
 
-Append to `.learnings/LEARNINGS.md`:
+追加到 `.learnings/LEARNINGS.md`：
 
 ```markdown
 ## [LRN-YYYYMMDD-XXX] category
 
-**Logged**: ISO-8601 timestamp
-**Priority**: low | medium | high | critical
-**Status**: pending
-**Area**: frontend | backend | infra | tests | docs | config
+**记录时间**：ISO-8601 时间戳
+**优先级**：low | medium | high | critical
+**状态**：pending
+**领域**：frontend | backend | infra | tests | docs | config
 
-### Summary
-One-line description of what was learned
+### 摘要
+一行描述所学内容
 
-### Details
-Full context: what happened, what was wrong, what's correct
+### 详情
+完整上下文：发生了什么，什么是错误的，什么是正确的
 
-### Suggested Action
-Specific fix or improvement to make
+### 建议操作
+具体的修复或改进措施
 
-### Metadata
-- Source: conversation | error | user_feedback
-- Related Files: path/to/file.ext
-- Tags: tag1, tag2
-- See Also: LRN-20250110-001 (if related to existing entry)
+### 元数据
+- 来源：conversation | error | user_feedback
+- 相关文件：path/to/file.ext
+- 标签：tag1, tag2
+- 参见：LRN-20250110-001（如果与现有条目相关）
 
 ---
 ```
 
-### Error Entry
+### 错误条目
 
-Append to `.learnings/ERRORS.md`:
+追加到 `.learnings/ERRORS.md`：
 
 ```markdown
 ## [ERR-YYYYMMDD-XXX] skill_or_command_name
 
-**Logged**: ISO-8601 timestamp
-**Priority**: high
-**Status**: pending
-**Area**: frontend | backend | infra | tests | docs | config
+**记录时间**：ISO-8601 时间戳
+**优先级**：high
+**状态**：pending
+**领域**：frontend | backend | infra | tests | docs | config
 
-### Summary
-Brief description of what failed
+### 摘要
+简要描述失败的内容
 
-### Error
+### 错误
 ```
-Actual error message or output
+实际错误消息或输出
 ```
 
-### Context
-- Command/operation attempted
-- Input or parameters used
-- Environment details if relevant
+### 上下文
+- 尝试的命令/操作
+- 使用的输入或参数
+- 相关的环境详情
 
-### Suggested Fix
-If identifiable, what might resolve this
+### 建议修复
+如果可识别，可能解决此问题的方法
 
-### Metadata
-- Reproducible: yes | no | unknown
-- Related Files: path/to/file.ext
-- See Also: ERR-20250110-001 (if recurring)
+### 元数据
+- 可重现：yes | no | unknown
+- 相关文件：path/to/file.ext
+- 参见：ERR-20250110-001（如果重复）
 
 ---
 ```
 
-### Feature Request Entry
+### 功能请求条目
 
-Append to `.learnings/FEATURE_REQUESTS.md`:
+追加到 `.learnings/FEATURE_REQUESTS.md`：
 
 ```markdown
 ## [FEAT-YYYYMMDD-XXX] capability_name
 
-**Logged**: ISO-8601 timestamp
-**Priority**: medium
-**Status**: pending
-**Area**: frontend | backend | infra | tests | docs | config
+**记录时间**：ISO-8601 时间戳
+**优先级**：medium
+**状态**：pending
+**领域**：frontend | backend | infra | tests | docs | config
 
-### Requested Capability
-What the user wanted to do
+### 请求的功能
+用户想要做什么
 
-### User Context
-Why they needed it, what problem they're solving
+### 用户上下文
+他们为什么需要它，他们正在解决什么问题
 
-### Complexity Estimate
+### 复杂度估计
 simple | medium | complex
 
-### Suggested Implementation
-How this could be built, what it might extend
+### 建议实现
+如何构建此功能，它可能扩展什么
 
-### Metadata
-- Frequency: first_time | recurring
-- Related Features: existing_feature_name
+### 元数据
+- 频率：first_time | recurring
+- 相关功能：existing_feature_name
 
 ---
 ```
 
-## ID Generation
+## ID 生成
 
-Format: `TYPE-YYYYMMDD-XXX`
-- TYPE: `LRN` (learning), `ERR` (error), `FEAT` (feature)
-- YYYYMMDD: Current date
-- XXX: Sequential number or random 3 chars (e.g., `001`, `A7B`)
+格式：`TYPE-YYYYMMDD-XXX`
+- TYPE: `LRN` (学习), `ERR` (错误), `FEAT` (功能)
+- YYYYMMDD: 当前日期
+- XXX: 序号或随机 3 个字符（例如，`001`, `A7B`）
 
-Examples: `LRN-20250115-001`, `ERR-20250115-A3F`, `FEAT-20250115-002`
+示例：`LRN-20250115-001`, `ERR-20250115-A3F`, `FEAT-20250115-002`
 
-## Resolving Entries
+## 解决条目
 
-When an issue is fixed, update the entry:
+当问题得到修复时，更新条目：
 
-1. Change `**Status**: pending` → `**Status**: resolved`
-2. Add resolution block after Metadata:
+1. 将 `**状态**：pending` → `**状态**：resolved`
+2. 在元数据后添加解决块：
 
 ```markdown
-### Resolution
-- **Resolved**: 2025-01-16T09:00:00Z
-- **Commit/PR**: abc123 or #42
-- **Notes**: Brief description of what was done
+### 解决
+- **解决时间**：2025-01-16T09:00:00Z
+- **提交/PR**：abc123 或 #42
+- **备注**：简要描述所做的工作
 ```
 
-Other status values:
-- `in_progress` - Actively being worked on
-- `wont_fix` - Decided not to address (add reason in Resolution notes)
-- `promoted` - Elevated to CLAUDE.md or AGENTS.md
+其他状态值：
+- `in_progress` - 正在积极处理
+- `wont_fix` - 决定不解决（在解决备注中添加原因）
+- `promoted` - 提升到 CLAUDE.md 或 AGENTS.md
 
-## Promoting to Project Memory
+## 提升到项目记忆
 
-When a learning is broadly applicable (not a one-off fix), promote it to permanent project memory.
+当学习内容广泛适用（不是一次性修复）时，将其提升到永久项目记忆中。
 
-### When to Promote
+### 何时提升
 
-- Learning applies across multiple files/features
-- Knowledge any contributor (human or AI) should know
-- Prevents recurring mistakes
-- Documents project-specific conventions
+- 学习内容适用于多个文件/功能
+- 任何贡献者（人类或 AI）都应该知道的知识
+- 防止重复错误
+- 记录项目特定的约定
 
-### Promotion Targets
+### 提升目标
 
-| Target | What Belongs There |
-|--------|-------------------|
-| `CLAUDE.md` | Project facts, conventions, gotchas for all Claude interactions |
-| `AGENTS.md` | Agent-specific workflows, tool usage patterns, automation rules |
+| 目标 | 适合的内容 |
+|------|------------|
+| `CLAUDE.md` | 项目事实、约定、所有 Claude 交互的注意事项 |
+| `AGENTS.md` | 代理特定的工作流程、工具使用模式、自动化规则 |
 
-### How to Promote
+### 如何提升
 
-1. **Distill** the learning into a concise rule or fact
-2. **Add** to appropriate section in target file
-3. **Update** original entry:
-   - Change `**Status**: pending` → `**Status**: promoted`
-   - Add `**Promoted**: CLAUDE.md` or `**Promoted**: AGENTS.md`
+1. **提炼**学习内容为简洁的规则或事实
+2. **添加**到目标文件的适当部分
+3. **更新**原始条目：
+   - 将 `**状态**：pending` → `**状态**：promoted`
+   - 添加 `**提升到**：CLAUDE.md` 或 `**提升到**：AGENTS.md`
 
-### Promotion Examples
+### 提升示例
 
-**Learning** (verbose):
-> Project uses pnpm workspaces. Attempted `npm install` but failed. 
-> Lock file is `pnpm-lock.yaml`. Must use `pnpm install`.
+**学习**（详细）：
+> 项目使用 pnpm workspaces。尝试 `npm install` 但失败。
+> 锁文件是 `pnpm-lock.yaml`。必须使用 `pnpm install`。
 
-**In CLAUDE.md** (concise):
+**在 CLAUDE.md 中**（简洁）：
 ```markdown
-## Build & Dependencies
-- Package manager: pnpm (not npm) - use `pnpm install`
+## 构建与依赖
+- 包管理器：pnpm（不是 npm）- 使用 `pnpm install`
 ```
 
-**Learning** (verbose):
-> When modifying API endpoints, must regenerate TypeScript client.
-> Forgetting this causes type mismatches at runtime.
+**学习**（详细）：
+> 修改 API 端点时，必须重新生成 TypeScript 客户端。
+> 忘记这一点会导致运行时类型不匹配。
 
-**In AGENTS.md** (actionable):
+**在 AGENTS.md 中**（可操作）：
 ```markdown
-## After API Changes
-1. Regenerate client: `pnpm run generate:api`
-2. Check for type errors: `pnpm tsc --noEmit`
+## API 变更后
+1. 重新生成客户端：`pnpm run generate:api`
+2. 检查类型错误：`pnpm tsc --noEmit`
 ```
 
-## Recurring Pattern Detection
+## 重复模式检测
 
-If logging something similar to an existing entry:
+如果记录的内容与现有条目相似：
 
-1. **Search first**: `grep -r "keyword" .learnings/`
-2. **Link entries**: Add `**See Also**: ERR-20250110-001` in Metadata
-3. **Bump priority** if issue keeps recurring
-4. **Consider systemic fix**: Recurring issues often indicate:
-   - Missing documentation (→ promote to CLAUDE.md)
-   - Missing automation (→ add to AGENTS.md)
-   - Architectural problem (→ create tech debt ticket)
+1. **先搜索**：`grep -r "keyword" .learnings/`
+2. **链接条目**：在元数据中添加 `**参见**：ERR-20250110-001`
+3. **提高优先级**如果问题持续重复
+4. **考虑系统性修复**：重复问题通常表明：
+   - 缺少文档（→ 提升到 CLAUDE.md）
+   - 缺少自动化（→ 添加到 AGENTS.md）
+   - 架构问题（→ 创建技术债务工单）
 
-## Periodic Review
+## 定期审查
 
-Review `.learnings/` at natural breakpoints:
+在自然断点审查 `.learnings/`：
 
-### When to Review
-- Before starting a new major task
-- After completing a feature
-- When working in an area with past learnings
-- Weekly during active development
+### 何时审查
+- 在开始新的主要任务之前
+- 完成功能后
+- 在有过去学习内容的领域工作时
+- 积极开发期间每周
 
-### Quick Status Check
+### 快速状态检查
 ```bash
-# Count pending items
-grep -h "Status\*\*: pending" .learnings/*.md | wc -l
+# 计算待处理项目
+grep -h "状态\*\*: pending" .learnings/*.md | wc -l
 
-# List pending high-priority items
-grep -B5 "Priority\*\*: high" .learnings/*.md | grep "^## \["
+# 列出待处理的高优先级项目
+grep -B5 "优先级\*\*: high" .learnings/*.md | grep "^## \["
 
-# Find learnings for a specific area
-grep -l "Area\*\*: backend" .learnings/*.md
+# 查找特定领域的学习
+grep -l "领域\*\*: backend" .learnings/*.md
 ```
 
-### Review Actions
-- Resolve fixed items
-- Promote applicable learnings
-- Link related entries
-- Escalate recurring issues
+### 审查操作
+- 解决已修复的项目
+- 提升适用的学习内容
+- 链接相关条目
+- 升级重复问题
 
-## Detection Triggers
+## 检测触发器
 
-Automatically log when you notice:
+当你注意到以下情况时自动记录：
 
-**Corrections** (→ learning with `correction` category):
-- "No, that's not right..."
-- "Actually, it should be..."
-- "You're wrong about..."
-- "That's outdated..."
+**修正**（→ 学习，类别为 `correction`）：
+- "不，那不对..."
+- "实际上，应该是..."
+- "你错了关于..."
+- "那已经过时了..."
 
-**Feature Requests** (→ feature request):
-- "Can you also..."
-- "I wish you could..."
-- "Is there a way to..."
-- "Why can't you..."
+**功能请求**（→ 功能请求）：
+- "你也能..."
+- "我希望你能..."
+- "有没有办法..."
+- "你为什么不能..."
 
-**Knowledge Gaps** (→ learning with `knowledge_gap` category):
-- User provides information you didn't know
-- Documentation you referenced is outdated
-- API behavior differs from your understanding
+**知识缺口**（→ 学习，类别为 `knowledge_gap`）：
+- 用户提供你不知道的信息
+- 你引用的文档过时
+- API 行为与你的理解不同
 
-**Errors** (→ error entry):
-- Command returns non-zero exit code
-- Exception or stack trace
-- Unexpected output or behavior
-- Timeout or connection failure
+**错误**（→ 错误条目）：
+- 命令返回非零退出码
+- 异常或堆栈跟踪
+- 意外输出或行为
+- 超时或连接失败
 
-## Priority Guidelines
+## 优先级指南
 
-| Priority | When to Use |
-|----------|-------------|
-| `critical` | Blocks core functionality, data loss risk, security issue |
-| `high` | Significant impact, affects common workflows, recurring issue |
-| `medium` | Moderate impact, workaround exists |
-| `low` | Minor inconvenience, edge case, nice-to-have |
+| 优先级 | 使用场景 |
+|--------|----------|
+| `critical` | 阻塞核心功能，数据丢失风险，安全问题 |
+| `high` | 重大影响，影响常见工作流程，重复问题 |
+| `medium` | 中等影响，存在变通方法 |
+| `low` | 轻微不便，边缘情况，锦上添花 |
 
-## Area Tags
+## 领域标签
 
-Use to filter learnings by codebase region:
+用于按代码库区域筛选学习内容：
 
-| Area | Scope |
-|------|-------|
-| `frontend` | UI, components, client-side code |
-| `backend` | API, services, server-side code |
-| `infra` | CI/CD, deployment, Docker, cloud |
-| `tests` | Test files, testing utilities, coverage |
-| `docs` | Documentation, comments, READMEs |
-| `config` | Configuration files, environment, settings |
+| 领域 | 范围 |
+|------|------|
+| `frontend` | UI、组件、客户端代码 |
+| `backend` | API、服务、服务器端代码 |
+| `infra` | CI/CD、部署、Docker、云 |
+| `tests` | 测试文件、测试工具、覆盖率 |
+| `docs` | 文档、注释、README |
+| `config` | 配置文件、环境、设置 |
 
-## Best Practices
+## 最佳实践
 
-1. **Log immediately** - context is freshest right after the issue
-2. **Be specific** - future agents need to understand quickly
-3. **Include reproduction steps** - especially for errors
-4. **Link related files** - makes fixes easier
-5. **Suggest concrete fixes** - not just "investigate"
-6. **Use consistent categories** - enables filtering
-7. **Promote aggressively** - if in doubt, add to CLAUDE.md
-8. **Review regularly** - stale learnings lose value
+1. **立即记录** - 问题发生后上下文最清晰
+2. **具体明确** - 未来的代理需要快速理解
+3. **包含重现步骤** - 特别是对于错误
+4. **链接相关文件** - 使修复更容易
+5. **建议具体修复** - 而不仅仅是"调查"
+6. **使用一致的类别** - 启用筛选
+7. **积极提升** - 如果有疑问，添加到 CLAUDE.md
+8. **定期审查** - 过时的学习内容会失去价值
 
-## Gitignore Options
+## Gitignore 选项
 
-**Keep learnings local** (per-developer):
+**保持学习内容本地**（每个开发者）：
 ```gitignore
 .learnings/
 ```
 
-**Track learnings in repo** (team-wide):
-Don't add to .gitignore - learnings become shared knowledge.
+**在仓库中跟踪学习内容**（团队范围）：
+不要添加到 .gitignore - 学习内容成为共享知识。
 
-**Hybrid** (track templates, ignore entries):
+**混合**（跟踪模板，忽略条目）：
 ```gitignore
 .learnings/*.md
 !.learnings/.gitkeep

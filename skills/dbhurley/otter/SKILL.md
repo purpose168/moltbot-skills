@@ -1,6 +1,6 @@
 ---
 name: otter
-description: Otter.ai transcription CLI - list, search, download, and sync meeting transcripts to CRM.
+description: Otter.ai 转录命令行工具 - 列出、搜索、下载和同步会议转录到 CRM。
 version: 1.0.0
 author: dbhurley
 homepage: https://otter.ai
@@ -18,27 +18,27 @@ metadata:
     primaryEnv: OTTER_EMAIL
 ---
 
-# Otter.ai Transcription CLI
+# Otter.ai 转录命令行工具
 
-Interact with Otter.ai to manage meeting transcripts - list, search, download, upload, summarize, and sync to CRM.
+与 Otter.ai 交互管理会议转录 - 列出、搜索、下载、上传、总结和同步到 CRM。
 
-## 🔑 Required Secrets
+## 🔑 必需的密钥
 
-| Variable | Description | How to Get |
+| 变量 | 描述 | 如何获取 |
 |----------|-------------|------------|
-| `OTTER_EMAIL` | Your Otter.ai account email | Your login email |
-| `OTTER_PASSWORD` | Your Otter.ai password | Set in Otter account settings |
+| `OTTER_EMAIL` | 您的 Otter.ai 账户邮箱 | 您的登录邮箱 |
+| `OTTER_PASSWORD` | 您的 Otter.ai 密码 | 在 Otter 账户设置中设置 |
 
-## 🔐 Optional Secrets (for CRM sync)
+## 🔐 可选密钥（用于 CRM 同步）
 
-| Variable | Description | How to Get |
+| 变量 | 描述 | 如何获取 |
 |----------|-------------|------------|
-| `TWENTY_API_URL` | Twenty CRM API endpoint | Your Twenty instance URL |
-| `TWENTY_API_TOKEN` | Twenty API key | Twenty → Settings → Developers → API Keys |
+| `TWENTY_API_URL` | Twenty CRM API 端点 | 您的 Twenty 实例 URL |
+| `TWENTY_API_TOKEN` | Twenty API 密钥 | Twenty → 设置 → 开发者 → API 密钥 |
 
-## ⚙️ Setup
+## ⚙️ 设置
 
-Configure in `~/.clawdis/clawdis.json`:
+在 `~/.clawdis/clawdis.json` 中配置：
 ```json
 {
   "skills": {
@@ -54,65 +54,65 @@ Configure in `~/.clawdis/clawdis.json`:
 }
 ```
 
-## 📋 Commands
+## 📋 命令
 
-### List Recent Transcripts
+### 列出最近的转录
 ```bash
 uv run {baseDir}/scripts/otter.py list [--limit 10]
 ```
 
-### Get Full Transcript
+### 获取完整转录
 ```bash
 uv run {baseDir}/scripts/otter.py get <speech_id>
 ```
 
-### Search Transcripts
+### 搜索转录
 ```bash
-uv run {baseDir}/scripts/otter.py search "quarterly review"
+uv run {baseDir}/scripts/otter.py search "季度评审"
 ```
 
-### Download Transcript
+### 下载转录
 ```bash
 uv run {baseDir}/scripts/otter.py download <speech_id> [--format txt|pdf|docx|srt]
 ```
 
-### Upload Audio for Transcription
+### 上传音频进行转录
 ```bash
 uv run {baseDir}/scripts/otter.py upload /path/to/audio.mp3
 ```
 
-### Get AI Summary
+### 获取 AI 摘要
 ```bash
 uv run {baseDir}/scripts/otter.py summary <speech_id>
 ```
 
-### Sync to Twenty CRM
+### 同步到 Twenty CRM
 ```bash
 uv run {baseDir}/scripts/otter.py sync-twenty <speech_id>
-uv run {baseDir}/scripts/otter.py sync-twenty <speech_id> --company "Client Name"
+uv run {baseDir}/scripts/otter.py sync-twenty <speech_id> --company "客户名称"
 ```
 
-## 📤 Output Formats
+## 📤 输出格式
 
-All commands support `--json` for machine-readable output:
+所有命令都支持 `--json` 用于机器可读输出：
 ```bash
 uv run {baseDir}/scripts/otter.py list --json
 ```
 
-## 🔗 Twenty CRM Integration
+## 🔗 Twenty CRM 集成
 
-When syncing to Twenty, creates:
-- **Note** with transcript title, date, duration, and full text
-- **Auto-links** to engagement if `--company` matches
+同步到 Twenty 时，会创建：
+- **备注** 包含转录标题、日期、时长和完整文本
+- **自动链接** 到相关业务，如果 `--company` 匹配
 
-## ⚠️ Notes
+## ⚠️ 注意事项
 
-- Requires Otter.ai account (Business recommended for API access)
-- Uses unofficial Otter.ai API
-- SSO users: Create a password in Otter account settings
-- Rate limits may apply
+- 需要 Otter.ai 账户（建议使用 Business 版以获取 API 访问权限）
+- 使用非官方的 Otter.ai API
+- SSO 用户：在 Otter 账户设置中创建密码
+- 可能会有速率限制
 
-## 📦 Installation
+## 📦 安装
 
 ```bash
 clawdhub install otter

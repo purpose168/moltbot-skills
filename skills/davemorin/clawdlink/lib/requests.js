@@ -1,12 +1,19 @@
 /**
- * ClawdLink Friend Request Protocol
+ * ClawdLink 好友请求协议模块
  * 
- * Flow:
- * 1. Alice parses Bob's friend link
- * 2. Alice sends friend_request to Bob via relay (plaintext, signed)
- * 3. Bob receives request, decides to accept/reject
- * 4. If accepted, Bob adds Alice and sends friend_accept (encrypted)
- * 5. Both can now message with shared secret
+ * 实现完整的好友添加流程，确保安全地建立加密通信通道：
+ * 
+ * 好友请求流程：
+ * 1. Alice 解析 Bob 的好友链接，获取 Bob 的公钥和名称
+ * 2. Alice 构建签名载荷并发送好友请求到中继服务器（明文，但经过数字签名）
+ * 3. Bob 收到请求后，决定是否接受
+ * 4. 如果接受，Bob 将 Alice 添加为好友并发送好友接受消息（加密）
+ * 5. 双方建立共享密钥，可以进行端到端加密通信
+ * 
+ * 安全设计：
+ * - 好友请求使用 Ed25519 签名，防止伪造
+ * - 接受消息使用共享密钥加密，确保只有请求发起方能解密
+ * - X25519 密钥交换确保前向安全性
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'fs';
@@ -21,48 +28,78 @@ const FRIENDS_FILE = join(DATA_DIR, 'friends.json');
 const CONFIG_FILE = join(DATA_DIR, 'config.json');
 const PENDING_FILE = join(DATA_DIR, 'pending_requests.json');
 
+/**
+ * 加载本地保存的身份信息
+ * @returns {Object} 身份信息对象
+ */
 function loadIdentity() {
   return JSON.parse(readFileSync(IDENTITY_FILE, 'utf8'));
 }
 
+/**
+ * 加载用户配置
+ * @returns {Object} 配置对象
+ */
 function loadConfig() {
-  if (!existsSync(CONFIG_FILE)) return { displayName: 'ClawdLink User' };
+  if (!existsSync(CONFIG_FILE)) return { displayName: 'ClawdLink 用户' };
   return JSON.parse(readFileSync(CONFIG_FILE, 'utf8'));
 }
 
+/**
+ * 加载好友列表
+ * @returns {Object} 好友列表对象
+ */
 function loadFriends() {
   if (!existsSync(FRIENDS_FILE)) return { friends: [] };
   return JSON.parse(readFileSync(FRIENDS_FILE, 'utf8'));
 }
 
+/**
+ * 保存好友列表到文件
+ * @param {Object} data - 好友列表数据
+ */
 function saveFriends(data) {
   writeFileSync(FRIENDS_FILE, JSON.stringify(data, null, 2));
 }
 
+/**
+ * 加载待处理的好友请求
+ * @returns {Object} 包含 incoming 和 outgoing 数组的对象
+ */
 function loadPending() {
   if (!existsSync(PENDING_FILE)) return { incoming: [], outgoing: [] };
   return JSON.parse(readFileSync(PENDING_FILE, 'utf8'));
 }
 
+/**
+ * 保存待处理请求到文件
+ * @param {Object} data - 待处理请求数据
+ */
 function savePending(data) {
   writeFileSync(PENDING_FILE, JSON.stringify(data, null, 2));
 }
 
 /**
- * Parse a friend link
+ * 解析好友链接
+ * 
+ * 好友链接格式：
+ * clawdlink://relay.clawdlink.bot/add?key=ed25519:<base64公钥>&name=<URL编码的名称>
+ * 
+ * @param {string} link - 好友链接字符串
+ * @returns {Object} 包含公钥和显示名称的对象
  */
 export function parseFriendLink(link) {
   const url = new URL(link.replace('clawdlink://', 'https://'));
   const params = new URLSearchParams(url.search);
   
   let key = params.get('key') || '';
-  const name = params.get('name') || 'Unknown';
+  const name = params.get('name') || '未知用户';
   
   if (key.startsWith('ed25519:')) {
     key = key.slice(8);
   }
   
-  if (!key) throw new Error('No public key in link');
+  if (!key) throw new Error('链接中不包含公钥');
   
   return { 
     publicKey: key, 
@@ -71,29 +108,38 @@ export function parseFriendLink(link) {
 }
 
 /**
- * Send a friend request via the relay
+ * 通过中继服务器发送好友请求
+ * 
+ * 发送流程：
+ * 1. 解析好友链接获取对方公钥和名称
+ * 2. 检查是否已经是好友
+ * 3. 构建签名载荷（发送方:接收方:发送方名称:请求消息）
+ * 4. 使用 Ed25519 私钥对载荷进行签名
+ * 5. 将请求发送到中继服务器
+ * 6. 保存到待发送请求列表
+ * 
+ * @param {string} friendLink - 好友链接
+ * @param {string} message - 附加的请求消息
+ * @returns {Promise<Object>} 发送结果
  */
 export async function sendFriendRequest(friendLink, message = '') {
   const identity = loadIdentity();
   const config = loadConfig();
   const { publicKey, displayName } = parseFriendLink(friendLink);
   
-  // Check if already friends
   const { friends } = loadFriends();
   if (friends.find(f => f.publicKey === publicKey)) {
-    throw new Error(`Already friends with ${displayName}`);
+    throw new Error(`您已与 ${displayName} 是好友`);
   }
   
-  // Build signature payload
   const fromHex = relay.base64ToHex(identity.publicKey);
   const toHex = relay.base64ToHex(publicKey);
   const fromX25519Hex = relay.base64ToHex(identity.x25519PublicKey);
-  const msg = message || `${config.displayName} wants to connect on ClawdLink`;
+  const msg = message || `${config.displayName} 想在 ClawdLink 上与您建立连接`;
   
   const signPayload = `${fromHex}:${toHex}:${config.displayName}:${msg}`;
   const signature = crypto.sign(signPayload, identity.secretKey);
   
-  // Send to relay
   const response = await fetch(`${relay.RELAY_URL}/request`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -109,10 +155,9 @@ export async function sendFriendRequest(friendLink, message = '') {
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to send request');
+    throw new Error(error.error || '请求发送失败');
   }
   
-  // Save as pending outgoing
   const pending = loadPending();
   pending.outgoing.push({
     to: displayName,
@@ -126,7 +171,15 @@ export async function sendFriendRequest(friendLink, message = '') {
 }
 
 /**
- * Fetch friend requests from relay
+ * 从中继服务器获取待处理的好友请求
+ * 
+ * 获取流程：
+ * 1. 生成当前时间戳
+ * 2. 使用 Ed25519 私钥签名时间戳
+ * 3. 将密钥、时间和签名发送到服务器进行认证
+ * 4. 返回所有待处理的好友请求
+ * 
+ * @returns {Promise<Array>} 请求对象数组
  */
 export async function fetchFriendRequests() {
   const identity = loadIdentity();
@@ -146,7 +199,7 @@ export async function fetchFriendRequests() {
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch requests');
+    throw new Error(error.error || '获取请求失败');
   }
   
   const data = await response.json();
@@ -154,7 +207,14 @@ export async function fetchFriendRequests() {
 }
 
 /**
- * Process incoming - check both messages and friend requests
+ * 处理所有传入消息和好友请求
+ * 
+ * 此函数同时检查：
+ * 1. 来自中继服务器的好友请求
+ * 2. 来自好友的加密消息
+ * 3. 好友接受通知
+ * 
+ * @returns {Promise<Object>} 包含 requests、messages 和 accepted 的结果对象
  */
 export async function processIncoming() {
   const identity = loadIdentity();
@@ -163,12 +223,10 @@ export async function processIncoming() {
   
   const results = { requests: [], messages: [], accepted: [] };
   
-  // Fetch friend requests
   try {
     const requests = await fetchFriendRequests();
     
     for (const req of requests) {
-      // Save to pending if not already there
       if (!pending.incoming.find(p => p.id === req.id)) {
         const incomingReq = {
           id: req.id,
@@ -185,10 +243,9 @@ export async function processIncoming() {
       }
     }
   } catch (e) {
-    console.error('Error fetching requests:', e.message);
+    console.error('获取请求错误:', e.message);
   }
   
-  // Fetch messages
   try {
     const messages = await relay.pollMessages(identity);
     
@@ -210,15 +267,13 @@ export async function processIncoming() {
             });
           }
         } catch (e) {
-          // Decryption failed
         }
       }
     }
   } catch (e) {
-    console.error('Error fetching messages:', e.message);
+    console.error('获取消息错误:', e.message);
   }
   
-  // Also include any pending requests we haven't shown yet
   for (const req of pending.incoming) {
     if (!results.requests.find(r => r.id === req.id)) {
       results.requests.push(req);
@@ -229,7 +284,17 @@ export async function processIncoming() {
 }
 
 /**
- * Accept a friend request
+ * 接受好友请求
+ * 
+ * 接受流程：
+ * 1. 找到对应的待处理请求
+ * 2. 使用 X25519 密钥交换派生出与请求方的共享密钥
+ * 3. 将请求方添加为好友
+ * 4. 发送加密的接受消息给请求方
+ * 5. 从待处理列表中移除该请求
+ * 
+ * @param {string} requestId - 要接受的请求 ID 或发送者名称
+ * @returns {Promise<Object>} 接受结果
  */
 export async function acceptFriendRequest(requestId) {
   const identity = loadIdentity();
@@ -237,23 +302,20 @@ export async function acceptFriendRequest(requestId) {
   const pending = loadPending();
   const friendsData = loadFriends();
   
-  // Find the request
   const request = pending.incoming.find(r => 
     r.id === requestId || 
     r.from?.toLowerCase().includes(requestId.toLowerCase())
   );
   
   if (!request) {
-    throw new Error('Friend request not found');
+    throw new Error('未找到好友请求');
   }
   
-  // Derive shared secret
   const sharedSecret = crypto.deriveSharedSecret(
     identity.x25519SecretKey,
     request.fromX25519
   );
   
-  // Add as friend
   const newFriend = {
     displayName: request.from,
     publicKey: request.fromKey,
@@ -266,7 +328,6 @@ export async function acceptFriendRequest(requestId) {
   friendsData.friends.push(newFriend);
   saveFriends(friendsData);
   
-  // Send acceptance message (encrypted now that we have shared secret)
   const content = {
     type: 'friend_accept',
     from: {
@@ -284,7 +345,6 @@ export async function acceptFriendRequest(requestId) {
     friend: newFriend
   });
   
-  // Remove from pending
   pending.incoming = pending.incoming.filter(r => r.id !== request.id);
   savePending(pending);
   
@@ -292,7 +352,8 @@ export async function acceptFriendRequest(requestId) {
 }
 
 /**
- * Get pending friend requests
+ * 获取待处理的好友请求列表
+ * @returns {Object} 包含 incoming 和 outgoing 数组的对象
  */
 export function getPendingRequests() {
   return loadPending();

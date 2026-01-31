@@ -1,124 +1,124 @@
-# Microsoft 365 Integration
+# Microsoft 365 集成
 
-## Description
-Access Microsoft 365 services - Email (Outlook), Calendar, OneDrive, To Do tasks, and Contacts via MS Graph API.
+## 描述
+通过 Microsoft Graph API 访问 Microsoft 365 服务 - 邮件（Outlook）、日历、OneDrive、待办事项任务和联系人。
 
-## Activation
-Activated when user mentions: outlook, email, calendar, onedrive, microsoft, office 365, o365, ms365, my meetings, my emails, schedule meeting, send email, check calendar, to do, microsoft tasks
+## 激活
+当用户提到以下内容时激活：outlook、电子邮件、日历、onedrive、microsoft、office 365、o365、ms365、我的会议、我的电子邮件、安排会议、发送电子邮件、检查日历、待办事项、microsoft 任务
 
-## Configuration
-Authentication is cached after first login. No environment variables required for device code flow.
+## 配置
+首次登录后会缓存身份验证。设备代码流程不需要环境变量。
 
-For headless/automated operation, set these environment variables:
-- MS365_MCP_CLIENT_ID - Azure AD app client ID
-- MS365_MCP_CLIENT_SECRET - Azure AD app secret
-- MS365_MCP_TENANT_ID - Tenant ID (use "consumers" for personal accounts)
+对于无头/自动化操作，请设置以下环境变量：
+- MS365_MCP_CLIENT_ID - Azure AD 应用客户端 ID
+- MS365_MCP_CLIENT_SECRET - Azure AD 应用密钥
+- MS365_MCP_TENANT_ID - 租户 ID（个人账户使用 "consumers"）
 
-## Available Commands
+## 可用命令
 
-### Authentication
+### 身份验证
 
 ```bash
-# Login via device code (interactive)
+# 通过设备代码登录（交互式）
 python3 /root/clawd/skills/ms365/ms365_cli.py login
 
-# Check authentication status
+# 检查身份验证状态
 python3 /root/clawd/skills/ms365/ms365_cli.py status
 
-# List cached accounts
+# 列出已缓存的账户
 python3 /root/clawd/skills/ms365/ms365_cli.py accounts
 
-# Get current user info
+# 获取当前用户信息
 python3 /root/clawd/skills/ms365/ms365_cli.py user
 ```
 
-### Email (Outlook)
+### 邮件（Outlook）
 
 ```bash
-# List recent emails
+# 列出最近的邮件
 python3 /root/clawd/skills/ms365/ms365_cli.py mail list [--top N]
 
-# Read specific email
+# 读取特定邮件
 python3 /root/clawd/skills/ms365/ms365_cli.py mail read MESSAGE_ID
 
-# Send email
+# 发送邮件
 python3 /root/clawd/skills/ms365/ms365_cli.py mail send --to "recipient@example.com" --subject "Subject" --body "Message body"
 ```
 
-### Calendar
+### 日历
 
 ```bash
-# List upcoming events
+# 列出即将发生的事件
 python3 /root/clawd/skills/ms365/ms365_cli.py calendar list [--top N]
 
-# Create event
+# 创建事件
 python3 /root/clawd/skills/ms365/ms365_cli.py calendar create --subject "Meeting" --start "2026-01-15T10:00:00" --end "2026-01-15T11:00:00" [--body "Description"] [--timezone "America/Chicago"]
 ```
 
-### OneDrive Files
+### OneDrive 文件
 
 ```bash
-# List files in root
+# 列出根目录中的文件
 python3 /root/clawd/skills/ms365/ms365_cli.py files list
 
-# List files in folder
+# 列出文件夹中的文件
 python3 /root/clawd/skills/ms365/ms365_cli.py files list --path "Documents"
 ```
 
-### To Do Tasks
+### 待办事项任务
 
 ```bash
-# List task lists
+# 列出任务列表
 python3 /root/clawd/skills/ms365/ms365_cli.py tasks lists
 
-# Get tasks from a list
+# 从列表中获取任务
 python3 /root/clawd/skills/ms365/ms365_cli.py tasks get LIST_ID
 
-# Create task
+# 创建任务
 python3 /root/clawd/skills/ms365/ms365_cli.py tasks create LIST_ID --title "Task title" [--due "2026-01-20"]
 ```
 
-### Contacts
+### 联系人
 
 ```bash
-# List contacts
+# 列出联系人
 python3 /root/clawd/skills/ms365/ms365_cli.py contacts list [--top N]
 
-# Search contacts
+# 搜索联系人
 python3 /root/clawd/skills/ms365/ms365_cli.py contacts search "John"
 ```
 
-## Usage Examples
+## 使用示例
 
-User: "Check my outlook email"
-Agent: Runs `mail list --top 10` command
+用户："检查我的 outlook 邮件"
+代理：运行 `mail list --top 10` 命令
 
-User: "What meetings do I have today?"
-Agent: Runs `calendar list` command
+用户："我今天有什么会议？"
+代理：运行 `calendar list` 命令
 
-User: "Send an email to john@company.com about the project update"
-Agent: Runs `mail send` with appropriate parameters
+用户："向 john@company.com 发送关于项目更新的电子邮件"
+代理：使用适当的参数运行 `mail send`
 
-User: "Show my OneDrive files"
-Agent: Runs `files list` command
+用户："显示我的 OneDrive 文件"
+代理：运行 `files list` 命令
 
-User: "Add a task to review the budget"
-Agent: Lists task lists first, then creates task in appropriate list
+用户："添加一个审查预算的任务"
+代理：先列出任务列表，然后在适当的列表中创建任务
 
-## Prompts
+## 提示
 
-When helping with Microsoft 365:
-- Use the ms365_cli.py script for all operations
-- Check authentication status first if commands fail
-- If not logged in, guide user through device code login
-- For calendar events, use ISO 8601 datetime format
-- Default timezone is America/Chicago
-- When sending email, confirm recipient and content before sending
-- For tasks, list available task lists first so user can choose
+在帮助使用 Microsoft 365 时：
+- 对所有操作使用 ms365_cli.py 脚本
+- 如果命令失败，先检查身份验证状态
+- 如果未登录，引导用户完成设备代码登录
+- 对于日历事件，使用 ISO 8601 日期时间格式
+- 默认时区是 America/Chicago
+- 发送电子邮件时，确认收件人和内容后再发送
+- 对于任务，先列出可用的任务列表让用户选择
 
-## Attribution
+## 归属
 
-This skill uses the **ms-365-mcp-server** by Softeria.
-- **NPM Package**: [@softeria/ms-365-mcp-server](https://www.npmjs.com/package/@softeria/ms-365-mcp-server)
+此技能使用 Softeria 的 **ms-365-mcp-server**。
+- **NPM 包**: [@softeria/ms-365-mcp-server](https://www.npmjs.com/package/@softeria/ms-365-mcp-server)
 - **GitHub**: https://github.com/Softeria/ms-365-mcp-server
-- **License**: MIT
+- **许可证**: MIT

@@ -1,43 +1,43 @@
 ---
 name: hn
-description: Browse Hacker News - top stories, new, best, ask, show, jobs, and story details with comments.
+description: 浏览 Hacker News - 热门故事、最新、最佳、问答、展示、工作，以及带有评论的故事详情。
 homepage: https://news.ycombinator.com
 metadata: {"clawdis":{"emoji":"📰","requires":{"bins":["curl"]}}}
 ---
 
 # Hacker News
 
-Read Hacker News from the command line.
+从命令行阅读 Hacker News。
 
-## Commands
+## 命令
 
-### Top Stories
+### 热门故事
 ```bash
-uv run {baseDir}/scripts/hn.py top          # Top 10 stories
-uv run {baseDir}/scripts/hn.py top -n 20    # Top 20 stories
+uv run {baseDir}/scripts/hn.py top          # 前 10 个故事
+uv run {baseDir}/scripts/hn.py top -n 20    # 前 20 个故事
 ```
 
-### Other Feeds
+### 其他 feeds
 ```bash
-uv run {baseDir}/scripts/hn.py new          # Newest stories
-uv run {baseDir}/scripts/hn.py best         # Best stories
-uv run {baseDir}/scripts/hn.py ask          # Ask HN
-uv run {baseDir}/scripts/hn.py show         # Show HN
-uv run {baseDir}/scripts/hn.py jobs         # Jobs
+uv run {baseDir}/scripts/hn.py new          # 最新故事
+uv run {baseDir}/scripts/hn.py best         # 最佳故事
+uv run {baseDir}/scripts/hn.py ask          # 问答 HN
+uv run {baseDir}/scripts/hn.py show         # 展示 HN
+uv run {baseDir}/scripts/hn.py jobs         # 工作
 ```
 
-### Story Details
+### 故事详情
 ```bash
-uv run {baseDir}/scripts/hn.py story <id>              # Story with top comments
-uv run {baseDir}/scripts/hn.py story <id> --comments 20 # More comments
+uv run {baseDir}/scripts/hn.py story <id>              # 带有顶部评论的故事
+uv run {baseDir}/scripts/hn.py story <id> --comments 20 # 更多评论
 ```
 
-### Search
+### 搜索
 ```bash
-uv run {baseDir}/scripts/hn.py search "AI agents"      # Search stories
-uv run {baseDir}/scripts/hn.py search "Claude" -n 5    # Limit results
+uv run {baseDir}/scripts/hn.py search "AI agents"      # 搜索故事
+uv run {baseDir}/scripts/hn.py search "Claude" -n 5    # 限制结果数量
 ```
 
 ## API
 
-Uses the official [Hacker News API](https://github.com/HackerNews/API) (no auth required).
+使用官方的 [Hacker News API](https://github.com/HackerNews/API)（无需认证）。

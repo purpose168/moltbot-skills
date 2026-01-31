@@ -1,18 +1,28 @@
 /**
+ * GraphQL 操作定义 - 上下文优化版本
  * GraphQL Operations with Context Optimization
- *
- * All queries now support verbosity levels for optimal context usage:
- * - ultra-light: Essential fields only (~60-80 chars per item)
- * - light: Moderate detail (~180-220 chars per item)
- * - standard: Full detail (original query complexity)
+ * 
+ * 所有查询现在支持三个详细程度级别，以优化上下文使用：
+ * - ultra-light: 仅包含必要字段（每个项目约 60-80 字符）
+ * - light: 中等详细程度（每个项目约 180-220 字符）
+ * - standard: 完整详细信息（原始查询复杂度）
  */
 
 // =============================================================================
-// ACCOUNT OPERATIONS
+// 账户操作 - ACCOUNT OPERATIONS
 // =============================================================================
 
+// 极简账户查询（仅必要字段）
 // Ultra-light accounts (essential fields only)
 export const GET_ACCOUNTS_ULTRA_LIGHT = `
+
+// 轻量账户查询（中等详细程度）
+// Light accounts (moderate detail)
+export const GET_ACCOUNTS_LIGHT = `
+
+// 标准账户查询（完整详细信息）
+// Standard accounts (full detail - original complexity)
+export const GET_ACCOUNT_DETAILS = `
   query GetAccountsUltraLight {
     accounts {
       id
@@ -25,6 +35,7 @@ export const GET_ACCOUNTS_ULTRA_LIGHT = `
   }
 `;
 
+// 轻量账户查询（中等详细程度）
 // Light accounts (moderate detail)
 export const GET_ACCOUNTS_LIGHT = `
   query GetAccountsLight {
@@ -47,6 +58,7 @@ export const GET_ACCOUNTS_LIGHT = `
   }
 `;
 
+// 标准账户查询（完整详细信息）
 // Standard accounts (full detail - original complexity)
 export const GET_ACCOUNT_DETAILS = `
   query Common_AccountDetails_getAccount($id: UUID!) {
@@ -103,6 +115,7 @@ export const GET_ACCOUNT_DETAILS = `
   }
 `;
 
+// 完整账户列表查询（标准模式）
 export const GET_ACCOUNTS = `
   query GetAccounts {
     accounts {
@@ -159,11 +172,20 @@ export const GET_ACCOUNTS = `
 `;
 
 // =============================================================================
-// TRANSACTION OPERATIONS
+// 交易操作 - TRANSACTION OPERATIONS
 // =============================================================================
 
+// 极简交易查询（最小字段集）
 // Ultra-light transactions (minimal fields)
 export const GET_TRANSACTIONS_ULTRA_LIGHT = `
+
+// 轻量交易查询（中等详细程度）
+// Light transactions (moderate detail)
+export const GET_TRANSACTIONS_LIGHT = `
+
+// 标准交易查询（完整详细信息）
+// Standard transactions (full detail - original complexity)
+export const GET_TRANSACTIONS = `
   query GetTransactionsUltraLight(
     $offset: Int,
     $limit: Int,
@@ -292,7 +314,7 @@ export const GET_TRANSACTIONS = `
 `;
 
 // =============================================================================
-// SMART SEARCH OPERATIONS
+// 智能搜索操作 - SMART SEARCH OPERATIONS
 // =============================================================================
 
 export const SMART_TRANSACTION_SEARCH = `
@@ -337,7 +359,7 @@ export const SMART_TRANSACTION_SEARCH = `
 `;
 
 // =============================================================================
-// CATEGORY OPERATIONS
+// 分类操作 - CATEGORY OPERATIONS
 // =============================================================================
 
 export const GET_TRANSACTION_CATEGORIES = `
@@ -371,7 +393,7 @@ export const GET_CATEGORIES_LIGHT = `
 `;
 
 // =============================================================================
-// BUDGET OPERATIONS
+// 预算操作 - BUDGET OPERATIONS
 // =============================================================================
 
 export const GET_BUDGETS = `
@@ -421,7 +443,7 @@ export const GET_BUDGETS_LIGHT = `
 `;
 
 // =============================================================================
-// SUMMARY OPERATIONS (Ultra-compact responses)
+// 汇总操作 - SUMMARY OPERATIONS (极简响应格式)
 // =============================================================================
 
 export const GET_QUICK_FINANCIAL_OVERVIEW = `
@@ -468,7 +490,7 @@ export const GET_ACCOUNT_BALANCE_TRENDS = `
 `;
 
 // =============================================================================
-// OTHER OPERATIONS (kept from original)
+// 其他操作 - OTHER OPERATIONS (保留自原始版本)
 // =============================================================================
 
 export const GET_ACCOUNT_TYPE_OPTIONS = `
@@ -506,12 +528,13 @@ export const GET_NET_WORTH_HISTORY = `
 `;
 
 // =============================================================================
-// VERBOSITY UTILITIES
+// 详细程度工具 - VERBOSITY UTILITIES
 // =============================================================================
 
 export type VerbosityLevel = 'ultra-light' | 'light' | 'standard';
 
 /**
+ * 根据详细程度级别选择合适的查询
  * Select appropriate queries based on verbosity level
  */
 export function getQueryForVerbosity(queryType: 'accounts' | 'transactions' | 'categories' | 'budgets', verbosity: VerbosityLevel): string {

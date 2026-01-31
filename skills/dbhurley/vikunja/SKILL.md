@@ -1,70 +1,102 @@
 ---
 name: vikunja
-description: Manage projects and tasks in Vikunja, an open-source project management tool. Create projects, tasks, set due dates, priorities, and track completion.
+description: 在 Vikunja 中管理项目和任务，Vikunja 是一个开源的项目管理工具。创建项目、任务，设置截止日期、优先级，并跟踪完成状态。
 homepage: https://vikunja.io
 metadata: {"clawdbot":{"emoji":"📋","requires":{"bins":["uv"],"env":["VIKUNJA_URL","VIKUNJA_USER","VIKUNJA_PASSWORD"]},"primaryEnv":"VIKUNJA_URL"}}
 ---
 
-# Vikunja Project Management
+# Vikunja 项目管理
 
-Manage projects and tasks in [Vikunja](https://vikunja.io), an open-source, self-hosted project management tool.
+管理 [Vikunja](https://vikunja.io) 中的项目和任务，Vikunja 是一个开源、自托管的项目管理工具。
 
-## Setup
+## 环境配置
 
-Set these environment variables:
-- `VIKUNJA_URL` - Your Vikunja instance URL (e.g., `https://vikunja.example.com`)
-- `VIKUNJA_USER` - Username or email
-- `VIKUNJA_PASSWORD` - Password
+在使用之前，请设置以下环境变量：
+- `VIKUNJA_URL` - 您的 Vikunja 实例地址（例如：`https://vikunja.example.com`）
+- `VIKUNJA_USER` - 用户名或邮箱
+- `VIKUNJA_PASSWORD` - 密码
 
-## Commands
+## 命令
 
-### Projects
+### 项目管理
 ```bash
-# List all projects
+# 列出所有项目
 uv run {baseDir}/scripts/vikunja.py projects
 
-# Get project details
+# 获取项目详情
 uv run {baseDir}/scripts/vikunja.py project <ID>
 
-# Create a project
-uv run {baseDir}/scripts/vikunja.py create-project "Project Name" -d "Description"
+# 创建新项目
+uv run {baseDir}/scripts/vikunja.py create-project "项目名称" -d "项目描述"
 ```
 
-### Tasks
+### 任务管理
 ```bash
-# List all tasks
+# 列出所有任务
 uv run {baseDir}/scripts/vikunja.py tasks
 
-# List tasks in a specific project
+# 列出指定项目中的任务
 uv run {baseDir}/scripts/vikunja.py tasks --project <PROJECT_ID>
 
-# Create a task
-uv run {baseDir}/scripts/vikunja.py create-task "Task title" --project <ID> --due 2026-01-15 --priority 3
+# 创建新任务
+uv run {baseDir}/scripts/vikunja.py create-task "任务标题" --project <ID> --due 2026-01-15 --priority 3
 
-# Mark task complete
+# 标记任务完成
 uv run {baseDir}/scripts/vikunja.py complete <TASK_ID>
 ```
 
-### Options
-- `--json` - Output results as JSON (for programmatic use)
+### 全局选项
+- `--json` - 以 JSON 格式输出结果（用于程序化处理）
 
-## Priority Levels
-- 0: None
-- 1: Low
-- 2: Medium  
-- 3: High
-- 4: Urgent
-- 5: Critical
+## 优先级级别说明
 
-## Examples
+| 优先级 | 名称 | 说明 |
+|--------|------|------|
+| 0 | 无 | 无优先级 |
+| 1 | 低 | 低优先级任务 |
+| 2 | 中 | 中等优先级任务 |
+| 3 | 高 | 高优先级任务 |
+| 4 | 紧急 | 紧急任务 |
+| 5 | 关键 | 关键任务 |
+
+## 使用示例
 
 ```bash
-# Create a project for Q1 planning
-uv run {baseDir}/scripts/vikunja.py create-project "Q1 2026 Planning" -d "Quarterly planning tasks"
+# 创建 2026 年第一季度规划项目
+uv run {baseDir}/scripts/vikunja.py create-project "2026 年 Q1 规划" -d "季度规划任务"
 
-# Add a high-priority task
-uv run {baseDir}/scripts/vikunja.py create-task "Review budget" --project 5 --due 2026-01-20 --priority 3
+# 添加高优先级任务
+uv run {baseDir}/scripts/vikunja.py create-task "审查预算" --project 5 --due 2026-01-20 --priority 3
 
-# Check what's due
+# 查看到期任务
 uv run {baseDir}/scripts/vikunja.py tasks --project 5 --json
 ```
+
+## 功能特点
+
+1. **项目管理**：
+   - 列出所有项目及其任务数量
+   - 查看项目详细信息和描述
+   - 创建新项目
+
+2. **任务管理**：
+   - 列出所有任务或按项目筛选
+   - 创建任务，支持设置截止日期和优先级
+   - 标记任务完成
+
+3. **输出格式**：
+   - 支持美化的表格输出（默认）
+   - 支持 JSON 格式输出（便于程序处理）
+
+4. **认证安全**：
+   - 使用环境变量存储凭据
+   - 支持 Bearer Token 认证
+   - 每次运行自动检查配置完整性
+
+## 注意事项
+
+1. 确保 Vikunja 实例可访问且网络连接正常
+2. 用户名可以是邮箱或用户名，取决于 Vikunja 配置
+3. 截止日期格式必须为 YYYY-MM-DD
+4. 优先级范围为 0-5，数字越大优先级越高
+5. 建议定期更新密码以确保安全

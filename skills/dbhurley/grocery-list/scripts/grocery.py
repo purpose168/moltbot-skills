@@ -2,10 +2,10 @@
 # /// script
 # requires-python = ">=3.10"
 # ///
-"""Grocery List & Meal Planner CLI.
+"""购物清单和膳食计划 CLI。
 
-Self-contained grocery lists, recipes, and meal planning with local JSON storage.
-No external services required.
+自包含的购物清单、食谱和膳食计划，使用本地 JSON 存储。
+无需外部服务。
 """
 
 from __future__ import annotations
@@ -20,11 +20,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-# Default data directory
+# 默认数据目录
 DATA_DIR = Path(os.environ.get("GROCERY_DATA_DIR", Path.home() / ".clawdbot" / "grocery-list"))
 DATA_FILE = DATA_DIR / "data.json"
 
-# Category auto-detection keywords
+# 分类自动检测关键词
 CATEGORY_KEYWORDS: dict[str, list[str]] = {
     "produce": ["apple", "banana", "orange", "lettuce", "tomato", "onion", "potato", "carrot", "celery", "broccoli", "spinach", "avocado", "pepper", "cucumber", "garlic", "lemon", "lime", "strawberry", "blueberry", "grape", "mango", "pineapple", "watermelon", "mushroom", "corn", "cabbage", "kale", "asparagus", "zucchini", "squash"],
     "dairy": ["milk", "cheese", "yogurt", "butter", "cream", "egg", "eggs", "sour cream", "cottage cheese", "half and half", "creamer", "whipping cream"],
@@ -44,70 +44,81 @@ ALL_CATEGORIES = list(CATEGORY_KEYWORDS.keys()) + ["other"]
 
 @dataclass
 class GroceryItem:
-    id: str
-    name: str
-    list_name: str
-    category: str = "other"
-    quantity: float = 1.0
-    unit: str = ""
-    assignee: str = ""
-    checked: bool = False
-    added: str = ""
+    """购物清单项目类"""
+    id: str  # 项目唯一标识符
+    name: str  # 项目名称
+    list_name: str  # 所属清单名称
+    category: str = "other"  # 分类，默认为"other"
+    quantity: float = 1.0  # 数量，默认为1.0
+    unit: str = ""  # 单位，默认为空
+    assignee: str = ""  # 负责人，默认为空
+    checked: bool = False  # 是否已勾选，默认为False
+    added: str = ""  # 添加时间，ISO格式字符串
     
     def to_dict(self) -> dict:
+        """转换为字典格式"""
         return asdict(self)
     
     @classmethod
     def from_dict(cls, d: dict) -> "GroceryItem":
+        """从字典创建实例"""
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass
 class Recipe:
-    id: str
-    name: str
-    ingredients: list[str] = field(default_factory=list)
-    instructions: str = ""
-    category: str = ""
-    servings: int = 4
-    prep_time: str = ""
-    cook_time: str = ""
-    notes: str = ""
-    created: str = ""
+    """食谱类"""
+    id: str  # 食谱唯一标识符
+    name: str  # 食谱名称
+    ingredients: list[str] = field(default_factory=list)  #  ingredients，默认为空列表
+    instructions: str = ""  # 烹饪说明，默认为空
+    category: str = ""  # 食谱分类，默认为空
+    servings: int = 4  # 份量，默认为4
+    prep_time: str = ""  # 准备时间，默认为空
+    cook_time: str = ""  # 烹饪时间，默认为空
+    notes: str = ""  # 备注，默认为空
+    created: str = ""  # 创建时间，ISO格式字符串
     
     def to_dict(self) -> dict:
+        """转换为字典格式"""
         return asdict(self)
     
     @classmethod
     def from_dict(cls, d: dict) -> "Recipe":
+        """从字典创建实例"""
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass
 class Meal:
-    id: str
-    date: str  # YYYY-MM-DD
-    type: str  # breakfast, lunch, dinner, snack
-    recipe_name: str = ""
-    notes: str = ""
+    """膳食计划项目类"""
+    id: str  # 膳食唯一标识符
+    date: str  # 日期，格式为YYYY-MM-DD
+    type: str  # 膳食类型，如breakfast, lunch, dinner, snack
+    recipe_name: str = ""  # 关联的食谱名称，默认为空
+    notes: str = ""  # 备注，默认为空
     
     def to_dict(self) -> dict:
+        """转换为字典格式"""
         return asdict(self)
     
     @classmethod
     def from_dict(cls, d: dict) -> "Meal":
+        """从字典创建实例"""
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass
 class DataStore:
-    lists: list[str] = field(default_factory=lambda: ["Grocery"])
-    items: list[GroceryItem] = field(default_factory=list)
-    recipes: list[Recipe] = field(default_factory=list)
-    meals: list[Meal] = field(default_factory=list)
-    family: list[str] = field(default_factory=list)
+    """数据存储类"""
+    lists: list[str] = field(default_factory=lambda: ["Grocery"])  # 购物清单列表，默认为["Grocery"]
+    items: list[GroceryItem] = field(default_factory=list)  # 购物项目列表，默认为空
+    recipes: list[Recipe] = field(default_factory=list)  # 食谱列表，默认为空
+    meals: list[Meal] = field(default_factory=list)  # 膳食计划列表，默认为空
+    family: list[str] = field(default_factory=list)  # 家庭成员列表，默认为空
     
     def to_dict(self) -> dict:
+        """转换为字典格式"""
         return {
             "lists": self.lists,
             "items": [i.to_dict() for i in self.items],
@@ -118,6 +129,7 @@ class DataStore:
     
     @classmethod
     def from_dict(cls, d: dict) -> "DataStore":
+        """从字典创建实例"""
         return cls(
             lists=d.get("lists", ["Grocery"]),
             items=[GroceryItem.from_dict(i) for i in d.get("items", [])],
@@ -128,7 +140,7 @@ class DataStore:
 
 
 def load_data() -> DataStore:
-    """Load data from JSON file."""
+    """从JSON文件加载数据"""
     if not DATA_FILE.exists():
         return DataStore()
     try:
@@ -139,14 +151,14 @@ def load_data() -> DataStore:
 
 
 def save_data(data: DataStore) -> None:
-    """Save data to JSON file."""
+    """将数据保存到JSON文件"""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with open(DATA_FILE, "w") as f:
         json.dump(data.to_dict(), f, indent=2, sort_keys=True)
 
 
 def detect_category(name: str) -> str:
-    """Auto-detect category based on item name."""
+    """根据项目名称自动检测分类"""
     name_lower = name.lower()
     for category, keywords in CATEGORY_KEYWORDS.items():
         for kw in keywords:
@@ -156,7 +168,7 @@ def detect_category(name: str) -> str:
 
 
 def parse_quantity(qty_str: str) -> tuple[float, str]:
-    """Parse '2 gallons' into (2.0, 'gallon')."""
+    """解析数量字符串，如'2 gallons' 转换为 (2.0, 'gallon')"""
     if not qty_str:
         return (1.0, "")
     parts = qty_str.strip().split(None, 1)
@@ -167,19 +179,19 @@ def parse_quantity(qty_str: str) -> tuple[float, str]:
             return (1.0, parts[0])
     try:
         num = float(parts[0])
-        unit = parts[1].rstrip("s")  # Normalize plural
+        unit = parts[1].rstrip("s")  # 标准化复数形式
         return (num, unit)
     except ValueError:
         return (1.0, qty_str)
 
 
 def now_iso() -> str:
-    """Get current ISO timestamp."""
+    """获取当前时间的ISO格式字符串"""
     return datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def today_str() -> str:
-    """Get today's date as YYYY-MM-DD."""
+    """获取今天日期的字符串表示，格式为YYYY-MM-DD"""
     return datetime.now().strftime("%Y-%m-%d")
 
 
@@ -188,7 +200,7 @@ def today_str() -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def cmd_lists(args: argparse.Namespace) -> int:
-    """List all shopping lists."""
+    """显示所有购物清单"""
     data = load_data()
     if args.json:
         print(json.dumps({"lists": data.lists}, indent=2))
@@ -201,7 +213,7 @@ def cmd_lists(args: argparse.Namespace) -> int:
 
 
 def cmd_list_view(args: argparse.Namespace) -> int:
-    """View items in a specific list."""
+    """查看特定清单中的项目"""
     data = load_data()
     list_name = args.list_name
     
@@ -217,7 +229,7 @@ def cmd_list_view(args: argparse.Namespace) -> int:
         print(json.dumps({"list": list_name, "items": [i.to_dict() for i in items]}, indent=2))
         return 0
     
-    # Group by category
+    # 按分类分组
     by_category: dict[str, list[GroceryItem]] = {}
     for item in items:
         by_category.setdefault(item.category, []).append(item)
@@ -241,7 +253,7 @@ def cmd_list_view(args: argparse.Namespace) -> int:
 
 
 def cmd_list_create(args: argparse.Namespace) -> int:
-    """Create a new list."""
+    """创建新清单"""
     data = load_data()
     name = args.name
     if name in data.lists:
@@ -254,7 +266,7 @@ def cmd_list_create(args: argparse.Namespace) -> int:
 
 
 def cmd_list_delete(args: argparse.Namespace) -> int:
-    """Delete a list and its items."""
+    """删除清单及其项目"""
     data = load_data()
     name = args.name
     if name not in data.lists:
@@ -268,7 +280,7 @@ def cmd_list_delete(args: argparse.Namespace) -> int:
 
 
 def cmd_add(args: argparse.Namespace) -> int:
-    """Add item(s) to a list."""
+    """向清单添加项目"""
     data = load_data()
     list_name = args.list_name
     
@@ -298,7 +310,7 @@ def cmd_add(args: argparse.Namespace) -> int:
 
 
 def cmd_check(args: argparse.Namespace) -> int:
-    """Mark item as checked."""
+    """标记项目为已勾选"""
     data = load_data()
     found = False
     for item in data.items:
@@ -315,7 +327,7 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 
 def cmd_uncheck(args: argparse.Namespace) -> int:
-    """Mark item as unchecked."""
+    """标记项目为未勾选"""
     data = load_data()
     found = False
     for item in data.items:
@@ -332,7 +344,7 @@ def cmd_uncheck(args: argparse.Namespace) -> int:
 
 
 def cmd_remove(args: argparse.Namespace) -> int:
-    """Remove item from list."""
+    """从清单中移除项目"""
     data = load_data()
     before = len(data.items)
     data.items = [i for i in data.items if not (i.list_name == args.list_name and i.name.lower() == args.item.lower())]
@@ -345,7 +357,7 @@ def cmd_remove(args: argparse.Namespace) -> int:
 
 
 def cmd_clear(args: argparse.Namespace) -> int:
-    """Clear all checked items from a list."""
+    """清除清单中所有已勾选的项目"""
     data = load_data()
     before = len(data.items)
     data.items = [i for i in data.items if not (i.list_name == args.list_name and i.checked)]
@@ -358,7 +370,7 @@ def cmd_clear(args: argparse.Namespace) -> int:
 # ─── Recipes ─────────────────────────────────────────────────────────────────
 
 def cmd_recipes(args: argparse.Namespace) -> int:
-    """List all recipes."""
+    """显示所有食谱"""
     data = load_data()
     recipes = data.recipes
     
@@ -386,7 +398,7 @@ def cmd_recipes(args: argparse.Namespace) -> int:
 
 
 def cmd_recipe_view(args: argparse.Namespace) -> int:
-    """View a specific recipe."""
+    """查看特定食谱"""
     data = load_data()
     name = args.name.lower()
     recipe = next((r for r in data.recipes if r.name.lower() == name), None)
@@ -422,10 +434,10 @@ def cmd_recipe_view(args: argparse.Namespace) -> int:
 
 
 def cmd_recipe_add(args: argparse.Namespace) -> int:
-    """Add a new recipe."""
+    """添加新食谱"""
     data = load_data()
     
-    # Check if exists
+    # 检查是否已存在
     existing = next((r for r in data.recipes if r.name.lower() == args.name.lower()), None)
     if existing:
         print(f"⚠️  Recipe '{args.name}' already exists. Use a different name or delete first.", file=sys.stderr)
@@ -454,7 +466,7 @@ def cmd_recipe_add(args: argparse.Namespace) -> int:
 
 
 def cmd_recipe_delete(args: argparse.Namespace) -> int:
-    """Delete a recipe."""
+    """删除食谱"""
     data = load_data()
     before = len(data.recipes)
     data.recipes = [r for r in data.recipes if r.name.lower() != args.name.lower()]
@@ -467,7 +479,7 @@ def cmd_recipe_delete(args: argparse.Namespace) -> int:
 
 
 def cmd_recipe_search(args: argparse.Namespace) -> int:
-    """Search recipes."""
+    """搜索食谱"""
     data = load_data()
     query = args.query.lower()
     matches = [r for r in data.recipes if query in r.name.lower() or query in " ".join(r.ingredients).lower()]
@@ -488,13 +500,13 @@ def cmd_recipe_search(args: argparse.Namespace) -> int:
 # ─── Meals ───────────────────────────────────────────────────────────────────
 
 def cmd_meals(args: argparse.Namespace) -> int:
-    """Show meal plan."""
+    """显示膳食计划"""
     data = load_data()
     
-    # Default to this week
+    # 默认显示本周
     today = datetime.now()
-    start = today - timedelta(days=today.weekday())  # Monday
-    end = start + timedelta(days=6)  # Sunday
+    start = today - timedelta(days=today.weekday())  # 周一
+    end = start + timedelta(days=6)  # 周日
     
     if args.date:
         target = datetime.strptime(args.date, "%Y-%m-%d")
@@ -527,7 +539,7 @@ def cmd_meals(args: argparse.Namespace) -> int:
 
 
 def cmd_meal_add(args: argparse.Namespace) -> int:
-    """Add a meal to the plan."""
+    """向膳食计划添加膳食"""
     data = load_data()
     
     date = args.date or today_str()
@@ -537,7 +549,7 @@ def cmd_meal_add(args: argparse.Namespace) -> int:
         print(f"❌ Invalid meal type '{meal_type}'. Use: breakfast, lunch, dinner, snack", file=sys.stderr)
         return 1
     
-    # Check for existing
+    # 检查是否已存在
     existing = next((m for m in data.meals if m.date == date and m.type == meal_type), None)
     if existing:
         existing.recipe_name = args.recipe or ""
@@ -559,7 +571,7 @@ def cmd_meal_add(args: argparse.Namespace) -> int:
 
 
 def cmd_meal_remove(args: argparse.Namespace) -> int:
-    """Remove a meal from the plan."""
+    """从膳食计划中移除膳食"""
     data = load_data()
     date = args.date or today_str()
     meal_type = args.type.lower()
@@ -575,12 +587,12 @@ def cmd_meal_remove(args: argparse.Namespace) -> int:
 
 
 def cmd_meal_add_to_list(args: argparse.Namespace) -> int:
-    """Add meal ingredients to a grocery list."""
+    """将膳食食材添加到购物清单"""
     data = load_data()
     date = args.date or today_str()
     list_name = args.list or "Grocery"
     
-    # Find meals for this date
+    # 查找指定日期的膳食
     meals_today = [m for m in data.meals if m.date == date and m.recipe_name]
     if not meals_today:
         print(f"❌ No meals with recipes found for {date}", file=sys.stderr)
@@ -597,7 +609,7 @@ def cmd_meal_add_to_list(args: argparse.Namespace) -> int:
             continue
         
         for ing in recipe.ingredients:
-            # Check if already in list
+            # 检查是否已在清单中
             exists = any(i.list_name == list_name and i.name.lower() == ing.lower() and not i.checked for i in data.items)
             if exists:
                 continue
@@ -624,13 +636,13 @@ def cmd_meal_add_to_list(args: argparse.Namespace) -> int:
 # ─── Utility ─────────────────────────────────────────────────────────────────
 
 def cmd_stats(args: argparse.Namespace) -> int:
-    """Show quick statistics."""
+    """显示统计信息"""
     data = load_data()
     
     total_items = len([i for i in data.items if not i.checked])
     total_recipes = len(data.recipes)
     
-    # This week's meals
+    # 本周的膳食
     today = datetime.now()
     start = today - timedelta(days=today.weekday())
     start_str = start.strftime("%Y-%m-%d")
@@ -655,12 +667,12 @@ def cmd_stats(args: argparse.Namespace) -> int:
 
 
 def cmd_notify(args: argparse.Namespace) -> int:
-    """Output notification for heartbeat/cron."""
+    """输出心跳/定时任务的通知"""
     data = load_data()
     
     alerts = []
     
-    # Items to buy
+    # 待购买项目
     unchecked = [i for i in data.items if not i.checked]
     if unchecked:
         by_list: dict[str, int] = {}
@@ -670,7 +682,7 @@ def cmd_notify(args: argparse.Namespace) -> int:
             if count >= 5:
                 alerts.append(f"🛒 {lst} has {count} items")
     
-    # Unplanned meals this week
+    # 本周未计划的膳食
     today = datetime.now()
     for i in range(7):
         check_date = (today + timedelta(days=i)).strftime("%Y-%m-%d")
@@ -681,7 +693,7 @@ def cmd_notify(args: argparse.Namespace) -> int:
                 alerts.append(f"🍽️ No dinner planned for tonight!")
             elif i <= 2:
                 alerts.append(f"🍽️ No dinner planned for {day_name}")
-            break  # Only alert for first unplanned
+            break  # 只提醒第一个未计划的
     
     if args.json:
         print(json.dumps({"alerts": alerts}, indent=2))
@@ -696,7 +708,7 @@ def cmd_notify(args: argparse.Namespace) -> int:
 
 
 def cmd_family(args: argparse.Namespace) -> int:
-    """Manage family members."""
+    """管理家庭成员"""
     data = load_data()
     
     if args.add:
@@ -734,6 +746,7 @@ def cmd_family(args: argparse.Namespace) -> int:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main() -> int:
+    """主函数"""
     parser = argparse.ArgumentParser(
         description="Grocery List & Meal Planner",
         formatter_class=argparse.RawDescriptionHelpFormatter,

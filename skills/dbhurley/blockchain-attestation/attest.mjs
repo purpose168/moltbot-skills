@@ -1,4 +1,29 @@
 #!/usr/bin/env node
+/**
+ * 区块链证明工具 - 使用以太坊证明服务（EAS）创建可验证的代理工作证明
+ * 
+ * 功能：
+ * - 注册证明模式（schema）到链上
+ * - 创建链上（onchain）或链下（offchain）证明
+ * - 验证已存在的证明
+ * - 为文件或文本生成哈希值
+ * - 为链下证明添加链上时间戳
+ * 
+ * 支持的链：
+ * - Base 主网
+ * - Base Sepolia 测试网
+ * 
+ * 使用示例：
+ *   # 注册模式
+ *   node attest.mjs schema register --chain base
+ *   
+ *   # 创建链下证明
+ *   node attest.mjs attest --mode offchain --chain base --task-text "任务描述" --output-file ./output.txt
+ *   
+ *   # 验证证明
+ *   node attest.mjs verify --chain base --uid <证明UID>
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -6,48 +31,73 @@ import process from 'node:process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
-// Use createRequire for packages with ESM resolution issues
+// 使用createRequire处理ESM解析问题
 const require = createRequire(import.meta.url);
-const { Command } = require('commander');
 const {
-  EAS,
-  NO_EXPIRATION,
-  SchemaEncoder,
-  SchemaRegistry,
-  Offchain,
-  OffchainAttestationVersion
+  EAS,              // 以太坊证明服务主类
+  NO_EXPIRATION,    // 无过期时间常量
+  SchemaEncoder,    // 模式编码器
+  SchemaRegistry,   // 模式注册表
+  Offchain,         // 链下证明
+  OffchainAttestationVersion // 链下证明版本
 } = require('@ethereum-attestation-service/eas-sdk');
-const { ethers } = require('ethers');
+const { ethers } = require('ethers');  // ethers.js 库
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CHAINS_PATH = path.join(__dirname, 'chains.json');
-const SCHEMAS_PATH = path.join(__dirname, 'schemas.json');
+// 配置文件路径
+const CHAINS_PATH = path.join(__dirname, 'chains.json');     // 链配置文件
+const SCHEMAS_PATH = path.join(__dirname, 'schemas.json');    // 模式配置文件
 
+/**
+ * 读取JSON文件
+ * @param {string} filePath - 文件路径
+ * @returns {object} 解析后的JSON对象
+ * @throws {Error} 如果文件读取或解析失败
+ */
 function readJson(filePath) {
   try {
     const raw = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(raw);
   } catch (err) {
-    throw new Error(`Failed to read JSON: ${filePath}: ${err?.message || String(err)}`);
+    throw new Error(`读取JSON文件失败: ${filePath}: ${err?.message || String(err)}`);
   }
 }
 
+/**
+ * 写入JSON文件（原子操作）
+ * @param {string} filePath - 文件路径
+ * @param {object} obj - 要写入的对象
+ */
 function writeJson(filePath, obj) {
   const tmp = `${filePath}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 2) + '\n', 'utf8');
   fs.renameSync(tmp, filePath);
 }
 
+/**
+ * 获取当前时间的ISO格式字符串
+ * @returns {string} ISO格式的时间字符串
+ */
 function nowIso() {
   return new Date().toISOString();
 }
 
+/**
+ * 输出成功结果
+ * @param {object} payload - 成功数据
+ */
 function ok(payload) {
   process.stdout.write(JSON.stringify({ success: true, ...payload }) + '\n');
 }
 
+/**
+ * 输出失败结果并设置退出码
+ * @param {string} code - 错误代码
+ * @param {string} message - 错误消息
+ * @param {any} details - 错误详情
+ */
 function fail(code, message, details) {
   process.stdout.write(
     JSON.stringify({
@@ -58,75 +108,139 @@ function fail(code, message, details) {
   process.exitCode = 1;
 }
 
+/**
+ * 检查值是否存在，不存在则抛出错误
+ * @param {string} name - 值的名称
+ * @param {any} value - 要检查的值
+ * @returns {any} 检查后的值
+ * @throws {Error} 如果值不存在
+ */
 function requireValue(name, value) {
   if (value === undefined || value === null || value === '') {
-    throw new Error(`Missing required value: ${name}`);
+    throw new Error(`缺少必需值: ${name}`);
   }
   return value;
 }
 
+/**
+ * 检查字符串是否以0x前缀开头
+ * @param {string} s - 要检查的字符串
+ * @returns {boolean} 是否以0x前缀开头
+ */
 function isHexPrefixed(s) {
   return typeof s === 'string' && s.startsWith('0x');
 }
 
+/**
+ * 规范化32字节的十六进制字符串
+ * @param {string} hex - 十六进制字符串
+ * @returns {string} 规范化的32字节十六进制字符串
+ * @throws {Error} 如果输入不是有效的32字节十六进制字符串
+ */
 function normalizeHexBytes32(hex) {
-  if (typeof hex !== 'string') throw new Error('Expected hex string');
+  if (typeof hex !== 'string') throw new Error('期望十六进制字符串');
   const h = hex.startsWith('0x') ? hex.slice(2) : hex;
-  if (!/^[0-9a-fA-F]+$/.test(h)) throw new Error(`Invalid hex: ${hex}`);
-  if (h.length !== 64) throw new Error(`Expected 32 bytes hex (64 nybbles). Got length ${h.length}: ${hex}`);
+  if (!/^[0-9a-fA-F]+$/.test(h)) throw new Error(`无效的十六进制: ${hex}`);
+  if (h.length !== 64) throw new Error(`期望32字节十六进制（64个半字节）。得到长度 ${h.length}: ${hex}`);
   return '0x' + h.toLowerCase();
 }
 
+/**
+ * 规范化证明UID
+ * @param {string} uid - 证明UID
+ * @returns {string} 规范化的UID
+ */
 function normalizeUid(uid) {
   return normalizeHexBytes32(uid);
 }
 
+/**
+ * 规范化以太坊地址
+ * @param {string} addr - 以太坊地址
+ * @returns {string} 规范化的以太坊地址
+ * @throws {Error} 如果地址无效
+ */
 function normalizeAddress(addr) {
-  if (!ethers.isAddress(addr)) throw new Error(`Invalid address: ${addr}`);
+  if (!ethers.isAddress(addr)) throw new Error(`无效地址: ${addr}`);
   return ethers.getAddress(addr);
 }
 
+/**
+ * 获取零地址（0x0000000000000000000000000000000000000000）
+ * @returns {string} 零地址
+ */
 function zeroAddress() {
   return ethers.ZeroAddress;
 }
 
+/**
+ * 获取零哈希值（0x0000000000000000000000000000000000000000000000000000000000000000）
+ * @returns {string} 零哈希值
+ */
 function zeroUid() {
   return ethers.ZeroHash;
 }
 
+/**
+ * 计算数据的SHA-256哈希值（32字节）
+ * @param {Buffer|string} data - 要哈希的数据
+ * @returns {string} 32字节的SHA-256哈希值（带0x前缀）
+ */
 function sha256Bytes32(data) {
   const hash = crypto.createHash('sha256').update(data).digest('hex');
   return '0x' + hash;
 }
 
+/**
+ * 计算数据的Keccak-256哈希值（32字节）
+ * @param {Buffer|string} data - 要哈希的数据
+ * @returns {string} 32字节的Keccak-256哈希值（带0x前缀）
+ */
 function keccakBytes32(data) {
-  // ethers.keccak256 expects BytesLike
+  // ethers.keccak256 期望 BytesLike 类型
   return ethers.keccak256(data);
 }
 
+/**
+ * 从文本生成哈希值
+ * @param {string} text - 要哈希的文本
+ * @param {string} algo - 哈希算法（'sha256'或'keccak256'）
+ * @returns {string} 32字节的哈希值（带0x前缀）
+ */
 function hashFromText(text, algo) {
   const buf = Buffer.from(String(text), 'utf8');
   if (algo === 'keccak256') return keccakBytes32(buf);
   return sha256Bytes32(buf);
 }
 
+/**
+ * 从文件生成哈希值
+ * @param {string} filePath - 要哈希的文件路径
+ * @param {string} algo - 哈希算法（'sha256'或'keccak256'）
+ * @returns {string} 32字节的哈希值（带0x前缀）
+ */
 function hashFromFile(filePath, algo) {
   const buf = fs.readFileSync(filePath);
   if (algo === 'keccak256') return keccakBytes32(buf);
   return sha256Bytes32(buf);
 }
 
+/**
+ * 解析模式字符串
+ * @param {string} schemaString - 模式字符串，例如："bytes32 taskHash, bytes32 outputHash, string agentId, string metadata"
+ * @returns {object} 解析后的模式对象，包含fields、types和names
+ * @throws {Error} 如果模式字符串无效
+ */
 function parseSchemaString(schemaString) {
-  // Example: "bytes32 taskHash, bytes32 outputHash, string agentId, string metadata"
   const parts = String(schemaString)
     .split(',')
     .map((p) => p.trim())
     .filter(Boolean);
 
   const fields = parts.map((p) => {
-    // split by whitespace, first token is type, last token is name
+    // 按空白分割，第一个标记是类型，最后一个标记是名称
     const tokens = p.split(/\s+/).filter(Boolean);
-    if (tokens.length < 2) throw new Error(`Invalid schema field: ${p}`);
+    if (tokens.length < 2) throw new Error(`无效的模式字段: ${p}`);
     const type = tokens[0];
     const name = tokens[tokens.length - 1];
     return { type, name };
@@ -139,6 +253,12 @@ function parseSchemaString(schemaString) {
   };
 }
 
+/**
+ * 解码编码的数据
+ * @param {string} schemaString - 模式字符串
+ * @param {string} encodedData - 编码的数据
+ * @returns {object} 解码后的数据对象
+ */
 function decodeEncodedData(schemaString, encodedData) {
   const { types, names } = parseSchemaString(schemaString);
   const coder = ethers.AbiCoder.defaultAbiCoder();
@@ -148,27 +268,54 @@ function decodeEncodedData(schemaString, encodedData) {
   return out;
 }
 
+/**
+ * 加载链配置
+ * @returns {object} 链配置对象
+ */
 function loadChains() {
   return readJson(CHAINS_PATH);
 }
 
+/**
+ * 加载模式配置
+ * @returns {object} 模式配置对象
+ */
 function loadSchemas() {
   return readJson(SCHEMAS_PATH);
 }
 
+/**
+ * 解析链键
+ * @param {string} chainArg - 命令行传入的链键
+ * @returns {string} 解析后的链键（默认base）
+ */
 function resolveChainKey(chainArg) {
   return (chainArg || process.env.EAS_CHAIN || 'base').trim();
 }
 
+/**
+ * 获取链配置
+ * @param {object} chains - 链配置对象
+ * @param {string} chainKey - 链键
+ * @returns {object} 链配置
+ * @throws {Error} 如果链键未知
+ */
 function getChainConfig(chains, chainKey) {
   const cfg = chains[chainKey];
   if (!cfg) {
     const known = Object.keys(chains).join(', ');
-    throw new Error(`Unknown chain key: ${chainKey}. Known: ${known}`);
+    throw new Error(`未知链键: ${chainKey}。已知: ${known}`);
   }
   return cfg;
 }
 
+/**
+ * 构建浏览器URL
+ * @param {object} chainCfg - 链配置
+ * @param {string} uid - UID
+ * @param {string} mode - 模式（onchain、offchain、schema）
+ * @returns {object} 包含view URL的对象
+ */
 function buildExplorerUrls(chainCfg, uid, mode) {
   const base = String(chainCfg.explorer).replace(/\/+$/, '');
   if (mode === 'onchain') return { view: `${base}/attestation/view/${uid}` };
@@ -177,17 +324,33 @@ function buildExplorerUrls(chainCfg, uid, mode) {
   return { view: base };
 }
 
+/**
+ * 获取RPC URL
+ * @param {string} argRpc - 命令行传入的RPC URL
+ * @returns {string} RPC URL（优先使用命令行参数，然后是环境变量）
+ */
 function getRpcUrl(argRpc) {
   return argRpc || process.env.EAS_RPC_URL || '';
 }
 
+/**
+ * 获取私钥
+ * @param {string} argPk - 命令行传入的私钥
+ * @returns {string} 私钥（优先使用命令行参数，然后是环境变量）
+ */
 function getPrivateKey(argPk) {
   return argPk || process.env.EAS_PRIVATE_KEY || '';
 }
 
+/**
+ * 创建以太坊提供者
+ * @param {string} rpcUrl - RPC URL
+ * @param {number} chainId - 链ID
+ * @returns {ethers.JsonRpcProvider|null} 以太坊提供者实例
+ */
 function makeProvider(rpcUrl, chainId) {
   if (!rpcUrl) return null;
-  // Provide chainId to avoid extra network calls when possible
+  // 提供chainId以尽可能避免额外的网络调用
   try {
     return new ethers.JsonRpcProvider(rpcUrl, chainId);
   } catch {
@@ -195,35 +358,62 @@ function makeProvider(rpcUrl, chainId) {
   }
 }
 
+/**
+ * 创建以太坊签名者
+ * @param {string} privateKey - 私钥
+ * @param {ethers.JsonRpcProvider} provider - 以太坊提供者
+ * @returns {ethers.Wallet|null} 以太坊签名者实例
+ */
 function makeSigner(privateKey, provider) {
   if (!privateKey) return null;
   if (provider) return new ethers.Wallet(privateKey, provider);
   return new ethers.Wallet(privateKey);
 }
 
+/**
+ * 将值强制转换为布尔值
+ * @param {any} v - 要转换的值
+ * @param {boolean} defaultValue - 默认值
+ * @returns {boolean} 转换后的布尔值
+ * @throws {Error} 如果值无法转换为布尔值
+ */
 function coerceBool(v, defaultValue) {
   if (v === undefined || v === null) return defaultValue;
   if (typeof v === 'boolean') return v;
   const s = String(v).toLowerCase().trim();
   if (['true', '1', 'yes', 'y', 'on'].includes(s)) return true;
   if (['false', '0', 'no', 'n', 'off'].includes(s)) return false;
-  throw new Error(`Invalid boolean: ${v}`);
+  throw new Error(`无效的布尔值: ${v}`);
 }
 
+/**
+ * 确保文件所在目录存在
+ * @param {string} filePath - 文件路径
+ */
 function ensureDirForFile(filePath) {
   const dir = path.dirname(filePath);
   fs.mkdirSync(dir, { recursive: true });
 }
 
+/**
+ * 安全读取文本文件
+ * @param {string} filePath - 文件路径
+ * @returns {string} 文件内容
+ */
 function safeReadTextFile(filePath) {
   return fs.readFileSync(filePath, 'utf8');
 }
 
+/**
+ * 解析JSON或原始字符串
+ * @param {string} s - 要解析的字符串
+ * @returns {string} 解析后的字符串
+ */
 function parseJsonOrRawString(s) {
   const trimmed = String(s ?? '').trim();
   if (!trimmed) return '';
   try {
-    // If it's JSON, normalize spacing by re-stringifying
+    // 如果是JSON，通过重新字符串化来标准化间距
     return JSON.stringify(JSON.parse(trimmed));
   } catch {
     return trimmed;

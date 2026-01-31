@@ -1,123 +1,123 @@
 ---
 name: pptx-creator
-description: Create professional PowerPoint presentations from outlines, data sources, or AI-generated content. Supports custom templates, style presets, charts/tables from data, and AI-generated images. Use when asked to create slides, pitch decks, reports, or presentations.
+description: 从大纲、数据源或AI生成内容创建专业的PowerPoint演示文稿。支持自定义模板、样式预设、从数据生成图表/表格以及AI生成图像。当被要求创建幻灯片、推介演示、报告或演示文稿时使用。
 homepage: https://python-pptx.readthedocs.io
 metadata: {"clawdbot":{"emoji":"📽️","requires":{"bins":["uv"]}}}
 ---
 
-# PowerPoint Creator
+# PowerPoint 演示文稿创建器
 
-Create professional presentations from outlines, topics, or data sources.
+从大纲、主题或数据源创建专业演示文稿。
 
-## Quick Start
+## 快速开始
 
-### From Outline/Markdown
+### 从大纲/Markdown创建
 ```bash
 uv run {baseDir}/scripts/create_pptx.py --outline outline.md --output deck.pptx
 ```
 
-### From Topic
+### 从主题创建
 ```bash
-uv run {baseDir}/scripts/create_pptx.py --topic "Q4 Sales Review" --slides 8 --output review.pptx
+uv run {baseDir}/scripts/create_pptx.py --topic "Q4 销售回顾" --slides 8 --output review.pptx
 ```
 
-### With Style Template
+### 使用样式模板
 ```bash
 uv run {baseDir}/scripts/create_pptx.py --outline outline.md --template corporate --output deck.pptx
 ```
 
-### From JSON Structure
+### 从JSON结构创建
 ```bash
 uv run {baseDir}/scripts/create_pptx.py --json slides.json --output deck.pptx
 ```
 
-## Outline Format (Markdown)
+## 大纲格式（Markdown）
 
 ```markdown
-# Presentation Title
-subtitle: Annual Review 2026
-author: Your Name
+# 演示文稿标题
+subtitle: 2026年年度回顾
+author: 您的姓名
 
-## Introduction
-- Welcome and agenda
-- Key objectives for today
-- ![image](generate: modern office building, minimalist style)
+## 介绍
+- 欢迎和议程
+- 今天的主要目标
+- ![image](generate: 现代办公楼，极简风格)
 
-## Market Analysis
+## 市场分析
 - chart: bar
 - data: sales_by_region.csv
-- Market grew 15% YoY
-- Strong competitive position
+- 市场同比增长15%
+- 强劲的竞争地位
 
-## Financial Summary
+## 财务摘要
 - table: quarterly_results
-- Strong Q4 performance
-- Revenue targets exceeded
+- Q4表现强劲
+- 超出收入目标
 ```
 
-## JSON Structure
+## JSON结构
 
 ```json
 {
-  "title": "Quarterly Review",
-  "subtitle": "Q4 Performance",
-  "author": "Your Name",
+  "title": "季度回顾",
+  "subtitle": "Q4 表现",
+  "author": "您的姓名",
   "template": "corporate",
   "slides": [
     {
-      "title": "Introduction",
+      "title": "介绍",
       "layout": "title_and_content",
-      "bullets": ["Welcome", "Agenda", "Goals"],
-      "notes": "Speaker notes here"
+      "bullets": ["欢迎", "议程", "目标"],
+      "notes": "演讲者备注"
     },
     {
-      "title": "Revenue Chart",
+      "title": "收入图表",
       "layout": "chart",
       "chart_type": "bar"
     },
     {
-      "title": "Team",
+      "title": "团队",
       "layout": "image_and_text",
-      "image": "generate: professional team collaboration, corporate style",
-      "bullets": ["Leadership", "Sales", "Operations"]
+      "image": "generate: 专业团队协作，企业风格",
+      "bullets": ["领导层", "销售", "运营"]
     }
   ]
 }
 ```
 
-## Built-in Style Templates
+## 内置样式模板
 
-- `minimal` — Clean white, Helvetica Neue, blue accent (default)
-- `corporate` — Professional blue, Arial, business-ready
-- `creative` — Bold orange accents, Avenir, modern feel
-- `dark` — Dark background, SF Pro, cyan accents
-- `executive` — Gold accents, Georgia/Calibri, refined elegance
-- `startup` — Purple accents, Poppins/Inter, pitch-deck ready
+- `minimal` — 干净白色，Helvetica Neue，蓝色强调（默认）
+- `corporate` — 专业蓝色，Arial，商务就绪
+- `creative` — 大胆橙色强调，Avenir，现代感
+- `dark` — 深色背景，SF Pro，青色强调
+- `executive` — 金色强调，Georgia/Calibri，精致优雅
+- `startup` — 紫色强调，Poppins/Inter，推介演示就绪
 
-### Generate All Templates
+### 生成所有模板
 ```bash
 uv run {baseDir}/scripts/create_template.py --all
 ```
 
-### List Templates
+### 列出模板
 ```bash
 uv run {baseDir}/scripts/create_pptx.py --list-templates
 ```
 
-## Custom Templates
+## 自定义模板
 
-### Save Existing PPTX as Template
+### 将现有PPTX保存为模板
 ```bash
 uv run {baseDir}/scripts/create_pptx.py --save-template "my-brand" --from existing.pptx
 ```
 
-### Analyze Template Structure
+### 分析模板结构
 ```bash
 uv run {baseDir}/scripts/analyze_template.py existing.pptx
 uv run {baseDir}/scripts/analyze_template.py existing.pptx --json
 ```
 
-### Build from Custom Template
+### 从自定义模板构建
 ```bash
 uv run {baseDir}/scripts/use_template.py \
   --template my-brand \
@@ -126,19 +126,19 @@ uv run {baseDir}/scripts/use_template.py \
   --output presentation.pptx
 ```
 
-## Data Sources
+## 数据源
 
 ### CSV/Excel
 ```markdown
-## Regional Sales
+## 区域销售
 - chart: pie
 - data: sales.csv
 - columns: region, revenue
 ```
 
-### Inline Data
+### 内联数据
 ```markdown
-## Quarterly Comparison
+## 季度比较
 - chart: bar
 - data:
   - Q1: 120
@@ -147,60 +147,60 @@ uv run {baseDir}/scripts/use_template.py \
   - Q4: 178
 ```
 
-## Image Generation
+## 图像生成
 
-Generate images inline using compatible image generation skills:
+使用兼容的图像生成技能内联生成图像：
 
 ```markdown
-## Our Vision
-- ![hero](generate: futuristic cityscape, clean energy, optimistic)
-- Building tomorrow's solutions
+## 我们的愿景
+- ![hero](generate: 未来城市景观，清洁能源，乐观)
+- 构建明天的解决方案
 ```
 
-Or via JSON:
+或通过JSON：
 ```json
 {
-  "title": "Innovation",
+  "title": "创新",
   "image": {
-    "generate": "abstract technology visualization, blue tones",
+    "generate": "抽象技术可视化，蓝色调",
     "position": "right",
     "size": "half"
   }
 }
 ```
 
-## Layouts
+## 布局
 
-- `title` — Title slide
-- `title_and_content` — Title + bullet points (default)
-- `two_column` — Side-by-side content
-- `image_and_text` — Image with text
-- `chart` — Full chart slide
-- `table` — Data table
-- `section` — Section divider
-- `blank` — Empty slide for custom content
+- `title` — 标题幻灯片
+- `title_and_content` — 标题 + 项目符号（默认）
+- `two_column` — 并排内容
+- `image_and_text` — 带文本的图像
+- `chart` — 完整图表幻灯片
+- `table` — 数据表格
+- `section` — 章节分隔符
+- `blank` — 用于自定义内容的空白幻灯片
 
-## Chart Types
+## 图表类型
 
-- `bar` / `bar_stacked`
-- `column` / `column_stacked`
-- `line` / `line_markers`
-- `pie` / `doughnut`
-- `area` / `area_stacked`
-- `scatter`
+- `bar` / `bar_stacked` — 条形图 / 堆叠条形图
+- `column` / `column_stacked` — 柱状图 / 堆叠柱状图
+- `line` / `line_markers` — 折线图 / 带标记的折线图
+- `pie` / `doughnut` — 饼图 / 环形图
+- `area` / `area_stacked` — 面积图 / 堆叠面积图
+- `scatter` — 散点图
 
-## Examples
+## 示例
 
-### Pitch Deck
+### 推介演示
 ```bash
 uv run {baseDir}/scripts/create_pptx.py \
-  --topic "Series A pitch for tech startup" \
+  --topic "科技创业公司A轮融资推介" \
   --slides 10 \
   --template startup \
   --output pitch-deck.pptx
 ```
 
-### Executive Report
+###  executive 报告
 ```bash
 uv run {baseDir}/scripts/create_pptx.py \
   --outline report.md \
@@ -208,7 +208,7 @@ uv run {baseDir}/scripts/create_pptx.py \
   --output board-report.pptx
 ```
 
-### Marketing Presentation
+### 市场营销演示
 ```bash
 uv run {baseDir}/scripts/create_pptx.py \
   --outline campaign.md \

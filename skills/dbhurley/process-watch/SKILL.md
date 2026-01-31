@@ -1,6 +1,6 @@
 ---
 name: process-watch
-description: Monitor system processes - CPU, memory, disk I/O, network, open files, ports. Find resource hogs, kill runaway processes, track what's consuming your machine.
+description: 监控系统进程 - CPU、内存、磁盘 I/O、网络、打开的文件、端口。查找资源占用大户，终止失控进程，跟踪机器资源消耗情况。
 metadata:
   clawdhub:
     emoji: "📊"
@@ -8,90 +8,90 @@ metadata:
       bins: ["python3"]
 ---
 
-# Process Watch
+# 进程监控
 
-Comprehensive system process monitoring. Goes beyond basic `top` to show:
-- CPU & memory usage
-- Disk I/O per process
-- Network connections
-- Open files & handles
-- Port bindings
-- Process trees
+全面的系统进程监控。超越基本的 `top` 命令，显示：
+- CPU 和内存使用情况
+- 每个进程的磁盘 I/O
+- 网络连接
+- 打开的文件和句柄
+- 端口绑定
+- 进程树
 
-## Commands
+## 命令
 
-### List processes
+### 列出进程
 ```bash
 process-watch list [--sort cpu|mem|disk|name] [--limit 20]
 ```
 
-### Top resource consumers
+### 资源消耗大户
 ```bash
 process-watch top [--type cpu|mem|disk|net] [--limit 10]
 ```
 
-### Process details
+### 进程详情
 ```bash
 process-watch info <pid>
-# Shows: CPU, memory, open files, network connections, children, environment
+# 显示：CPU、内存、打开的文件、网络连接、子进程、环境变量
 ```
 
-### Find by name
+### 按名称查找
 ```bash
 process-watch find <name>
-# e.g., process-watch find chrome
+# 例如：process-watch find chrome
 ```
 
-### Port bindings
+### 端口绑定
 ```bash
 process-watch ports [--port 3000]
-# What's listening on which port?
+# 什么进程在监听哪个端口？
 ```
 
-### Network connections
+### 网络连接
 ```bash
 process-watch net [--pid <pid>] [--established]
 ```
 
-### Kill process
+### 终止进程
 ```bash
 process-watch kill <pid> [--force]
 process-watch kill --name "chrome" [--force]
 ```
 
-### Watch mode
+### 监控模式
 ```bash
 process-watch watch [--interval 2] [--alert-cpu 80] [--alert-mem 90]
-# Continuous monitoring with threshold alerts
+# 带阈值警报的持续监控
 ```
 
-### System summary
+### 系统摘要
 ```bash
 process-watch summary
-# Quick overview: load, memory, disk, top processes
+# 快速概览：负载、内存、磁盘、顶级进程
 ```
 
-## Examples
+## 示例
 
 ```bash
-# What's eating my CPU?
+# 什么在消耗我的 CPU？
 process-watch top --type cpu
 
-# What's on port 3000?
+# 端口 3000 上是什么？
 process-watch ports --port 3000
 
-# Details on a specific process
+# 特定进程的详情
 process-watch info 1234
 
-# Kill all Chrome processes
+# 终止所有 Chrome 进程
 process-watch kill --name chrome
 
-# Watch with alerts
+# 带警报的监控
 process-watch watch --alert-cpu 90 --alert-mem 85
 ```
 
-## Platform Support
+## 平台支持
 
-- **macOS**: Full support
-- **Linux**: Full support  
-- **Windows**: Partial (basic process list, no lsof equivalent)
+- **macOS**：完全支持
+- **Linux**：完全支持  
+- **Windows**：部分支持（基本进程列表，无 lsof 等效功能）

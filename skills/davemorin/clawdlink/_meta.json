@@ -2,6 +2,7 @@
   "owner": "davemorin",
   "slug": "clawdlink",
   "displayName": "ClawdLink",
+  "description": "加密的 Clawdbot 到 Clawdbot 消息传递系统。支持端到端加密的好友消息、好友请求和消息投递控制。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769143210082,

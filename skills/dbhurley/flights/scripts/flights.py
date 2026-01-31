@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Flight tracking CLI - check status, delays, and set alerts.
+航班跟踪命令行工具 - 检查状态、延误情况并设置提醒。
 
-Usage:
+使用方法:
     flights.py status <flight> [--date DATE]
     flights.py search <origin> <dest> [--date DATE] [--airline AIRLINE]
     flights.py track <flight> [--notify]
@@ -20,12 +20,12 @@ try:
     import requests
     from bs4 import BeautifulSoup
 except ImportError:
-    print("Install dependencies: pip install requests beautifulsoup4", file=sys.stderr)
+    print("安装依赖项: pip install requests beautifulsoup4", file=sys.stderr)
     sys.exit(1)
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
 
-# Airline codes
+# 航空公司代码
 AIRLINES = {
     "MX": "Breeze Airways",
     "AA": "American Airlines",
@@ -40,11 +40,20 @@ AIRLINES = {
 
 
 def get_flightaware_status(flight_number: str, date: str = None) -> dict:
-    """Get flight status from FlightAware."""
-    # Clean flight number
+    """
+    从 FlightAware 获取航班状态。
+    
+    参数:
+        flight_number: 航班号（例如：MX123, AA100）
+        date: 日期（可选，格式：YYYY-MM-DD）
+        
+    返回:
+        包含航班状态信息的字典
+    """
+    # 清理航班号格式
     flight = flight_number.upper().replace(" ", "")
     
-    # Build URL
+    # 构建 URL
     url = f"https://www.flightaware.com/live/flight/{flight}"
     if date:
         url += f"/{date}"
@@ -58,15 +67,15 @@ def get_flightaware_status(flight_number: str, date: str = None) -> dict:
         
         soup = BeautifulSoup(resp.text, "html.parser")
         
-        # Try to extract flight data
+        # 尝试提取航班数据
         data = {"flight": flight, "source": "flightaware", "url": url}
         
-        # Look for flight status
+        # 查找航班状态
         status_elem = soup.select_one(".flightPageStatus")
         if status_elem:
             data["status"] = status_elem.get_text(strip=True)
         
-        # Look for departure/arrival info
+        # 查找出发/到达信息
         for row in soup.select(".flightPageSummaryRow"):
             label = row.select_one(".flightPageSummaryLabel")
             value = row.select_one(".flightPageSummaryValue")
@@ -74,7 +83,7 @@ def get_flightaware_status(flight_number: str, date: str = None) -> dict:
                 key = label.get_text(strip=True).lower().replace(" ", "_")
                 data[key] = value.get_text(strip=True)
         
-        # Try alternate selectors for newer layout
+        # 尝试使用新布局的选择器
         origin = soup.select_one("[data-origin]")
         dest = soup.select_one("[data-destination]")
         if origin:
@@ -82,7 +91,7 @@ def get_flightaware_status(flight_number: str, date: str = None) -> dict:
         if dest:
             data["destination"] = dest.get("data-destination") or dest.get_text(strip=True)
         
-        # Look for times in various formats
+        # 查找各种格式的时间信息
         time_blocks = soup.select(".flightPageDataBlock")
         for block in time_blocks:
             title = block.select_one(".flightPageDataTitle")
@@ -98,11 +107,22 @@ def get_flightaware_status(flight_number: str, date: str = None) -> dict:
 
 
 def search_flights_flightaware(origin: str, dest: str, date: str = None, airline: str = None) -> list:
-    """Search for flights between airports."""
+    """
+    搜索两个机场之间的航班。
+    
+    参数:
+        origin: 出发机场代码（例如：PVD）
+        dest: 到达机场代码（例如：ORF）
+        date: 日期（可选，格式：YYYY-MM-DD）
+        airline: 航空公司代码（可选，例如：MX）
+        
+    返回:
+        航班信息列表
+    """
     origin = origin.upper()
     dest = dest.upper()
     
-    # FlightAware route search
+    # FlightAware 航线搜索
     url = f"https://www.flightaware.com/live/findflight?origin={origin}&destination={dest}"
     
     headers = {"User-Agent": USER_AGENT}
@@ -112,7 +132,7 @@ def search_flights_flightaware(origin: str, dest: str, date: str = None, airline
         
         flights = []
         
-        # FlightAware returns JSON in a JS variable
+        # FlightAware 在 JS 变量中返回 JSON
         import re
         match = re.search(r'FA\.findflight\.resultsContent\s*=\s*(\[.*?\]);', resp.text, re.DOTALL)
         if match:
@@ -120,29 +140,29 @@ def search_flights_flightaware(origin: str, dest: str, date: str = None, airline
                 data = json.loads(match.group(1))
                 for flight in data:
                     flight_ident = flight.get("flightIdent", "")
-                    # Extract flight number from HTML
+                    # 从 HTML 中提取航班号
                     fn_match = re.search(r'>([A-Z]{2,3}\d+)<', flight_ident)
                     flight_num = fn_match.group(1) if fn_match else ""
                     
-                    # Filter by airline if specified
+                    # 如果指定了航空公司，则过滤
                     if airline:
                         airline_upper = airline.upper()
                         if not flight_num.upper().startswith(airline_upper):
-                            # Also check MXY for Breeze (MX)
+                            # 同时检查 Breeze 航空的 MXY 代码（对应 MX）
                             if airline_upper == "MX" and not flight_num.upper().startswith("MXY"):
                                 continue
                             elif airline_upper != "MX":
                                 continue
                     
-                    # Only include nonstop flights unless connecting
+                    # 只包含直飞航班
                     if flight.get("nonstop") != "Nonstop":
                         continue
                     
-                    # Clean HTML from status
+                    # 清理状态中的 HTML
                     status_raw = flight.get("flightStatus", "")
                     status = re.sub(r'<[^>]+>', '', status_raw).strip()
                     
-                    # Clean times
+                    # 清理时间信息
                     dep_time = re.sub(r'<[^>]+>', ' ', flight.get("flightDepartureTime", "")).strip()
                     arr_time = re.sub(r'<[^>]+>', ' ', flight.get("flightArrivalTime", "")).strip()
                     dep_day = re.sub(r'<[^>]+>', '', flight.get("flightDepartureDay", "")).strip()
@@ -168,7 +188,16 @@ def search_flights_flightaware(origin: str, dest: str, date: str = None, airline
 
 
 def get_aviationstack_status(flight_number: str, api_key: str) -> dict:
-    """Get flight status from AviationStack API."""
+    """
+    从 AviationStack API 获取航班状态。
+    
+    参数:
+        flight_number: 航班号
+        api_key: AviationStack API 密钥
+        
+    返回:
+        包含航班状态信息的字典
+    """
     url = "http://api.aviationstack.com/v1/flights"
     params = {
         "access_key": api_key,
@@ -180,11 +209,11 @@ def get_aviationstack_status(flight_number: str, api_key: str) -> dict:
         data = resp.json()
         
         if data.get("error"):
-            return {"error": data["error"].get("message", "API error")}
+            return {"error": data["error"].get("message", "API 错误")}
         
         flights = data.get("data", [])
         if not flights:
-            return {"error": "Flight not found"}
+            return {"error": "未找到航班"}
         
         flight = flights[0]
         return {
@@ -208,43 +237,50 @@ def get_aviationstack_status(flight_number: str, api_key: str) -> dict:
 
 
 def cmd_status(args):
-    """Get flight status."""
+    """
+    获取航班状态命令。
+    """
     api_key = os.environ.get("AVIATIONSTACK_API_KEY")
     
-    # Try AviationStack first if we have a key
+    # 如果有 API 密钥，先尝试使用 AviationStack
     if api_key:
         result = get_aviationstack_status(args.flight, api_key)
         if not result.get("error"):
             print(json.dumps(result, indent=2))
             return
     
-    # Fall back to FlightAware scraping
+    # 回退到 FlightAware 抓取
     result = get_flightaware_status(args.flight, args.date)
     print(json.dumps(result, indent=2))
 
 
 def cmd_search(args):
-    """Search for flights."""
+    """
+    搜索航班命令。
+    """
     results = search_flights_flightaware(args.origin, args.dest, args.date, args.airline)
     print(json.dumps(results, indent=2))
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Flight tracking CLI")
+    """
+    主函数：解析命令行参数并执行相应操作。
+    """
+    parser = argparse.ArgumentParser(description="航班跟踪命令行工具")
     subparsers = parser.add_subparsers(dest="command", required=True)
     
-    # status
-    p = subparsers.add_parser("status", help="Get flight status")
-    p.add_argument("flight", help="Flight number (e.g., MX123, AA100)")
-    p.add_argument("--date", help="Date (YYYY-MM-DD)")
+    # status 命令
+    p = subparsers.add_parser("status", help="获取航班状态")
+    p.add_argument("flight", help="航班号（例如：MX123, AA100）")
+    p.add_argument("--date", help="日期（YYYY-MM-DD）")
     p.set_defaults(func=cmd_status)
     
-    # search
-    p = subparsers.add_parser("search", help="Search flights by route")
-    p.add_argument("origin", help="Origin airport code (e.g., PVD)")
-    p.add_argument("dest", help="Destination airport code (e.g., ORF)")
-    p.add_argument("--date", help="Date (YYYY-MM-DD)")
-    p.add_argument("--airline", help="Airline code filter (e.g., MX)")
+    # search 命令
+    p = subparsers.add_parser("search", help="按航线搜索航班")
+    p.add_argument("origin", help="出发机场代码（例如：PVD）")
+    p.add_argument("dest", help="到达机场代码（例如：ORF）")
+    p.add_argument("--date", help="日期（YYYY-MM-DD）")
+    p.add_argument("--airline", help="航空公司代码过滤（例如：MX）")
     p.set_defaults(func=cmd_search)
     
     args = parser.parse_args()

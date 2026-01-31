@@ -1,64 +1,64 @@
-# Google Chat Skill
+# Google Chat 技能
 
-Send messages to Google Chat spaces and users via webhooks or OAuth 2.0.
+通过 webhook 或 OAuth 2.0 向 Google Chat 空间和用户发送消息。
 
-## Features
+## 功能
 
-✅ **Webhook support** - Send to predefined channels (messages appear as configured bot)  
-✅ **OAuth support** - Send to any space dynamically (messages appear from your Google Chat App)  
-✅ **Space discovery** - List all available spaces and DMs  
-✅ **Automatic emoji prefix** - OAuth messages include 🤖 emoji (configurable)  
-✅ **Message threading** - Support for threaded conversations
+✅ **Webhook 支持** - 发送到预配置的频道（消息显示为配置的机器人）  
+✅ **OAuth 支持** - 动态发送到任何空间（消息从您的 Google Chat 应用显示）  
+✅ **空间发现** - 列出所有可用的空间和 DM  
+✅ **自动表情符号前缀** - OAuth 消息包含 🤖 表情符号（可配置）  
+✅ **消息线程** - 支持线程对话
 
-## Quick Start
+## 快速开始
 
-### Webhook (fastest)
+### Webhook（最快）
 ```bash
-python3 scripts/send_webhook.py "$WEBHOOK_URL" "Your message"
+python3 scripts/send_webhook.py "$WEBHOOK_URL" "您的消息"
 ```
 
-### OAuth (flexible)
+### OAuth（灵活）
 ```bash
-# First time: authenticate
+# 首次: 身份验证
 python3 scripts/send_oauth.py \
   --credentials oauth-creds.json \
   --token token.json \
-  --space "Channel Name" \
-  "Your message"
+  --space "频道名称" \
+  "您的消息"
 
-# List spaces
+# 列出空间
 python3 scripts/send_oauth.py \
   --credentials oauth-creds.json \
   --token token.json \
   --list-spaces
 ```
 
-## Setup Requirements
+## 设置要求
 
-**For webhooks:**
-- Create incoming webhook in Google Chat space settings
+**对于 webhook:**
+- 在 Google Chat 空间设置中创建传入 webhook
 
-**For OAuth:**
-1. Google Cloud Console → Create OAuth 2.0 credentials (Desktop app)
-2. Enable Google Chat API
-3. Download credentials JSON
-4. Run authentication flow (opens browser)
+**对于 OAuth:**
+1. Google Cloud Console → 创建 OAuth 2.0 凭据（桌面应用）
+2. 启用 Google Chat API
+3. 下载凭据 JSON
+4. 运行身份验证流程（打开浏览器）
 
-## Configuration Example
+## 配置示例
 
-See `references/config-example.json` for a config template with multiple webhooks.
+有关具有多个 webhook 的配置模板，请参阅 `references/config-example.json`。
 
-## Limitations
+## 限制
 
-- **OAuth cannot create new DMs by email** - This is a Google Chat API limitation
-- To send DMs via OAuth, you need the space ID of an existing conversation
-- Use `--list-spaces` to discover available DM space IDs
+- **OAuth 无法按电子邮件创建新的 DM** - 这是 Google Chat API 限制
+- 要通过 OAuth 发送 DM，您需要现有对话的空间 ID
+- 使用 `--list-spaces` 发现可用的 DM 空间 ID
 
-## Full Documentation
+## 完整文档
 
-See `SKILL.md` for complete usage, examples, and troubleshooting.
+有关完整用法、示例和故障排除，请参阅 `SKILL.md`。
 
 ---
 
-**Created:** 2026-01-25  
-**Tested with:** Google Workspace
+**创建日期:** 2026-01-25  
+**测试环境:** Google Workspace

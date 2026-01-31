@@ -1,61 +1,61 @@
 ---
 name: meshguard
-description: Manage MeshGuard AI agent governance - agents, policies, audit logs, and monitoring.
+description: 管理网格防护 AI 代理治理 - 代理、策略、审计日志和监控。
 metadata: {"clawdbot":{"requires":{"bins":["curl","jq"]}}}
 ---
 
-# MeshGuard
+# 网格防护
 
-AI agent governance platform. Manage agents, policies, audit logs, and monitor your MeshGuard instance.
+AI 代理治理平台。管理代理、策略、审计日志，并监控您的网格防护实例。
 
-## Setup
+## 设置
 
-First-time setup — run the wizard:
+首次设置 — 运行向导：
 ```bash
 bash skills/meshguard/scripts/meshguard-setup.sh
 ```
-This saves config to `~/.meshguard/config` (URL, API key, admin token).
+这会将配置保存到 `~/.meshguard/config`（URL、API 密钥、管理员令牌）。
 
-## Environment Variables
+## 环境变量
 
-| Variable | Description |
+| 变量 | 描述 |
 |----------|-------------|
-| `MESHGUARD_URL` | Gateway URL (default: `https://dashboard.meshguard.app`) |
-| `MESHGUARD_API_KEY` | API key for authenticated requests |
-| `MESHGUARD_ADMIN_TOKEN` | Admin token for org management & signup |
+| `MESHGUARD_URL` | 网关 URL（默认：`https://dashboard.meshguard.app`） |
+| `MESHGUARD_API_KEY` | 用于认证请求的 API 密钥 |
+| `MESHGUARD_ADMIN_TOKEN` | 用于组织管理和注册的管理员令牌 |
 
-Config file `~/.meshguard/config` is sourced automatically by the CLI.
+配置文件 `~/.meshguard/config` 会被 CLI 自动加载。
 
-## CLI Usage
+## CLI 使用
 
-All commands go through the wrapper script:
+所有命令都通过包装脚本执行：
 ```bash
 bash skills/meshguard/scripts/meshguard-cli.sh <command> [args...]
 ```
 
-### Status Check
+### 状态检查
 ```bash
 meshguard-cli.sh status
 ```
-Returns gateway health, version, and connectivity.
+返回网关健康状态、版本和连接性。
 
-### Agent Management
+### 代理管理
 ```bash
-meshguard-cli.sh agents list                          # List all agents in org
-meshguard-cli.sh agents create <name> --tier <tier>   # Create agent (tier: free|pro|enterprise)
-meshguard-cli.sh agents get <agent-id>                # Get agent details
-meshguard-cli.sh agents delete <agent-id>             # Delete agent
+meshguard-cli.sh agents list                          # 列出组织中的所有代理
+meshguard-cli.sh agents create <name> --tier <tier>   # 创建代理（等级：free|pro|enterprise）
+meshguard-cli.sh agents get <agent-id>                # 获取代理详情
+meshguard-cli.sh agents delete <agent-id>             # 删除代理
 ```
 
-### Policy Management
+### 策略管理
 ```bash
-meshguard-cli.sh policies list                        # List all policies
-meshguard-cli.sh policies create <yaml-file>          # Create policy from YAML file
-meshguard-cli.sh policies get <policy-id>             # Get policy details
-meshguard-cli.sh policies delete <policy-id>          # Delete policy
+meshguard-cli.sh policies list                        # 列出所有策略
+meshguard-cli.sh policies create <yaml-file>          # 从 YAML 文件创建策略
+meshguard-cli.sh policies get <policy-id>             # 获取策略详情
+meshguard-cli.sh policies delete <policy-id>          # 删除策略
 ```
 
-Policy YAML format:
+策略 YAML 格式：
 ```yaml
 name: rate-limit-policy
 description: Limit agent calls to 100/min
@@ -67,34 +67,34 @@ rules:
     block_categories: [pii, credentials]
 ```
 
-### Audit Logs
+### 审计日志
 ```bash
-meshguard-cli.sh audit query                              # Recent audit events
-meshguard-cli.sh audit query --agent <name>               # Filter by agent
-meshguard-cli.sh audit query --action <action>            # Filter by action type
-meshguard-cli.sh audit query --limit 50                   # Limit results
-meshguard-cli.sh audit query --agent X --action Y --limit N  # Combined filters
+meshguard-cli.sh audit query                              # 最近的审计事件
+meshguard-cli.sh audit query --agent <name>               # 按代理过滤
+meshguard-cli.sh audit query --action <action>            # 按操作类型过滤
+meshguard-cli.sh audit query --limit 50                   # 限制结果数量
+meshguard-cli.sh audit query --agent X --action Y --limit N  # 组合过滤
 ```
 
-Actions: `agent.create`, `agent.delete`, `policy.create`, `policy.update`, `policy.delete`, `auth.login`, `auth.revoke`
+操作类型：`agent.create`, `agent.delete`, `policy.create`, `policy.update`, `policy.delete`, `auth.login`, `auth.revoke`
 
-### Self-Service Signup
+### 自助注册
 ```bash
 meshguard-cli.sh signup --name "Acme Corp" --email admin@acme.com
 ```
-Creates a new org and returns API credentials. Requires `MESHGUARD_ADMIN_TOKEN`.
+创建新组织并返回 API 凭证。需要 `MESHGUARD_ADMIN_TOKEN`。
 
-## Workflow Examples
+## 工作流示例
 
-**Onboard a new agent with policy:**
-1. Create agent: `meshguard-cli.sh agents create my-agent --tier pro`
-2. Create policy: `meshguard-cli.sh policies create policy.yaml`
-3. Verify: `meshguard-cli.sh agents list`
+**使用策略注册新代理：**
+1. 创建代理：`meshguard-cli.sh agents create my-agent --tier pro`
+2. 创建策略：`meshguard-cli.sh policies create policy.yaml`
+3. 验证：`meshguard-cli.sh agents list`
 
-**Investigate agent activity:**
-1. Query logs: `meshguard-cli.sh audit query --agent my-agent --limit 20`
-2. Check agent status: `meshguard-cli.sh agents get <id>`
+**调查代理活动：**
+1. 查询日志：`meshguard-cli.sh audit query --agent my-agent --limit 20`
+2. 检查代理状态：`meshguard-cli.sh agents get <id>`
 
-## API Reference
+## API 参考
 
-See `skills/meshguard/references/api-reference.md` for full endpoint documentation.
+完整的端点文档请参阅 `skills/meshguard/references/api-reference.md`。

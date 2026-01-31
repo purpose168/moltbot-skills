@@ -2,6 +2,7 @@
   "owner": "daniel-laszlo",
   "slug": "enzoldhazam",
   "displayName": "enzoldhazam",
+  "description": "通过 enzoldhazam.hu 控制 NGBS iCON 智能家居温控器。查看和调整房间温度。",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1769339516000,

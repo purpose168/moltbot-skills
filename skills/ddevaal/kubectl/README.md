@@ -1,160 +1,160 @@
-# kubectl Skill
+# kubectl 技能
 
-An Agent Skills-compatible skill package for kubectl command-line operations on Kubernetes clusters.
+一个兼容 Agent Skills 的技能包，用于在 Kubernetes 集群上执行 kubectl 命令行操作。
 
-## What's Included
+## 包含内容
 
-- **SKILL.md** — Main skill instructions (AgentSkills format)
-- **references/REFERENCE.md** — Complete command reference
-- **scripts/** — Helper scripts for common workflows
-  - `kubectl-pod-debug.sh` — Comprehensive pod debugging
-  - `kubectl-deploy-update.sh` — Safe deployment image updates with monitoring
-  - `kubectl-node-drain.sh` — Safe node maintenance with confirmation
-  - `kubectl-cluster-info.sh` — Cluster health check
+- **SKILL.md** — 主要技能说明（AgentSkills 格式）
+- **references/REFERENCE.md** — 完整的命令参考
+- **scripts/** — 用于常见工作流的辅助脚本
+  - `kubectl-pod-debug.sh` — 全面的 Pod 调试
+  - `kubectl-deploy-update.sh` — 带监控的安全部署镜像更新
+  - `kubectl-node-drain.sh` — 带确认的安全节点维护
+  - `kubectl-cluster-info.sh` — 集群健康检查
 
-## Installation
+## 安装
 
-### Via ClawdHub
+### 通过 ClawdHub
 ```bash
 clawdhub install kubectl-skill
 ```
 
-### Manual Installation
-Copy the `kubectl-skill` directory to one of these locations:
+### 手动安装
+将 `kubectl-skill` 目录复制到以下位置之一：
 
-- **Workspace skills** (per-project): `<workspace>/skills/`
-- **Local skills** (user-wide): `~/.clawdbot/skills/`
-- **Extra skills folder**: Configured via `~/.clawdbot/clawdbot.json`
+- **工作区技能**（每个项目）：`<workspace>/skills/`
+- **本地技能**（用户范围）：`~/.clawdbot/skills/`
+- **额外技能文件夹**：通过 `~/.clawdbot/clawdbot.json` 配置
 
-## Requirements
+## 要求
 
-- **kubectl** v1.20+ installed and on PATH
-- **kubeconfig** file configured with cluster access
-- Active connection to a Kubernetes cluster
+- **kubectl** v1.20+ 已安装并在 PATH 中
+- **kubeconfig** 文件已配置集群访问权限
+- 与 Kubernetes 集群的活动连接
 
-## Quick Start
+## 快速入门
 
-### Verify Installation
+### 验证安装
 ```bash
 kubectl version --client
 kubectl cluster-info
 ```
 
-### Basic Commands
+### 基本命令
 ```bash
-# List pods
+# 列出 Pod
 kubectl get pods -A
 
-# View logs
+# 查看日志
 kubectl logs POD_NAME
 
-# Execute in pod
+# 在 Pod 中执行命令
 kubectl exec -it POD_NAME -- /bin/bash
 
-# Apply configuration
+# 应用配置
 kubectl apply -f deployment.yaml
 
-# Scale deployment
+# 扩展部署
 kubectl scale deployment/APP --replicas=3
 ```
 
-## Helper Scripts
+## 辅助脚本
 
-Make scripts executable first:
+首先使脚本可执行：
 ```bash
 chmod +x scripts/*.sh
 ```
 
-### Debug a Pod
+### 调试 Pod
 ```bash
 ./scripts/kubectl-pod-debug.sh POD_NAME [NAMESPACE]
 ```
 
-### Update Deployment Image
+### 更新部署镜像
 ```bash
 ./scripts/kubectl-deploy-update.sh DEPLOYMENT CONTAINER IMAGE [NAMESPACE]
 ```
 
-### Drain Node for Maintenance
+### 为维护排空节点
 ```bash
 ./scripts/kubectl-node-drain.sh NODE_NAME
 ```
 
-### Check Cluster Health
+### 检查集群健康
 ```bash
 ./scripts/kubectl-cluster-info.sh
 ```
 
-## Structure
+## 结构
 
 ```
 kubectl-skill/
-├── SKILL.md                    # Main skill instructions
-├── LICENSE                     # MIT License
-├── README.md                   # This file
+├── SKILL.md                    # 主要技能说明
+├── LICENSE                     # MIT 许可证
+├── README.md                   # 本文档
 ├── references/
-│   └── REFERENCE.md           # Complete command reference
+│   └── REFERENCE.md           # 完整的命令参考
 ├── scripts/
 │   ├── kubectl-pod-debug.sh
 │   ├── kubectl-deploy-update.sh
 │   ├── kubectl-node-drain.sh
 │   └── kubectl-cluster-info.sh
-└── assets/                    # (Optional) For future additions
+└── assets/                    # （可选）用于未来添加
 ```
 
-## Key Features
+## 主要功能
 
-✅ Query and inspect Kubernetes resources  
-✅ Deploy and update applications  
-✅ Debug pods and containers  
-✅ Manage cluster configuration  
-✅ Monitor resource usage and health  
-✅ Execute commands in running containers  
-✅ View logs and events  
-✅ Port forwarding for local testing  
-✅ Node maintenance operations  
-✅ Dry-run support for safe operations  
+✅ 查询和检查 Kubernetes 资源  
+✅ 部署和更新应用程序  
+✅ 调试 Pod 和容器  
+✅ 管理集群配置  
+✅ 监控资源使用情况和健康状态  
+✅ 在运行中的容器中执行命令  
+✅ 查看日志和事件  
+✅ 用于本地测试的端口转发  
+✅ 节点维护操作  
+✅ 支持安全操作的干运行  
 
-## Environment Variables
+## 环境变量
 
-- `KUBECONFIG` — Path to kubeconfig file (can include multiple paths separated by `:`)
-- `KUBECTLDIR` — Directory for kubectl plugins (optional)
+- `KUBECONFIG` — kubeconfig 文件路径（可包含多个路径，用 `:` 分隔）
+- `KUBECTLDIR` — kubectl 插件目录（可选）
 
-## Documentation
+## 文档
 
-- **Main instructions**: See `SKILL.md` for overview and common commands
-- **Complete reference**: See `references/REFERENCE.md` for all commands
-- **Official docs**: https://kubernetes.io/docs/reference/kubectl/
-- **AgentSkills spec**: https://agentskills.io/
+- **主要说明**：请参阅 `SKILL.md` 了解概述和常见命令
+- **完整参考**：请参阅 `references/REFERENCE.md` 了解所有命令
+- **官方文档**：https://kubernetes.io/zh-cn/docs/reference/kubectl/
+- **AgentSkills 规范**：https://agentskills.io/
 
-## Compatibility
+## 兼容性
 
-- **kubectl versions**: v1.20+
-- **Kubernetes versions**: v1.20+
-- **Platforms**: macOS, Linux, Windows (WSL)
-- **Agent frameworks**: Any that supports AgentSkills format
+- **kubectl 版本**：v1.20+
+- **Kubernetes 版本**：v1.20+
+- **平台**：macOS、Linux、Windows（WSL）
+- **Agent 框架**：任何支持 AgentSkills 格式的框架
 
-## Contributing
+## 贡献
 
-This skill is part of the Clawdbot project. To contribute:
+此技能是 Clawdbot 项目的一部分。要贡献：
 
-1. Test changes locally
-2. Update documentation
-3. Ensure scripts are executable and tested
-4. Submit pull request with clear description
+1. 在本地测试更改
+2. 更新文档
+3. 确保脚本可执行并经过测试
+4. 提交带有清晰描述的拉取请求
 
-## License
+## 许可证
 
-MIT License — See LICENSE file for details
+MIT 许可证 — 详见 LICENSE 文件
 
-## Support
+## 支持
 
-- **GitHub Issues**: Report bugs and request features
-- **Official Docs**: https://kubernetes.io/docs/reference/kubectl/
-- **ClawdHub**: https://clawdhub.com/
+- **GitHub Issues**：报告错误和请求功能
+- **官方文档**：https://kubernetes.io/zh-cn/docs/reference/kubectl/
+- **ClawdHub**：https://clawdhub.com/
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: January 24, 2026  
-**Maintainer**: Clawdbot Contributors
+**版本**：1.0.0  
+**最后更新**：2026 年 1 月 24 日  
+**维护者**：Clawdbot 贡献者

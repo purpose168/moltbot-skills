@@ -1,6 +1,6 @@
 ---
 name: monarch-money
-description: TypeScript library and CLI for Monarch Money budget management. Search transactions by date/merchant/amount, update categories, list accounts and budgets, manage authentication. Use when user asks about Monarch Money transactions, wants to categorize spending, needs to find specific transactions, or wants to automate budget tasks.
+description: 用于 Monarch Money 预算管理的 TypeScript 库和 CLI 工具。按日期/商家/金额搜索交易、更新分类、列出账户和预算、管理身份认证。当用户询问 Monarch Money 交易、想要分类支出、查找特定交易或想要自动化预算任务时使用。
 metadata:
   clawdbot:
     requires:
@@ -10,196 +10,196 @@ metadata:
         kind: node
         package: "."
         bins: ["monarch-money"]
-        label: "Install Monarch Money CLI"
+        label: "安装 Monarch Money CLI"
 ---
 
 # Monarch Money
 
-CLI and TypeScript library for Monarch Money budget automation.
+用于 Monarch Money 预算自动化的 CLI 工具和 TypeScript 库。
 
-## Prerequisites
+## 前置条件
 
-### Environment Variables (Required)
+### 环境变量（必需）
 
-| Variable | Required | Description |
+| 变量 | 必需 | 描述 |
 |----------|----------|-------------|
-| `MONARCH_EMAIL` | **Yes** | Monarch Money account email |
-| `MONARCH_PASSWORD` | **Yes** | Monarch Money account password |
-| `MONARCH_MFA_SECRET` | **Yes** | TOTP secret for MFA (see below) |
+| `MONARCH_EMAIL` | **是** | Monarch Money 账户邮箱 |
+| `MONARCH_PASSWORD` | **是** | Monarch Money 账户密码 |
+| `MONARCH_MFA_SECRET` | **是** | MFA 所需的 TOTP 密钥（见下方） |
 
-### Getting Your MFA Secret
+### 获取 MFA 密钥
 
-Monarch Money requires MFA. Generate the TOTP secret:
+Monarch Money 需要 MFA 验证。生成 TOTP 密钥的步骤：
 
-1. Login to https://app.monarchmoney.com
-2. Go to Settings > Security > Two-Factor Authentication
-3. If MFA is already enabled: disable and re-enable to get a new secret
-4. When shown the QR code: click "Can't scan? View setup key"
-5. Copy the secret key (base32 string like `JBSWY3DPEHPK3PXP`)
-6. Complete MFA setup in Monarch Money with an authenticator app
-7. Set the secret: `export MONARCH_MFA_SECRET="YOUR_SECRET"`
+1. 登录 https://app.monarchmoney.com
+2. 进入设置 > 安全 > 双因素身份认证
+3. 如果 MFA 已启用：先禁用再重新启用以获取新密钥
+4. 显示二维码时：点击"无法扫描？查看设置密钥"
+5. 复制密钥（base32 字符串，如 `JBSWY3DPEHPK3PXP`）
+6. 在验证器应用中完成 MFA 设置
+7. 设置密钥：`export MONARCH_MFA_SECRET="YOUR_SECRET"`
 
-## Quick Start
+## 快速开始
 
 ```bash
-# Check setup
+# 检查配置
 monarch-money doctor
 
-# Login (uses env vars by default)
+# 登录（默认使用环境变量）
 monarch-money auth login
 
-# List transactions
+# 列出交易
 monarch-money tx list --limit 10
 
-# List categories
+# 列出分类
 monarch-money cat list
 ```
 
-## CLI Commands
+## CLI 命令
 
-### Authentication
+### 身份认证
 
 ```bash
-# Login with environment variables
+# 使用环境变量登录
 monarch-money auth login
 
-# Login with explicit credentials
+# 使用明确凭据登录
 monarch-money auth login -e email@example.com -p password --mfa-secret SECRET
 
-# Check auth status
+# 检查认证状态
 monarch-money auth status
 
-# Logout
+# 退出登录
 monarch-money auth logout
 ```
 
-### Transactions
+### 交易
 
 ```bash
-# List recent transactions
+# 列出最近的交易
 monarch-money tx list --limit 20
 
-# Search by date
+# 按日期搜索
 monarch-money tx list --start-date 2026-01-01 --end-date 2026-01-31
 
-# Search by merchant
+# 按商家搜索
 monarch-money tx list --merchant "Walmart"
 
-# Get transaction by ID
+# 按 ID 获取交易
 monarch-money tx get <transaction_id>
 
-# Update category
+# 更新分类
 monarch-money tx update <id> --category <category_id>
 
-# Update merchant name
+# 更新商家名称
 monarch-money tx update <id> --merchant "New Name"
 
-# Add notes
+# 添加备注
 monarch-money tx update <id> --notes "My notes here"
 ```
 
-### Categories
+### 分类
 
 ```bash
-# List all categories
+# 列出所有分类
 monarch-money cat list
 
-# List with IDs (for updates)
+# 列出分类（显示 ID，用于更新操作）
 monarch-money cat list --show-ids
 ```
 
-### Accounts
+### 账户
 
 ```bash
-# List accounts
+# 列出账户
 monarch-money acc list
 
-# Show account details
+# 显示账户详情
 monarch-money acc get <account_id>
 ```
 
-### Doctor (Diagnostics)
+### 医生（诊断）
 
 ```bash
-# Run diagnostic checks
+# 运行诊断检查
 monarch-money doctor
 ```
 
-Checks:
-- Environment variables set
-- API connectivity
-- Session validity
-- Node.js version
+检查项目：
+- 环境变量是否设置
+- API 连接性
+- 会话有效性
+- Node.js 版本
 
-## Library Usage
+## 库使用方式
 
-Import and use the TypeScript library directly:
+直接导入和使用 TypeScript 库：
 
 ```typescript
 import { MonarchClient } from 'monarch-money';
 
 const client = new MonarchClient({ baseURL: 'https://api.monarch.com' });
 
-// Login
+// 登录
 await client.login({
   email: process.env.MONARCH_EMAIL,
   password: process.env.MONARCH_PASSWORD,
   mfaSecretKey: process.env.MONARCH_MFA_SECRET
 });
 
-// Get transactions
+// 获取交易
 const transactions = await client.transactions.getTransactions({ limit: 10 });
 
-// Get categories
+// 获取分类
 const categories = await client.categories.getCategories();
 
-// Get accounts
+// 获取账户
 const accounts = await client.accounts.getAll();
 ```
 
-## Common Workflows
+## 常见工作流程
 
-### Find and Update a Transaction
+### 查找并更新交易
 
 ```bash
-# 1. Find the transaction
+# 1. 查找交易
 monarch-money tx list --date 2026-01-15 --merchant "Target"
 
-# 2. Get category ID
+# 2. 获取分类 ID
 monarch-money cat list --show-ids
 
-# 3. Update the transaction
+# 3. 更新交易
 monarch-money tx update <transaction_id> --category <category_id>
 ```
 
-### Search Transactions by Date Range
+### 按日期范围搜索交易
 
 ```bash
 monarch-money tx list --start-date 2026-01-01 --end-date 2026-01-31 --limit 100
 ```
 
-### Check Budget Status
+### 检查预算状态
 
 ```bash
 monarch-money acc list
 ```
 
-## Error Handling
+## 错误处理
 
-| Error | Solution |
+| 错误 | 解决方案 |
 |-------|----------|
-| "Not logged in" | Run `monarch-money auth login` |
-| "MFA code required" | Set `MONARCH_MFA_SECRET` environment variable |
-| "Invalid credentials" | Verify email/password work at app.monarchmoney.com |
-| "Session expired" | Run `monarch-money auth login` again |
+| "未登录" | 运行 `monarch-money auth login` |
+| "需要 MFA 验证码" | 设置 `MONARCH_MFA_SECRET` 环境变量 |
+| "凭据无效" | 验证邮箱/密码在 app.monarchmoney.com 是否有效 |
+| "会话已过期" | 重新运行 `monarch-money auth login` |
 
-## Session Management
+## 会话管理
 
-Sessions are cached locally at `~/.mm/session.json`. After initial login, subsequent commands reuse the saved session for faster execution.
+会话会缓存在本地 `~/.mm/session.json`。首次登录后，后续命令会重用保存的会话以加快执行速度。
 
-To clear the session: `monarch-money auth logout`
+清除会话：`monarch-money auth logout`
 
-## References
+## 参考资料
 
-- [API.md](references/API.md) - GraphQL API details and advanced usage
-- [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) - Common issues and solutions
+- [API.md](references/API.md) - GraphQL API 详情和高级用法
+- [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) - 常见问题和解决方案

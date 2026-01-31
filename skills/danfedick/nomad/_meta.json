@@ -2,6 +2,7 @@
   "owner": "danfedick",
   "slug": "nomad",
   "displayName": "Nomad",
+  "description": "使用 nomad CLI 查询 HashiCorp Nomad 集群。列出作业、节点、分配、评估和服务。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769388922153,

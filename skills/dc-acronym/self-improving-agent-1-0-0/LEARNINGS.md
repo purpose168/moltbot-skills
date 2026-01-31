@@ -1,10 +1,10 @@
-# Learnings
+# 学习内容
 
-Corrections, insights, and knowledge gaps captured during development.
+在开发过程中捕获的修正、见解和知识缺口。
 
-**Categories**: correction | insight | knowledge_gap | best_practice  
-**Areas**: frontend | backend | infra | tests | docs | config  
-**Statuses**: pending | in_progress | resolved | wont_fix | promoted
+**类别**：correction | insight | knowledge_gap | best_practice  
+**领域**：frontend | backend | infra | tests | docs | config  
+**状态**：pending | in_progress | resolved | wont_fix | promoted
 
 ---
 

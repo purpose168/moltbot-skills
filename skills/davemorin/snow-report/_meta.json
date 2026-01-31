@@ -1,7 +1,8 @@
 {
   "owner": "davemorin",
   "slug": "snow-report",
-  "displayName": "Snow Report",
+  "displayName": "雪况报告",
+  "description": "从 OpenSnow 获取全球滑雪胜地的实时雪况、天气预报和滑雪报告。支持 SnowTick 快速代码查询。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769052450046,

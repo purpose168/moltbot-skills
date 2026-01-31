@@ -1,6 +1,6 @@
 ---
 name: github-pr
-description: Fetch, preview, merge, and test GitHub PRs locally. Great for trying upstream PRs before they're merged.
+description: 在本地获取、预览、合并和测试 GitHub PR。非常适合在合并前尝试上游 PR。
 homepage: https://cli.github.com
 metadata:
   clawdhub:
@@ -9,63 +9,63 @@ metadata:
       bins: ["gh", "git"]
 ---
 
-# GitHub PR Tool
+# GitHub PR 工具
 
-Fetch and merge GitHub pull requests into your local branch. Perfect for:
-- Trying upstream PRs before they're merged
-- Incorporating features from open PRs into your fork
-- Testing PR compatibility locally
+在本地获取和合并 GitHub 拉取请求到你的分支。非常适合：
+- 在合并前尝试上游 PR
+- 将开放 PR 中的功能整合到你的分叉中
+- 在本地测试 PR 兼容性
 
-## Prerequisites
+## 前提条件
 
-- `gh` CLI authenticated (`gh auth login`)
-- Git repository with remotes configured
+- `gh` CLI 已认证 (`gh auth login`)
+- 配置了远程仓库的 Git 仓库
 
-## Commands
+## 命令
 
-### Preview a PR
+### 预览 PR
 ```bash
 github-pr preview <owner/repo> <pr-number>
 ```
-Shows PR title, author, status, files changed, CI status, and recent comments.
+显示 PR 标题、作者、状态、更改的文件、CI 状态和最近的评论。
 
-### Fetch PR branch locally
+### 在本地获取 PR 分支
 ```bash
 github-pr fetch <owner/repo> <pr-number> [--branch <name>]
 ```
-Fetches the PR head into a local branch (default: `pr/<number>`).
+将 PR 头部获取到本地分支（默认：`pr/<number>`）。
 
-### Merge PR into current branch
+### 合并 PR 到当前分支
 ```bash
 github-pr merge <owner/repo> <pr-number> [--no-install]
 ```
-Fetches and merges the PR. Optionally runs install after merge.
+获取并合并 PR。可选地在合并后运行安装。
 
-### Full test cycle
+### 完整测试周期
 ```bash
 github-pr test <owner/repo> <pr-number>
 ```
-Fetches, merges, installs dependencies, and runs build + tests.
+获取、合并、安装依赖并运行构建 + 测试。
 
-## Examples
+## 示例
 
 ```bash
-# Preview MS Teams PR from clawdbot
+# 预览来自 clawdbot 的 MS Teams PR
 github-pr preview clawdbot/clawdbot 404
 
-# Fetch it locally
+# 在本地获取
 github-pr fetch clawdbot/clawdbot 404
 
-# Merge into your current branch
+# 合并到当前分支
 github-pr merge clawdbot/clawdbot 404
 
-# Or do the full test cycle
+# 或执行完整测试周期
 github-pr test clawdbot/clawdbot 404
 ```
 
-## Notes
+## 注意事项
 
-- PRs are fetched from the `upstream` remote by default
-- Use `--remote <name>` to specify a different remote
-- Merge conflicts must be resolved manually
-- The `test` command auto-detects package manager (npm/pnpm/yarn/bun)
+- PR 默认从 `upstream` 远程获取
+- 使用 `--remote <name>` 指定不同的远程
+- 合并冲突必须手动解决
+- `test` 命令自动检测包管理器（npm/pnpm/yarn/bun）

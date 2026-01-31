@@ -1,7 +1,7 @@
 {
   "name": "clawdlink",
   "version": "1.0.0",
-  "description": "Encrypted Clawdbot-to-Clawdbot messaging",
+  "description": "Clawdbot 端到端加密消息系统",
   "author": "Dave Morin",
   
   "entrypoints": {
@@ -13,23 +13,23 @@
   "heartbeat": {
     "enabled": true,
     "script": "./heartbeat.js",
-    "description": "Poll relay for messages and friend requests"
+    "description": "轮询中继服务器获取消息和好友请求"
   },
   
   "setup": {
     "required": true,
     "script": "./cli.js setup",
-    "instructions": "Run: clawdlink setup \"Your Name\""
+    "instructions": "运行：clawdlink setup \"您的名称\""
   },
   
   "triggers": [
     "clawdlink",
-    "friend link", 
-    "add friend",
-    "send message to",
-    "tell * that",
-    "message from",
-    "accept friend request"
+    "好友链接", 
+    "添加好友",
+    "发送消息给",
+    "告诉*说",
+    "来自*的消息",
+    "接受好友请求"
   ],
   
   "dependencies": {

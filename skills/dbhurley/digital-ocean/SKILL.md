@@ -1,64 +1,64 @@
 ---
 name: digital-ocean
-description: Manage Digital Ocean droplets, domains, and infrastructure via DO API.
+description: 通过 DO API 管理 Digital Ocean  droplet、域名和基础设施。
 homepage: https://docs.digitalocean.com/reference/api/
 metadata: {"clawdis":{"emoji":"🌊","requires":{"bins":["uv","curl"],"env":["DO_API_TOKEN"]},"primaryEnv":"DO_API_TOKEN"}}
 ---
 
-# Digital Ocean Management
+# Digital Ocean 管理
 
-Control DO droplets, domains, and infrastructure.
+控制 DO droplet、域名和基础设施。
 
-## Setup
+## 设置
 
-Set environment variable:
-- `DO_API_TOKEN`: Your Digital Ocean API token (create at cloud.digitalocean.com/account/api/tokens)
+设置环境变量：
+- `DO_API_TOKEN`: 您的 Digital Ocean API 令牌（在 cloud.digitalocean.com/account/api/tokens 创建）
 
-## CLI Commands
+## 命令行命令
 
 ```bash
-# Account info
+# 账户信息
 uv run {baseDir}/scripts/do.py account
 
-# List all droplets
+# 列出所有 droplet
 uv run {baseDir}/scripts/do.py droplets
 
-# Get droplet details
+# 获取 droplet 详情
 uv run {baseDir}/scripts/do.py droplet <droplet_id>
 
-# List domains
+# 列出域名
 uv run {baseDir}/scripts/do.py domains
 
-# List domain records
+# 列出域名记录
 uv run {baseDir}/scripts/do.py records <domain>
 
-# Droplet actions
+# Droplet 操作
 uv run {baseDir}/scripts/do.py power-off <droplet_id>
 uv run {baseDir}/scripts/do.py power-on <droplet_id>
 uv run {baseDir}/scripts/do.py reboot <droplet_id>
 ```
 
-## Direct API (curl)
+## 直接 API (curl)
 
-### List Droplets
+### 列出 Droplet
 ```bash
 curl -s -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/droplets" | jq '.droplets[] | {id, name, status, ip: .networks.v4[0].ip_address}'
 ```
 
-### Get Account Info
+### 获取账户信息
 ```bash
 curl -s -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/account" | jq '.account'
 ```
 
-### List Domains
+### 列出域名
 ```bash
 curl -s -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/domains" | jq '.domains[].name'
 ```
 
-### Create Droplet
+### 创建 Droplet
 ```bash
 curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   -H "Content-Type: application/json" \
@@ -71,7 +71,7 @@ curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/droplets"
 ```
 
-### Reboot Droplet
+### 重启 Droplet
 ```bash
 curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   -H "Content-Type: application/json" \
@@ -79,7 +79,7 @@ curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/droplets/<DROPLET_ID>/actions"
 ```
 
-### Add Domain
+### 添加域名
 ```bash
 curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   -H "Content-Type: application/json" \
@@ -87,8 +87,8 @@ curl -s -X POST -H "Authorization: Bearer $DO_API_TOKEN" \
   "https://api.digitalocean.com/v2/domains"
 ```
 
-## Notes
+## 注意事项
 
-- Always confirm before destructive actions (power-off, destroy)
-- Token requires read/write scope for management actions
-- API docs: https://docs.digitalocean.com/reference/api/api-reference/
+- 在执行破坏性操作（关机、销毁）前请始终确认
+- 令牌需要读写权限才能执行管理操作
+- API 文档：https://docs.digitalocean.com/reference/api/api-reference/

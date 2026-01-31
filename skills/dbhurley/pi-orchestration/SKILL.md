@@ -1,28 +1,28 @@
 ---
 name: pi-orchestration
-description: Orchestrate multiple AI models (GLM, MiniMax, etc.) as workers using Pi Coding Agent with Claude as coordinator.
+description: 使用 Pi Coding Agent 和 Claude 作为协调器，编排多个 AI 模型（GLM、MiniMax 等）作为工作者。
 homepage: https://github.com/mariozechner/pi-coding-agent
 metadata: {"clawdis":{"emoji":"🎭","requires":{"bins":["pi"]}}}
 ---
 
-# Pi Orchestration
+# 树莓派编排
 
-Use Claude as an orchestrator to spawn and coordinate multiple AI model workers (GLM, MiniMax, etc.) via Pi Coding Agent.
+使用 Claude 作为编排器，通过 Pi Coding Agent 生成和协调多个 AI 模型工作者（GLM、MiniMax 等）。
 
-## Supported Providers
+## 支持的提供商
 
-| Provider | Model | Status |
+| 提供商 | 模型 | 状态 |
 |----------|-------|--------|
-| **GLM** | glm-4.7 | ✅ Working |
-| **MiniMax** | MiniMax-M2.1 | ✅ Working |
-| OpenAI | gpt-4o, etc. | ✅ Working |
-| Anthropic | claude-* | ✅ Working |
+| **GLM** | glm-4.7 | ✅ 可用 |
+| **MiniMax** | MiniMax-M2.1 | ✅ 可用 |
+| OpenAI | gpt-4o, 等 | ✅ 可用 |
+| Anthropic | claude-* | ✅ 可用 |
 
-## Setup
+## 设置
 
-### 1. GLM (Zhipu AI)
+### 1. GLM（智谱 AI）
 
-Get API key from [open.bigmodel.cn](https://open.bigmodel.cn/)
+从 [open.bigmodel.cn](https://open.bigmodel.cn/) 获取 API 密钥
 
 ```bash
 export GLM_API_KEY="your-glm-api-key"
@@ -30,100 +30,100 @@ export GLM_API_KEY="your-glm-api-key"
 
 ### 2. MiniMax
 
-Get API key from [api.minimax.chat](https://api.minimax.chat/)
+从 [api.minimax.chat](https://api.minimax.chat/) 获取 API 密钥
 
 ```bash
 export MINIMAX_API_KEY="your-minimax-api-key"
-export MINIMAX_GROUP_ID="your-group-id"  # Required for MiniMax
+export MINIMAX_GROUP_ID="your-group-id"  # MiniMax 必需
 ```
 
-## Usage
+## 使用方法
 
-### Direct Commands
+### 直接命令
 
 ```bash
 # GLM-4.7
-pi --provider glm --model glm-4.7 -p "Your task"
+pi --provider glm --model glm-4.7 -p "你的任务"
 
 # MiniMax M2.1
-pi --provider minimax --model MiniMax-M2.1 -p "Your task"
+pi --provider minimax --model MiniMax-M2.1 -p "你的任务"
 
-# Test connectivity
-pi --provider glm --model glm-4.7 -p "Say hello"
+# 测试连接
+pi --provider glm --model glm-4.7 -p "说你好"
 ```
 
-### Orchestration Patterns
+### 编排模式
 
-Claude (Opus) can spawn these as background workers:
+Claude (Opus) 可以将这些作为后台工作者生成：
 
-#### Background Worker
+#### 后台工作者
 ```bash
-bash workdir:/tmp/task background:true command:"pi --provider glm --model glm-4.7 -p 'Build feature X'"
+bash workdir:/tmp/task background:true command:"pi --provider glm --model glm-4.7 -p '构建功能 X'"
 ```
 
-#### Parallel Army (tmux)
+#### 并行军团（tmux）
 ```bash
-# Create worker sessions
+# 创建工作者会话
 tmux new-session -d -s worker-1
 tmux new-session -d -s worker-2
 
-# Dispatch tasks
-tmux send-keys -t worker-1 "pi --provider glm --model glm-4.7 -p 'Task 1'" Enter
-tmux send-keys -t worker-2 "pi --provider minimax --model MiniMax-M2.1 -p 'Task 2'" Enter
+# 分派任务
+tmux send-keys -t worker-1 "pi --provider glm --model glm-4.7 -p '任务 1'" Enter
+tmux send-keys -t worker-2 "pi --provider minimax --model MiniMax-M2.1 -p '任务 2'" Enter
 
-# Check progress
+# 检查进度
 tmux capture-pane -t worker-1 -p
 tmux capture-pane -t worker-2 -p
 ```
 
-#### Map-Reduce Pattern
+#### 映射-归约模式
 ```bash
-# Map: Distribute subtasks to workers
+# 映射：将子任务分配给工作者
 for i in 1 2 3; do
-  tmux send-keys -t worker-$i "pi --provider glm --model glm-4.7 -p 'Process chunk $i'" Enter
+  tmux send-keys -t worker-$i "pi --provider glm --model glm-4.7 -p '处理块 $i'" Enter
 done
 
-# Reduce: Collect and combine results
+# 归约：收集并组合结果
 for i in 1 2 3; do
   tmux capture-pane -t worker-$i -p >> /tmp/results.txt
 done
 ```
 
-## Orchestration Script
+## 编排脚本
 
 ```bash
-# Quick orchestration helper
-uv run {baseDir}/scripts/orchestrate.py spawn --provider glm --model glm-4.7 --task "Build a REST API"
+# 快速编排助手
+uv run {baseDir}/scripts/orchestrate.py spawn --provider glm --model glm-4.7 --task "构建 REST API"
 uv run {baseDir}/scripts/orchestrate.py status
 uv run {baseDir}/scripts/orchestrate.py collect
 ```
 
-## Best Practices
+## 最佳实践
 
-1. **Task Decomposition**: Break large tasks into independent subtasks
-2. **Model Selection**: Use GLM for Chinese content, MiniMax for creative tasks
-3. **Error Handling**: Check worker status before collecting results
-4. **Resource Management**: Clean up tmux sessions after completion
+1. **任务分解**：将大型任务分解为独立的子任务
+2. **模型选择**：中文内容使用 GLM，创意任务使用 MiniMax
+3. **错误处理**：收集结果前检查工作者状态
+4. **资源管理**：完成后清理 tmux 会话
 
-## Example: Parallel Code Review
+## 示例：并行代码审查
 
 ```bash
-# Claude orchestrates 3 workers to review different files
-tmux send-keys -t worker-1 "pi --provider glm -p 'Review auth.py for security issues'" Enter
-tmux send-keys -t worker-2 "pi --provider minimax -p 'Review api.py for performance'" Enter  
-tmux send-keys -t worker-3 "pi --provider glm -p 'Review db.py for SQL injection'" Enter
+# Claude 编排 3 个工作者审查不同文件
+tmux send-keys -t worker-1 "pi --provider glm -p '审查 auth.py 的安全问题'" Enter
+tmux send-keys -t worker-2 "pi --provider minimax -p '审查 api.py 的性能'" Enter  
+tmux send-keys -t worker-3 "pi --provider glm -p '审查 db.py 的 SQL 注入'" Enter
 
-# Wait and collect
+# 等待并收集
 sleep 30
 for i in 1 2 3; do
-  echo "=== Worker $i ===" >> review.md
+  echo "=== 工作者 $i ===" >> review.md
   tmux capture-pane -t worker-$i -p >> review.md
 done
 ```
 
-## Notes
+## 注意事项
 
-- Pi Coding Agent must be installed: `npm install -g @anthropic/pi-coding-agent`
-- GLM and MiniMax have generous free tiers
-- Claude acts as coordinator, workers do the heavy lifting
-- Combine with process tool for background task management
+- 必须安装 Pi Coding Agent：`npm install -g @anthropic/pi-coding-agent`
+- GLM 和 MiniMax 有慷慨的免费额度
+- Claude 作为协调器，工作者负责繁重的工作
+- 与进程工具结合使用以管理后台任务

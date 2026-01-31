@@ -1,43 +1,43 @@
 ---
 name: clinkding
-description: Manage linkding bookmarks - save URLs, search, tag, organize, and retrieve your personal bookmark collection. Use when the user wants to save links, search bookmarks, manage tags, or organize their reading list.
+description: 管理 linkding 书签 - 保存网址、搜索、标签、组织和检索您的个人书签收藏。当用户想要保存链接、搜索书签、管理标签或组织阅读列表时使用。
 homepage: https://github.com/daveonkels/clinkding
 metadata: {"clawdis":{"emoji":"🔖","requires":{"bins":["clinkding"]},"install":[{"id":"homebrew","kind":"brew","formula":"daveonkels/tap/clinkding","bins":["clinkding"],"label":"Install clinkding (Homebrew)"},{"id":"go","kind":"go","module":"github.com/daveonkels/clinkding@latest","bins":["clinkding"],"label":"Install clinkding (Go)"}]}}
 ---
 
-# clinkding - Linkding Bookmark Manager CLI
+# clinkding - Linkding 书签管理器 CLI
 
-A modern Go-based CLI for managing bookmarks in [linkding](https://github.com/sissbruecker/linkding), a self-hosted bookmark manager.
+一个现代的基于 Go 的 CLI，用于管理 [linkding](https://github.com/sissbruecker/linkding) 中的书签，这是一款自托管的书签管理器。
 
-## What This Does
+## 功能概述
 
-**Linkding** is a self-hosted bookmark manager (like Pocket, Instapaper). **clinkding** is the CLI that lets you manage your bookmarks from the terminal or via AI agents.
+**Linkding** 是一款自托管的书签管理器（类似于 Pocket、Instapaper）。**clinkding** 是 CLI 工具，可让您通过终端或 AI 代理管理书签。
 
-Think of it as:
-- **Save for later** - Capture URLs you want to read
-- **Searchable library** - Full-text search across titles, descriptions, tags
-- **Organized collections** - Tag and bundle related bookmarks
-- **Personal archive** - Keep important links with notes and metadata
+它的功能包括：
+- **稍后保存** - 捕获您想阅读的网址
+- **可搜索库** - 在标题、描述、标签中进行全文搜索
+- **有组织的集合** - 标签和捆绑相关书签
+- **个人存档** - 保留带有笔记和元数据的重要链接
 
-## Quick Start
+## 快速开始
 
-### Initial Setup
+### 初始设置
 
 ```bash
-# Interactive configuration
+# 交互式配置
 clinkding config init
 
-# Or manually configure
+# 或手动配置
 clinkding config set url https://your-linkding-instance.com
 clinkding config set token YOUR_API_TOKEN
 
-# Test connection
+# 测试连接
 clinkding config test
 ```
 
-### Configuration File
+### 配置文件
 
-Location: `~/.config/clinkding/config.yaml`
+位置: `~/.config/clinkding/config.yaml`
 
 ```yaml
 url: https://linkding.example.com
@@ -48,257 +48,257 @@ defaults:
   output_format: auto
 ```
 
-### Environment Variables
+### 环境变量
 
 ```bash
 export LINKDING_URL="https://linkding.example.com"
 export LINKDING_TOKEN="your-api-token-here"
 ```
 
-## Core Commands
+## 核心命令
 
-### Bookmarks
+### 书签
 
-#### List & Search
+#### 列出和搜索
 
 ```bash
-# List recent bookmarks
+# 列出最近的书签
 clinkding bookmarks list
 
-# Search by keyword
+# 按关键词搜索
 clinkding bookmarks list --query "golang tutorial"
 
-# Filter by tag
+# 按标签过滤
 clinkding bookmarks list --query "tag:programming"
 
-# Recent bookmarks (last 7 days)
+# 最近的书签（最近 7 天）
 clinkding bookmarks list --added-since "7d"
 
-# Unread bookmarks
+# 未读的书签
 clinkding bookmarks list --query "unread:yes"
 
-# JSON output for scripting
+# 用于脚本化的 JSON 输出
 clinkding bookmarks list --json
 
-# Plain text (tab-separated)
+# 纯文本（制表符分隔）
 clinkding bookmarks list --plain
 ```
 
-#### Create Bookmarks
+#### 创建书签
 
 ```bash
-# Simple bookmark
+# 简单书签
 clinkding bookmarks create https://go.dev
 
-# With metadata
+# 带元数据
 clinkding bookmarks create https://go.dev \
-  --title "Go Programming Language" \
+  --title "Go 编程语言" \
   --tags "golang,programming,reference" \
-  --description "Official Go website" \
+  --description "Go 官方网站" \
   --unread
 
-# Check if URL already exists before creating
+# 在创建之前检查网址是否已存在
 clinkding bookmarks check https://go.dev
 ```
 
-#### Update Bookmarks
+#### 更新书签
 
 ```bash
-# Update title
-clinkding bookmarks update 42 --title "New Title"
+# 更新标题
+clinkding bookmarks update 42 --title "新标题"
 
-# Add tags
+# 添加标签
 clinkding bookmarks update 42 --add-tags "important,work"
 
-# Remove tags
+# 移除标签
 clinkding bookmarks update 42 --remove-tags "old-tag"
 
-# Mark as read
+# 标记为已读
 clinkding bookmarks update 42 --read
 
-# Update description
-clinkding bookmarks update 42 --description "Updated notes"
+# 更新描述
+clinkding bookmarks update 42 --description "更新的笔记"
 ```
 
-#### Get Bookmark Details
+#### 获取书签详情
 
 ```bash
-# Full details
+# 完整详情
 clinkding bookmarks get 42
 
-# JSON output
+# JSON 输出
 clinkding bookmarks get 42 --json
 ```
 
-#### Archive & Delete
+#### 存档和删除
 
 ```bash
-# Archive (hide from main list)
+# 存档（从主列表中隐藏）
 clinkding bookmarks archive 42
 
-# Unarchive
+# 取消存档
 clinkding bookmarks unarchive 42
 
-# Delete permanently
+# 永久删除
 clinkding bookmarks delete 42
 ```
 
-### Tags
+### 标签
 
 ```bash
-# List all tags
+# 列出所有标签
 clinkding tags list
 
-# Create a tag
+# 创建标签
 clinkding tags create "golang"
 
-# Get tag details
+# 获取标签详情
 clinkding tags get 1
 
-# Plain text output
+# 纯文本输出
 clinkding tags list --plain
 ```
 
-### Bundles
+### 捆绑
 
-Bundles are collections of related bookmarks.
+捆绑是相关书签的集合。
 
 ```bash
-# List bundles
+# 列出捆绑
 clinkding bundles list
 
-# Create a bundle
-clinkding bundles create "Go Resources" \
-  --description "Everything related to Go programming"
+# 创建捆绑
+clinkding bundles create "Go 资源" \
+  --description "与 Go 编程相关的一切"
 
-# Update a bundle
-clinkding bundles update 1 --name "Go Lang Resources"
+# 更新捆绑
+clinkding bundles update 1 --name "Go 语言资源"
 
-# Get bundle details
+# 获取捆绑详情
 clinkding bundles get 1
 
-# Delete a bundle
+# 删除捆绑
 clinkding bundles delete 1
 ```
 
-### Assets
+### 资源
 
-Upload and manage file attachments for bookmarks.
+上传和管理书签的附件。
 
 ```bash
-# List assets for a bookmark
+# 列出书签的资源
 clinkding assets list 42
 
-# Upload a file
+# 上传文件
 clinkding assets upload 42 ~/Documents/screenshot.png
 
-# Download an asset
+# 下载资源
 clinkding assets download 42 1 -o ./downloaded-file.png
 
-# Delete an asset
+# 删除资源
 clinkding assets delete 42 1
 ```
 
-### User Profile
+### 用户资料
 
 ```bash
-# Get user profile info
+# 获取用户资料信息
 clinkding user profile
 ```
 
-## Agent Usage Patterns
+## 代理使用模式
 
-### Save URL from Conversation
+### 从对话中保存网址
 
 ```bash
-# User: "Save this for later: https://example.com"
+# 用户: "保存这个稍后阅读: https://example.com"
 clinkding bookmarks create https://example.com \
-  --title "Article Title" \
-  --description "Context from conversation" \
+  --title "文章标题" \
+  --description "来自对话的上下文" \
   --tags "topic,context"
 ```
 
-### Search Bookmarks
+### 搜索书签
 
 ```bash
-# User: "Find my golang bookmarks"
+# 用户: "找到我的 golang 书签"
 clinkding bookmarks list --query "golang"
 
-# User: "Show me unread programming articles"
+# 用户: "显示我未读的编程文章"
 clinkding bookmarks list --query "tag:programming unread:yes"
 
-# User: "What did I save last week?"
+# 用户: "我上周保存了什么？"
 clinkding bookmarks list --added-since "7d"
 ```
 
-### Organize & Tag
+### 组织和标签
 
 ```bash
-# User: "Tag bookmark 42 as important"
+# 用户: "将书签 42 标记为重要"
 clinkding bookmarks update 42 --add-tags "important"
 
-# User: "Create a bundle for my AI research links"
-clinkding bundles create "AI Research" \
-  --description "Machine learning and AI papers"
+# 用户: "为我的 AI 研究链接创建一个捆绑"
+clinkding bundles create "AI 研究" \
+  --description "机器学习和 AI 论文"
 ```
 
-### Retrieve for Reading
+### 检索阅读
 
 ```bash
-# User: "Give me something to read"
+# 用户: "给我一些阅读内容"
 clinkding bookmarks list --query "unread:yes" --limit 5
 
-# User: "Show me my golang tutorials"
+# 用户: "显示我的 golang 教程"
 clinkding bookmarks list --query "tag:golang tag:tutorial"
 ```
 
-## Output Formats
+## 输出格式
 
-### Auto (Default)
-Human-friendly tables and colors for terminal display.
+### 自动（默认）
+终端显示的人类友好的表格和颜色。
 
 ### JSON
 ```bash
 clinkding bookmarks list --json
 ```
-Machine-readable for scripting and agent parsing.
+用于脚本化和代理解析的机器可读格式。
 
-### Plain Text
+### 纯文本
 ```bash
 clinkding bookmarks list --plain
 ```
-Tab-separated values for pipe-friendly parsing.
+制表符分隔的值，便于管道解析。
 
-## Relative Date Filtering
+## 相对日期过滤
 
-Supports human-friendly time ranges:
+支持人类友好的时间范围：
 
 ```bash
-# Last 24 hours
+# 最近 24 小时
 clinkding bookmarks list --added-since "24h"
 
-# Last 7 days
+# 最近 7 天
 clinkding bookmarks list --added-since "7d"
 
-# Last 6 months
+# 最近 6 个月
 clinkding bookmarks list --modified-since "180d"
 ```
 
-**Supported units:** `h` (hours), `d` (days), `y` (years)
+**支持的单位:** `h`（小时）, `d`（天）, `y`（年）
 
-## Common Workflows
+## 常见工作流程
 
-### Morning Reading Routine
+### 早晨阅读例程
 
 ```bash
-# Check unread bookmarks
+# 检查未读的书签
 clinkding bookmarks list --query "unread:yes"
 
-# Get top 5 most recent
+# 获取最近的前 5 个
 clinkding bookmarks list --limit 5
 ```
 
-### Save from Clipboard
+### 从剪贴板保存
 
 ```bash
 # macOS
@@ -308,89 +308,89 @@ pbpaste | xargs -I {} clinkding bookmarks create {}
 xclip -o | xargs -I {} clinkding bookmarks create {}
 ```
 
-### Batch Operations
+### 批量操作
 
 ```bash
-# Tag multiple bookmarks
+# 为多个书签添加标签
 for id in 42 43 44; do
   clinkding bookmarks update $id --add-tags "important"
 done
 
-# Archive old unread bookmarks
+# 存档旧的未读书签
 clinkding bookmarks list --query "unread:yes" --added-since "30d" --plain | \
   while read id _; do
     clinkding bookmarks archive "$id"
   done
 ```
 
-### Backup Bookmarks
+### 备份书签
 
 ```bash
-# Export all bookmarks as JSON
+# 将所有书签导出为 JSON
 clinkding bookmarks list --json > bookmarks-backup-$(date +%Y%m%d).json
 
-# Export specific tag
+# 导出特定标签
 clinkding bookmarks list --query "tag:important" --json > important.json
 ```
 
-## Global Flags
+## 全局标志
 
-Available on all commands:
+适用于所有命令：
 
-| Flag | Description |
+| 标志 | 描述 |
 |------|-------------|
-| `-c, --config <file>` | Config file path |
-| `-u, --url <url>` | Linkding instance URL |
-| `-t, --token <token>` | API token |
-| `--json` | Output as JSON |
-| `--plain` | Output as plain text |
-| `--no-color` | Disable colors |
-| `-q, --quiet` | Minimal output |
-| `-v, --verbose` | Verbose output |
+| `-c, --config <file>` | 配置文件路径 |
+| `-u, --url <url>` | Linkding 实例 URL |
+| `-t, --token <token>` | API 令牌 |
+| `--json` | 输出为 JSON |
+| `--plain` | 输出为纯文本 |
+| `--no-color` | 禁用颜色 |
+| `-q, --quiet` | 最小输出 |
+| `-v, --verbose` | 详细输出 |
 
-## Exit Codes
+## 退出代码
 
-| Code | Meaning |
+| 代码 | 含义 |
 |------|---------|
-| 0 | Success |
-| 1 | General error (API/network) |
-| 2 | Invalid usage (bad flags/args) |
-| 3 | Authentication error |
-| 4 | Not found |
-| 130 | Interrupted (Ctrl-C) |
+| 0 | 成功 |
+| 1 | 常规错误（API/网络） |
+| 2 | 用法无效（错误的标志/参数） |
+| 3 | 身份验证错误 |
+| 4 | 未找到 |
+| 130 | 中断（Ctrl-C） |
 
-## Troubleshooting
+## 故障排除
 
-### Test Configuration
+### 测试配置
 
 ```bash
-# Verify settings
+# 验证设置
 clinkding config show
 
-# Test connection
+# 测试连接
 clinkding config test
 ```
 
-### Common Issues
+### 常见问题
 
-**Authentication Error:**
-- Verify API token in linkding web interface
-- Check URL includes protocol (`https://`)
-- Remove trailing slashes from URL
+**身份验证错误:**
+- 验证 linkding Web 界面中的 API 令牌
+- 检查 URL 包含协议（`https://`）
+- 从 URL 中移除尾随斜杠
 
-**Command-Specific Help:**
+**命令特定帮助:**
 ```bash
 clinkding bookmarks --help
 clinkding bookmarks create --help
 ```
 
-## Links
+## 链接
 
 - **GitHub:** https://github.com/daveonkels/clinkding
 - **Linkding:** https://github.com/sissbruecker/linkding
 - **Homebrew:** `brew install daveonkels/tap/clinkding`
 
-## Installation
+## 安装
 
 ### Homebrew (macOS/Linux)
 
@@ -398,17 +398,17 @@ clinkding bookmarks create --help
 brew install daveonkels/tap/clinkding
 ```
 
-### Go Install
+### Go 安装
 
 ```bash
 go install github.com/daveonkels/clinkding@latest
 ```
 
-### Binary Download
+### 二进制下载
 
-Download from [releases](https://github.com/daveonkels/clinkding/releases) for your platform.
+从 [releases](https://github.com/daveonkels/clinkding/releases) 为您的平台下载。
 
-## Shell Completion
+## Shell 补全
 
 ```bash
 # Bash
@@ -423,174 +423,173 @@ clinkding completion fish > ~/.config/fish/completions/clinkding.fish
 
 ---
 
-**Built by:** [@daveonkels](https://github.com/daveonkels)  
-**License:** MIT
+**创建者:** [@daveonkels](https://github.com/daveonkels)  
+**许可证:** MIT
 
-## Agent Workflows for Smart Bookmark Creation
+## 智能书签创建的代理工作流程
 
-### Adding URLs with Automatic Metadata
+### 使用自动元数据添加网址
 
-When a user says "Add this to linkding" or "Save this URL", follow this workflow:
+当用户说"添加这个到 linkding"或"保存这个网址"时，遵循此工作流程：
 
-**1. Extract metadata from the URL**
+**1. 从 URL 提取元数据**
 
-Use the `summarize` skill to get title and description:
+使用 `summarize` 技能获取标题和描述：
 
 ```bash
-# Get page metadata
+# 获取页面元数据
 summarize url https://example.com --format json
 ```
 
-This returns structured data with:
-- Title
-- Description/summary
-- Main content
+这会返回包含以下内容的结构化数据：
+- 标题
+- 描述/摘要
+- 主要内容
 
-**2. Infer appropriate tags from content**
+**2. 从内容推断适当的标签**
 
-Map the content to **existing canonical tags only**. Do NOT create new tags.
+仅映射到**现有的规范标签**。不要创建新标签。
 
-Use this canonical tag list (263 tags total):
-- **Tech:** webdev, design, programming, ai, cloud, devops, docker, linux, networking, security, privacy
-- **Content:** content, media, photography, video, audio, books, podcasting
-- **Business:** business, marketing, ecommerce, finance, career, productivity
-- **Home:** smart-home, home-assistant, esphome, iot, home-improvement
-- **Tools:** tools, cli, git, github, editor, reference, documentation
-- **Data:** data, analytics, mysql, nosql
-- **Communication:** communication, email, messaging, slack
-- **Education:** education, guide, howto, research, testing
-- **Locations:** texas, seattle, dallas (use sparingly)
+使用此规范标签列表（共 263 个标签）：
+- **技术:** webdev, design, programming, ai, cloud, devops, docker, linux, networking, security, privacy
+- **内容:** content, media, photography, video, audio, books, podcasting
+- **商业:** business, marketing, ecommerce, finance, career, productivity
+- **家居:** smart-home, home-assistant, esphome, iot, home-improvement
+- **工具:** tools, cli, git, github, editor, reference, documentation
+- **数据:** data, analytics, mysql, nosql
+- **通信:** communication, email, messaging, slack
+- **教育:** education, guide, howto, research, testing
+- **地点:** texas, seattle, dallas（谨慎使用）
 
-**Tag Selection Rules:**
-- Use 2-5 tags maximum
-- Choose the most specific applicable tags
-- If unsure, default to broader categories (e.g., `tools` over `generator`)
-- Check existing tags first: `clinkding tags list --plain | grep -i <keyword>`
-- Never create tags like: `awesome`, `cool`, `interesting`, `resources`, `tips`
+**标签选择规则:**
+- 最多使用 2-5 个标签
+- 选择最具体的适用标签
+- 如果不确定，默认为更广泛的类别（例如 `tools` 优于 `generator`）
+- 首先检查现有标签: `clinkding tags list --plain | grep -i <keyword>`
+- 永远不要创建类似这样的标签: `awesome`, `cool`, `interesting`, `resources`, `tips`
 
-**3. Create the bookmark with metadata**
+**3. 使用元数据创建书签**
 
 ```bash
 clinkding bookmarks create "https://example.com" \
-  --title "Title from summarize" \
-  --description "Summary from summarize (1-2 sentences)" \
+  --title "来自 summarize 的标题" \
+  --description "来自 summarize 的摘要（1-2 句）" \
   --tags "webdev,tools,reference"
 ```
 
-### Example Workflow
+### 示例工作流程
 
-**User:** "Save this to linkding: https://github.com/awesome/project"
+**用户:** "保存这个到 linkding: https://github.com/awesome/project"
 
-**Agent Actions:**
+**代理操作:**
 
 ```bash
-# 1. Check if already bookmarked
+# 1. 检查是否已添加书签
 clinkding bookmarks check https://github.com/awesome/project
 
-# 2. Get metadata (use summarize skill)
+# 2. 获取元数据（使用 summarize 技能）
 summarize url https://github.com/awesome/project --format json
 
-# 3. Analyze content and infer tags
-# From summary: "A CLI tool for Docker container management"
-# Canonical tags: docker, devops, cli, tools
+# 3. 分析内容并推断标签
+# 来自摘要: "用于 Docker 容器管理的 CLI 工具"
+# 规范标签: docker, devops, cli, tools
 
-# 4. Create bookmark
+# 4. 创建书签
 clinkding bookmarks create https://github.com/awesome/project \
-  --title "Awesome Project - Docker Container CLI" \
-  --description "Command-line tool for managing Docker containers with enhanced features" \
+  --title "Awesome Project - Docker 容器 CLI" \
+  --description "用于管理 Docker 容器的命令行工具，具有增强功能" \
   --tags "docker,devops,cli"
 ```
 
-### Tag Mapping Heuristics
+### 标签映射启发式
 
-Use these rules to map content → canonical tags:
+使用这些规则将内容映射到规范标签：
 
-| Content Type | Canonical Tags |
+| 内容类型 | 规范标签 |
 |--------------|----------------|
-| Web development, HTML, CSS, JavaScript | `webdev`, `css`, `javascript` |
-| React, frameworks, frontend | `webdev`, `react` |
-| Design, UI/UX, mockups | `design` |
-| Python, Go, Ruby code | `programming`, `python`/`ruby` |
-| Docker, K8s, DevOps | `docker`, `devops`, `cloud` |
-| Home automation, ESP32, sensors | `smart-home`, `esphome`, `iot` |
-| AI, ML, LLMs | `ai`, `llm` |
-| Productivity tools, workflows | `productivity`, `tools` |
-| Finance, investing, crypto | `finance` |
-| Marketing, SEO, ads | `marketing` |
-| Shopping, deals, stores | `ecommerce` |
-| Tutorials, guides, docs | `guide`, `howto`, `documentation` |
-| Security, privacy, encryption | `security`, `privacy` |
-| Local (DFW/Seattle) | `texas`, `seattle` |
+| Web 开发、HTML、CSS、JavaScript | `webdev`, `css`, `javascript` |
+| React、框架、前端 | `webdev`, `react` |
+| 设计、UI/UX、原型 | `design` |
+| Python、Go、Ruby 代码 | `programming`, `python`/`ruby` |
+| Docker、K8s、DevOps | `docker`, `devops`, `cloud` |
+| 家庭自动化、ESP32、传感器 | `smart-home`, `esphome`, `iot` |
+| AI、ML、LLMs | `ai`, `llm` |
+| 生产力工具、工作流程 | `productivity`, `tools` |
+| 财务、投资、加密货币 | `finance` |
+| 营销、SEO、广告 | `marketing` |
+| 购物、优惠、商店 | `ecommerce` |
+| 教程、指南、文档 | `guide`, `howto`, `documentation` |
+| 安全、隐私、加密 | `security`, `privacy` |
+| 本地（DFW/Seattle） | `texas`, `seattle` |
 
-### Validation Before Creating
+### 创建前的验证
 
-Always run these checks:
+始终运行这些检查：
 
 ```bash
-# 1. Does URL already exist?
+# 1. 网址是否已存在？
 clinkding bookmarks check <url>
 
-# 2. Do the tags exist?
+# 2. 标签是否存在？
 clinkding tags list --plain | grep -iE "^(tag1|tag2|tag3)$"
 
-# 3. Are we using canonical tags?
-# Cross-reference against the 263 canonical tags
-# Never create new tags without explicit user request
+# 3. 我们使用的是规范标签吗？
+# 与 263 个规范标签交叉引用
+# 未经用户明确请求，永远不要创建新标签
 ```
 
-### User Requests to Save Multiple Links
+### 用户请求保存多个链接
 
-If user provides multiple URLs:
+如果用户提供多个网址：
 
 ```bash
-# Process each URL separately with metadata extraction
+# 使用元数据提取分别处理每个网址
 for url in url1 url2 url3; do
-  # Get metadata
-  # Infer tags
-  # Create bookmark
+  # 获取元数据
+  # 推断标签
+  # 创建书签
 done
 ```
 
-### Updating Existing Bookmarks
+### 更新现有书签
 
-If user says "Update that bookmark" or "Add tags to my last save":
+如果用户说"更新那个书签"或"添加标签到我上次保存的内容"：
 
 ```bash
-# Get most recent bookmark
+# 获取最近的书签
 recent_id=$(clinkding bookmarks list --limit 1 --plain | cut -f1)
 
-# Add tags (don't remove existing ones unless asked)
+# 添加标签（不要移除已有的，除非被要求）
 clinkding bookmarks update $recent_id --add-tags "new-tag"
 
-# Update description
-clinkding bookmarks update $recent_id --description "Updated notes"
+# 更新描述
+clinkding bookmarks update $recent_id --description "更新的笔记"
 ```
 
-### Key Principles
+### 关键原则
 
-1. **Always fetch metadata** - Use `summarize` to get good titles/descriptions
-2. **Use existing tags** - Never create new tags without checking canonical list
-3. **Be selective** - 2-5 tags max, choose the most specific applicable
-4. **Validate first** - Check for duplicates before creating
-5. **Provide context** - Include brief description explaining why it's useful
+1. **始终获取元数据** - 使用 `summarize` 获取好的标题/描述
+2. **使用现有标签** - 永远不要在不检查规范列表的情况下创建新标签
+3. **有选择性** - 最多 2-5 个标签，选择最具体的适用标签
+4. **首先验证** - 创建前检查重复项
+5. **提供上下文** - 包含简要描述说明它为什么有用
 
 ---
 
-## Current Canonical Tag Structure
+## 当前规范标签结构
 
-Dave's linkding instance has **263 canonical tags** after consolidation from 17,189 duplicates.
+Dave 的 linkding 实例在从 17,189 个重复项合并后有 **263 个规范标签**。
 
-Top categories (by bookmark count):
-- `pinboard` (4,987) - Legacy import tag
-- `ifttt` (2,639) - Legacy import tag  
-- `webdev` (1,679) - Web development
-- `design` (561) - Design/UI/UX
-- `content` (416) - Content/writing
-- `cloud` (383) - Cloud/hosting/SaaS
-- `business` (364) - Business/strategy
-- `ecommerce` (308) - Shopping/marketplace
-- `smart-home` (295) - Home automation
-- `productivity` (291) - Productivity tools
+热门类别（按书签数量）：
+- `pinboard` (4,987) - 旧导入标签
+- `ifttt` (2,639) - 旧导入标签  
+- `webdev` (1,679) - Web 开发
+- `design` (561) - 设计/UI/UX
+- `content` (416) - 内容/写作
+- `cloud` (383) - 云/托管/SaaS
+- `business` (364) - 商业/策略
+- `ecommerce` (308) - 购物/市场
+- `smart-home` (295) - 家庭自动化
+- `productivity` (291) - 生产力工具
 
-**Golden Rule:** When in doubt, use broader existing tags rather than creating new specific ones.
-
+**黄金法则:** 如果有疑问，使用更广泛的现有标签而不是创建新的具体标签。

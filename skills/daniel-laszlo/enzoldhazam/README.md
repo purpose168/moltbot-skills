@@ -1,82 +1,82 @@
 # enzoldhazam
 
-CLI tool for controlling thermostats via [enzoldhazam.hu](https://www.enzoldhazam.hu) (NGBS iCON Smart Home system).
+通过 [enzoldhazam.hu](https://www.enzoldhazam.hu)（NGBS iCON 智能家居系统）控制温控器的 CLI 工具。
 
-## Installation
+## 安装
 
 ```bash
-# Clone the repository
+# 克隆仓库
 git clone https://github.com/daniel-laszlo/enzoldhazam.git
 cd enzoldhazam
 
-# Build
+# 构建
 go build -o enzoldhazam ./cmd/enzoldhazam
 
-# Optional: move to PATH
+# 可选：移动到 PATH
 mv enzoldhazam /usr/local/bin/
 ```
 
-## Usage
+## 使用
 
-### Authentication
+### 身份验证
 
-Login and save credentials to macOS Keychain:
+登录并将凭据保存到 macOS 钥匙串：
 
 ```bash
 enzoldhazam login
 ```
 
-Or use environment variables:
+或使用环境变量：
 
 ```bash
 export ENZOLDHAZAM_USER="your-email@example.com"
 export ENZOLDHAZAM_PASS="your-password"
 ```
 
-### Commands
+### 命令
 
 ```bash
-# Show all rooms with current/target temperatures
+# 显示所有房间的当前/目标温度
 enzoldhazam status
 
-# Get specific room details
+# 获取特定房间详情
 enzoldhazam get <room-name>
 enzoldhazam get <thermostat-id>
 
-# Set target temperature
+# 设置目标温度
 enzoldhazam set <room-name> <temperature>
 
-# Clear stored credentials
+# 清除存储的凭据
 enzoldhazam logout
 ```
 
-### JSON Output
+### JSON 输出
 
-All data commands support `--json` flag for automation:
+所有数据命令都支持 `--json` 标志以实现自动化：
 
 ```bash
 enzoldhazam status --json
 enzoldhazam get <room-name> --json
 ```
 
-## Example Output
+## 示例输出
 
 ```
 $ enzoldhazam status
-Device: My Device (123456789012)
-Status: Online | Water: 38.2°C | External: 5.0°C
+设备: 我的设备 (123456789012)
+状态: 在线 | 水温: 38.2°C | 外部: 5.0°C
 
-Living Room     22.5°C (target: 21.5°C) RH: 31%
-Office          21.6°C (target: 21.5°C) RH: 30%
-Bedroom         21.8°C (target: 21.5°C) RH: 26%
+客厅     22.5°C (目标: 21.5°C) 相对湿度: 31%
+办公室   21.6°C (目标: 21.5°C) 相对湿度: 30%
+卧室     21.8°C (目标: 21.5°C) 相对湿度: 26%
 ```
 
-## Requirements
+## 要求
 
 - Go 1.21+
-- macOS (for Keychain credential storage)
-- An enzoldhazam.hu account with registered NGBS iCON device(s)
+- macOS（用于钥匙串凭据存储）
+- 在 enzoldhazam.hu 上注册了 NGBS iCON 设备的账户
 
-## License
+## 许可证
 
 MIT

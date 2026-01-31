@@ -4,13 +4,13 @@
   "schedule": {
     "kind": "cron",
     "expr": "0 17 * * *",
-    "tz": "America/New_York"
+    "tz": "Asia/Shanghai"
   },
   "sessionTarget": "isolated",
   "wakeMode": "now",
   "payload": {
     "kind": "agentTurn",
     "deliver": true,
-    "message": "Generate your daily recap posterboard image.\n\n1. Get current weather for your configured location.\n\n2. Review today's accomplishments by checking:\n   - Today's memory file: memory/YYYY-MM-DD.md\n   - Recent cron run summaries\n   - Any notable completed tasks\n\n3. Pick 4-6 key wins for the posterboard. Keep them SHORT (3-5 words each).\n\n4. Read your IDENTITY.md for visual appearance details.\n\n5. Generate the image using nano-banana-pro with your agent's appearance:\n   - Include weather-appropriate attire (jacket if cold, etc.)\n   - Agent holding a large white posterboard\n   - Handwritten black marker text with wins\n   - Time of day lighting based on current hour\n\n6. Send the image to your configured chat with caption:\n   📋 Daily Recap - [Day of Week]\n\nIf no notable accomplishments today, generate your agent relaxing instead with caption: 🌙 Quiet day - recharging for tomorrow!"
+    "message": "生成您的每日回顾海报板图像。\n\n1. 获取您配置位置的当前天气。\n\n2. 通过检查以下内容回顾今天的成就：\n   - 今天的记忆文件：memory/YYYY-MM-DD.md\n   - 最近的 cron 运行摘要\n   - 任何值得注意的已完成任务\n\n3. 为海报板选择 4-6 个关键胜利。保持简短（每项 3-5 个词）。\n\n4. 阅读您的 IDENTITY.md 了解视觉外观细节。\n\n5. 使用 nano-banana-pro 生成带有您助手外观的图像：\n   - 包括适合天气的着装（冷时穿夹克等）\n   - 助手手持大型白色海报板\n   - 用黑色马克笔手写的胜利文本\n   - 根据当前小时的一天中时间光照\n\n6. 将图像发送到您配置的聊天，并附带标题：\n   📋 每日回顾 - [星期几]\n\n如果今天没有值得注意的成就，请生成您的助手放松的图像，标题为：🌙 安静的一天 - 为明天充电！"
   }
 }

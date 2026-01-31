@@ -1,16 +1,16 @@
-# Monarch Money API Reference
+# Monarch Money API 参考
 
-## Table of Contents
+## 目录
 
-- [Authentication](#authentication)
-- [Transactions API](#transactions-api)
-- [Categories API](#categories-api)
-- [Accounts API](#accounts-api)
-- [GraphQL Direct Access](#graphql-direct-access)
+- [认证](#认证)
+- [交易 API](#交易-api)
+- [分类 API](#分类-api)
+- [账户 API](#账户-api)
+- [GraphQL 直接访问](#graphql-直接访问)
 
-## Authentication
+## 认证
 
-The MonarchClient handles authentication automatically:
+MonarchClient 会自动处理认证：
 
 ```typescript
 import { MonarchClient } from 'monarch-money';
@@ -29,24 +29,24 @@ await client.login({
 });
 ```
 
-### Session Management
+### 会话管理
 
-Sessions are encrypted and stored at `~/.mm/session.json`. The `useSavedSession` option loads existing sessions, and `saveSession` persists new ones.
+会话会被加密并存储在 `~/.mm/session.json`。`useSavedSession` 选项会加载现有会话，`saveSession` 会持久化新会话。
 
 ```typescript
-// Load saved session
+// 加载保存的会话
 const loaded = client.loadSession();
 
-// Delete session
+// 删除会话
 client.deleteSession();
 
-// Close client
+// 关闭客户端
 await client.close();
 ```
 
-## Transactions API
+## 交易 API
 
-### Get Transactions
+### 获取交易
 
 ```typescript
 const result = await client.transactions.getTransactions({
@@ -56,10 +56,10 @@ const result = await client.transactions.getTransactions({
   verbosity: 'light'  // 'ultra-light' | 'light' | 'standard'
 });
 
-// result.transactions contains array of Transaction objects
+// result.transactions 包含 Transaction 对象数组
 ```
 
-### Transaction Object
+### 交易对象
 
 ```typescript
 interface Transaction {
@@ -84,7 +84,7 @@ interface Transaction {
 }
 ```
 
-### Update Transaction
+### 更新交易
 
 ```typescript
 await client.transactions.updateTransaction(transactionId, {
@@ -94,7 +94,7 @@ await client.transactions.updateTransaction(transactionId, {
 });
 ```
 
-### Split Transaction
+### 拆分交易
 
 ```typescript
 const splits = [
@@ -105,17 +105,17 @@ const splits = [
 await client.transactions.splitTransaction(transactionId, splits);
 ```
 
-## Categories API
+## 分类 API
 
-### Get All Categories
+### 获取所有分类
 
 ```typescript
 const categories = await client.categories.getCategories();
 
-// categories is array of Category objects
+// categories 是 Category 对象数组
 ```
 
-### Category Object
+### 分类对象
 
 ```typescript
 interface Category {
@@ -130,17 +130,17 @@ interface Category {
 }
 ```
 
-### Common Category IDs
+### 常用分类 ID
 
-Categories vary by user account. Use the CLI to get your specific IDs:
+分类因用户账户而异。使用 CLI 获取您的特定 ID：
 
 ```bash
 monarch-money cat list --show-ids
 ```
 
-## Accounts API
+## 账户 API
 
-### Get All Accounts
+### 获取所有账户
 
 ```typescript
 const accounts = await client.accounts.getAll({
@@ -149,7 +149,7 @@ const accounts = await client.accounts.getAll({
 });
 ```
 
-### Account Object
+### 账户对象
 
 ```typescript
 interface Account {
@@ -166,19 +166,19 @@ interface Account {
 }
 ```
 
-## GraphQL Direct Access
+## GraphQL 直接访问
 
-For advanced use cases, access the GraphQL client directly:
+对于高级用例，直接访问 GraphQL 客户端：
 
 ```typescript
-// Query
+// 查询
 const result = await client['graphql'].query(queryString, variables);
 
-// Mutation
+// 变更
 const result = await client['graphql'].mutation(mutationString, variables);
 ```
 
-### Example: Custom Query
+### 示例：自定义查询
 
 ```typescript
 const query = `
@@ -197,9 +197,9 @@ const query = `
 const result = await client['graphql'].query(query, { id: transactionId });
 ```
 
-### Working Mutations
+### 常用变更
 
-**Update Transaction:**
+**更新交易：**
 ```graphql
 mutation UpdateTransaction($input: UpdateTransactionInput!) {
   updateTransaction(input: $input) {
@@ -209,7 +209,7 @@ mutation UpdateTransaction($input: UpdateTransactionInput!) {
 }
 ```
 
-**Split Transaction:**
+**拆分交易：**
 ```graphql
 mutation SplitTransaction($input: UpdateTransactionSplitInput!) {
   updateTransactionSplit(input: $input) {
@@ -219,29 +219,29 @@ mutation SplitTransaction($input: UpdateTransactionSplitInput!) {
 }
 ```
 
-## Verbosity Levels
+## 详细程度级别
 
-Control response detail with verbosity:
+使用详细程度控制响应详情：
 
-| Level | Use Case | Data Included |
-|-------|----------|---------------|
-| `ultra-light` | Quick overviews | IDs, amounts, names only |
-| `light` | Standard display | Core fields + dates + categories |
-| `standard` | Full analysis | All fields including metadata |
+| 级别 | 用例 | 包含数据 |
+|------|------|----------|
+| `ultra-light` | 快速概览 | 仅包含 ID、金额、名称 |
+| `light` | 标准显示 | 核心字段 + 日期 + 分类 |
+| `standard` | 完整分析 | 所有字段，包括元数据 |
 
 ```typescript
 const accounts = await client.accounts.getAll({ verbosity: 'ultra-light' });
-// Returns minimal data for fast processing
+// 返回最小数据以快速处理
 ```
 
-## Rate Limiting
+## 速率限制
 
-The client includes built-in rate limiting. Default settings:
+客户端包含内置速率限制。默认设置：
 
-- 10 requests per second
-- 20 burst size
+- 每秒 10 个请求
+- 突发大小 20
 
-Configure in client options:
+在客户端选项中配置：
 
 ```typescript
 const client = new MonarchClient({
@@ -253,19 +253,19 @@ const client = new MonarchClient({
 });
 ```
 
-## Caching
+## 缓存
 
-Two levels of caching available:
+提供两种级别的缓存：
 
-**Memory Cache:** In-session caching (default enabled)
-**Persistent Cache:** Cross-session caching (optional)
+**内存缓存：** 会话内缓存（默认启用）
+**持久缓存：** 跨会话缓存（可选）
 
 ```typescript
 const client = new MonarchClient({
   baseURL: 'https://api.monarch.com',
   cache: {
     enabled: true,
-    ttl: 300000  // 5 minutes
+    ttl: 300000  // 5 分钟
   },
   enablePersistentCache: true
 });

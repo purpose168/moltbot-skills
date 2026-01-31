@@ -1,7 +1,21 @@
 #!/usr/bin/env node
 /**
- * Test the friend request flow
- * Simulates Sophie sending Dave a friend request via the new endpoint
+ * ClawdLink 好友请求流程测试脚本
+ * 
+ * 此脚本用于测试完整的好友请求流程：
+ * 1. 创建模拟用户 Sophie 的身份
+ * 2. 向 Dave 发送好友请求
+ * 3. 验证请求是否成功发送
+ * 
+ * 测试场景：
+ * - Sophie 向 Dave 发送好友请求
+ * - 请求消息为："嘿 Dave！我们来连接 Clawdbot 吧，这样就能协调播客了。"
+ * - 使用 Ed25519 签名确保请求真实性
+ * 
+ * 预期结果：
+ * - 好友请求成功发送到中继服务器
+ * - 返回请求 ID
+ * - 运行 handler.js check 可以看到来自 Sophie 的好友请求
  */
 
 import { writeFileSync, mkdirSync, readFileSync } from 'fs';
@@ -13,7 +27,6 @@ import relay from '../lib/relay.js';
 const SOPHIE_DIR = '/tmp/clawdlink-sophie';
 const DAVE_DATA_DIR = join(homedir(), '.clawdbot', 'clawdlink');
 
-// Create Sophie's identity
 mkdirSync(SOPHIE_DIR, { recursive: true });
 
 const sophieIdentity = crypto.generateIdentity();
@@ -31,19 +44,17 @@ writeFileSync(join(SOPHIE_DIR, 'identity.json'), JSON.stringify(sophieData, null
 writeFileSync(join(SOPHIE_DIR, 'config.json'), JSON.stringify({ displayName: 'Sophie Bakalar' }, null, 2));
 writeFileSync(join(SOPHIE_DIR, 'friends.json'), JSON.stringify({ friends: [] }, null, 2));
 
-console.log('🧪 Created Sophie Bakalar identity');
+console.log('🧪 已创建 Sophie Bakalar 的身份');
 console.log('');
 
-// Load Dave's identity
 const daveIdentity = JSON.parse(readFileSync(join(DAVE_DATA_DIR, 'identity.json'), 'utf8'));
 
-// Sophie sends a friend request to Dave
-console.log('→ Sophie sending friend request to Dave...');
+console.log('→ Sophie 正在向 Dave 发送好友请求...');
 
 const fromHex = relay.base64ToHex(sophieIdentity.publicKey);
 const toHex = relay.base64ToHex(daveIdentity.publicKey);
 const fromX25519Hex = relay.base64ToHex(sophieX25519.publicKey);
-const message = "Hey Dave! Let's connect our Clawdbots so we can coordinate on the podcast.";
+const message = "嘿 Dave！我们来连接 Clawdbot 吧，这样就能协调播客了。";
 const fromName = 'Sophie Bakalar';
 
 const signPayload = `${fromHex}:${toHex}:${fromName}:${message}`;
@@ -64,11 +75,11 @@ const response = await fetch(`${relay.RELAY_URL}/request`, {
 
 const result = await response.json();
 if (result.error) {
-  console.error('Error:', result.error);
+  console.error('错误：', result.error);
 } else {
-  console.log('✓ Friend request sent!');
-  console.log('  ID:', result.id);
+  console.log('✓ 好友请求已发送！');
+  console.log('  请求 ID：', result.id);
   console.log('');
-  console.log('Now run: node handler.js check');
-  console.log('You should see the friend request from Sophie.');
+  console.log('现在请运行：node handler.js check');
+  console.log('您应该能看到来自 Sophie 的好友请求。');
 }

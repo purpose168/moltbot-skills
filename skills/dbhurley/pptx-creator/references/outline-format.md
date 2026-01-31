@@ -1,107 +1,107 @@
-# Outline Format Reference
+# 大纲格式参考
 
-## Basic Structure
+## 基本结构
 
 ```markdown
-# Presentation Title
-subtitle: Optional Subtitle
-author: Your Name
+# 演示文稿标题
+subtitle: 可选副标题
+author: 您的姓名
 
-## First Slide Title
-- Bullet point one
-- Bullet point two
-- Bullet point three
+## 第一张幻灯片标题
+- 项目符号一
+- 项目符号二
+- 项目符号三
 
-## Second Slide Title
-- More content here
-- And here
+## 第二张幻灯片标题
+- 更多内容
+- 这里也是
 ```
 
-## Special Directives
+## 特殊指令
 
-### Images
+### 图像
 ```markdown
-## Slide with Image
-- ![alt text](/path/to/image.png)
-- ![hero](generate: description for AI image generation)
+## 带图像的幻灯片
+- ![替代文本](/path/to/image.png)
+- ![hero](generate: AI图像生成描述)
 ```
 
-### Charts
+### 图表
 ```markdown
-## Chart Slide
+## 图表幻灯片
 - chart: bar
 - data: /path/to/data.csv
-- Optional bullet describing the chart
+- 描述图表的可选项目符号
 ```
 
-Chart types: `bar`, `column`, `line`, `pie`, `doughnut`, `area`, `scatter`
+图表类型: `bar`, `column`, `line`, `pie`, `doughnut`, `area`, `scatter`
 
-### Tables
+### 表格
 ```markdown
-## Table Slide  
+## 表格幻灯片  
 - table: my_table
 - data: /path/to/data.csv
 - columns: name, value, category
 ```
 
-### Layouts
+### 布局
 ```markdown
-## Custom Layout Slide
+## 自定义布局幻灯片
 - layout: two_column
-- Left column content
-- Right column content
+- 左栏内容
+- 右栏内容
 ```
 
-Layouts: `title_and_content`, `two_column`, `image_and_text`, `chart`, `table`, `section`, `blank`
+布局: `title_and_content`, `two_column`, `image_and_text`, `chart`, `table`, `section`, `blank`
 
-### Speaker Notes
+### 演讲者备注
 ```markdown
-## Slide Title
-- Bullet points
-> These are speaker notes that won't appear on the slide
-> They help the presenter remember key points
+## 幻灯片标题
+- 项目符号
+> 这些是不会在幻灯片上显示的演讲者备注
+> 它们帮助演讲者记住关键点
 ```
 
-## Complete Example
+## 完整示例
 
 ```markdown
-# Q4 2026 Review
-subtitle: Performance & Outlook
-author: Your Name
+# 2026年第四季度回顾
+subtitle: 表现与展望
+author: 您的姓名
 
-## Agenda
-- Q4 Performance Highlights
-- Regional Breakdown
-- Key Wins
-- 2027 Outlook
+## 议程
+- 第四季度表现亮点
+- 区域细分
+- 关键成果
+- 2027年展望
 
-## Q4 Highlights
-- Revenue: $4.2M (+18% YoY)
-- New customers: 47
-- Retention rate: 94%
-> Emphasize the retention improvement from Q3
+## 第四季度亮点
+- 收入: $4.2M (+18% 同比)
+- 新客户: 47
+- 留存率: 94%
+> 强调与第三季度相比的留存率提升
 
-## Regional Performance
+## 区域表现
 - chart: bar
 - data: regional_sales_q4.csv
-- Northeast led growth at 24%
-- West recovering after Q3 dip
+- 东北部领先增长24%
+- 西部在第三季度下滑后恢复
 
-## Key Wins
-- ![logo](generate: abstract celebration, confetti, corporate style)
-- Major enterprise deal closed
-- Strategic partnership signed
-- Product launch successful
+## 关键成果
+- ![logo](generate: 抽象庆祝场景，五彩纸屑，企业风格)
+- 关闭重大企业交易
+- 签署战略合作伙伴关系
+- 产品发布成功
 
-## 2027 Outlook
+## 2027年展望
 - layout: two_column
-- **Goals**: $18M revenue, 200 new customers
-- **Investments**: Team expansion, Platform upgrades
-- **Risks**: Market conditions, Competition
+- **目标**: 1800万美元收入，200个新客户
+- **投资**: 团队扩张，平台升级
+- **风险**: 市场条件，竞争
 
-## Next Steps
-- Finalize 2027 targets
-- Kick-off planning meeting
-- Q1 pipeline review
-> Schedule follow-ups with regional leads
+## 后续步骤
+- 敲定2027年目标
+- 启动规划会议
+- 第一季度管线审查
+> 安排与区域负责人的跟进
 ```

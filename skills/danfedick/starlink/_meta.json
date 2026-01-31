@@ -2,6 +2,7 @@
   "owner": "danfedick",
   "slug": "starlink",
   "displayName": "Starlink",
+  "description": "通过本地 gRPC API 控制 Starlink 碟形天线。支持状态检查、WiFi 客户端、速度测试、收起/展开、重启和 GPS 定位。",
   "latest": {
     "version": "1.0.1",
     "publishedAt": 1769372533044,

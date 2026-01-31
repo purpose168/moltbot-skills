@@ -1,8 +1,8 @@
 {
   "name": "daily-recap",
   "version": "1.0.1",
-  "summary": "Generate a daily recap image with your agent holding a posterboard of accomplishments",
-  "description": "A cron-driven skill that reviews your agent's daily memory files and accomplishments, then generates a custom image of your agent holding a posterboard with the day's wins. Includes weather-appropriate attire and time-of-day lighting based on current conditions.",
+  "summary": "生成每日回顾图像，您的助手手持写有成就的海报板",
+  "description": "一个由 Cron 驱动的技能，它会查看助手的每日记忆文件和成就，然后生成一张自定义图像，显示助手手持写有当日胜利的海报板。包括适合天气的着装和根据当前条件的一天中时间光照。",
   "author": "dbhurley",
   "license": "MIT",
   "keywords": [
@@ -21,15 +21,15 @@
   "config": {
     "env": {
       "RECAP_LOCATION": {
-        "description": "Location for weather lookup (e.g., 'Boston, MA')",
+        "description": "天气查询位置（例如：'北京, 中国'）",
         "required": true
       },
       "RECAP_CHAT_ID": {
-        "description": "Chat ID for image delivery",
+        "description": "图像传递的聊天 ID",
         "required": true
       },
       "RECAP_TIME": {
-        "description": "Time for daily cron in 24h format",
+        "description": "每日 Cron 的时间（24 小时格式）",
         "required": false,
         "default": "17:00"
       }

@@ -4,7 +4,7 @@
 # dependencies = ["python-pptx", "Pillow"]
 # ///
 """
-Template Creator - Generate branded PowerPoint templates with proper layouts.
+模板创建器 - 生成带有适当布局的品牌 PowerPoint 模板。
 """
 
 import argparse
@@ -24,10 +24,10 @@ from pptx.dml.color import RGBColor
 SKILL_DIR = Path(__file__).parent.parent
 TEMPLATES_DIR = SKILL_DIR / "templates"
 
-# Template presets with full styling
+# 带有完整样式的模板预设
 PRESETS = {
     "minimal": {
-        "name": "Minimal",
+        "name": "极简",
         "colors": {
             "background": "FFFFFF",
             "title": "1a1a1a",
@@ -48,7 +48,7 @@ PRESETS = {
         }
     },
     "corporate": {
-        "name": "Corporate",
+        "name": "企业",
         "colors": {
             "background": "FFFFFF",
             "title": "003366",
@@ -69,7 +69,7 @@ PRESETS = {
         }
     },
     "creative": {
-        "name": "Creative",
+        "name": "创意",
         "colors": {
             "background": "FAFAFA",
             "title": "2d2d2d",
@@ -90,7 +90,7 @@ PRESETS = {
         }
     },
     "dark": {
-        "name": "Dark Mode",
+        "name": "深色模式",
         "colors": {
             "background": "1a1a2e",
             "title": "ffffff",
@@ -111,7 +111,7 @@ PRESETS = {
         }
     },
     "executive": {
-        "name": "Executive",
+        "name": "高管",
         "colors": {
             "background": "FFFFFF",
             "title": "1e3a5f",
@@ -132,7 +132,7 @@ PRESETS = {
         }
     },
     "startup": {
-        "name": "Startup Pitch",
+        "name": "创业推介",
         "colors": {
             "background": "FFFFFF",
             "title": "2d3436",
@@ -156,7 +156,7 @@ PRESETS = {
 
 
 def hex_to_rgb(hex_color: str) -> RGBColor:
-    """Convert hex color to RGBColor."""
+    """将十六进制颜色转换为 RGBColor。"""
     hex_color = hex_color.lstrip('#')
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
@@ -165,26 +165,26 @@ def hex_to_rgb(hex_color: str) -> RGBColor:
 
 
 def create_template(preset_name: str, output_path: Path) -> None:
-    """Create a PowerPoint template with proper layouts."""
+    """创建带有适当布局的 PowerPoint 模板。"""
     preset = PRESETS.get(preset_name, PRESETS["minimal"])
     colors = preset["colors"]
     fonts = preset["fonts"]
     sizes = preset["sizes"]
     
-    # Create presentation
+    # 创建演示文稿
     prs = Presentation()
     prs.slide_width = Inches(13.333)  # 16:9
     prs.slide_height = Inches(7.5)
     
-    # We'll create slides that demonstrate each layout
-    # Users can delete these after seeing them
+    # 我们将创建演示每种布局的幻灯片
+    # 用户在查看后可以删除这些幻灯片
     
-    # 1. Title Slide
+    # 1. 标题幻灯片
     slide_layout = prs.slide_layouts[0]
     slide = prs.slides.add_slide(slide_layout)
     
     title = slide.shapes.title
-    title.text = "Presentation Title"
+    title.text = "演示文稿标题"
     title.text_frame.paragraphs[0].font.size = Pt(sizes["title"])
     title.text_frame.paragraphs[0].font.name = fonts["title"]
     title.text_frame.paragraphs[0].font.bold = True
@@ -192,13 +192,13 @@ def create_template(preset_name: str, output_path: Path) -> None:
     
     if len(slide.placeholders) > 1:
         subtitle = slide.placeholders[1]
-        subtitle.text = "Subtitle goes here\nAuthor Name"
+        subtitle.text = "副标题内容\n作者姓名"
         for para in subtitle.text_frame.paragraphs:
             para.font.size = Pt(sizes["subtitle"])
             para.font.name = fonts["body"]
             para.font.color.rgb = hex_to_rgb(colors["body"])
     
-    # Add accent bar
+    # 添加强调条
     shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE,
         Inches(0), Inches(6.8),
@@ -208,35 +208,35 @@ def create_template(preset_name: str, output_path: Path) -> None:
     shape.fill.fore_color.rgb = hex_to_rgb(colors["accent"])
     shape.line.fill.background()
     
-    # 2. Section Header
+    # 2. 章节标题
     slide_layout = prs.slide_layouts[2] if len(prs.slide_layouts) > 2 else prs.slide_layouts[0]
     slide = prs.slides.add_slide(slide_layout)
     
     if slide.shapes.title:
-        slide.shapes.title.text = "Section Title"
+        slide.shapes.title.text = "章节标题"
         for para in slide.shapes.title.text_frame.paragraphs:
             para.font.size = Pt(sizes["title"])
             para.font.name = fonts["title"]
             para.font.bold = True
             para.font.color.rgb = hex_to_rgb(colors["accent"])
     
-    # 3. Title and Content
+    # 3. 标题和内容
     slide_layout = prs.slide_layouts[1]
     slide = prs.slides.add_slide(slide_layout)
     
-    slide.shapes.title.text = "Slide Title"
+    slide.shapes.title.text = "幻灯片标题"
     for para in slide.shapes.title.text_frame.paragraphs:
         para.font.size = Pt(sizes["heading"])
         para.font.name = fonts["title"]
         para.font.color.rgb = hex_to_rgb(colors["title"])
     
-    # Find content placeholder
+    # 查找内容占位符
     for shape in slide.placeholders:
         if shape.placeholder_format.idx == 1:
             tf = shape.text_frame
             tf.clear()
             
-            bullets = ["First key point", "Second key point", "Third key point with more detail", "Final point"]
+            bullets = ["第一关键点", "第二关键点", "第三关键点（详细说明）", "最后一点"]
             for i, bullet in enumerate(bullets):
                 if i == 0:
                     p = tf.paragraphs[0]
@@ -249,26 +249,26 @@ def create_template(preset_name: str, output_path: Path) -> None:
                 p.level = 0
             break
     
-    # 4. Two Column Layout
+    # 4. 两栏布局
     slide_layout = prs.slide_layouts[3] if len(prs.slide_layouts) > 3 else prs.slide_layouts[1]
     slide = prs.slides.add_slide(slide_layout)
     
     if slide.shapes.title:
-        slide.shapes.title.text = "Two Column Layout"
+        slide.shapes.title.text = "两栏布局"
         for para in slide.shapes.title.text_frame.paragraphs:
             para.font.size = Pt(sizes["heading"])
             para.font.name = fonts["title"]
             para.font.color.rgb = hex_to_rgb(colors["title"])
     
-    # 5. Image with Caption (simulated)
+    # 5. 带说明的图像（模拟）
     slide = prs.slides.add_slide(prs.slide_layouts[1])
-    slide.shapes.title.text = "Image Slide"
+    slide.shapes.title.text = "图像幻灯片"
     for para in slide.shapes.title.text_frame.paragraphs:
         para.font.size = Pt(sizes["heading"])
         para.font.name = fonts["title"]
         para.font.color.rgb = hex_to_rgb(colors["title"])
     
-    # Add placeholder rectangle for image
+    # 添加图像占位符矩形
     img_placeholder = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE,
         Inches(1), Inches(1.8),
@@ -279,7 +279,7 @@ def create_template(preset_name: str, output_path: Path) -> None:
     img_placeholder.fill.fore_color.brightness = 0.8
     img_placeholder.line.color.rgb = hex_to_rgb(colors["accent"])
     
-    # Add text box for caption
+    # 添加说明文本框
     caption_box = slide.shapes.add_textbox(
         Inches(8.5), Inches(2),
         Inches(4), Inches(4)
@@ -287,15 +287,15 @@ def create_template(preset_name: str, output_path: Path) -> None:
     tf = caption_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "Image description and supporting text goes here. This area can contain bullet points or paragraphs."
+    p.text = "图像描述和支持文本放在这里。此区域可以包含项目符号或段落。"
     p.font.size = Pt(sizes["body"])
     p.font.name = fonts["body"]
     p.font.color.rgb = hex_to_rgb(colors["body"])
     
-    # 6. Quote/Callout Slide
+    # 6. 引用/标注幻灯片
     slide = prs.slides.add_slide(prs.slide_layouts[6] if len(prs.slide_layouts) > 6 else prs.slide_layouts[1])
     
-    # Add large quote
+    # 添加大引用
     quote_box = slide.shapes.add_textbox(
         Inches(1.5), Inches(2),
         Inches(10), Inches(3)
@@ -303,26 +303,26 @@ def create_template(preset_name: str, output_path: Path) -> None:
     tf = quote_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = '"This is a powerful quote or key insight that you want to emphasize."'
+    p.text = '"这是您想要强调的有力引用或关键见解。"'
     p.font.size = Pt(36)
     p.font.name = fonts["title"]
     p.font.italic = True
     p.font.color.rgb = hex_to_rgb(colors["accent"])
     p.alignment = PP_ALIGN.CENTER
     
-    # Attribution
+    # 归属
     p2 = tf.add_paragraph()
-    p2.text = "— Attribution"
+    p2.text = "— 归属"
     p2.font.size = Pt(sizes["body"])
     p2.font.name = fonts["body"]
     p2.font.color.rgb = hex_to_rgb(colors["body"])
     p2.alignment = PP_ALIGN.CENTER
     
-    # 7. Thank You / End Slide
+    # 7. 感谢/结束幻灯片
     slide = prs.slides.add_slide(prs.slide_layouts[0])
     
     title = slide.shapes.title
-    title.text = "Thank You"
+    title.text = "谢谢"
     for para in title.text_frame.paragraphs:
         para.font.size = Pt(sizes["title"])
         para.font.name = fonts["title"]
@@ -332,14 +332,14 @@ def create_template(preset_name: str, output_path: Path) -> None:
     
     if len(slide.placeholders) > 1:
         subtitle = slide.placeholders[1]
-        subtitle.text = "Questions?\ncontact@example.com"
+        subtitle.text = "有问题？\ncontact@example.com"
         for para in subtitle.text_frame.paragraphs:
             para.font.size = Pt(sizes["subtitle"])
             para.font.name = fonts["body"]
             para.font.color.rgb = hex_to_rgb(colors["body"])
             para.alignment = PP_ALIGN.CENTER
     
-    # Add accent bar
+    # 添加强调条
     shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE,
         Inches(0), Inches(0),
@@ -349,25 +349,25 @@ def create_template(preset_name: str, output_path: Path) -> None:
     shape.fill.fore_color.rgb = hex_to_rgb(colors["accent"])
     shape.line.fill.background()
     
-    # Save
+    # 保存
     prs.save(output_path)
-    print(f"Created template: {output_path}")
+    print(f"已创建模板: {output_path}")
 
 
 def create_all_templates():
-    """Generate all preset templates."""
+    """生成所有预设模板。"""
     TEMPLATES_DIR.mkdir(exist_ok=True)
     
     for preset_name in PRESETS:
         output_path = TEMPLATES_DIR / f"{preset_name}.pptx"
         create_template(preset_name, output_path)
     
-    # Also create a config file with template metadata
+    # 还创建一个包含模板元数据的配置文件
     config = {
         "templates": {
             name: {
                 "name": preset["name"],
-                "description": f"{preset['name']} theme with {preset['fonts']['title']} font",
+                "description": f"{preset['name']} 主题，使用 {preset['fonts']['title']} 字体",
                 "colors": preset["colors"],
             }
             for name, preset in PRESETS.items()
@@ -377,27 +377,27 @@ def create_all_templates():
     config_path = TEMPLATES_DIR / "templates.json"
     with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
-    print(f"Created config: {config_path}")
+    print(f"已创建配置文件: {config_path}")
 
 
 def list_presets():
-    """List available template presets."""
-    print("Available template presets:\n")
+    """列出可用的模板预设。"""
+    print("可用的模板预设:\n")
     for name, preset in PRESETS.items():
         colors = preset["colors"]
         print(f"  {name}")
-        print(f"    Name: {preset['name']}")
-        print(f"    Fonts: {preset['fonts']['title']} / {preset['fonts']['body']}")
-        print(f"    Accent: #{colors['accent']}")
+        print(f"    名称: {preset['name']}")
+        print(f"    字体: {preset['fonts']['title']} / {preset['fonts']['body']}")
+        print(f"    强调色: #{colors['accent']}")
         print()
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Create PowerPoint templates")
-    parser.add_argument("--preset", "-p", help="Preset name to generate")
-    parser.add_argument("--all", "-a", action="store_true", help="Generate all templates")
-    parser.add_argument("--list", "-l", action="store_true", help="List available presets")
-    parser.add_argument("--output", "-o", help="Output path (default: templates/<preset>.pptx)")
+    parser = argparse.ArgumentParser(description="创建 PowerPoint 模板")
+    parser.add_argument("--preset", "-p", help="要生成的预设名称")
+    parser.add_argument("--all", "-a", action="store_true", help="生成所有模板")
+    parser.add_argument("--list", "-l", action="store_true", help="列出可用的预设")
+    parser.add_argument("--output", "-o", help="输出路径 (默认: templates/<preset>.pptx)")
     
     args = parser.parse_args()
     
@@ -411,8 +411,8 @@ def main():
     
     if args.preset:
         if args.preset not in PRESETS:
-            print(f"Unknown preset: {args.preset}")
-            print(f"Available: {', '.join(PRESETS.keys())}")
+            print(f"未知预设: {args.preset}")
+            print(f"可用: {', '.join(PRESETS.keys())}")
             return
         
         TEMPLATES_DIR.mkdir(exist_ok=True)

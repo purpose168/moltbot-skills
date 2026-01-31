@@ -1,83 +1,83 @@
-# Twenty CRM Integration
+# Twenty CRM 集成
 
-Sync Otter.ai transcripts to Twenty CRM as notes on contacts or companies.
+将 Otter.ai 转录同步到 Twenty CRM 作为联系人或公司的备注。
 
-## Setup
+## 设置
 
-Set environment variables:
+设置环境变量：
 ```bash
 export TWENTY_API_URL="https://api.your-twenty-instance.com"
 export TWENTY_API_TOKEN="your-api-token"
 ```
 
-## Workflow
+## 工作流程
 
-### 1. Get Transcript Summary
+### 1. 获取转录摘要
 ```bash
 uv run skills/otter/scripts/otter.py summary <speech_id>
 ```
 
-### 2. Sync to Contact
+### 2. 同步到联系人
 ```bash
-uv run skills/otter/scripts/otter.py sync-twenty <speech_id> --contact "John Smith"
+uv run skills/otter/scripts/otter.py sync-twenty <speech_id> --contact "张三"
 ```
 
-### 3. Sync to Company
+### 3. 同步到公司
 ```bash
-uv run skills/otter/scripts/otter.py sync-twenty <speech_id> --company "Acme Corp"
+uv run skills/otter/scripts/otter.py sync-twenty <speech_id> --company "示例公司"
 ```
 
-## Agent Integration
+## 代理集成
 
-When the `sync-twenty` command runs, it outputs JSON that the agent should process:
+当运行 `sync-twenty` 命令时，它会输出代理应该处理的 JSON：
 
 ```json
 {
   "action": "sync_to_twenty",
-  "title": "Weekly Standup",
+  "title": "每周站会",
   "speech_id": "abc123",
   "transcript_text": "...",
-  "contact": "John Smith",
+  "contact": "张三",
   "company": null
 }
 ```
 
-The agent should then:
-1. Summarize the transcript (key points, action items)
-2. Find the contact/company in Twenty CRM
-3. Create a note with the summary
-4. Optionally attach full transcript
+然后代理应该：
+1. 总结转录内容（关键点、行动项）
+2. 在 Twenty CRM 中查找联系人/公司
+3. 创建包含摘要的备注
+4. 可选地附加完整转录
 
-## Twenty API Endpoints Used
+## 使用的 Twenty API 端点
 
-- `POST /api/notes` - Create note
-- `GET /api/people?filter[name]` - Find contact
-- `GET /api/companies?filter[name]` - Find company
+- `POST /api/notes` - 创建备注
+- `GET /api/people?filter[name]` - 查找联系人
+- `GET /api/companies?filter[name]` - 查找公司
 
-## Example Note Format
+## 备注格式示例
 
 ```markdown
-## Meeting Summary: Weekly Standup
-**Date:** 2026-01-06
-**Duration:** 45 minutes
-**Participants:** John, Sarah, Mike
+## 会议摘要：每周站会
+**日期：** 2026-01-06
+**时长：** 45 分钟
+**参与者：** 张三、李四、王五
 
-### Key Points
-- Project timeline on track
-- Budget review needed
-- New feature request from client
+### 关键点
+- 项目时间线按计划进行
+- 需要预算审查
+- 客户提出新功能请求
 
-### Action Items
-- [ ] John: Send budget proposal by Friday
-- [ ] Sarah: Schedule client demo
+### 行动项
+- [ ] 张三：周五前发送预算提案
+- [ ] 李四：安排客户演示
 
-### Full Transcript
-[Attached as separate note or linked to Otter]
+### 完整转录
+[作为单独备注附加或链接到 Otter]
 ```
 
-## Automatic Sync (Cron)
+## 自动同步（Cron）
 
-Set up a cron job to check for new transcripts and auto-sync:
+设置 cron 作业来检查新的转录并自动同步：
 
 ```json
 {
@@ -85,7 +85,7 @@ Set up a cron job to check for new transcripts and auto-sync:
   "schedule": {"kind": "cron", "expr": "*/30 * * * *"},
   "payload": {
     "kind": "agentTurn",
-    "message": "Check Otter for new transcripts. If found, summarize and ask if I should sync to Twenty CRM."
+    "message": "检查 Otter 是否有新的转录。如果找到，总结并询问是否应同步到 Twenty CRM。"
   }
 }
 ```

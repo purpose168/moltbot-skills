@@ -1,19 +1,19 @@
-# MeshGuard API Reference
+# MeshGuard API 参考
 
-Base URL: `{MESHGUARD_URL}/api/v1`
+基础 URL: `{MESHGUARD_URL}/api/v1`
 
-All authenticated endpoints require: `Authorization: Bearer <API_KEY>`
+所有需要认证的端点都需要：`Authorization: Bearer <API_KEY>`
 
-Admin endpoints require: `Authorization: Bearer <ADMIN_TOKEN>`
+管理员端点需要：`Authorization: Bearer <ADMIN_TOKEN>`
 
 ---
 
-## Health
+## 健康检查
 
 ### `GET /health`
-Check gateway health. No auth required.
+检查网关健康状态。无需认证。
 
-**Response:**
+**响应：**
 ```json
 {
   "status": "healthy",
@@ -29,12 +29,12 @@ Check gateway health. No auth required.
 
 ---
 
-## Agents
+## 代理
 
 ### `GET /agents`
-List all agents in the organization.
+列出组织中的所有代理。
 
-**Response:**
+**响应：**
 ```json
 {
   "agents": [
@@ -52,9 +52,9 @@ List all agents in the organization.
 ```
 
 ### `POST /agents`
-Create a new agent.
+创建新代理。
 
-**Body:**
+**请求体：**
 ```json
 {
   "name": "my-agent",
@@ -62,22 +62,22 @@ Create a new agent.
 }
 ```
 
-**Response:** Agent object with `id`, `api_key`.
+**响应：** 带有 `id` 和 `api_key` 的代理对象。
 
 ### `GET /agents/{id}`
-Get agent details by ID.
+通过 ID 获取代理详情。
 
 ### `DELETE /agents/{id}`
-Delete an agent. Returns `204 No Content`.
+删除代理。返回 `204 No Content`。
 
 ---
 
-## Policies
+## 策略
 
 ### `GET /policies`
-List all policies.
+列出所有策略。
 
-**Response:**
+**响应：**
 ```json
 {
   "policies": [
@@ -100,9 +100,9 @@ List all policies.
 ```
 
 ### `POST /policies`
-Create a new policy.
+创建新策略。
 
-**Body:**
+**请求体：**
 ```json
 {
   "name": "my-policy",
@@ -126,43 +126,43 @@ Create a new policy.
 }
 ```
 
-### Rule Types
+### 规则类型
 
-| Type | Fields | Description |
-|------|--------|-------------|
-| `rate_limit` | `max_requests`, `window_seconds` | Throttle request rate |
-| `content_filter` | `block_categories` | Block sensitive content categories |
-| `scope_restriction` | `allowed_actions`, `denied_actions` | Restrict agent capabilities |
-| `time_window` | `allowed_hours`, `timezone` | Restrict operation hours |
-| `budget_limit` | `max_cost_usd`, `period` | Cost guardrails |
+| 类型 | 字段 | 描述 |
+|------|------|-------------|
+| `rate_limit` | `max_requests`, `window_seconds` | 限制请求速率 |
+| `content_filter` | `block_categories` | 阻止敏感内容类别 |
+| `scope_restriction` | `allowed_actions`, `denied_actions` | 限制代理能力 |
+| `time_window` | `allowed_hours`, `timezone` | 限制操作时间 |
+| `budget_limit` | `max_cost_usd`, `period` | 成本控制 |
 
 ### `GET /policies/{id}`
-Get policy details.
+获取策略详情。
 
 ### `DELETE /policies/{id}`
-Delete a policy. Returns `204 No Content`.
+删除策略。返回 `204 No Content`。
 
 ---
 
-## Audit Logs
+## 审计日志
 
 ### `GET /audit/logs`
-Query audit events.
+查询审计事件。
 
-**Query Parameters:**
+**查询参数：**
 
-| Param | Type | Description |
+| 参数 | 类型 | 描述 |
 |-------|------|-------------|
-| `agent` | string | Filter by agent name |
-| `action` | string | Filter by action type |
-| `limit` | integer | Max results (default: 20, max: 1000) |
-| `offset` | integer | Pagination offset |
-| `from` | ISO 8601 | Start timestamp |
-| `to` | ISO 8601 | End timestamp |
+| `agent` | string | 按代理名称过滤 |
+| `action` | string | 按操作类型过滤 |
+| `limit` | integer | 最大结果数（默认：20，最大：1000） |
+| `offset` | integer | 分页偏移量 |
+| `from` | ISO 8601 | 开始时间戳 |
+| `to` | ISO 8601 | 结束时间戳 |
 
-**Actions:** `agent.create`, `agent.delete`, `agent.update`, `policy.create`, `policy.update`, `policy.delete`, `policy.attach`, `policy.detach`, `auth.login`, `auth.revoke`, `violation.rate_limit`, `violation.content_filter`, `violation.scope`
+**操作类型：** `agent.create`, `agent.delete`, `agent.update`, `policy.create`, `policy.update`, `policy.delete`, `policy.attach`, `policy.detach`, `auth.login`, `auth.revoke`, `violation.rate_limit`, `violation.content_filter`, `violation.scope`
 
-**Response:**
+**响应：**
 ```json
 {
   "events": [
@@ -186,12 +186,12 @@ Query audit events.
 
 ---
 
-## Organization Signup
+## 组织注册
 
-### `POST /orgs/signup` *(Admin token required)*
-Create a new organization.
+### `POST /orgs/signup` *(需要管理员令牌)*
+创建新组织。
 
-**Body:**
+**请求体：**
 ```json
 {
   "name": "Acme Corp",
@@ -199,7 +199,7 @@ Create a new organization.
 }
 ```
 
-**Response:**
+**响应：**
 ```json
 {
   "org_id": "org_abc123",
@@ -212,9 +212,9 @@ Create a new organization.
 
 ---
 
-## Error Responses
+## 错误响应
 
-All errors follow this format:
+所有错误都遵循以下格式：
 ```json
 {
   "error": {
@@ -225,4 +225,4 @@ All errors follow this format:
 }
 ```
 
-Common error codes: `unauthorized` (401), `forbidden` (403), `not_found` (404), `rate_limited` (429), `internal_error` (500).
+常见错误代码：`unauthorized` (401), `forbidden` (403), `not_found` (404), `rate_limited` (429), `internal_error` (500)。

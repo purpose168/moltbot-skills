@@ -1,26 +1,26 @@
 ---
 name: content-advisory
-description: Lookup detailed content ratings for movies and TV shows (sex/nudity, violence/gore, language) from Kids-In-Mind.
+description: 从 Kids-In-Mind 查询电影和电视节目的详细内容评级（性/裸露、暴力/ gore、语言）。
 homepage: https://kids-in-mind.com
 metadata: { "clawdbot": { "emoji": "🎬", "requires": { "bins": ["uv"] } } }
 ---
 
-# Content Advisory
+# 内容评级
 
-Detailed parental content ratings for movies and TV shows. Goes beyond simple MPAA ratings with specific breakdowns of objectionable content.
+为电影和电视节目提供详细的家长内容评级。超越简单的 MPAA 评级，提供具体的不良内容分类。
 
-## Features
+## 功能
 
-- **Detailed ratings** — Sex/Nudity, Violence/Gore, Language on 0-10 scale
-- **Content specifics** — Exact descriptions of concerning content
-- **Substance use** — Alcohol, drugs, smoking references
-- **Discussion topics** — Themes parents may want to discuss
-- **Message/moral** — Overall takeaway of the film
-- **Caching** — Results cached locally to avoid repeated lookups
+- **详细评级** — 性/裸露、暴力/ gore、语言，0-10 分制
+- **内容详情** — 不良内容的准确描述
+- **物质使用** — 酒精、毒品、吸烟参考
+- **讨论话题** — 家长可能想要讨论的主题
+- **信息/道德** — 电影的整体主题
+- **缓存** — 结果本地缓存，避免重复查询
 
-## Commands
+## 命令
 
-### Lookup a Movie
+### 查询电影
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py lookup "The Batman"
@@ -28,87 +28,87 @@ uv run {baseDir}/scripts/content_advisory.py lookup "Inside Out" --year 2015
 uv run {baseDir}/scripts/content_advisory.py lookup "Oppenheimer" --json
 ```
 
-### Search for Titles
+### 搜索标题
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py search "batman"
 uv run {baseDir}/scripts/content_advisory.py search "pixar" --limit 10
 ```
 
-### Clear Cache
+### 清除缓存
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py clear-cache
 ```
 
-## Output Example
+## 输出示例
 
 ```
 🎬 The Batman (2022) | PG-13
 
-📊 CONTENT RATINGS
-   Sex/Nudity:    2 ▓▓░░░░░░░░
-   Violence/Gore: 7 ▓▓▓▓▓▓▓░░░
-   Language:      5 ▓▓▓▓▓░░░░░
+📊 内容评级
+   性/裸露:    2 ▓▓░░░░░░░░
+   暴力/ gore: 7 ▓▓▓▓▓▓▓░░░
+   语言:      5 ▓▓▓▓▓░░░░░
 
-📋 CATEGORY DETAILS
-   Sex/Nudity: A man and woman kiss...
-   Violence:   Multiple fight scenes with punching...
-   Language:   15 uses of profanity including...
+📋 类别详情
+   性/裸露: 一男一女接吻...
+   暴力:   多次打斗场景，有拳击...
+   语言:   15 次使用亵渎语言，包括...
 
-💊 SUBSTANCE USE
-   Alcohol consumed at party scenes...
+💊 物质使用
+   派对场景中饮酒...
 
-💬 DISCUSSION TOPICS
-   Vigilantism, revenge, grief, corruption
+💬 讨论话题
+   警戒主义、复仇、悲伤、腐败
 
-📝 MESSAGE
-   Justice requires restraint, not vengeance.
+📝 信息
+   正义需要克制，而不是复仇。
 ```
 
-## Rating Scale
+## 评级量表
 
-| Score | Level    | Description                 |
+| 分数 | 级别    | 描述                       |
 | ----- | -------- | --------------------------- |
-| 0-1   | None     | No content in this category |
-| 2-3   | Mild     | Brief, non-graphic content  |
-| 4-5   | Moderate | Some concerning content     |
-| 6-7   | Heavy    | Significant content         |
-| 8-10  | Severe   | Extensive, graphic content  |
+| 0-1   | 无       | 此类别中无内容              |
+| 2-3   | 轻微     | 简短、非图形化内容          |
+| 4-5   | 中等     | 一些令人担忧的内容          |
+| 6-7   | 严重     | 显著的内容                  |
+| 8-10  | 非常严重 | 广泛、图形化的内容          |
 
-## Data Source
+## 数据源
 
-Content ratings are sourced from [Kids-In-Mind.com](https://kids-in-mind.com), an independent nonprofit that has been reviewing movies since 1992. They do not assign age ratings but provide objective descriptions so parents can make informed decisions.
+内容评级来自 [Kids-In-Mind.com](https://kids-in-mind.com)，这是一个独立的非营利组织，自 1992 年以来一直在审查电影。他们不分配年龄评级，而是提供客观描述，以便父母做出明智的决定。
 
-## Usage Examples
+## 使用示例
 
-**"Is The Batman appropriate for my 12 year old?"**
+**"The Batman 适合我 12 岁的孩子吗？"**
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py lookup "The Batman"
 ```
 
-**"How violent is Oppenheimer?"**
+**"Oppenheimer 有多暴力？"**
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py lookup "Oppenheimer"
-# Check the Violence/Gore rating and details
+# 检查暴力/ gore 评级和详情
 ```
 
-**"Find family movies with low content ratings"**
+**"查找内容评级低的家庭电影"**
 
 ```bash
 uv run {baseDir}/scripts/content_advisory.py search "disney" --limit 20
-# Review results for low-rated titles
+# 查看低评级标题的结果
 ```
 
-## Data Storage
+## 数据存储
 
-Cache stored at `~/.clawdbot/content-advisory/cache.json` to minimize repeated lookups.
+缓存存储在 `~/.clawdbot/content-advisory/cache.json` 中，以最小化重复查询。
 
-## Notes
+## 注意事项
 
-- Results are scraped from Kids-In-Mind.com
-- Not all movies are reviewed — primarily theatrical releases
-- Cache can be cleared to force fresh lookups
-- Please support Kids-In-Mind if you find their service valuable
+- 结果从 Kids-In-Mind.com 抓取
+- 并非所有电影都经过审查 — 主要是影院上映的电影
+- 可以清除缓存以强制刷新查询
+- 如果您发现他们的服务有价值，请支持 Kids-In-Mind

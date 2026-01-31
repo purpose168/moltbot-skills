@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["click>=8.0.0"]
 # ///
-"""Backup Clawdbot media to a local folder (synced by Dropbox/iCloud/etc)."""
+"""将 Clawdbot 媒体备份到本地文件夹（由 Dropbox/iCloud 等同步）。"""
 
 import os
 import sys
@@ -14,7 +14,7 @@ from datetime import datetime
 
 import click
 
-# Defaults
+# 默认值
 DEFAULT_SOURCE = Path.home() / ".clawdbot" / "media" / "inbound"
 DEFAULT_DEST = Path.home() / "Dropbox" / "Clawdbot" / "media"
 STATE_FILE = Path.home() / ".clawdbot" / "media" / "backup-state.json"
@@ -26,7 +26,7 @@ MEDIA_EXTENSIONS = {
 
 
 def get_dest_path() -> Path:
-    """Get destination from env or default."""
+    """从环境变量获取目标路径或使用默认值。"""
     env_dest = os.environ.get("MEDIA_BACKUP_DEST")
     if env_dest:
         return Path(env_dest).expanduser()
@@ -34,7 +34,7 @@ def get_dest_path() -> Path:
 
 
 def load_state() -> set:
-    """Load set of already-archived file hashes."""
+    """加载已存档文件哈希的集合。"""
     if STATE_FILE.exists():
         try:
             return set(json.loads(STATE_FILE.read_text()))
@@ -44,70 +44,70 @@ def load_state() -> set:
 
 
 def save_state(hashes: set):
-    """Save archived file hashes."""
+    """保存已存档文件的哈希值。"""
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     STATE_FILE.write_text(json.dumps(list(hashes)))
 
 
 def file_hash(path: Path) -> str:
-    """Get MD5 hash of file content."""
+    """获取文件内容的 MD5 哈希值。"""
     return hashlib.md5(path.read_bytes()).hexdigest()
 
 
 @click.group(invoke_without_command=True)
-@click.option("--source", "-s", type=click.Path(exists=True), help="Source directory")
-@click.option("--dest", "-d", type=click.Path(), help="Destination directory")
-@click.option("--dry-run", is_flag=True, help="Preview only, don't copy")
+@click.option("--source", "-s", type=click.Path(exists=True), help="源目录")
+@click.option("--dest", "-d", type=click.Path(), help="目标目录")
+@click.option("--dry-run", is_flag=True, help="仅预览，不复制")
 @click.pass_context
 def cli(ctx, source, dest, dry_run):
-    """Backup Clawdbot media to a local folder."""
+    """将 Clawdbot 媒体备份到本地文件夹。"""
     if ctx.invoked_subcommand is None:
-        # Default action: run backup
+        # 默认操作：运行备份
         run_backup(source, dest, dry_run)
 
 
 def run_backup(source, dest, dry_run):
-    """Run the backup."""
+    """运行备份。"""
     source_path = Path(source) if source else DEFAULT_SOURCE
     dest_path = Path(dest) if dest else get_dest_path()
     
     if not source_path.exists():
-        click.echo(f"Source not found: {source_path}", err=True)
+        click.echo(f"源目录不存在: {source_path}", err=True)
         sys.exit(1)
     
-    # Load state
+    # 加载状态
     archived = load_state()
     
-    # Stats
+    # 统计
     copied = 0
     skipped = 0
     errors = 0
     
-    # Process files
+    # 处理文件
     for file in source_path.iterdir():
         if not file.is_file():
             continue
         
-        # Check extension
+        # 检查扩展名
         if file.suffix.lower() not in MEDIA_EXTENSIONS:
             continue
         
-        # Check if already archived
+        # 检查是否已存档
         fhash = file_hash(file)
         if fhash in archived:
             skipped += 1
             continue
         
-        # Get date folder from file mtime
+        # 从文件修改时间获取日期文件夹
         mtime = datetime.fromtimestamp(file.stat().st_mtime)
         date_folder = mtime.strftime("%Y-%m-%d")
         
-        # Destination path
+        # 目标路径
         dest_dir = dest_path / date_folder
         dest_file = dest_dir / file.name
         
         if dry_run:
-            click.echo(f"Would copy: {file.name} → {dest_dir}/")
+            click.echo(f"将复制: {file.name} → {dest_dir}/")
             copied += 1
             continue
         
@@ -121,52 +121,52 @@ def run_backup(source, dest, dry_run):
             click.echo(f"✗ {file.name}: {e}", err=True)
             errors += 1
     
-    # Save state
+    # 保存状态
     if not dry_run and copied > 0:
         save_state(archived)
     
-    # Summary
-    click.echo(f"\n📸 Copied: {copied}, Skipped: {skipped}, Errors: {errors}")
+    # 摘要
+    click.echo(f"\n📸 已复制: {copied}, 已跳过: {skipped}, 错误: {errors}")
     
     if dry_run:
-        click.echo(f"Destination: {dest_path}")
+        click.echo(f"目标: {dest_path}")
 
 
 @cli.command()
 def status():
-    """Show backup status."""
+    """显示备份状态。"""
     source_path = DEFAULT_SOURCE
     dest_path = get_dest_path()
     archived = load_state()
     
-    click.echo(f"📂 Source: {source_path}")
-    click.echo(f"📁 Destination: {dest_path}")
-    click.echo(f"✓ Archived: {len(archived)} files")
+    click.echo(f"📂 源: {source_path}")
+    click.echo(f"📁 目标: {dest_path}")
+    click.echo(f"✓ 已存档: {len(archived)} 个文件")
     
-    # Count pending
+    # 计算待处理文件数
     if source_path.exists():
         pending = 0
         for file in source_path.iterdir():
             if file.is_file() and file.suffix.lower() in MEDIA_EXTENSIONS:
                 if file_hash(file) not in archived:
                     pending += 1
-        click.echo(f"⏳ Pending: {pending} files")
+        click.echo(f"⏳ 待处理: {pending} 个文件")
     
-    # Check dest exists
+    # 检查目标是否存在
     if dest_path.exists():
-        click.echo(f"🔗 Destination exists: ✓")
+        click.echo(f"🔗 目标存在: ✓")
     else:
-        click.echo(f"🔗 Destination exists: ✗ (will be created)")
+        click.echo(f"🔗 目标存在: ✗ (将被创建)")
 
 
 @cli.command()
 def reset():
-    """Reset backup state (re-archive all files)."""
+    """重置备份状态（重新存档所有文件）。"""
     if STATE_FILE.exists():
         STATE_FILE.unlink()
-        click.echo("✓ State reset. Next backup will re-process all files.")
+        click.echo("✓ 状态已重置。下次备份将重新处理所有文件。")
     else:
-        click.echo("No state file found.")
+        click.echo("未找到状态文件。")
 
 
 if __name__ == "__main__":

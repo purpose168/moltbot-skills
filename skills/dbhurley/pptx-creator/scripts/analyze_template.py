@@ -4,8 +4,8 @@
 # dependencies = ["python-pptx"]
 # ///
 """
-Analyze a PowerPoint template to extract layouts, colors, fonts, and structure.
-Use this to understand existing templates before creating new presentations.
+分析 PowerPoint 模板以提取布局、颜色、字体和结构。
+在创建新演示文稿之前，使用此工具了解现有模板。
 """
 
 import argparse
@@ -17,7 +17,7 @@ from pptx.util import Inches, Pt
 
 
 def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
-    """Analyze a PowerPoint template and return its structure."""
+    """分析 PowerPoint 模板并返回其结构。"""
     prs = Presentation(pptx_path)
     
     analysis = {
@@ -32,7 +32,7 @@ def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
         "slides": [],
     }
     
-    # Analyze slide masters
+    # 分析幻灯片母版
     for i, master in enumerate(prs.slide_masters):
         master_info = {
             "index": i,
@@ -63,7 +63,7 @@ def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
         
         analysis["masters"].append(master_info)
     
-    # Analyze slides (sample or all)
+    # 分析幻灯片（样本或全部）
     max_slides = len(prs.slides) if verbose else min(10, len(prs.slides))
     
     for idx in range(max_slides):
@@ -80,17 +80,17 @@ def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
                 "type": str(shape.shape_type) if shape.shape_type else "Unknown",
             }
             
-            # Get position/size
+            # 获取位置/大小
             shape_info["left"] = round(shape.left.inches, 2) if shape.left else 0
             shape_info["top"] = round(shape.top.inches, 2) if shape.top else 0
             shape_info["width"] = round(shape.width.inches, 2) if shape.width else 0
             shape_info["height"] = round(shape.height.inches, 2) if shape.height else 0
             
-            # Get text content
+            # 获取文本内容
             if hasattr(shape, 'text') and shape.text.strip():
                 shape_info["text"] = shape.text.strip()[:100]
             
-            # Get fill color
+            # 获取填充颜色
             if hasattr(shape, 'fill'):
                 try:
                     if shape.fill.type is not None:
@@ -105,7 +105,7 @@ def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
                 except:
                     pass
             
-            # Get font info from first paragraph
+            # 从第一段获取字体信息
             if hasattr(shape, 'text_frame'):
                 try:
                     for para in shape.text_frame.paragraphs[:1]:
@@ -134,33 +134,33 @@ def analyze_template(pptx_path: str, verbose: bool = False) -> dict:
 
 
 def print_summary(analysis: dict):
-    """Print a human-readable summary."""
-    print(f"📊 Template Analysis: {Path(analysis['file']).name}")
-    print(f"   Dimensions: {analysis['dimensions']['width_inches']}\" x {analysis['dimensions']['height_inches']}\"")
-    print(f"   Total slides: {analysis['slide_count']}")
+    """打印人类可读的摘要。"""
+    print(f"📊 模板分析: {Path(analysis['file']).name}")
+    print(f"   尺寸: {analysis['dimensions']['width_inches']}" x {analysis['dimensions']['height_inches']}"")
+    print(f"   幻灯片总数: {analysis['slide_count']}")
     print()
     
-    print("📐 Available Layouts:")
+    print("📐 可用布局:")
     for layout in analysis["layouts"]:
         print(f"   [{layout['index']}] {layout['name']}")
     print()
     
-    print("📄 Slide Structure (first 10):")
+    print("📄 幻灯片结构 (前 10 张):")
     for slide in analysis["slides"][:10]:
-        print(f"\n   Slide {slide['number']}: {slide['layout']}")
+        print(f"\n   幻灯片 {slide['number']}: {slide['layout']}")
         for shape in slide["shapes"][:5]:
             text_preview = f" → \"{shape.get('text', '')[:40]}\"" if shape.get('text') else ""
             print(f"      • {shape['type']}: {shape['name']}{text_preview}")
         if len(slide["shapes"]) > 5:
-            print(f"      ... and {len(slide['shapes']) - 5} more shapes")
+            print(f"      ... 还有 {len(slide['shapes']) - 5} 个形状")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Analyze PowerPoint template")
-    parser.add_argument("template", help="Path to PPTX file")
-    parser.add_argument("--json", "-j", action="store_true", help="Output JSON")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Analyze all slides")
-    parser.add_argument("--output", "-o", help="Save JSON to file")
+    parser = argparse.ArgumentParser(description="分析 PowerPoint 模板")
+    parser.add_argument("template", help="PPTX 文件路径")
+    parser.add_argument("--json", "-j", action="store_true", help="输出 JSON 格式")
+    parser.add_argument("--verbose", "-v", action="store_true", help="分析所有幻灯片")
+    parser.add_argument("--output", "-o", help="保存 JSON 到文件")
     
     args = parser.parse_args()
     
@@ -171,7 +171,7 @@ def main():
         if args.output:
             with open(args.output, "w") as f:
                 f.write(output)
-            print(f"Saved analysis to {args.output}")
+            print(f"分析已保存到 {args.output}")
         else:
             print(output)
     else:

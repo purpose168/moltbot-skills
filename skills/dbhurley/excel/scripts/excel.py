@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Excel CLI - Comprehensive Excel file manipulation.
+Excel 命令行工具 - 全面的 Excel 文件操作。
 
-Read, write, edit, and format Excel files (.xlsx, .xls).
+读取、写入、编辑和格式化 Excel 文件 (.xlsx, .xls)。
 
-Usage:
+使用方法:
     excel.py info <file>
     excel.py read <file> [--sheet NAME] [--range A1:B10] [--format json|csv|markdown]
     excel.py cell <file> <cell> [--sheet NAME]
@@ -67,12 +67,12 @@ def require_openpyxl():
 
 
 def ok(data: Any):
-    """Output success JSON."""
+    """输出成功 JSON。"""
     print(json.dumps({"success": True, **data}, indent=2, default=str))
 
 
 def fail(message: str, details: Any = None):
-    """Output error JSON."""
+    """输出错误 JSON。"""
     result = {"success": False, "error": message}
     if details:
         result["details"] = details
@@ -81,7 +81,7 @@ def fail(message: str, details: Any = None):
 
 
 def parse_range(range_str: str) -> tuple:
-    """Parse A1:B10 into ((1,1), (10,2))."""
+    """解析 A1:B10 为 ((1,1), (10,2))。"""
     if ':' in range_str:
         start, end = range_str.upper().split(':')
     else:
@@ -97,18 +97,18 @@ def parse_range(range_str: str) -> tuple:
 
 
 def cell_to_coords(cell: str) -> tuple:
-    """Convert A1 to (row, col) tuple."""
+    """将 A1 转换为 (行, 列) 元组。"""
     col_str, row = coordinate_from_string(cell.upper())
     return (row, column_index_from_string(col_str))
 
 
 def coords_to_cell(row: int, col: int) -> str:
-    """Convert (row, col) to A1 notation."""
+    """将 (行, 列) 转换为 A1 表示法。"""
     return f"{get_column_letter(col)}{row}"
 
 
 def get_sheet(wb, sheet_name: Optional[str] = None):
-    """Get worksheet by name or active sheet."""
+    """通过名称获取工作表或活动工作表。"""
     if sheet_name:
         if sheet_name not in wb.sheetnames:
             fail(f"Sheet '{sheet_name}' not found", {"available": wb.sheetnames})
@@ -117,7 +117,7 @@ def get_sheet(wb, sheet_name: Optional[str] = None):
 
 
 def read_sheet_data(ws, range_str: Optional[str] = None) -> list:
-    """Read sheet data as list of lists."""
+    """将工作表数据读取为列表的列表。"""
     if range_str:
         (start_row, start_col), (end_row, end_col) = parse_range(range_str)
         data = []
@@ -136,11 +136,11 @@ def read_sheet_data(ws, range_str: Optional[str] = None) -> list:
 
 
 def data_to_markdown(data: list, headers: bool = True) -> str:
-    """Convert data to markdown table."""
+    """将数据转换为 markdown 表格。"""
     if not data:
         return "*Empty*"
     
-    # Calculate column widths
+    # 计算列宽
     widths = []
     for col_idx in range(len(data[0])):
         max_width = 3
@@ -166,10 +166,10 @@ def data_to_markdown(data: list, headers: bool = True) -> str:
 
 
 def parse_color(color_str: str) -> str:
-    """Parse color string to ARGB hex."""
+    """解析颜色字符串为 ARGB 十六进制。"""
     color_str = color_str.upper().strip()
     
-    # Named colors
+    # 命名颜色
     colors = {
         "RED": "FFFF0000",
         "GREEN": "FF00FF00",
@@ -188,7 +188,7 @@ def parse_color(color_str: str) -> str:
     if color_str in colors:
         return colors[color_str]
     
-    # Hex color (with or without #)
+    # 十六进制颜色 (带或不带 #)
     if color_str.startswith("#"):
         color_str = color_str[1:]
     
@@ -197,15 +197,15 @@ def parse_color(color_str: str) -> str:
     elif len(color_str) == 8:
         return color_str
     
-    return "FF000000"  # Default black
+    return "FF000000"  # 默认黑色
 
 
 # ============================================================================
-# Commands
+# 命令
 # ============================================================================
 
 def cmd_info(args):
-    """Get workbook information."""
+    """获取工作簿信息。"""
     require_openpyxl()
     
     try:
@@ -233,7 +233,7 @@ def cmd_info(args):
 
 
 def cmd_read(args):
-    """Read sheet data."""
+    """读取工作表数据。"""
     require_openpyxl()
     
     try:
@@ -266,7 +266,7 @@ def cmd_read(args):
 
 
 def cmd_cell(args):
-    """Read a specific cell."""
+    """读取特定单元格。"""
     require_openpyxl()
     
     try:
@@ -288,16 +288,16 @@ def cmd_cell(args):
 
 
 def cmd_create(args):
-    """Create a new workbook."""
+    """创建新工作簿。"""
     require_openpyxl()
     
     wb = Workbook()
     
     if args.sheets:
         sheet_names = [s.strip() for s in args.sheets.split(",")]
-        # Rename first sheet
+        # 重命名第一个工作表
         wb.active.title = sheet_names[0]
-        # Add additional sheets
+        # 添加其他工作表
         for name in sheet_names[1:]:
             wb.create_sheet(title=name)
     
@@ -314,10 +314,10 @@ def cmd_create(args):
 
 
 def cmd_write(args):
-    """Write data to cells."""
+    """向单元格写入数据。"""
     require_openpyxl()
     
-    # Load or create workbook
+    # 加载或创建工作簿
     if os.path.exists(args.file):
         wb = load_workbook(args.file)
     else:
@@ -325,16 +325,16 @@ def cmd_write(args):
     
     ws = get_sheet(wb, args.sheet)
     
-    # Parse data
+    # 解析数据
     try:
         data = json.loads(args.data)
     except json.JSONDecodeError as e:
         fail(f"Invalid JSON data: {e}")
     
-    # Parse start cell
+    # 解析起始单元格
     start_row, start_col = cell_to_coords(args.start)
     
-    # Write data
+    # 写入数据
     if isinstance(data, list):
         for i, row in enumerate(data):
             if isinstance(row, list):
@@ -343,7 +343,7 @@ def cmd_write(args):
             else:
                 ws.cell(row=start_row + i, column=start_col, value=row)
     elif isinstance(data, dict):
-        # Write as key-value pairs or headers + rows
+        # 写入为键值对或表头 + 行
         if "headers" in data and "rows" in data:
             for j, header in enumerate(data["headers"]):
                 ws.cell(row=start_row, column=start_col + j, value=header)
@@ -367,7 +367,7 @@ def cmd_write(args):
 
 
 def cmd_from_csv(args):
-    """Create Excel from CSV."""
+    """从 CSV 创建 Excel。"""
     require_openpyxl()
     
     wb = Workbook()
@@ -393,7 +393,7 @@ def cmd_from_csv(args):
 
 
 def cmd_from_json(args):
-    """Create Excel from JSON."""
+    """从 JSON 创建 Excel。"""
     require_openpyxl()
     
     try:
@@ -409,13 +409,13 @@ def cmd_from_json(args):
     
     if isinstance(data, list):
         if data and isinstance(data[0], dict):
-            # List of dicts - use keys as headers
+            # 字典列表 - 使用键作为表头
             headers = list(data[0].keys())
             ws.append(headers)
             for item in data:
                 ws.append([item.get(h) for h in headers])
         else:
-            # List of lists or values
+            # 列表的列表或值
             for row in data:
                 if isinstance(row, list):
                     ws.append(row)
@@ -440,7 +440,7 @@ def cmd_from_json(args):
 
 
 def cmd_edit(args):
-    """Edit a cell value or formula."""
+    """编辑单元格值或公式。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -449,13 +449,13 @@ def cmd_edit(args):
     cell = ws[args.cell.upper()]
     old_value = cell.value
     
-    # Set new value
+    # 设置新值
     if args.formula:
         if not args.value.startswith("="):
             args.value = "=" + args.value
         cell.value = args.value
     else:
-        # Try to convert to appropriate type
+        # 尝试转换为适当类型
         try:
             if args.value.lower() in ('true', 'false'):
                 cell.value = args.value.lower() == 'true'
@@ -476,7 +476,7 @@ def cmd_edit(args):
 
 
 def cmd_add_sheet(args):
-    """Add a new sheet."""
+    """添加新工作表。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -497,7 +497,7 @@ def cmd_add_sheet(args):
 
 
 def cmd_rename_sheet(args):
-    """Rename a sheet."""
+    """重命名工作表。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -519,7 +519,7 @@ def cmd_rename_sheet(args):
 
 
 def cmd_delete_sheet(args):
-    """Delete a sheet."""
+    """删除工作表。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -540,7 +540,7 @@ def cmd_delete_sheet(args):
 
 
 def cmd_copy_sheet(args):
-    """Copy a sheet."""
+    """复制工作表。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -564,7 +564,7 @@ def cmd_copy_sheet(args):
 
 
 def cmd_insert_rows(args):
-    """Insert rows."""
+    """插入行。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -582,13 +582,13 @@ def cmd_insert_rows(args):
 
 
 def cmd_insert_cols(args):
-    """Insert columns."""
+    """插入列。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
     ws = get_sheet(wb, args.sheet)
     
-    # Convert column letter to number if needed
+    # 如有需要，将列字母转换为数字
     col = args.col
     if isinstance(col, str) and col.isalpha():
         col = column_index_from_string(col.upper())
@@ -605,7 +605,7 @@ def cmd_insert_cols(args):
 
 
 def cmd_delete_rows(args):
-    """Delete rows."""
+    """删除行。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -623,7 +623,7 @@ def cmd_delete_rows(args):
 
 
 def cmd_delete_cols(args):
-    """Delete columns."""
+    """删除列。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -645,7 +645,7 @@ def cmd_delete_cols(args):
 
 
 def cmd_merge(args):
-    """Merge cells."""
+    """合并单元格。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -661,7 +661,7 @@ def cmd_merge(args):
 
 
 def cmd_unmerge(args):
-    """Unmerge cells."""
+    """取消合并单元格。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -677,7 +677,7 @@ def cmd_unmerge(args):
 
 
 def cmd_format(args):
-    """Format cells."""
+    """格式化单元格。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -691,7 +691,7 @@ def cmd_format(args):
         for col in range(start_col, end_col + 1):
             cell = ws.cell(row=row, column=col)
             
-            # Font
+            # 字体
             if args.bold is not None or args.italic is not None or args.font_size or args.font_color or args.font_name:
                 current_font = cell.font
                 cell.font = Font(
@@ -703,14 +703,14 @@ def cmd_format(args):
                 )
                 applied.append("font")
             
-            # Fill/background
+            # 填充/背景
             if args.bg_color:
                 cell.fill = PatternFill(start_color=parse_color(args.bg_color),
                                          end_color=parse_color(args.bg_color),
                                          fill_type="solid")
                 applied.append("background")
             
-            # Alignment
+            # 对齐
             if args.align or args.valign or args.wrap:
                 current_align = cell.alignment
                 cell.alignment = Alignment(
@@ -720,7 +720,7 @@ def cmd_format(args):
                 )
                 applied.append("alignment")
             
-            # Border
+            # 边框
             if args.border:
                 side = Side(style=args.border, color="FF000000")
                 cell.border = Border(left=side, right=side, top=side, bottom=side)
@@ -735,7 +735,7 @@ def cmd_format(args):
 
 
 def cmd_resize(args):
-    """Resize rows/columns."""
+    """调整行和列大小。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -763,7 +763,7 @@ def cmd_resize(args):
 
 
 def cmd_freeze(args):
-    """Freeze panes at cell."""
+    """冻结窗格。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -779,7 +779,7 @@ def cmd_freeze(args):
 
 
 def cmd_find(args):
-    """Find text in sheet."""
+    """在工作表中查找文本。"""
     require_openpyxl()
     
     wb = load_workbook(args.file, read_only=True, data_only=True)
@@ -806,7 +806,7 @@ def cmd_find(args):
 
 
 def cmd_replace(args):
-    """Find and replace text."""
+    """查找并替换文本。"""
     require_openpyxl()
     
     wb = load_workbook(args.file)
@@ -830,7 +830,7 @@ def cmd_replace(args):
 
 
 def cmd_to_csv(args):
-    """Export sheet to CSV."""
+    """将工作表导出为 CSV。"""
     require_openpyxl()
     
     wb = load_workbook(args.file, read_only=True, data_only=True)
@@ -851,7 +851,7 @@ def cmd_to_csv(args):
 
 
 def cmd_to_json(args):
-    """Export sheet to JSON."""
+    """将工作表导出为 JSON。"""
     require_openpyxl()
     
     wb = load_workbook(args.file, read_only=True, data_only=True)
@@ -883,7 +883,7 @@ def cmd_to_json(args):
 
 
 def cmd_to_markdown(args):
-    """Export sheet to markdown table."""
+    """将工作表导出为 markdown 表格。"""
     require_openpyxl()
     
     wb = load_workbook(args.file, read_only=True, data_only=True)
@@ -896,136 +896,136 @@ def cmd_to_markdown(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Excel CLI - Read, write, edit, and format Excel files",
+        description="Excel 命令行工具 - 读取、写入、编辑和格式化 Excel 文件",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    subparsers = parser.add_subparsers(dest="command", help="命令")
     
     # info
-    p = subparsers.add_parser("info", help="Get workbook information")
-    p.add_argument("file", help="Excel file path")
+    p = subparsers.add_parser("info", help="获取工作簿信息")
+    p.add_argument("file", help="Excel 文件路径")
     
     # read
-    p = subparsers.add_parser("read", help="Read sheet data")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("--sheet", "-s", help="Sheet name")
-    p.add_argument("--range", "-r", help="Cell range (e.g., A1:D10)")
+    p = subparsers.add_parser("read", help="读取工作表数据")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("--sheet", "-s", help="工作表名称")
+    p.add_argument("--range", "-r", help="单元格范围（例如：A1:D10）")
     p.add_argument("--format", "-f", choices=["json", "csv", "markdown"], default="json")
     
     # cell
-    p = subparsers.add_parser("cell", help="Read a specific cell")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("cell", help="Cell reference (e.g., A1)")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("cell", help="读取特定单元格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("cell", help="单元格引用（例如：A1）")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # create
-    p = subparsers.add_parser("create", help="Create new workbook")
-    p.add_argument("file", help="Output file path")
-    p.add_argument("--sheets", help="Comma-separated sheet names")
+    p = subparsers.add_parser("create", help="创建新工作簿")
+    p.add_argument("file", help="输出文件路径")
+    p.add_argument("--sheets", help="逗号分隔的工作表名称")
     
     # write
-    p = subparsers.add_parser("write", help="Write data to cells")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("--data", "-d", required=True, help="JSON data to write")
-    p.add_argument("--sheet", "-s", help="Sheet name")
-    p.add_argument("--start", default="A1", help="Starting cell (default: A1)")
+    p = subparsers.add_parser("write", help="向单元格写入数据")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("--data", "-d", required=True, help="要写入的 JSON 数据")
+    p.add_argument("--sheet", "-s", help="工作表名称")
+    p.add_argument("--start", default="A1", help="起始单元格（默认：A1）")
     
     # from-csv
-    p = subparsers.add_parser("from-csv", help="Create Excel from CSV")
-    p.add_argument("csv_file", help="Input CSV file")
-    p.add_argument("excel_file", help="Output Excel file")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("from-csv", help="从 CSV 创建 Excel")
+    p.add_argument("csv_file", help="输入 CSV 文件")
+    p.add_argument("excel_file", help="输出 Excel 文件")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # from-json
-    p = subparsers.add_parser("from-json", help="Create Excel from JSON")
-    p.add_argument("json_file", help="Input JSON file")
-    p.add_argument("excel_file", help="Output Excel file")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("from-json", help="从 JSON 创建 Excel")
+    p.add_argument("json_file", help="输入 JSON 文件")
+    p.add_argument("excel_file", help="输出 Excel 文件")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # edit
-    p = subparsers.add_parser("edit", help="Edit a cell")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("cell", help="Cell reference")
-    p.add_argument("value", help="New value")
-    p.add_argument("--sheet", "-s", help="Sheet name")
-    p.add_argument("--formula", "-F", action="store_true", help="Value is a formula")
+    p = subparsers.add_parser("edit", help="编辑单元格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("cell", help="单元格引用")
+    p.add_argument("value", help="新值")
+    p.add_argument("--sheet", "-s", help="工作表名称")
+    p.add_argument("--formula", "-F", action="store_true", help="值是公式")
     
     # add-sheet
-    p = subparsers.add_parser("add-sheet", help="Add a new sheet")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("name", help="New sheet name")
-    p.add_argument("--position", "-p", type=int, help="Position index")
+    p = subparsers.add_parser("add-sheet", help="添加新工作表")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("name", help="新工作表名称")
+    p.add_argument("--position", "-p", type=int, help="位置索引")
     
     # rename-sheet
-    p = subparsers.add_parser("rename-sheet", help="Rename a sheet")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("old_name", help="Current sheet name")
-    p.add_argument("new_name", help="New sheet name")
+    p = subparsers.add_parser("rename-sheet", help="重命名工作表")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("old_name", help="当前工作表名称")
+    p.add_argument("new_name", help="新工作表名称")
     
     # delete-sheet
-    p = subparsers.add_parser("delete-sheet", help="Delete a sheet")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("name", help="Sheet name to delete")
+    p = subparsers.add_parser("delete-sheet", help="删除工作表")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("name", help="要删除的工作表名称")
     
     # copy-sheet
-    p = subparsers.add_parser("copy-sheet", help="Copy a sheet")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("source", help="Source sheet name")
-    p.add_argument("new_name", help="New sheet name")
+    p = subparsers.add_parser("copy-sheet", help="复制工作表")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("source", help="源工作表名称")
+    p.add_argument("new_name", help="新工作表名称")
     
     # insert-rows
-    p = subparsers.add_parser("insert-rows", help="Insert rows")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("row", type=int, help="Row number to insert at")
-    p.add_argument("--count", "-n", type=int, default=1, help="Number of rows")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("insert-rows", help="插入行")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("row", type=int, help="要插入的行号")
+    p.add_argument("--count", "-n", type=int, default=1, help="行数")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # insert-cols
-    p = subparsers.add_parser("insert-cols", help="Insert columns")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("col", help="Column (letter or number) to insert at")
-    p.add_argument("--count", "-n", type=int, default=1, help="Number of columns")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("insert-cols", help="插入列")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("col", help="要插入的列（字母或数字）")
+    p.add_argument("--count", "-n", type=int, default=1, help="列数")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # delete-rows
-    p = subparsers.add_parser("delete-rows", help="Delete rows")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("row", type=int, help="Starting row number")
-    p.add_argument("--count", "-n", type=int, default=1, help="Number of rows")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("delete-rows", help="删除行")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("row", type=int, help="起始行号")
+    p.add_argument("--count", "-n", type=int, default=1, help="行数")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # delete-cols
-    p = subparsers.add_parser("delete-cols", help="Delete columns")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("col", help="Column (letter or number)")
-    p.add_argument("--count", "-n", type=int, default=1, help="Number of columns")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("delete-cols", help="删除列")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("col", help="列（字母或数字）")
+    p.add_argument("--count", "-n", type=int, default=1, help="列数")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # merge
-    p = subparsers.add_parser("merge", help="Merge cells")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("range", help="Cell range to merge (e.g., A1:C1)")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("merge", help="合并单元格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("range", help="要合并的单元格范围（例如：A1:C1）")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # unmerge
-    p = subparsers.add_parser("unmerge", help="Unmerge cells")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("range", help="Cell range to unmerge")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("unmerge", help="取消合并单元格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("range", help="要取消合并的单元格范围")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # format
-    p = subparsers.add_parser("format", help="Format cells")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("range", help="Cell range to format")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("format", help="格式化单元格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("range", help="要格式化的单元格范围")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     p.add_argument("--bold", "-b", action="store_true", default=None)
     p.add_argument("--no-bold", dest="bold", action="store_false")
     p.add_argument("--italic", "-i", action="store_true", default=None)
     p.add_argument("--no-italic", dest="italic", action="store_false")
-    p.add_argument("--font-size", type=int, help="Font size")
-    p.add_argument("--font-color", help="Font color (name or hex)")
-    p.add_argument("--font-name", help="Font name")
-    p.add_argument("--bg-color", help="Background color")
+    p.add_argument("--font-size", type=int, help="字体大小")
+    p.add_argument("--font-color", help="字体颜色（名称或十六进制）")
+    p.add_argument("--font-name", help="字体名称")
+    p.add_argument("--bg-color", help="背景颜色")
     p.add_argument("--align", choices=["left", "center", "right"])
     p.add_argument("--valign", choices=["top", "center", "bottom"])
     p.add_argument("--wrap", action="store_true", default=None)
@@ -1033,47 +1033,47 @@ def main():
     p.add_argument("--border", choices=["thin", "medium", "thick", "double"])
     
     # resize
-    p = subparsers.add_parser("resize", help="Resize rows/columns")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("--row", action="append", help="Row:height (e.g., 1:30)")
-    p.add_argument("--col", action="append", help="Col:width (e.g., A:20)")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("resize", help="调整行和列大小")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("--row", action="append", help="Row:height（例如：1:30）")
+    p.add_argument("--col", action="append", help="Col:width（例如：A:20）")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # freeze
-    p = subparsers.add_parser("freeze", help="Freeze panes")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("cell", help="Cell to freeze at (e.g., A2 freezes row 1)")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("freeze", help="冻结窗格")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("cell", help="要冻结的单元格（例如：A2 冻结第 1 行）")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # find
-    p = subparsers.add_parser("find", help="Find text in sheet")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("text", help="Text to search for")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("find", help="在工作表中查找文本")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("text", help="要搜索的文本")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # replace
-    p = subparsers.add_parser("replace", help="Find and replace text")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("old", help="Text to find")
-    p.add_argument("new", help="Replacement text")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("replace", help="查找并替换文本")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("old", help="要查找的文本")
+    p.add_argument("new", help="替换文本")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # to-csv
-    p = subparsers.add_parser("to-csv", help="Export sheet to CSV")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("output", help="Output CSV file")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("to-csv", help="将工作表导出为 CSV")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("output", help="输出 CSV 文件")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # to-json
-    p = subparsers.add_parser("to-json", help="Export sheet to JSON")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("output", help="Output JSON file")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("to-json", help="将工作表导出为 JSON")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("output", help="输出 JSON 文件")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     # to-markdown
-    p = subparsers.add_parser("to-markdown", help="Export sheet to markdown")
-    p.add_argument("file", help="Excel file path")
-    p.add_argument("--sheet", "-s", help="Sheet name")
+    p = subparsers.add_parser("to-markdown", help="将工作表导出为 markdown")
+    p.add_argument("file", help="Excel 文件路径")
+    p.add_argument("--sheet", "-s", help="工作表名称")
     
     args = parser.parse_args()
     

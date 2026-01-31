@@ -1,62 +1,62 @@
 ---
 name: voice-transcribe
-description: Transcribe audio files using OpenAI's gpt-4o-mini-transcribe model with vocabulary hints and text replacements. Requires uv (https://docs.astral.sh/uv/).
+description: 使用 OpenAI 的 gpt-4o-mini-transcribe 模型转录音频文件，支持词汇提示和文本替换。需要 uv (https://docs.astral.sh/uv/)。
 ---
 
 # voice-transcribe
 
-transcribe audio files using openai's gpt-4o-mini-transcribe model.
+使用 OpenAI 的 gpt-4o-mini-transcribe 模型转录音频文件。
 
-## when to use
+## 使用场景
 
-when receiving voice memos (especially via whatsapp), just run:
+当收到语音备忘录时（尤其是通过 WhatsApp），只需运行：
 ```bash
 uv run /Users/darin/clawd/skills/voice-transcribe/transcribe <audio-file>
 ```
-then respond based on the transcribed content.
+然后根据转录内容进行回复。
 
-## fixing transcription errors
+## 修复转录错误
 
-if darin says a word was transcribed wrong, add it to `vocab.txt` (for hints) or `replacements.txt` (for guaranteed fix). see sections below.
+如果 darin 说某个词转录错误，将其添加到 `vocab.txt`（用于提示）或 `replacements.txt`（用于保证修复）。请参阅下面的部分。
 
-## supported formats
+## 支持的格式
 
 - mp3, mp4, mpeg, mpga, m4a, wav, webm, ogg, opus
 
-## examples
+## 示例
 
 ```bash
-# transcribe a voice memo
+# 转录语音备忘录
 transcribe /tmp/voice-memo.ogg
 
-# pipe to other tools
+# 管道传输到其他工具
 transcribe /tmp/memo.ogg | pbcopy
 ```
 
-## setup
+## 设置
 
-1. add your openai api key to `/Users/darin/clawd/skills/voice-transcribe/.env`:
+1. 将您的 OpenAI API 密钥添加到 `/Users/darin/clawd/skills/voice-transcribe/.env`：
    ```
    OPENAI_API_KEY=sk-...
    ```
 
-## custom vocabulary
+## 自定义词汇
 
-add words to `vocab.txt` (one per line) to help the model recognize names/jargon:
+将单词添加到 `vocab.txt`（每行一个）以帮助模型识别名称/行话：
 ```
 Clawdis
 Clawdbot
 ```
 
-## text replacements
+## 文本替换
 
-if the model still gets something wrong, add a replacement to `replacements.txt`:
+如果模型仍然弄错了什么，将替换添加到 `replacements.txt`：
 ```
-wrong spelling -> correct spelling
+错误拼写 -> 正确拼写
 ```
 
-## notes
+## 注意事项
 
-- assumes english (no language detection)
-- uses gpt-4o-mini-transcribe model specifically
-- caches by sha256 of audio file
+- 假设为英文（无语言检测）
+- 专门使用 gpt-4o-mini-transcribe 模型
+- 按音频文件的 sha256 缓存结果

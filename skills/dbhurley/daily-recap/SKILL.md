@@ -1,28 +1,28 @@
 ---
 name: daily-recap
-description: Generate a daily recap image with your agent holding a posterboard of accomplishments. Cron-driven, weather-aware, customizable to any agent identity.
+description: 生成每日回顾图像，您的助手手持写有成就的海报板。由 Cron 驱动，支持天气感知，可定制为任何助手身份。
 metadata: {"clawdbot":{"emoji":"📋","requires":{"skills":["nano-banana-pro"]}}}
 ---
 
-# Daily Recap Skill
+# 每日回顾技能
 
-Generate a personalized daily recap image featuring your agent's avatar holding a posterboard with the day's accomplishments.
+生成个性化的每日回顾图像，展示您的助手头像手持写有当日成就的海报板。
 
-## Summary
+## 概述
 
-A cron-driven skill that reviews your agent's daily memory files and accomplishments, then generates a custom image of your agent holding a posterboard with the day's wins. Includes weather-appropriate attire and time-of-day lighting.
+这是一个由 Cron 驱动的技能，它会查看助手的每日记忆文件和成就，然后生成一张自定义图像，显示助手手持写有当日胜利的海报板。包括适合天气的着装和根据一天中时间的光照效果。
 
-## Features
+## 功能
 
-- Reviews the day's memory files for accomplishments
-- Checks cron job summaries for completed tasks
-- Generates a weather-appropriate image based on local conditions
-- Agent holds a posterboard with 4-6 key wins written in marker
-- Customizable to any agent identity
+- 查看当日记忆文件中的成就
+- 检查已完成任务的 Cron 作业摘要
+- 根据当地条件生成适合天气的图像
+- 助手手持海报板，上面用马克笔写有 4-6 个关键胜利
+- 可定制为任何助手身份
 
-## Configuration
+## 配置
 
-Set these in your `clawdbot.json` under `skills.entries.daily-recap`:
+在您的 `clawdbot.json` 文件中的 `skills.entries.daily-recap` 下设置这些配置：
 
 ```json
 {
@@ -30,8 +30,8 @@ Set these in your `clawdbot.json` under `skills.entries.daily-recap`:
     "entries": {
       "daily-recap": {
         "env": {
-          "RECAP_LOCATION": "Your City, ST",
-          "RECAP_CHAT_ID": "your-chat-id",
+          "RECAP_LOCATION": "您的城市, 省份",
+          "RECAP_CHAT_ID": "您的聊天ID",
           "RECAP_TIME": "17:00"
         }
       }
@@ -40,66 +40,66 @@ Set these in your `clawdbot.json` under `skills.entries.daily-recap`:
 }
 ```
 
-### Environment Variables
+### 环境变量
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `RECAP_LOCATION` | Location for weather lookup (e.g., "Boston, MA") | Required |
-| `RECAP_CHAT_ID` | Chat ID for image delivery (Telegram, Discord, etc.) | Required |
-| `RECAP_TIME` | Cron time (24h format, local timezone) | `17:00` |
+| 变量 | 描述 | 默认值 |
+|------|------|--------|
+| `RECAP_LOCATION` | 天气查询位置（例如："北京, 中国"） | 必填 |
+| `RECAP_CHAT_ID` | 图像传递的聊天 ID（Telegram、Discord 等） | 必填 |
+| `RECAP_TIME` | Cron 时间（24 小时格式，本地时区） | `17:00` |
 
-## Agent Identity
+## 助手身份
 
-The skill reads your agent's `IDENTITY.md` for visual appearance details. Include a section like:
+该技能会读取您助手的 `IDENTITY.md` 文件以获取视觉外观详细信息。请包含如下部分：
 
 ```markdown
-## Visual Appearance (for image generation)
+## 视觉外观（用于图像生成）
 
-[Your agent] is a [description] with:
-- [Physical traits]
-- [Clothing/accessories]
-- [Style notes]
+[您的助手] 是一个 [描述]，具有：
+- [身体特征]
+- [服装/配饰]
+- [风格说明]
 ```
 
-## Dependencies
+## 依赖项
 
-- **nano-banana-pro** skill (for Gemini image generation)
-- A messaging provider configured (Telegram, Discord, etc.)
+- **nano-banana-pro** 技能（用于 Gemini 图像生成）
+- 已配置的消息传递提供商（Telegram、Discord 等）
 
-## Cron Setup
+## Cron 设置
 
-The skill includes a sample cron job. After installation, create your cron:
+该技能包含一个示例 Cron 作业。安装后，创建您的 Cron：
 
 ```bash
-clawdbot cron add --name "daily-recap" --schedule "0 17 * * *" --tz "America/New_York"
+clawdbot cron add --name "daily-recap" --schedule "0 17 * * *" --tz "Asia/Shanghai"
 ```
 
-## How It Works
+## 工作原理
 
-1. **Weather Check**: Gets current conditions for your location
-2. **Review Day**: Scans memory files and cron summaries for accomplishments
-3. **Pick Wins**: Selects 4-6 key items (kept short for posterboard)
-4. **Generate Image**: Creates agent holding posterboard with wins
-5. **Deliver**: Sends to your configured chat
+1. **天气检查**：获取您所在位置的当前条件
+2. **回顾当日**：扫描记忆文件和 Cron 摘要以获取成就
+3. **选择胜利**：选择 4-6 个关键项目（保持简短以适合海报板）
+4. **生成图像**：创建助手手持写有胜利的海报板
+5. **传递**：发送到您配置的聊天
 
-## Tips
+## 提示
 
-- Keep accomplishments SHORT (3-5 words each) for readable posterboard text
-- Include weather-appropriate attire in your identity description
-- If no accomplishments found, generates a "quiet day" relaxation image
-- Works best with Pixar/3D animation style prompts
+- 保持成就简短（每项 3-5 个词），以便海报板文本清晰可读
+- 在您的身份描述中包含适合天气的着装
+- 如果未找到成就，会生成"安静的一天"放松图像
+- 与 Pixar/3D 动画风格提示配合使用效果最佳
 
-## Example Output
+## 示例输出
 
-Your agent holding a posterboard:
+您的助手手持海报板：
 ```
-TODAY'S WINS
-✓ Fixed config bug
-✓ Merged 50 commits
-✓ Created new cron
-✓ Cleaned up data
+今日胜利
+✓ 修复了配置错误
+✓ 合并了 50 个提交
+✓ 创建了新的 Cron
+✓ 清理了数据
 ```
 
-## Credits
+## 致谢
 
-Created by the Clawdbot community.
+由 Clawdbot 社区创建。

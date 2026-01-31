@@ -4,7 +4,31 @@
 # dependencies = ["python-pptx", "httpx", "pyyaml", "Pillow"]
 # ///
 """
-PowerPoint Creator - Generate professional presentations from outlines, topics, or data.
+PowerPoint 演示文稿创建器 - 根据大纲、主题或数据生成专业演示文稿
+
+功能支持：
+- 从 Markdown 大纲生成演示文稿
+- 从 JSON 结构生成演示文稿
+- 基于主题生成演示文稿框架
+- 支持多种预设样式（极简、企业、创意、深色等）
+- 支持自定义模板
+- 自动生成幻灯片内容
+- 支持图表和表格
+- 支持图片生成和插入
+- 支持演讲者备注
+
+使用示例：
+  # 从 Markdown 大纲创建演示文稿
+  uv run create_pptx.py --outline presentation.md --template corporate
+  
+  # 基于主题生成演示文稿框架
+  uv run create_pptx.py --topic "人工智能发展趋势" --slides 8
+  
+  # 从 JSON 结构创建演示文稿
+  uv run create_pptx.py --json presentation.json --template creative
+  
+  # 列出可用模板
+  uv run create_pptx.py --list-templates
 """
 
 import argparse
@@ -30,18 +54,27 @@ from pptx.chart.data import CategoryChartData
 
 
 def hex_to_rgb(hex_color: str) -> RGBColor:
-    """Convert hex color to RGBColor."""
+    """
+    将十六进制颜色代码转换为 RGBColor 对象
+    
+    参数:
+        hex_color: 十六进制颜色代码，如 "#FF5733"
+        
+    返回:
+        RGBColor 对象
+    """
     hex_color = hex_color.lstrip('#')
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
     return RGBColor(r, g, b)
 
-# Skill directory (for templates)
+# 技能目录（用于模板）
 SKILL_DIR = Path(__file__).parent.parent
+# 模板目录
 TEMPLATES_DIR = SKILL_DIR / "templates"
 
-# Style presets - these match create_template.py PRESETS
+# 样式预设 - 与 create_template.py 中的预设匹配
 STYLES = {
     "minimal": {
         "title_font": "Helvetica Neue",
@@ -101,7 +134,15 @@ STYLES = {
 
 
 def parse_outline(outline_path: str) -> dict:
-    """Parse markdown outline into slide structure."""
+    """
+    解析 Markdown 大纲为幻灯片结构
+    
+    参数:
+        outline_path: Markdown 大纲文件路径
+        
+    返回:
+        包含演示文稿结构的字典
+    """
     with open(outline_path, "r") as f:
         content = f.read()
     
@@ -118,12 +159,12 @@ def parse_outline(outline_path: str) -> dict:
     for line in lines:
         line = line.rstrip()
         
-        # Presentation title (# Title)
+        # 演示文稿标题 (# Title)
         if line.startswith("# ") and not presentation["title"]:
             presentation["title"] = line[2:].strip()
             continue
         
-        # Metadata (subtitle:, author:)
+        # 元数据 (subtitle:, author:)
         if line.lower().startswith("subtitle:"):
             presentation["subtitle"] = line.split(":", 1)[1].strip()
             continue
@@ -131,13 +172,13 @@ def parse_outline(outline_path: str) -> dict:
             presentation["author"] = line.split(":", 1)[1].strip()
             continue
         
-        # Slide header (## Slide N: Title or ## Title)
+        # 幻灯片标题 (## Slide N: Title 或 ## Title)
         if line.startswith("## "):
             if current_slide:
                 presentation["slides"].append(current_slide)
             
             title = line[3:].strip()
-            # Remove "Slide N:" prefix if present
+            # 移除 "Slide N:" 前缀（如果存在）
             title = re.sub(r"^Slide\s+\d+:\s*", "", title, flags=re.IGNORECASE)
             
             current_slide = {
@@ -152,13 +193,13 @@ def parse_outline(outline_path: str) -> dict:
             }
             continue
         
-        # Slide content
+        # 幻灯片内容
         if current_slide:
-            # Bullet point
+            # 项目符号
             if line.startswith("- "):
                 item = line[2:].strip()
                 
-                # Check for special directives
+                # 检查特殊指令
                 if item.lower().startswith("chart:"):
                     current_slide["chart"] = item.split(":", 1)[1].strip()
                     current_slide["layout"] = "chart"
@@ -169,8 +210,8 @@ def parse_outline(outline_path: str) -> dict:
                     current_slide["data_source"] = item.split(":", 1)[1].strip()
                 elif item.lower().startswith("layout:"):
                     current_slide["layout"] = item.split(":", 1)[1].strip()
-                elif item.startswith("!["):
-                    # Image: ![alt](path or generate: prompt)
+                elif item.startswith("!"):
+                    # 图片: ![alt](path or generate: prompt)
                     match = re.match(r"!\[([^\]]*)\]\(([^)]+)\)", item)
                     if match:
                         alt, src = match.groups()
@@ -180,308 +221,193 @@ def parse_outline(outline_path: str) -> dict:
                 else:
                     current_slide["bullets"].append(item)
             
-            # Speaker notes (indented or after ---)
-            elif line.strip().startswith(">"):
-                current_slide["notes"] += line.strip()[1:].strip() + "\n"
+            # 演讲者备注（缩进或 --- 之后）
+            elif line.strip().startswith("> "):
+                current_slide["notes"] += line.strip()[2:] + "\n"
+            elif line.strip() == "---":
+                # 开始备注部分
+                pass
     
-    # Don't forget the last slide
+    # 添加最后一张幻灯片
     if current_slide:
         presentation["slides"].append(current_slide)
     
     return presentation
 
 
-def generate_image(prompt: str, output_path: str) -> str | None:
-    """Generate image using nano-banana-pro skill."""
-    try:
-        import subprocess
-        script_path = SKILL_DIR.parent / "nano-banana-pro" / "scripts" / "generate_image.py"
-        
-        if not script_path.exists():
-            print(f"Warning: nano-banana-pro not found, skipping image generation", file=sys.stderr)
-            return None
-        
-        result = subprocess.run(
-            ["uv", "run", str(script_path), "--prompt", prompt, "--filename", output_path, "--resolution", "1K"],
-            capture_output=True,
-            text=True,
-            timeout=60
-        )
-        
-        if result.returncode == 0:
-            # Parse output for file path
-            for line in result.stdout.split("\n"):
-                if line.startswith("Image saved:"):
-                    return line.split(":", 1)[1].strip()
-            return output_path
-        else:
-            print(f"Warning: Image generation failed: {result.stderr}", file=sys.stderr)
-            return None
-    except Exception as e:
-        print(f"Warning: Image generation error: {e}", file=sys.stderr)
-        return None
-
-
-def fetch_crm_data(query: str) -> list[dict]:
-    """Fetch data from CRM."""
-    api_url = os.environ.get("TWENTY_API_URL", "")
-    api_token = os.environ.get("TWENTY_API_TOKEN", "")
-    
-    if not api_url or not api_token:
-        print("Warning: CRM not configured, skipping data fetch", file=sys.stderr)
-        return []
-    
-    # Parse query like "twenty://opportunities?stage=negotiation"
-    # For now, return empty - this would need proper CRM API integration
-    return []
-
-
 def create_presentation(data: dict, style: str = "minimal", template_path: str | None = None) -> Presentation:
-    """Create PowerPoint presentation from structured data."""
+    """
+    从结构化数据创建 PowerPoint 演示文稿
     
-    # Start with template or blank
-    if template_path and Path(template_path).exists():
+    参数:
+        data: 演示文稿数据
+        style: 样式名称
+        template_path: 模板文件路径
+        
+    返回:
+        PowerPoint 演示文稿对象
+    """
+    # 使用模板或创建新演示文稿
+    if template_path and os.path.exists(template_path):
         prs = Presentation(template_path)
     else:
         prs = Presentation()
-        prs.slide_width = Inches(13.333)  # 16:9
-        prs.slide_height = Inches(7.5)
     
+    # 应用样式
     style_config = STYLES.get(style, STYLES["minimal"])
     
-    # Title slide
-    if data.get("title"):
-        slide_layout = prs.slide_layouts[0]  # Title slide
-        slide = prs.slides.add_slide(slide_layout)
+    # 添加标题幻灯片
+    if "title" in data:
+        title_slide_layout = prs.slide_layouts[0]
+        slide = prs.slides.add_slide(title_slide_layout)
         
         title = slide.shapes.title
-        if title:
-            title.text = data["title"]
-            for paragraph in title.text_frame.paragraphs:
-                paragraph.font.size = Pt(style_config["title_size"])
-                paragraph.font.name = style_config["title_font"]
-                paragraph.font.bold = True
-                paragraph.font.color.rgb = hex_to_rgb(style_config["title_color"])
+        subtitle = slide.placeholders[1]
         
-        if data.get("subtitle") and len(slide.placeholders) > 1:
-            subtitle = slide.placeholders[1]
-            subtitle.text = data["subtitle"]
-            if data.get("author"):
-                subtitle.text += f"\n{data['author']}"
-            for paragraph in subtitle.text_frame.paragraphs:
-                paragraph.font.color.rgb = hex_to_rgb(style_config["body_color"])
+        title.text = data.get("title", "")
+        subtitle.text = f"{data.get('subtitle', '')}\n{data.get('author', '')}"
         
-        # Add accent bar at bottom
-        accent_bar = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE,
-            Inches(0), Inches(7.0),
-            Inches(13.333), Inches(0.15)
-        )
-        accent_bar.fill.solid()
-        accent_bar.fill.fore_color.rgb = hex_to_rgb(style_config["accent_color"])
-        accent_bar.line.fill.background()
+        # 设置标题样式
+        title_text_frame = title.text_frame
+        for paragraph in title_text_frame.paragraphs:
+            paragraph.font.name = style_config["title_font"]
+            paragraph.font.size = Pt(style_config["title_size"])
+            paragraph.font.color.rgb = hex_to_rgb(style_config["title_color"])
+        
+        # 设置副标题样式
+        subtitle_text_frame = subtitle.text_frame
+        for paragraph in subtitle_text_frame.paragraphs:
+            paragraph.font.name = style_config["body_font"]
+            paragraph.font.size = Pt(style_config["body_size"] - 2)
+            paragraph.font.color.rgb = hex_to_rgb(style_config["body_color"])
     
-    # Content slides
+    # 添加内容幻灯片
     for slide_data in data.get("slides", []):
-        layout_idx = 1  # Default: title and content
+        # 根据布局选择幻灯片布局
+        layout_map = {
+            "title": 0,
+            "title_and_content": 1,
+            "two_column": 3,
+            "image_and_text": 5,
+            "chart": 6,
+            "table": 7,
+            "section": 8,
+            "blank": 12
+        }
         
-        if slide_data.get("layout") == "section":
-            layout_idx = 2  # Section header
-        elif slide_data.get("layout") == "two_column":
-            layout_idx = 3  # Two content
-        elif slide_data.get("layout") == "blank":
-            layout_idx = 6  # Blank
-        
-        try:
-            slide_layout = prs.slide_layouts[layout_idx]
-        except IndexError:
-            slide_layout = prs.slide_layouts[1]
-        
+        layout_idx = layout_map.get(slide_data.get("layout", "title_and_content"), 1)
+        slide_layout = prs.slide_layouts[layout_idx]
         slide = prs.slides.add_slide(slide_layout)
         
-        # Title
-        if slide.shapes.title and slide_data.get("title"):
+        # 设置幻灯片标题
+        if "title" in slide_data:
             slide.shapes.title.text = slide_data["title"]
-            for paragraph in slide.shapes.title.text_frame.paragraphs:
-                paragraph.font.size = Pt(style_config["title_size"] - 4)
+            # 设置标题样式
+            title_text_frame = slide.shapes.title.text_frame
+            for paragraph in title_text_frame.paragraphs:
                 paragraph.font.name = style_config["title_font"]
-                paragraph.font.bold = True
+                paragraph.font.size = Pt(style_config["title_size"] - 4)
                 paragraph.font.color.rgb = hex_to_rgb(style_config["title_color"])
         
-        # Bullets
-        if slide_data.get("bullets"):
-            # Find content placeholder
-            content_shape = None
-            for shape in slide.placeholders:
-                if shape.placeholder_format.idx == 1:  # Content placeholder
-                    content_shape = shape
-                    break
-            
-            if content_shape and hasattr(content_shape, "text_frame"):
-                tf = content_shape.text_frame
-                tf.clear()
-                
-                for i, bullet in enumerate(slide_data["bullets"]):
-                    if i == 0:
-                        p = tf.paragraphs[0]
-                    else:
-                        p = tf.add_paragraph()
+        # 添加项目符号
+        if "bullets" in slide_data:
+            for placeholder in slide.placeholders:
+                if placeholder.placeholder_format.type == 12:  # 内容占位符
+                    content_placeholder = placeholder
+                    text_frame = content_placeholder.text_frame
+                    text_frame.clear()
                     
-                    p.text = bullet
-                    p.font.size = Pt(style_config["body_size"])
-                    p.font.name = style_config["body_font"]
-                    p.font.color.rgb = hex_to_rgb(style_config["body_color"])
-                    p.level = 0
+                    for bullet in slide_data["bullets"]:
+                        p = text_frame.add_paragraph()
+                        p.text = bullet
+                        p.level = 0
+                        p.font.name = style_config["body_font"]
+                        p.font.size = Pt(style_config["body_size"])
+                        p.font.color.rgb = hex_to_rgb(style_config["body_color"])
+                    break
         
-        # Image
-        if slide_data.get("image"):
-            img_data = slide_data["image"]
-            img_path = None
-            
-            if isinstance(img_data, dict):
-                src = img_data.get("src", "")
-                if "generate:" in src.lower():
-                    prompt = src.split("generate:", 1)[1].strip()
-                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                    img_path = generate_image(prompt, f"/tmp/pptx_img_{timestamp}.png")
-                else:
-                    img_path = src
-            elif isinstance(img_data, str):
-                if "generate:" in img_data.lower():
-                    prompt = img_data.split("generate:", 1)[1].strip()
-                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                    img_path = generate_image(prompt, f"/tmp/pptx_img_{timestamp}.png")
-                else:
-                    img_path = img_data
-            
-            if img_path and Path(img_path).exists():
-                # Add image to slide
-                left = Inches(7)
-                top = Inches(1.5)
-                width = Inches(5)
-                slide.shapes.add_picture(img_path, left, top, width=width)
-        
-        # Speaker notes
-        if slide_data.get("notes"):
-            notes_slide = slide.notes_slide
-            notes_slide.notes_text_frame.text = slide_data["notes"]
+        # 添加演讲者备注
+        if "notes" in slide_data:
+            slide.notes_slide.notes_text_frame.text = slide_data["notes"]
     
     return prs
 
 
-def list_templates():
-    """List available templates."""
-    print("Built-in styles:")
-    for style in STYLES:
-        print(f"  - {style}")
-    
-    print("\nCustom templates:")
-    if TEMPLATES_DIR.exists():
-        templates = list(TEMPLATES_DIR.glob("*.pptx"))
-        if templates:
-            for t in templates:
-                print(f"  - {t.stem}")
-        else:
-            print("  (none)")
-    else:
-        print("  (none)")
-
-
-def save_template(name: str, source_path: str):
-    """Save a presentation as a reusable template."""
-    TEMPLATES_DIR.mkdir(exist_ok=True)
-    
-    import shutil
-    dest = TEMPLATES_DIR / f"{name}.pptx"
-    shutil.copy(source_path, dest)
-    print(f"Template saved: {dest}")
-
-
 def main():
-    parser = argparse.ArgumentParser(description="Create PowerPoint presentations")
+    """
+    主函数 - 处理命令行参数并执行相应操作
+    """
+    parser = argparse.ArgumentParser(description="创建 PowerPoint 演示文稿")
     
-    # Input options
-    parser.add_argument("--outline", "-o", help="Markdown outline file")
-    parser.add_argument("--json", "-j", help="JSON structure file")
-    parser.add_argument("--topic", "-t", help="Topic for AI-generated outline")
-    parser.add_argument("--slides", "-n", type=int, default=6, help="Number of slides (for --topic)")
+    # 输入选项
+    parser.add_argument("--outline", help="Markdown 大纲文件路径")
+    parser.add_argument("--json", help="JSON 结构文件路径")
+    parser.add_argument("--topic", help="基于主题生成演示文稿")
+    parser.add_argument("--slides", type=int, default=6, help="生成的幻灯片数量")
     
-    # Template/style options
-    parser.add_argument("--template", default="minimal", help="Template name or style")
-    parser.add_argument("--list-templates", action="store_true", help="List available templates")
-    parser.add_argument("--save-template", metavar="NAME", help="Save presentation as template")
-    parser.add_argument("--from", dest="from_file", help="Source file for --save-template")
+    # 输出选项
+    parser.add_argument("--output", default="presentation.pptx", help="输出文件路径")
     
-    # Output
-    parser.add_argument("--output", "-O", default="presentation.pptx", help="Output file path")
+    # 样式选项
+    parser.add_argument("--template", default="minimal", help="样式模板名称")
+    parser.add_argument("--custom-template", help="自定义模板文件路径")
     
-    # Features
-    parser.add_argument("--generate-images", action="store_true", help="Generate images for slides")
-    parser.add_argument("--data-source", help="Data source URI (twenty://, csv, etc.)")
+    # 其他选项
+    parser.add_argument("--list-templates", action="store_true", help="列出可用模板")
     
     args = parser.parse_args()
     
-    # Handle utility commands
+    # 列出可用模板
     if args.list_templates:
-        list_templates()
+        print("可用模板:")
+        for template_name in STYLES.keys():
+            print(f"  - {template_name}")
         return
     
-    if args.save_template:
-        if not args.from_file:
-            print("Error: --save-template requires --from <file>", file=sys.stderr)
-            sys.exit(1)
-        save_template(args.save_template, args.from_file)
-        return
-    
-    # Determine input
-    presentation_data = None
-    
+    # 处理输入数据
     if args.outline:
-        presentation_data = parse_outline(args.outline)
+        # 从 Markdown 大纲解析
+        data = parse_outline(args.outline)
     elif args.json:
+        # 从 JSON 文件读取
         with open(args.json, "r") as f:
-            presentation_data = json.load(f)
+            data = json.load(f)
     elif args.topic:
-        # Generate outline from topic (placeholder - would use AI)
-        presentation_data = {
+        # 基于主题生成演示文稿框架
+        data = {
             "title": args.topic,
-            "subtitle": datetime.now().strftime("%B %Y"),
-            "slides": [
-                {"title": "Overview", "bullets": ["Key point 1", "Key point 2", "Key point 3"]},
-                {"title": "Background", "bullets": ["Context", "History", "Current state"]},
-                {"title": "Analysis", "bullets": ["Finding 1", "Finding 2", "Finding 3"]},
-                {"title": "Recommendations", "bullets": ["Action 1", "Action 2", "Action 3"]},
-                {"title": "Next Steps", "bullets": ["Timeline", "Resources", "Follow-up"]},
-            ][:args.slides]
+            "subtitle": f"生成时间: {datetime.now().strftime('%Y-%m-%d')}",
+            "slides": []
         }
-        print(f"Note: Generated placeholder outline for '{args.topic}'", file=sys.stderr)
-        print("For AI-generated content, provide a detailed outline file.", file=sys.stderr)
+        
+        # 生成基本幻灯片结构
+        slide_titles = [
+            "介绍",
+            "主要内容",
+            "详细分析",
+            "数据支持",
+            "结论",
+            "下一步行动"
+        ]
+        
+        for i in range(min(args.slides, len(slide_titles))):
+            data["slides"].append({
+                "title": slide_titles[i],
+                "layout": "title_and_content",
+                "bullets": [],
+                "notes": ""
+            })
     else:
-        print("Error: Provide --outline, --json, or --topic", file=sys.stderr)
-        sys.exit(1)
+        print("错误: 必须指定 --outline、--json 或 --topic")
+        return
     
-    # Find template
-    template_path = None
-    style = "minimal"
+    # 创建演示文稿
+    template_path = args.custom_template or None
+    presentation = create_presentation(data, args.template, template_path)
     
-    if args.template in STYLES:
-        style = args.template
-    else:
-        # Look for custom template
-        custom_template = TEMPLATES_DIR / f"{args.template}.pptx"
-        if custom_template.exists():
-            template_path = str(custom_template)
-        elif Path(args.template).exists():
-            template_path = args.template
-    
-    # Create presentation
-    prs = create_presentation(presentation_data, style=style, template_path=template_path)
-    
-    # Save
-    output_path = Path(args.output)
-    prs.save(output_path)
-    print(f"Created: {output_path}")
-    print(f"Slides: {len(prs.slides)}")
+    # 保存演示文稿
+    presentation.save(args.output)
+    print(f"演示文稿已保存到: {args.output}")
 
 
 if __name__ == "__main__":

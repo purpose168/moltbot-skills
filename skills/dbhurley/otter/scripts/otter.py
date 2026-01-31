@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Otter.ai CLI - Manage meeting transcripts
+Otter.ai 命令行工具 - 管理会议转录
 
-Usage:
+使用方法：
     otter.py list [--limit N] [--json]
     otter.py get <speech_id> [--json]
-    otter.py search <query> [--json]
-    otter.py download <speech_id> [--format FORMAT] [--output PATH]
-    otter.py upload <file>
+    otter.py search <查询> [--json]
+    otter.py download <speech_id> [--format 格式] [--output 路径]
+    otter.py upload <文件>
     otter.py summary <speech_id>
-    otter.py sync-twenty <speech_id> [--contact NAME] [--company NAME]
+    otter.py sync-twenty <speech_id> [--contact 联系人] [--company 公司]
 """
 
 import argparse
@@ -24,7 +24,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
 class OtterClient:
-    """Otter.ai API client"""
+    """Otter.ai API 客户端"""
     
     API_BASE = "https://otter.ai/forward/api/v1/"
     S3_BASE = "https://s3.us-west-2.amazonaws.com/"
@@ -36,7 +36,7 @@ class OtterClient:
         self._logged_in = False
     
     def login(self, email: str, password: str) -> bool:
-        """Authenticate with Otter.ai"""
+        """登录 Otter.ai"""
         url = f"{self.API_BASE}login"
         self._session.auth = (email, password)
         
@@ -51,9 +51,9 @@ class OtterClient:
         return True
     
     def get_speeches(self, limit: int = 20, folder: int = 0) -> list:
-        """Get list of transcripts"""
+        """获取转录列表"""
         if not self._logged_in:
-            raise RuntimeError("Not logged in")
+            raise RuntimeError("未登录")
         
         url = f"{self.API_BASE}speeches"
         params = {
@@ -70,9 +70,9 @@ class OtterClient:
         return resp.json().get("speeches", [])
     
     def get_speech(self, speech_id: str) -> dict:
-        """Get full transcript"""
+        """获取完整转录"""
         if not self._logged_in:
-            raise RuntimeError("Not logged in")
+            raise RuntimeError("未登录")
         
         url = f"{self.API_BASE}speech"
         params = {"userid": self._userid, "otid": speech_id}
@@ -84,9 +84,9 @@ class OtterClient:
         return resp.json().get("speech", {})
     
     def search(self, query: str, speech_id: Optional[str] = None, size: int = 100) -> list:
-        """Search transcripts"""
+        """搜索转录"""
         if not self._logged_in:
-            raise RuntimeError("Not logged in")
+            raise RuntimeError("未登录")
         
         url = f"{self.API_BASE}advanced_search"
         params = {"query": query, "size": size}
@@ -100,9 +100,9 @@ class OtterClient:
         return resp.json().get("hits", [])
     
     def download(self, speech_id: str, fmt: str = "txt") -> bytes:
-        """Download transcript in specified format"""
+        """下载指定格式的转录"""
         if not self._logged_in:
-            raise RuntimeError("Not logged in")
+            raise RuntimeError("未登录")
         
         url = f"{self.API_BASE}bulk_export"
         params = {"userid": self._userid}
@@ -119,19 +119,19 @@ class OtterClient:
         return resp.content
     
     def upload(self, filepath: str, content_type: str = "audio/mp4") -> dict:
-        """Upload audio for transcription"""
+        """上传音频进行转录"""
         if not self._logged_in:
-            raise RuntimeError("Not logged in")
+            raise RuntimeError("未登录")
         
-        # Get upload params
+        # 获取上传参数
         url = f"{self.API_BASE}speech_upload_params"
         resp = self._session.get(url, params={"userid": self._userid})
         if resp.status_code != 200:
-            return {"error": "Failed to get upload params"}
+            return {"error": "获取上传参数失败"}
         
         params_data = resp.json().get("data", {})
         
-        # Upload to S3
+        # 上传到 S3
         upload_url = f"{self.S3_BASE}speech-upload-prod"
         fields = dict(params_data)
         fields["success_action_status"] = str(fields.get("success_action_status", "201"))
@@ -148,15 +148,15 @@ class OtterClient:
             )
         
         if resp.status_code != 201:
-            return {"error": f"Upload failed: {resp.status_code}"}
+            return {"error": f"上传失败: {resp.status_code}"}
         
-        # Parse S3 response
+        # 解析 S3 响应
         import xml.etree.ElementTree as ET
         root = ET.fromstring(resp.text)
         bucket = root.find("Bucket").text if root.find("Bucket") is not None else ""
         key = root.find("Key").text if root.find("Key") is not None else ""
         
-        # Finish upload
+        # 完成上传
         finish_url = f"{self.API_BASE}finish_speech_upload"
         params = {
             "bucket": bucket,
@@ -167,55 +167,55 @@ class OtterClient:
         }
         resp = self._session.get(finish_url, params=params)
         
-        return resp.json() if resp.status_code == 200 else {"error": "Finish upload failed"}
+        return resp.json() if resp.status_code == 200 else {"error": "完成上传失败"}
 
 
 def format_speech_list(speeches: list) -> str:
-    """Format speech list for display"""
+    """格式化演讲列表用于显示"""
     lines = []
     for s in speeches:
-        title = s.get("title", "Untitled")
+        title = s.get("title", "未命名")
         otid = s.get("otid", "")
         created = s.get("created", 0)
         duration = s.get("duration", 0)
         
-        # Format timestamp
+        # 格式化时间戳
         if created:
             dt = datetime.fromtimestamp(created)
             date_str = dt.strftime("%Y-%m-%d %H:%M")
         else:
-            date_str = "Unknown"
+            date_str = "未知"
         
-        # Format duration
+        # 格式化时长
         mins = duration // 60
         secs = duration % 60
-        dur_str = f"{mins}m {secs}s"
+        dur_str = f"{mins}分 {secs}秒"
         
         lines.append(f"• {title}")
         lines.append(f"  ID: {otid}")
-        lines.append(f"  Date: {date_str} | Duration: {dur_str}")
+        lines.append(f"  日期: {date_str} | 时长: {dur_str}")
         lines.append("")
     
     return "\n".join(lines)
 
 
 def format_speech(speech: dict) -> str:
-    """Format full speech for display"""
-    title = speech.get("title", "Untitled")
+    """格式化完整演讲用于显示"""
+    title = speech.get("title", "未命名")
     created = speech.get("created", 0)
     
     if created:
         dt = datetime.fromtimestamp(created)
         date_str = dt.strftime("%Y-%m-%d %H:%M")
     else:
-        date_str = "Unknown"
+        date_str = "未知"
     
-    lines = [f"# {title}", f"Date: {date_str}", ""]
+    lines = [f"# {title}", f"日期: {date_str}", ""]
     
-    # Get transcript text
+    # 获取转录文本
     transcripts = speech.get("transcripts", [])
     for t in transcripts:
-        speaker = t.get("speaker_name", "Speaker")
+        speaker = t.get("speaker_name", "发言人")
         text = t.get("transcript", "")
         start = t.get("start_offset", 0)
         
@@ -228,12 +228,12 @@ def format_speech(speech: dict) -> str:
 
 
 def extract_summary_text(speech: dict) -> str:
-    """Extract plain text for summarization"""
+    """提取纯文本用于总结"""
     lines = []
     transcripts = speech.get("transcripts", [])
     
     for t in transcripts:
-        speaker = t.get("speaker_name", "Speaker")
+        speaker = t.get("speaker_name", "发言人")
         text = t.get("transcript", "")
         lines.append(f"{speaker}: {text}")
     
@@ -241,60 +241,60 @@ def extract_summary_text(speech: dict) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Otter.ai CLI")
-    parser.add_argument("--json", action="store_true", help="Output JSON")
+    parser = argparse.ArgumentParser(description="Otter.ai 命令行工具")
+    parser.add_argument("--json", action="store_true", help="输出 JSON 格式")
     
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     # list
-    list_p = subparsers.add_parser("list", help="List recent transcripts")
-    list_p.add_argument("--limit", type=int, default=10, help="Number of results")
+    list_p = subparsers.add_parser("list", help="列出最近的转录")
+    list_p.add_argument("--limit", type=int, default=10, help="结果数量")
     
     # get
-    get_p = subparsers.add_parser("get", help="Get full transcript")
-    get_p.add_argument("speech_id", help="Speech ID")
+    get_p = subparsers.add_parser("get", help="获取完整转录")
+    get_p.add_argument("speech_id", help="演讲 ID")
     
     # search
-    search_p = subparsers.add_parser("search", help="Search transcripts")
-    search_p.add_argument("query", help="Search query")
+    search_p = subparsers.add_parser("search", help="搜索转录")
+    search_p.add_argument("query", help="搜索查询")
     
     # download
-    dl_p = subparsers.add_parser("download", help="Download transcript")
-    dl_p.add_argument("speech_id", help="Speech ID")
+    dl_p = subparsers.add_parser("download", help="下载转录")
+    dl_p.add_argument("speech_id", help="演讲 ID")
     dl_p.add_argument("--format", default="txt", choices=["txt", "pdf", "docx", "srt"])
-    dl_p.add_argument("--output", help="Output path")
+    dl_p.add_argument("--output", help="输出路径")
     
     # upload
-    up_p = subparsers.add_parser("upload", help="Upload audio for transcription")
-    up_p.add_argument("file", help="Audio file path")
+    up_p = subparsers.add_parser("upload", help="上传音频进行转录")
+    up_p.add_argument("file", help="音频文件路径")
     
     # summary
-    sum_p = subparsers.add_parser("summary", help="Get transcript text for summarization")
-    sum_p.add_argument("speech_id", help="Speech ID")
+    sum_p = subparsers.add_parser("summary", help="获取转录文本用于总结")
+    sum_p.add_argument("speech_id", help="演讲 ID")
     
     # sync-twenty
-    sync_p = subparsers.add_parser("sync-twenty", help="Sync to Twenty CRM")
-    sync_p.add_argument("speech_id", help="Speech ID")
-    sync_p.add_argument("--contact", help="Contact name to link")
-    sync_p.add_argument("--company", help="Company name to link")
+    sync_p = subparsers.add_parser("sync-twenty", help="同步到 Twenty CRM")
+    sync_p.add_argument("speech_id", help="演讲 ID")
+    sync_p.add_argument("--contact", help="要链接的联系人")
+    sync_p.add_argument("--company", help="要链接的公司")
     
     args = parser.parse_args()
     
-    # Get credentials
+    # 获取凭证
     email = os.environ.get("OTTER_EMAIL")
     password = os.environ.get("OTTER_PASSWORD")
     
     if not email or not password:
-        print("Error: OTTER_EMAIL and OTTER_PASSWORD environment variables required", file=sys.stderr)
+        print("错误: 需要 OTTER_EMAIL 和 OTTER_PASSWORD 环境变量", file=sys.stderr)
         sys.exit(1)
     
-    # Initialize client
+    # 初始化客户端
     client = OtterClient()
     if not client.login(email, password):
-        print("Error: Failed to login to Otter.ai", file=sys.stderr)
+        print("错误: 登录 Otter.ai 失败", file=sys.stderr)
         sys.exit(1)
     
-    # Execute command
+    # 执行命令
     if args.command == "list":
         speeches = client.get_speeches(limit=args.limit)
         if args.json:
@@ -315,7 +315,7 @@ def main():
             print(json.dumps(results, indent=2))
         else:
             for r in results:
-                print(f"• {r.get('title', 'Untitled')} (ID: {r.get('otid', '')})")
+                print(f"• {r.get('title', '未命名')} (ID: {r.get('otid', '')})")
                 if r.get("highlight"):
                     print(f"  ...{r['highlight']}...")
                 print()
@@ -326,14 +326,14 @@ def main():
             output = args.output or f"{args.speech_id}.{args.format}"
             with open(output, "wb") as f:
                 f.write(content)
-            print(f"Downloaded to {output}")
+            print(f"已下载到 {output}")
         else:
-            print("Error: Download failed", file=sys.stderr)
+            print("错误: 下载失败", file=sys.stderr)
             sys.exit(1)
     
     elif args.command == "upload":
         if not os.path.exists(args.file):
-            print(f"Error: File not found: {args.file}", file=sys.stderr)
+            print(f"错误: 文件未找到: {args.file}", file=sys.stderr)
             sys.exit(1)
         
         result = client.upload(args.file)
@@ -341,17 +341,17 @@ def main():
             print(json.dumps(result, indent=2))
         else:
             if "error" in result:
-                print(f"Error: {result['error']}", file=sys.stderr)
+                print(f"错误: {result['error']}", file=sys.stderr)
                 sys.exit(1)
-            print("Upload started. Transcription in progress...")
+            print("上传已开始。转录正在进行中...")
     
     elif args.command == "summary":
         speech = client.get_speech(args.speech_id)
         if not speech:
-            print("Error: Speech not found", file=sys.stderr)
+            print("错误: 演讲未找到", file=sys.stderr)
             sys.exit(1)
         
-        title = speech.get("title", "Untitled")
+        title = speech.get("title", "未命名")
         text = extract_summary_text(speech)
         
         output = {
@@ -364,31 +364,31 @@ def main():
         if args.json:
             print(json.dumps(output, indent=2))
         else:
-            print(f"Title: {title}")
-            print(f"Words: {output['word_count']}")
-            print("\n--- Transcript ---\n")
+            print(f"标题: {title}")
+            print(f"字数: {output['word_count']}")
+            print("\n--- 转录 ---\n")
             print(text)
     
     elif args.command == "sync-twenty":
-        # Check Twenty credentials
+        # 检查 Twenty 凭证
         twenty_url = os.environ.get("TWENTY_API_URL")
         twenty_token = os.environ.get("TWENTY_API_TOKEN")
         
         if not twenty_url or not twenty_token:
-            print("Error: TWENTY_API_URL and TWENTY_API_TOKEN required for CRM sync", file=sys.stderr)
+            print("错误: CRM 同步需要 TWENTY_API_URL 和 TWENTY_API_TOKEN", file=sys.stderr)
             sys.exit(1)
         
         speech = client.get_speech(args.speech_id)
         if not speech:
-            print("Error: Speech not found", file=sys.stderr)
+            print("错误: 演讲未找到", file=sys.stderr)
             sys.exit(1)
         
-        title = speech.get("title", "Untitled")
+        title = speech.get("title", "未命名")
         text = extract_summary_text(speech)
         duration = speech.get("duration", 0)
         created = speech.get("created_at")
         
-        # Format date
+        # 格式化日期
         date_str = ""
         if created:
             try:
@@ -397,29 +397,29 @@ def main():
             except:
                 date_str = str(created)
         
-        # Build markdown note
-        markdown = f"""# Meeting Transcript: {title}
+        # 构建 markdown 备注
+        markdown = f"""# 会议转录: {title}
 
-**Date:** {date_str}
-**Duration:** {duration // 60}m {duration % 60}s
-**Source:** Otter.ai
+**日期:** {date_str}
+**时长:** {duration // 60}分 {duration % 60}秒
+**来源:** Otter.ai
 
-## Transcript
+## 转录内容
 
 {text[:3000]}{"..." if len(text) > 3000 else ""}
 
 ---
-*Synced from Otter.ai on {datetime.now().strftime("%Y-%m-%d %H:%M")}*
+*从 Otter.ai 同步于 {datetime.now().strftime("%Y-%m-%d %H:%M")}*
 """
         
-        # Create note in Twenty
+        # 在 Twenty 中创建备注
         headers = {
             "Authorization": f"Bearer {twenty_token}",
             "Content-Type": "application/json"
         }
         
         note_data = {
-            "title": f"Transcript: {title}",
+            "title": f"转录: {title}",
             "bodyV2": {
                 "blocknote": "",
                 "markdown": markdown
@@ -433,15 +433,15 @@ def main():
         )
         
         if resp.status_code >= 400:
-            print(f"Error creating note: {resp.status_code} {resp.text}", file=sys.stderr)
+            print(f"创建备注错误: {resp.status_code} {resp.text}", file=sys.stderr)
             sys.exit(1)
         
         result = resp.json()
         note_id = result.get("data", {}).get("createNote", {}).get("id")
         
-        # Link to engagement if company specified
+        # 如果指定了公司，链接到业务
         if args.company and note_id:
-            # Search for engagement by company name
+            # 按公司名称搜索业务
             eng_resp = requests.get(
                 f"{twenty_url}/rest/engagements",
                 headers=headers
@@ -451,17 +451,17 @@ def main():
                 company_lower = args.company.lower()
                 for eng in engagements:
                     if company_lower in eng.get("name", "").lower():
-                        # Link note to engagement
+                        # 将备注链接到业务
                         requests.post(
                             f"{twenty_url}/rest/noteTargets",
                             headers=headers,
                             json={"noteId": note_id, "engagementId": eng.get("id")}
                         )
-                        print(f"Linked to engagement: {eng.get('name')}")
+                        print(f"已链接到业务: {eng.get('name')}")
                         break
         
-        print(f"✅ Created note in Twenty: {title}")
-        print(f"   Note ID: {note_id}")
+        print(f"✅ 在 Twenty 中创建备注: {title}")
+        print(f"   备注 ID: {note_id}")
         if args.json:
             print(json.dumps({"note_id": note_id, "title": title}))
 

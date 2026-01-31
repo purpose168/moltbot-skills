@@ -1,8 +1,12 @@
 /**
- * ClawdLink Delivery Preferences
+ * ClawdLink 消息投递偏好设置模块
  * 
- * Controls how and when messages are delivered to the user.
- * Respects quiet hours, batching, urgency, and personal style.
+ * 此模块控制消息的投递方式和时间：
+ * - 静音时段设置：避免在休息时间被打扰
+ * - 批量投递：将非紧急消息汇总后在指定时间投递
+ * - 紧急消息处理：紧急消息即使在静音时段也会立即投递
+ * - 通信风格：支持自然、正式、休闲、简洁等风格
+ * - 好友特定设置：为不同好友设置不同的优先级和投递规则
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'fs';
@@ -14,7 +18,7 @@ const PREFS_FILE = join(DATA_DIR, 'preferences.json');
 const HELD_FILE = join(DATA_DIR, 'held_messages.json');
 
 const DEFAULT_PREFERENCES = {
-  // Schedule
+  // 定时设置
   schedule: {
     quietHours: {
       enabled: false,
@@ -23,42 +27,45 @@ const DEFAULT_PREFERENCES = {
     },
     batchDelivery: {
       enabled: false,
-      times: ["09:00", "18:00"]  // Deliver batched messages at these times
+      times: ["09:00", "18:00"]
     },
     timezone: "America/Los_Angeles"
   },
   
-  // Delivery rules
+  // 投递规则
   delivery: {
     allowUrgentDuringQuiet: true,
-    summarizeFirst: true,      // Show summary before full message
-    includeContext: true,      // Include sender's context/reason
-    maxPerDelivery: 10         // Don't overwhelm with too many at once
+    summarizeFirst: true,
+    includeContext: true,
+    maxPerDelivery: 10
   },
   
-  // Communication style
+  // 通信风格
   style: {
-    tone: "natural",           // natural | formal | casual | brief
-    voice: null,               // Custom voice description
-    rewriteMessages: false,    // Adapt messages to my style
-    greetingStyle: "friendly"  // How Clawdbot introduces messages
+    tone: "natural",
+    voice: null,
+    rewriteMessages: false,
+    greetingStyle: "friendly"
   },
   
-  // Per-friend overrides
+  // 好友特定覆盖设置
   friends: {
-    // "Friend Name": { priority: "high", alwaysDeliver: true, customTone: "casual" }
   },
   
-  // Context preferences
+  // 上下文偏好
   context: {
     workHours: { start: "09:00", end: "18:00" },
-    preferredContexts: ["personal", "work", "social"],  // In priority order
-    muteContexts: []  // Contexts to always batch
+    preferredContexts: ["personal", "work", "social"],
+    muteContexts: []
   }
 };
 
 /**
- * Load preferences (with defaults)
+ * 加载用户偏好设置
+ * 如果偏好文件不存在，返回默认设置
+ * 使用深度合并确保所有字段都存在
+ * 
+ * @returns {Object} 完整的偏好设置对象
  */
 export function loadPreferences() {
   if (!existsSync(PREFS_FILE)) {
@@ -66,19 +73,25 @@ export function loadPreferences() {
   }
   
   const saved = JSON.parse(readFileSync(PREFS_FILE, 'utf8'));
-  // Merge with defaults to ensure all fields exist
   return deepMerge(DEFAULT_PREFERENCES, saved);
 }
 
 /**
- * Save preferences
+ * 保存用户偏好设置到文件
+ * 
+ * @param {Object} prefs - 偏好设置对象
  */
 export function savePreferences(prefs) {
   writeFileSync(PREFS_FILE, JSON.stringify(prefs, null, 2));
 }
 
 /**
- * Update specific preference
+ * 更新特定偏好设置
+ * 支持点号分隔的路径格式，如 'schedule.quietHours.enabled'
+ * 
+ * @param {string} path - 偏好设置路径（使用点号分隔）
+ * @param {*} value - 要设置的值
+ * @returns {Object} 更新后的完整偏好设置
  */
 export function updatePreference(path, value) {
   const prefs = loadPreferences();
@@ -88,7 +101,10 @@ export function updatePreference(path, value) {
 }
 
 /**
- * Load held messages (messages waiting for delivery)
+ * 加载待投递消息列表
+ * 这些消息因各种原因被暂时保留，等待合适时机投递
+ * 
+ * @returns {Array} 待投递消息数组
  */
 export function loadHeldMessages() {
   if (!existsSync(HELD_FILE)) {
@@ -98,14 +114,19 @@ export function loadHeldMessages() {
 }
 
 /**
- * Save held messages
+ * 保存待投递消息列表到文件
+ * 
+ * @param {Array} messages - 待投递消息数组
  */
 export function saveHeldMessages(messages) {
   writeFileSync(HELD_FILE, JSON.stringify(messages, null, 2));
 }
 
 /**
- * Hold a message for later delivery
+ * 保留消息等待稍后投递
+ * 
+ * @param {Object} message - 要保留的消息对象
+ * @param {string} reason - 保留原因说明
  */
 export function holdMessage(message, reason) {
   const held = loadHeldMessages();
@@ -118,7 +139,14 @@ export function holdMessage(message, reason) {
 }
 
 /**
- * Check if current time is in quiet hours
+ * 检查当前时间是否在静音时段内
+ * 
+ * 静音时段处理逻辑：
+ * - 如果静音时段跨越午夜（如 22:00 - 08:00），需要特殊处理
+ * - 返回 true 表示当前在静音时段内
+ * 
+ * @param {Object} prefs - 偏好设置对象
+ * @returns {boolean} 是否在静音时段
  */
 export function isQuietHours(prefs) {
   if (!prefs.schedule.quietHours.enabled) return false;
@@ -134,7 +162,6 @@ export function isQuietHours(prefs) {
   const start = prefs.schedule.quietHours.start;
   const end = prefs.schedule.quietHours.end;
   
-  // Handle overnight quiet hours (e.g., 22:00 - 08:00)
   if (start > end) {
     return currentTime >= start || currentTime < end;
   }
@@ -142,7 +169,14 @@ export function isQuietHours(prefs) {
 }
 
 /**
- * Check if current time is a batch delivery time
+ * 检查当前时间是否是批量投递时间
+ * 
+ * 批量投递时间检查：
+ * - 在批量投递时间点的前后5分钟内返回 true
+ * - 这样可以捕捉到用户设定时间附近的任何检查
+ * 
+ * @param {Object} prefs - 偏好设置对象
+ * @returns {boolean} 是否是批量投递时间
  */
 export function isBatchDeliveryTime(prefs) {
   if (!prefs.schedule.batchDelivery.enabled) return false;
@@ -155,7 +189,6 @@ export function isBatchDeliveryTime(prefs) {
     timeZone: prefs.schedule.timezone 
   });
   
-  // Check if within 5 minutes of a batch time
   for (const batchTime of prefs.schedule.batchDelivery.times) {
     const [batchHour, batchMin] = batchTime.split(':').map(Number);
     const [currentHour, currentMin] = currentTime.split(':').map(Number);
@@ -171,7 +204,18 @@ export function isBatchDeliveryTime(prefs) {
 }
 
 /**
- * Determine if a message should be delivered now
+ * 判断消息是否应该立即投递
+ * 
+ * 投递决策逻辑：
+ * 1. 检查好友特定设置：是否标记为"始终投递"
+ * 2. 检查静音时段：紧急消息是否允许在静音时段投递
+ * 3. 检查批量投递设置：高优先级好友是否立即投递
+ * 4. 检查批量投递时间：是否到了批量投递时间点
+ * 5. 检查上下文设置：某些上下文是否需要批量处理
+ * 
+ * @param {Object} message - 消息对象
+ * @param {Object} prefs - 偏好设置对象
+ * @returns {Object} 包含 deliver（是否投递）和原因的结果
  */
 export function shouldDeliverNow(message, prefs) {
   const friendName = message.from;
@@ -179,48 +223,43 @@ export function shouldDeliverNow(message, prefs) {
   const urgency = message.content?.urgency || 'normal';
   const context = message.content?.context || 'personal';
   
-  // Friend-specific override: always deliver
   if (friendPrefs.alwaysDeliver) {
-    return { deliver: true, reason: 'Friend marked as always deliver' };
+    return { deliver: true, reason: '好友标记为始终投递' };
   }
   
-  // Quiet hours check
   if (isQuietHours(prefs)) {
     if (urgency === 'urgent' && prefs.delivery.allowUrgentDuringQuiet) {
-      return { deliver: true, reason: 'Urgent message during quiet hours' };
+      return { deliver: true, reason: '静音时段的紧急消息' };
     }
-    return { deliver: false, reason: 'Quiet hours', holdUntil: 'quiet_end' };
+    return { deliver: false, reason: '静音时段', holdUntil: 'quiet_end' };
   }
   
-  // Batch delivery check
   if (prefs.schedule.batchDelivery.enabled) {
-    // Check if friend is excluded from batching
     if (friendPrefs.priority === 'high') {
-      return { deliver: true, reason: 'High priority friend' };
+      return { deliver: true, reason: '高优先级好友' };
     }
     
-    // Check if it's batch delivery time
     if (isBatchDeliveryTime(prefs)) {
-      return { deliver: true, reason: 'Batch delivery time' };
+      return { deliver: true, reason: '批量投递时间' };
     }
     
-    // Check if context should be batched
     if (prefs.context.muteContexts.includes(context)) {
-      return { deliver: false, reason: 'Context set to batch', holdUntil: 'batch_time' };
+      return { deliver: false, reason: '该上下文设置为批量处理', holdUntil: 'batch_time' };
     }
     
-    // If batching is on but not urgent, hold
     if (urgency !== 'urgent') {
-      return { deliver: false, reason: 'Batch delivery enabled', holdUntil: 'batch_time' };
+      return { deliver: false, reason: '已启用批量投递', holdUntil: 'batch_time' };
     }
   }
   
-  // Default: deliver
-  return { deliver: true, reason: 'Default delivery' };
+  return { deliver: true, reason: '默认投递' };
 }
 
 /**
- * Get friend-specific preferences
+ * 获取特定好友的偏好设置
+ * 
+ * @param {string} friendName - 好友名称
+ * @returns {Object} 该好友的特定偏好设置
  */
 export function getFriendPrefs(friendName) {
   const prefs = loadPreferences();
@@ -228,7 +267,10 @@ export function getFriendPrefs(friendName) {
 }
 
 /**
- * Set friend-specific preferences
+ * 设置特定好友的偏好设置
+ * 
+ * @param {string} friendName - 好友名称
+ * @param {Object} friendPrefs - 要设置的偏好对象
  */
 export function setFriendPrefs(friendName, friendPrefs) {
   const prefs = loadPreferences();
@@ -236,7 +278,6 @@ export function setFriendPrefs(friendName, friendPrefs) {
   savePreferences(prefs);
 }
 
-// Utility functions
 function deepMerge(target, source) {
   const result = { ...target };
   for (const key of Object.keys(source)) {

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BBC News CLI - Fetch and display BBC News stories from RSS feeds
+BBC 新闻命令行工具 - 从 RSS 订阅获取并显示 BBC 新闻报道
 """
 import argparse
 import sys
@@ -9,10 +9,10 @@ from datetime import datetime
 try:
     import feedparser
 except ImportError:
-    print("Error: feedparser library not found. Install with: pip install feedparser", file=sys.stderr)
+    print("错误: 未找到 feedparser 库。请安装: pip install feedparser", file=sys.stderr)
     sys.exit(1)
 
-# BBC News RSS feeds
+# BBC 新闻 RSS 订阅
 FEEDS = {
     "top": "https://feeds.bbci.co.uk/news/rss.xml",
     "uk": "https://feeds.bbci.co.uk/news/uk/rss.xml",
@@ -39,17 +39,17 @@ FEEDS = {
 
 
 def fetch_news(section="top", limit=10, format="text"):
-    """Fetch BBC News stories from RSS feed"""
+    """从 RSS 订阅获取 BBC 新闻报道"""
     if section not in FEEDS:
-        print(f"Error: Unknown section '{section}'", file=sys.stderr)
-        print(f"Available sections: {', '.join(sorted(FEEDS.keys()))}", file=sys.stderr)
+        print(f"错误: 未知部分 '{section}'", file=sys.stderr)
+        print(f"可用部分: {', '.join(sorted(FEEDS.keys()))}", file=sys.stderr)
         return 1
 
     feed_url = FEEDS[section]
     feed = feedparser.parse(feed_url)
 
     if feed.bozo:
-        print(f"Error: Failed to parse feed from {feed_url}", file=sys.stderr)
+        print(f"错误: 无法解析来自 {feed_url} 的订阅", file=sys.stderr)
         return 1
 
     entries = feed.entries[:limit]
@@ -66,8 +66,8 @@ def fetch_news(section="top", limit=10, format="text"):
             })
         print(json.dumps(stories, indent=2))
     else:
-        # Text format
-        section_title = feed.feed.get("title", f"BBC News - {section.title()}")
+        # 文本格式
+        section_title = feed.feed.get("title", f"BBC 新闻 - {section.title()}")
         print(f"\n{section_title}")
         print("=" * len(section_title))
         print()
@@ -75,7 +75,7 @@ def fetch_news(section="top", limit=10, format="text"):
         for i, entry in enumerate(entries, 1):
             print(f"{i}. {entry.title}")
             if hasattr(entry, "description") and entry.description:
-                # Strip HTML tags from description
+                # 从描述中移除 HTML 标签
                 import re
                 desc = re.sub(r'<[^>]+>', '', entry.description)
                 print(f"   {desc}")
@@ -88,23 +88,23 @@ def fetch_news(section="top", limit=10, format="text"):
 
 
 def list_sections():
-    """List all available sections"""
-    print("\nAvailable BBC News sections:")
+    """列出所有可用部分"""
+    print("\n可用的 BBC 新闻部分:")
     print("=" * 40)
-    print("\nMain Sections:")
+    print("\n主要部分:")
     main = ["top", "uk", "world", "business", "politics", "health", 
             "education", "science", "technology", "entertainment"]
     for section in main:
         if section in FEEDS:
             print(f"  • {section}")
     
-    print("\nUK Regional:")
+    print("\n英国地区:")
     regional = ["england", "scotland", "wales", "northern-ireland"]
     for section in regional:
         if section in FEEDS:
             print(f"  • {section}")
     
-    print("\nWorld Regions:")
+    print("\n世界地区:")
     world = ["africa", "asia", "australia", "europe", 
              "latin-america", "middle-east", "us-canada"]
     for section in world:
@@ -115,39 +115,39 @@ def list_sections():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Fetch BBC News stories from RSS feeds",
+        description="从 RSS 订阅获取 BBC 新闻报道",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  %(prog)s                          # Top stories (default)
-  %(prog)s uk                       # UK news
-  %(prog)s world --limit 5          # Top 5 world stories
-  %(prog)s technology --json        # Technology news in JSON format
-  %(prog)s --list                   # List all available sections
+示例:
+  %(prog)s                          # 头条新闻（默认）
+  %(prog)s uk                       # 英国新闻
+  %(prog)s world --limit 5          # 世界前 5 条新闻
+  %(prog)s technology --json        # 技术新闻（JSON 格式）
+  %(prog)s --list                   # 列出所有可用部分
         """
     )
     parser.add_argument(
         "section",
         nargs="?",
         default="top",
-        help="News section (default: top)"
+        help="新闻部分（默认: top）"
     )
     parser.add_argument(
         "-l", "--limit",
         type=int,
         default=10,
-        help="Number of stories to fetch (default: 10)"
+        help="要获取的新闻数量（默认: 10）"
     )
     parser.add_argument(
         "-f", "--format",
         choices=["text", "json"],
         default="text",
-        help="Output format (default: text)"
+        help="输出格式（默认: text）"
     )
     parser.add_argument(
         "--list",
         action="store_true",
-        help="List all available sections"
+        help="列出所有可用部分"
     )
 
     args = parser.parse_args()

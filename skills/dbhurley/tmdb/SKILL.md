@@ -1,118 +1,145 @@
 ---
 name: tmdb
-description: Search movies/TV, get cast, ratings, streaming info, and personalized recommendations via TMDb API.
+description: 通过 TMDb API 搜索电影/电视剧、获取演员阵容、评分、流媒体信息，并提供个性化推荐。
 homepage: https://www.themoviedb.org/
 metadata: {"clawdis":{"emoji":"🎬","requires":{"bins":["uv"],"env":["TMDB_API_KEY"]},"primaryEnv":"TMDB_API_KEY"}}
 ---
 
-# TMDb - The Movie Database
+# TMDb - 电影数据库
 
-Comprehensive movie and TV information with streaming availability, recommendations, and personalization.
+提供全面的电影和电视剧信息，包括流媒体播放渠道、推荐功能和个性化设置。
 
-## Setup
+## 环境配置
 
-Set environment variable:
-- `TMDB_API_KEY`: Your TMDb API key (free at themoviedb.org)
+在使用之前，请设置以下环境变量：
+- `TMDB_API_KEY`: 您的 TMDb API 密钥（在 themoviedb.org 免费注册获取）
 
-## Quick Commands
+## 快速命令
 
-### Search
+### 搜索
 ```bash
-# Search movies
-uv run {baseDir}/scripts/tmdb.py search "Inception"
+# 搜索电影
+uv run {baseDir}/scripts/tmdb.py search "盗梦空间"
 
-# Search TV shows
-uv run {baseDir}/scripts/tmdb.py search "Breaking Bad" --tv
+# 搜索电视剧
+uv run {baseDir}/scripts/tmdb.py search "绝命毒师" --tv
 
-# Search people (actors, directors)
-uv run {baseDir}/scripts/tmdb.py person "Christopher Nolan"
+# 搜索人物（演员、导演等）
+uv run {baseDir}/scripts/tmdb.py person "克里斯托弗·诺兰"
 ```
 
-### Movie/TV Details
+### 电影/电视剧详情
 ```bash
-# Full movie info
+# 完整电影信息
 uv run {baseDir}/scripts/tmdb.py movie 27205
 
-# With cast
+# 包含演员阵容
 uv run {baseDir}/scripts/tmdb.py movie 27205 --cast
 
-# TV show details
+# 电视剧详情
 uv run {baseDir}/scripts/tmdb.py tv 1396
 
-# By name (searches first, then shows details)
-uv run {baseDir}/scripts/tmdb.py info "The Dark Knight"
+# 按名称搜索并显示详情
+uv run {baseDir}/scripts/tmdb.py info "蝙蝠侠：黑暗骑士"
 ```
 
-### Where to Stream
+### 流媒体播放渠道
 ```bash
-# Find streaming availability
-uv run {baseDir}/scripts/tmdb.py where "Inception"
+# 查找流媒体播放渠道
+uv run {baseDir}/scripts/tmdb.py where "盗梦空间"
 uv run {baseDir}/scripts/tmdb.py where 27205
 
-# Specify region
-uv run {baseDir}/scripts/tmdb.py where "Inception" --region GB
+# 指定地区
+uv run {baseDir}/scripts/tmdb.py where "盗梦空间" --region GB
 ```
 
-### Discovery
+### 发现功能
 ```bash
-# Trending this week
+# 本周热门
 uv run {baseDir}/scripts/tmdb.py trending
 uv run {baseDir}/scripts/tmdb.py trending --tv
 
-# Recommendations based on a movie
-uv run {baseDir}/scripts/tmdb.py recommend "Inception"
+# 基于电影推荐
+uv run {baseDir}/scripts/tmdb.py recommend "盗梦空间"
 
-# Advanced discover
+# 高级发现
 uv run {baseDir}/scripts/tmdb.py discover --genre action --year 2024
 uv run {baseDir}/scripts/tmdb.py discover --genre sci-fi --rating 7.5
 ```
 
-### Personalization
+### 个性化设置
 ```bash
-# Get personalized suggestions (uses Plex history + preferences)
+# 获取个性化推荐（使用 Plex 观看历史和偏好设置）
 uv run {baseDir}/scripts/tmdb.py suggest <user_id>
 
-# Set preferences
+# 设置偏好
 uv run {baseDir}/scripts/tmdb.py pref <user_id> --genres "sci-fi,thriller,drama"
-uv run {baseDir}/scripts/tmdb.py pref <user_id> --directors "Christopher Nolan,Denis Villeneuve"
+uv run {baseDir}/scripts/tmdb.py pref <user_id> --directors "克里斯托弗·诺兰,丹尼斯·维伦纽瓦"
 uv run {baseDir}/scripts/tmdb.py pref <user_id> --avoid "horror,romance"
 
-# View preferences
+# 查看偏好设置
 uv run {baseDir}/scripts/tmdb.py pref <user_id> --show
 ```
 
-### Watchlist
+### 观影清单
 ```bash
-# Add to watchlist
+# 添加到观影清单
 uv run {baseDir}/scripts/tmdb.py watchlist <user_id> add 27205
-uv run {baseDir}/scripts/tmdb.py watchlist <user_id> add "Dune: Part Two"
+uv run {baseDir}/scripts/tmdb.py watchlist <user_id> add "沙丘：第二部"
 
-# View watchlist
+# 查看观影清单
 uv run {baseDir}/scripts/tmdb.py watchlist <user_id>
 
-# Remove from watchlist
+# 从观影清单移除
 uv run {baseDir}/scripts/tmdb.py watchlist <user_id> rm 27205
 ```
 
-## Integrations
+## 集成功能
 
-### Plex
-If the Plex skill is available, `suggest` command pulls recent watch history to inform recommendations.
+### Plex 集成
+如果 Plex skill 可用，`suggest` 命令会获取最近的观看历史以生成更准确的推荐。
 
-### ppl.gift (CRM)
-If ppl skill is available, preferences are stored as notes on the user's contact for persistence across sessions.
+### ppl.gift (CRM) 集成
+如果 ppl skill 可用，偏好设置会作为用户联系人的笔记保存，以实现跨会话持久化。
 
-## Genre IDs
+## 电影类型 ID
 
-Common genres for `--genre` filter:
-- action (28), adventure (12), animation (16)
-- comedy (35), crime (80), documentary (99)
-- drama (18), family (10751), fantasy (14)
-- horror (27), mystery (9648), romance (10749)
-- sci-fi (878), thriller (53), war (10752)
+常用的 `--genre` 筛选类型：
+| 英文类型 | ID | 中文类型 |
+|----------|-----|----------|
+| action | 28 | 动作 |
+| adventure | 12 | 冒险 |
+| animation | 16 | 动画 |
+| comedy | 35 | 喜剧 |
+| crime | 80 | 犯罪 |
+| documentary | 99 | 纪录片 |
+| drama | 18 | 剧情 |
+| family | 10751 | 家庭 |
+| fantasy | 14 | 奇幻 |
+| horror | 27 | 恐怖 |
+| mystery | 9648 | 悬疑 |
+| romance | 10749 | 爱情 |
+| sci-fi | 878 | 科幻 |
+| thriller | 53 | 惊悚 |
+| war | 10752 | 战争 |
 
-## Notes
+## 使用说明
 
-- TMDb API: 40 requests per 10 seconds (free tier)
-- Watch providers vary by region (default: US)
-- Recommendations combine TMDb data + user preferences + watch history
+1. **API 限制**：
+   - 免费版：每秒 10 次请求，每天 50 次请求
+   - 流媒体提供商信息因地区而异（默认：美国）
+
+2. **推荐算法**：
+   - 结合 TMDb 数据、用户偏好和观看历史
+   - 偏好设置存储在本地 JSON 文件中
+   - 支持与 Plex 和 ppl.gift 集成
+
+3. **数据存储**：
+   - 观影清单和偏好设置保存在 `data/` 目录
+   - 支持多用户管理
+   - 数据可以跨会话持久化
+
+4. **搜索技巧**：
+   - 支持中英文电影名称搜索
+   - 可以按 ID 直接查询
+   - 人物搜索支持演员和导演

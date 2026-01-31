@@ -2,6 +2,7 @@
   "owner": "darconada",
   "slug": "google-chat",
   "displayName": "Google Chat",
+  "description": "通过 webhook 或 OAuth 2.0 向 Google Chat 空间和用户发送消息。支持预定义频道和动态消息传递。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1769302886235,

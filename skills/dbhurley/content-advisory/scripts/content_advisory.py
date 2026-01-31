@@ -2,10 +2,10 @@
 # /// script
 # requires-python = ">=3.10"
 # ///
-"""Content Advisory CLI - Kids-In-Mind style movie/TV content ratings.
+"""内容评级 CLI - Kids-In-Mind 风格的电影/电视内容评级工具。
 
-Provides detailed content breakdowns: Sex/Nudity, Violence/Gore, Language
-on a 0-10 scale, plus Substance Use, Discussion Topics, and Message.
+提供详细的内容分类：性/裸露、暴力/血腥、语言
+采用 0-10 分制，还包括物质使用、讨论话题和核心信息。
 """
 
 from __future__ import annotations
@@ -23,11 +23,11 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urljoin
 from urllib.request import Request, urlopen
 
-# Data directory
+# 数据目录
 DATA_DIR = Path(os.environ.get("CONTENT_ADVISORY_DATA_DIR", Path.home() / ".clawdbot" / "content-advisory"))
 CACHE_FILE = DATA_DIR / "cache.json"
 
-# Kids-In-Mind base URL
+# Kids-In-Mind 基础 URL
 KIM_BASE = "https://kids-in-mind.com"
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -35,43 +35,48 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
 
 @dataclass
 class ContentRating:
-    title: str
-    year: str = ""
-    mpaa: str = ""
-    sex_nudity: int = 0
-    violence_gore: int = 0
-    language: int = 0
-    sex_nudity_detail: str = ""
-    violence_gore_detail: str = ""
-    language_detail: str = ""
-    substance_use: str = ""
-    discussion_topics: str = ""
-    message: str = ""
-    url: str = ""
-    cached_at: str = ""
+    """内容评级数据类"""
+    title: str  # 电影或电视节目标题
+    year: str = ""  # 发行年份
+    mpaa: str = ""  # MPAA 评级
+    sex_nudity: int = 0  # 性/裸露评级 (0-10)
+    violence_gore: int = 0  # 暴力/血腥评级 (0-10)
+    language: int = 0  # 语言评级 (0-10)
+    sex_nudity_detail: str = ""  # 性/裸露详细描述
+    violence_gore_detail: str = ""  # 暴力/血腥详细描述
+    language_detail: str = ""  # 语言详细描述
+    substance_use: str = ""  # 物质使用描述
+    discussion_topics: str = ""  # 讨论话题
+    message: str = ""  # 核心信息
+    url: str = ""  # 评级来源 URL
+    cached_at: str = ""  # 缓存时间
     
     def to_dict(self) -> dict:
+        """转换为字典"""
         return asdict(self)
     
     @classmethod
     def from_dict(cls, d: dict) -> "ContentRating":
+        """从字典创建实例"""
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass
 class SearchResult:
-    title: str
-    year: str
-    url: str
-    ratings: str = ""  # e.g., "3.5.4"
-    mpaa: str = ""
+    """搜索结果数据类"""
+    title: str  # 标题
+    year: str  # 年份
+    url: str  # 详情 URL
+    ratings: str = ""  # 评级字符串，例如 "3.5.4"
+    mpaa: str = ""  # MPAA 评级
     
     def to_dict(self) -> dict:
+        """转换为字典"""
         return asdict(self)
 
 
 def load_cache() -> dict[str, ContentRating]:
-    """Load cache from JSON file."""
+    """从 JSON 文件加载缓存"""
     if not CACHE_FILE.exists():
         return {}
     try:
@@ -83,14 +88,14 @@ def load_cache() -> dict[str, ContentRating]:
 
 
 def save_cache(cache: dict[str, ContentRating]) -> None:
-    """Save cache to JSON file."""
+    """将缓存保存到 JSON 文件"""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     with open(CACHE_FILE, "w") as f:
         json.dump({k: v.to_dict() for k, v in cache.items()}, f, indent=2)
 
 
 def fetch_url(url: str) -> str:
-    """Fetch URL content as string."""
+    """获取 URL 内容作为字符串"""
     req = Request(
         url,
         headers={
@@ -105,32 +110,32 @@ def fetch_url(url: str) -> str:
     except HTTPError as e:
         raise RuntimeError(f"HTTP {e.code}: {e.reason}") from e
     except URLError as e:
-        raise RuntimeError(f"URL error: {e.reason}") from e
+        raise RuntimeError(f"URL 错误: {e.reason}") from e
 
 
 def clean_html(text: str) -> str:
-    """Remove HTML tags and decode entities."""
-    # Remove script/style content
+    """移除 HTML 标签并解码实体"""
+    # 移除脚本/样式内容
     text = re.sub(r"<(script|style)[^>]*>.*?</\1>", "", text, flags=re.DOTALL | re.IGNORECASE)
-    # Remove tags
+    # 移除标签
     text = re.sub(r"<[^>]+>", " ", text)
-    # Decode entities
+    # 解码实体
     text = html.unescape(text)
-    # Normalize whitespace
+    # 规范化空白
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
 def extract_section_by_id(html_content: str, section_id: str) -> str:
-    """Extract text from a section with a specific ID."""
-    # Look for section with id, then get content until next h2 or section end
+    """从具有特定 ID 的部分提取文本"""
+    # 查找具有 id 的部分，然后获取内容直到下一个 h2 或部分结束
     pattern = rf'id="{section_id}"[^>]*>([^<]*)</h2>\s*</div>\s*</div>\s*<div[^>]*>\s*<div[^>]*>(.*?)</div>'
     match = re.search(pattern, html_content, re.DOTALL | re.IGNORECASE)
     if match:
         content = match.group(2)
         return clean_html(content)[:600]
     
-    # Fallback: simpler pattern
+    # 备选方案：更简单的模式
     pattern2 = rf'id="{section_id}"[^>]*>.*?</h2>.*?<p[^>]*>(.*?)</p>'
     match2 = re.search(pattern2, html_content, re.DOTALL | re.IGNORECASE)
     if match2:
@@ -140,15 +145,15 @@ def extract_section_by_id(html_content: str, section_id: str) -> str:
 
 
 def parse_kim_page(html_content: str, url: str) -> ContentRating:
-    """Parse a Kids-In-Mind review page."""
+    """解析 Kids-In-Mind 评论页面"""
     rating = ContentRating(title="", url=url, cached_at=datetime.now().isoformat())
     
-    # Extract from title: "Title [Year] [MPAA] - X.Y.Z | Parents' Guide..."
+    # 从标题提取："Title [Year] [MPAA] - X.Y.Z | Parents' Guide..."
     title_match = re.search(r"<title>([^<]+)</title>", html_content, re.IGNORECASE)
     if title_match:
         title_text = html.unescape(title_match.group(1))
         
-        # Parse: "Greenland 2: Migration [2026] [PG-13] - 1.6.4 | Parents' Guide..."
+        # 解析："Greenland 2: Migration [2026] [PG-13] - 1.6.4 | Parents' Guide..."
         main_match = re.match(r"(.+?)\s*\[(\d{4})\]\s*\[([^\]]+)\]\s*-\s*(\d+)\.(\d+)\.(\d+)", title_text)
         if main_match:
             rating.title = main_match.group(1).strip()
@@ -158,27 +163,27 @@ def parse_kim_page(html_content: str, url: str) -> ContentRating:
             rating.violence_gore = int(main_match.group(5))
             rating.language = int(main_match.group(6))
         else:
-            # Try simpler pattern: just get title before | or [
+            # 尝试更简单的模式：只获取 | 或 [ 之前的标题
             simple = re.match(r"(.+?)(?:\s*[\|\[]|$)", title_text)
             if simple:
                 rating.title = simple.group(1).strip()
     
-    # Extract section details using IDs
+    # 使用 ID 提取部分详情
     rating.sex_nudity_detail = extract_section_by_id(html_content, "sex")
     rating.violence_gore_detail = extract_section_by_id(html_content, "violence")
     rating.language_detail = extract_section_by_id(html_content, "language")
     
-    # Extract substance use section
+    # 提取物质使用部分
     substance_match = re.search(r'id="substance"[^>]*>.*?SUBSTANCE[^<]*</h2>.*?<p[^>]*>(.*?)</p>', html_content, re.DOTALL | re.IGNORECASE)
     if substance_match:
         rating.substance_use = clean_html(substance_match.group(1))[:400]
     
-    # Extract discussion topics
+    # 提取讨论话题
     topics_match = re.search(r'id="discussion"[^>]*>.*?DISCUSSION[^<]*</h2>.*?<p[^>]*>(.*?)</p>', html_content, re.DOTALL | re.IGNORECASE)
     if topics_match:
         rating.discussion_topics = clean_html(topics_match.group(1))[:400]
     
-    # Extract message
+    # 提取核心信息
     message_match = re.search(r'id="message"[^>]*>.*?MESSAGE[^<]*</h2>.*?<p[^>]*>(.*?)</p>', html_content, re.DOTALL | re.IGNORECASE)
     if message_match:
         rating.message = clean_html(message_match.group(1))[:400]
@@ -187,11 +192,11 @@ def parse_kim_page(html_content: str, url: str) -> ContentRating:
 
 
 def search_kim_from_homepage(query: str, limit: int = 10) -> list[SearchResult]:
-    """Search for movies by scraping links from Kids-In-Mind homepage and alphabetical pages."""
+    """通过抓取 Kids-In-Mind 主页和字母索引页面搜索电影"""
     results = []
     query_lower = query.lower()
     
-    # First try the alphabetical index page for the first letter
+    # 首先尝试第一个字母的字母索引页面
     first_letter = query_lower[0] if query_lower else "a"
     index_url = f"{KIM_BASE}/{first_letter}.htm"
     
@@ -202,13 +207,13 @@ def search_kim_from_homepage(query: str, limit: int = 10) -> list[SearchResult]:
         try:
             html_content = fetch_url(base_url)
             
-            # Find all movie links
+            # 查找所有电影链接
             link_pattern = r'href="(/[a-z]/[^"]+\.htm)"[^>]*>([^<]+)'
             for match in re.finditer(link_pattern, html_content, re.IGNORECASE):
                 url_path = match.group(1)
                 link_text = clean_html(match.group(2))
                 
-                # Skip non-movie pages
+                # 跳过非电影页面
                 if any(skip in url_path.lower() for skip in ["/about", "/contact", "/donate", "/terms", "/search"]):
                     continue
                 
@@ -217,9 +222,9 @@ def search_kim_from_homepage(query: str, limit: int = 10) -> list[SearchResult]:
                     continue
                 seen_urls.add(full_url)
                 
-                # Check if query matches
+                # 检查查询是否匹配
                 if query_lower in link_text.lower():
-                    # Try to extract year and ratings from link text or URL
+                    # 尝试从链接文本或 URL 中提取年份和评级
                     year = ""
                     mpaa = ""
                     ratings = ""
@@ -236,7 +241,7 @@ def search_kim_from_homepage(query: str, limit: int = 10) -> list[SearchResult]:
                     if ratings_match:
                         ratings = f"{ratings_match.group(1)}.{ratings_match.group(2)}.{ratings_match.group(3)}"
                     
-                    # Clean title
+                    # 清理标题
                     title = re.sub(r"\s*\[\d{4}\].*$", "", link_text).strip()
                     
                     results.append(SearchResult(
@@ -250,17 +255,17 @@ def search_kim_from_homepage(query: str, limit: int = 10) -> list[SearchResult]:
                     if len(results) >= limit:
                         return results
         except Exception as e:
-            print(f"Error fetching {base_url}: {e}", file=sys.stderr)
+            print(f"获取 {base_url} 时出错: {e}", file=sys.stderr)
             continue
     
     return results
 
 
 def lookup_title(query: str, year: str | None = None) -> ContentRating | None:
-    """Look up content rating for a title."""
+    """查找标题的内容评级"""
     cache = load_cache()
     
-    # Check cache first
+    # 首先检查缓存
     cache_key = f"{query.lower()}:{year or ''}"
     if cache_key in cache:
         cached = cache[cache_key]
@@ -271,32 +276,32 @@ def lookup_title(query: str, year: str | None = None) -> ContentRating | None:
         except (ValueError, TypeError):
             pass
     
-    # Search for the title
+    # 搜索标题
     search_results = search_kim_from_homepage(query)
     
     if not search_results:
         return None
     
-    # Find best match
+    # 找到最佳匹配
     query_lower = query.lower()
     best_match = search_results[0]
     
     for result in search_results:
-        # Prefer exact title match
+        # 优先选择精确标题匹配
         if result.title.lower() == query_lower:
             best_match = result
             break
-        # Prefer matching year
+        # 优先选择匹配年份
         if year and result.year == year:
             best_match = result
             break
     
-    # Fetch the page
+    # 获取页面
     try:
         html_content = fetch_url(best_match.url)
         rating = parse_kim_page(html_content, best_match.url)
         
-        # Fallback to search result info if parsing failed
+        # 如果解析失败，回退到搜索结果信息
         if not rating.title:
             rating.title = best_match.title
         if not rating.year and best_match.year:
@@ -310,79 +315,79 @@ def lookup_title(query: str, year: str | None = None) -> ContentRating | None:
                 rating.violence_gore = int(parts[1])
                 rating.language = int(parts[2])
         
-        # Save to cache
+        # 保存到缓存
         cache[cache_key] = rating
         save_cache(cache)
         
         return rating
     except Exception as e:
-        print(f"Lookup error: {e}", file=sys.stderr)
+        print(f"查找错误: {e}", file=sys.stderr)
         return None
 
 
 def render_bar(value: int, max_val: int = 10) -> str:
-    """Render a visual bar for a rating."""
+    """为评级渲染可视化条形图"""
     filled = "▓" * value
     empty = "░" * (max_val - value)
     return f"{filled}{empty}"
 
 
 def print_rating(rating: ContentRating, json_output: bool = False) -> None:
-    """Print content rating in formatted output."""
+    """以格式化输出打印内容评级"""
     if json_output:
         print(json.dumps(rating.to_dict(), indent=2))
         return
     
-    # Header
+    # 标题
     year_str = f" ({rating.year})" if rating.year else ""
     mpaa_str = f" | {rating.mpaa}" if rating.mpaa else ""
     print(f"\n🎬 {rating.title}{year_str}{mpaa_str}\n")
     
-    # Ratings bars
-    print("📊 CONTENT RATINGS")
-    print(f"   Sex/Nudity:    {rating.sex_nudity:2d} {render_bar(rating.sex_nudity)}")
-    print(f"   Violence/Gore: {rating.violence_gore:2d} {render_bar(rating.violence_gore)}")
-    print(f"   Language:      {rating.language:2d} {render_bar(rating.language)}")
+    # 评级条
+    print("📊 内容评级")
+    print(f"   性/裸露:    {rating.sex_nudity:2d} {render_bar(rating.sex_nudity)}")
+    print(f"   暴力/血腥: {rating.violence_gore:2d} {render_bar(rating.violence_gore)}")
+    print(f"   语言:      {rating.language:2d} {render_bar(rating.language)}")
     
-    # Details
+    # 详情
     if rating.sex_nudity_detail or rating.violence_gore_detail or rating.language_detail:
-        print("\n📋 CATEGORY DETAILS")
+        print("\n📋 类别详情")
         if rating.sex_nudity_detail:
             detail = rating.sex_nudity_detail[:300]
-            print(f"   Sex/Nudity: {detail}{'...' if len(rating.sex_nudity_detail) > 300 else ''}")
+            print(f"   性/裸露: {detail}{'...' if len(rating.sex_nudity_detail) > 300 else ''}")
         if rating.violence_gore_detail:
             detail = rating.violence_gore_detail[:300]
-            print(f"   Violence: {detail}{'...' if len(rating.violence_gore_detail) > 300 else ''}")
+            print(f"   暴力: {detail}{'...' if len(rating.violence_gore_detail) > 300 else ''}")
         if rating.language_detail:
             detail = rating.language_detail[:300]
-            print(f"   Language: {detail}{'...' if len(rating.language_detail) > 300 else ''}")
+            print(f"   语言: {detail}{'...' if len(rating.language_detail) > 300 else ''}")
     
     if rating.substance_use:
-        print(f"\n💊 SUBSTANCE USE\n   {rating.substance_use[:250]}")
+        print(f"\n💊 物质使用\n   {rating.substance_use[:250]}")
     
     if rating.discussion_topics:
-        print(f"\n💬 DISCUSSION TOPICS\n   {rating.discussion_topics[:250]}")
+        print(f"\n💬 讨论话题\n   {rating.discussion_topics[:250]}")
     
     if rating.message:
-        print(f"\n📝 MESSAGE\n   {rating.message[:250]}")
+        print(f"\n📝 核心信息\n   {rating.message[:250]}")
     
     if rating.url:
-        print(f"\n🔗 Source: {rating.url}")
+        print(f"\n🔗 来源: {rating.url}")
     
     print()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Commands
+# 命令
 # ─────────────────────────────────────────────────────────────────────────────
 
 def cmd_lookup(args: argparse.Namespace) -> int:
-    """Look up content rating for a movie."""
+    """查找电影的内容评级"""
     rating = lookup_title(args.title, args.year)
     
     if not rating:
-        print(f"❌ Could not find content rating for '{args.title}'", file=sys.stderr)
-        print("   Try a different spelling or check kids-in-mind.com directly", file=sys.stderr)
+        print(f"❌ 无法找到 '{args.title}' 的内容评级", file=sys.stderr)
+        print("   尝试不同的拼写或直接查看 kids-in-mind.com", file=sys.stderr)
         return 1
     
     print_rating(rating, args.json)
@@ -390,18 +395,18 @@ def cmd_lookup(args: argparse.Namespace) -> int:
 
 
 def cmd_search(args: argparse.Namespace) -> int:
-    """Search for titles."""
+    """搜索标题"""
     results = search_kim_from_homepage(args.query, args.limit)
     
     if not results:
-        print(f"❌ No results found for '{args.query}'", file=sys.stderr)
+        print(f"❌ 未找到 '{args.query}' 的结果", file=sys.stderr)
         return 1
     
     if args.json:
         print(json.dumps([r.to_dict() for r in results], indent=2))
         return 0
     
-    print(f"🔍 Search results for '{args.query}':\n")
+    print(f"🔍 '{args.query}' 的搜索结果:\n")
     for r in results:
         year_str = f" ({r.year})" if r.year else ""
         mpaa_str = f" [{r.mpaa}]" if r.mpaa else ""
@@ -411,38 +416,39 @@ def cmd_search(args: argparse.Namespace) -> int:
 
 
 def cmd_clear_cache(args: argparse.Namespace) -> int:
-    """Clear the cache."""
+    """清除缓存"""
     if CACHE_FILE.exists():
         CACHE_FILE.unlink()
-        print("🗑️  Cache cleared")
+        print("🗑️  缓存已清除")
     else:
-        print("ℹ️  Cache was already empty")
+        print("ℹ️  缓存已经为空")
     return 0
 
 
 def main() -> int:
+    """主函数"""
     parser = argparse.ArgumentParser(
-        description="Content Advisory - Kids-In-Mind style movie ratings",
+        description="内容评级 - Kids-In-Mind 风格的电影评级",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    subparsers = parser.add_subparsers(dest="command", help="命令")
     
-    # lookup
-    p_lookup = subparsers.add_parser("lookup", help="Look up content rating for a movie")
-    p_lookup.add_argument("title", help="Movie or show title")
-    p_lookup.add_argument("--year", "-y", help="Release year")
-    p_lookup.add_argument("--json", action="store_true", help="JSON output")
+    # lookup 命令
+    p_lookup = subparsers.add_parser("lookup", help="查找电影的内容评级")
+    p_lookup.add_argument("title", help="电影或节目标题")
+    p_lookup.add_argument("--year", "-y", help="发行年份")
+    p_lookup.add_argument("--json", action="store_true", help="JSON 输出")
     p_lookup.set_defaults(func=cmd_lookup)
     
-    # search
-    p_search = subparsers.add_parser("search", help="Search for titles")
-    p_search.add_argument("query", help="Search query")
-    p_search.add_argument("--limit", "-n", type=int, default=10, help="Max results")
-    p_search.add_argument("--json", action="store_true", help="JSON output")
+    # search 命令
+    p_search = subparsers.add_parser("search", help="搜索标题")
+    p_search.add_argument("query", help="搜索查询")
+    p_search.add_argument("--limit", "-n", type=int, default=10, help="最大结果数")
+    p_search.add_argument("--json", action="store_true", help="JSON 输出")
     p_search.set_defaults(func=cmd_search)
     
-    # clear-cache
-    p_clear = subparsers.add_parser("clear-cache", help="Clear cached results")
+    # clear-cache 命令
+    p_clear = subparsers.add_parser("clear-cache", help="清除缓存结果")
     p_clear.set_defaults(func=cmd_clear_cache)
     
     args = parser.parse_args()

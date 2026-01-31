@@ -1,38 +1,38 @@
 ---
 name: grocery-list
-description: Standalone grocery lists, recipes, and meal planning with local storage. No external service required.
+description: 独立的购物清单、食谱和膳食计划，使用本地存储。无需外部服务。
 homepage: https://clawdhub.com/skills/grocery-list
 metadata: { "clawdbot": { "emoji": "🛒", "requires": { "bins": ["uv"] } } }
 ---
 
-# Grocery List & Meal Planner
+# 购物清单和膳食计划
 
-Self-contained grocery lists, recipes, and meal planning with local JSON storage. No subscriptions or external services required.
+自包含的购物清单、食谱和膳食计划，使用本地 JSON 存储。无需订阅或外部服务。
 
-## Features
+## 功能
 
-- **Multiple lists** — Grocery, Costco, Target, etc.
-- **Smart categories** — produce, dairy, meat, bakery, frozen, pantry, household
-- **Quantity parsing** — "2 gallons milk" → quantity: 2, unit: "gallon"
-- **Recipe storage** — Save recipes with ingredients
-- **Meal planning** — Plan meals by date and type (breakfast/lunch/dinner)
-- **Recipe-to-list** — Add recipe ingredients to any list with one command
-- **Family assignment** — Assign items to household members
-- **Notifications** — `notify` command for heartbeat/cron integration
+- **多个清单** — 杂货、Costco、Target 等
+- **智能分类** — 农产品、乳制品、肉类、面包、冷冻食品、食品储藏室、家居用品
+- **数量解析** — "2 gallons milk" → 数量: 2, 单位: "gallon"
+- **食谱存储** — 保存带有配料的食谱
+- **膳食计划** — 按日期和类型（早餐/午餐/晚餐）计划膳食
+- **食谱转清单** — 通过一个命令将食谱配料添加到任何清单
+- **家庭成员分配** — 将物品分配给家庭成员
+- **通知** — `notify` 命令用于心跳/定时任务集成
 
-## Commands
+## 命令
 
-### Lists
+### 清单
 
 ```bash
-uv run {baseDir}/scripts/grocery.py lists                    # Show all lists
-uv run {baseDir}/scripts/grocery.py list "Grocery"           # Show items in a list
+uv run {baseDir}/scripts/grocery.py lists                    # 显示所有清单
+uv run {baseDir}/scripts/grocery.py list "Grocery"           # 显示清单中的物品
 uv run {baseDir}/scripts/grocery.py list "Grocery" --unchecked
-uv run {baseDir}/scripts/grocery.py list create "Costco"     # Create new list
-uv run {baseDir}/scripts/grocery.py list delete "Costco"     # Delete a list
+uv run {baseDir}/scripts/grocery.py list create "Costco"     # 创建新清单
+uv run {baseDir}/scripts/grocery.py list delete "Costco"     # 删除清单
 ```
 
-### Items
+### 物品
 
 ```bash
 uv run {baseDir}/scripts/grocery.py add "Grocery" "Milk"
@@ -41,56 +41,56 @@ uv run {baseDir}/scripts/grocery.py add "Grocery" "Chicken" --assignee "Erin"
 uv run {baseDir}/scripts/grocery.py check "Grocery" "Milk"
 uv run {baseDir}/scripts/grocery.py uncheck "Grocery" "Milk"
 uv run {baseDir}/scripts/grocery.py remove "Grocery" "Milk"
-uv run {baseDir}/scripts/grocery.py clear "Grocery"          # Clear checked items
+uv run {baseDir}/scripts/grocery.py clear "Grocery"          # 清除已勾选物品
 ```
 
-### Recipes
+### 食谱
 
 ```bash
-uv run {baseDir}/scripts/grocery.py recipes                  # List all recipes
-uv run {baseDir}/scripts/grocery.py recipe "Tacos"           # View a recipe
+uv run {baseDir}/scripts/grocery.py recipes                  # 列出所有食谱
+uv run {baseDir}/scripts/grocery.py recipe "Tacos"           # 查看食谱
 uv run {baseDir}/scripts/grocery.py recipe add "Tacos" --ingredients "ground beef,tortillas,cheese,lettuce,tomatoes"
 uv run {baseDir}/scripts/grocery.py recipe add "Tacos" --category "Mexican" --servings 4
 uv run {baseDir}/scripts/grocery.py recipe delete "Tacos"
 uv run {baseDir}/scripts/grocery.py recipe search "chicken"
 ```
 
-### Meal Planning
+### 膳食计划
 
 ```bash
-uv run {baseDir}/scripts/grocery.py meals                    # Show this week's meals
+uv run {baseDir}/scripts/grocery.py meals                    # 显示本周膳食
 uv run {baseDir}/scripts/grocery.py meals --date 2026-01-15
 uv run {baseDir}/scripts/grocery.py meal add --date 2026-01-15 --type dinner --recipe "Tacos"
 uv run {baseDir}/scripts/grocery.py meal add-to-list --date 2026-01-15 --list "Grocery"
 uv run {baseDir}/scripts/grocery.py meal remove --date 2026-01-15 --type dinner
 ```
 
-### Notifications
+### 通知
 
 ```bash
-uv run {baseDir}/scripts/grocery.py notify                   # Pending alerts for heartbeat
-uv run {baseDir}/scripts/grocery.py stats                    # Quick summary
+uv run {baseDir}/scripts/grocery.py notify                   # 心跳的待处理警报
+uv run {baseDir}/scripts/grocery.py stats                    # 快速摘要
 ```
 
-## Categories
+## 分类
 
-Built-in categories with automatic detection:
+内置自动检测分类：
 
-- **produce** — fruits, vegetables
-- **dairy** — milk, cheese, eggs, yogurt
-- **meat** — chicken, beef, pork, fish
-- **bakery** — bread, rolls, bagels
-- **frozen** — ice cream, frozen meals
-- **pantry** — canned goods, pasta, rice
-- **beverages** — drinks, soda, juice
-- **snacks** — chips, crackers
-- **household** — cleaning, paper goods
-- **personal** — toiletries, medicine
-- **other** — uncategorized
+- **produce** — 水果、蔬菜
+- **dairy** — 牛奶、奶酪、鸡蛋、酸奶
+- **meat** — 鸡肉、牛肉、猪肉、鱼
+- **bakery** — 面包、卷、百吉饼
+- **frozen** — 冰淇淋、冷冻餐
+- **pantry** — 罐头食品、意大利面、米饭
+- **beverages** — 饮料、汽水、果汁
+- **snacks** — 薯片、饼干
+- **household** — 清洁用品、纸制品
+- **personal** — 洗漱用品、药品
+- **other** — 未分类
 
-## JSON Output
+## JSON 输出
 
-All commands support `--json` for programmatic access:
+所有命令都支持 `--json` 用于编程访问：
 
 ```bash
 uv run {baseDir}/scripts/grocery.py list "Grocery" --json
@@ -98,38 +98,38 @@ uv run {baseDir}/scripts/grocery.py recipes --json
 uv run {baseDir}/scripts/grocery.py meals --json
 ```
 
-## Data Storage
+## 数据存储
 
-Data is stored locally at `~/.clawdbot/grocery-list/data.json`. No cloud account required.
+数据存储在本地 `~/.clawdbot/grocery-list/data.json`。无需云账户。
 
-## Usage Examples
+## 使用示例
 
-**"Add milk and eggs to the grocery list"**
+**"将牛奶和鸡蛋添加到购物清单"**
 
 ```bash
 uv run {baseDir}/scripts/grocery.py add "Grocery" "Milk" --category dairy
 uv run {baseDir}/scripts/grocery.py add "Grocery" "Eggs" --category dairy
 ```
 
-**"What's on the grocery list?"**
+**"购物清单上有什么？"**
 
 ```bash
 uv run {baseDir}/scripts/grocery.py list "Grocery" --unchecked
 ```
 
-**"Plan tacos for dinner on Saturday"**
+**"计划周六晚餐吃 tacos"**
 
 ```bash
 uv run {baseDir}/scripts/grocery.py meal add --date 2026-01-18 --type dinner --recipe "Tacos"
 ```
 
-**"Add the taco ingredients to the grocery list"**
+**"将 taco 配料添加到购物清单"**
 
 ```bash
 uv run {baseDir}/scripts/grocery.py meal add-to-list --date 2026-01-18 --list "Grocery"
 ```
 
-**"Check off the milk"**
+**"勾选牛奶"**
 
 ```bash
 uv run {baseDir}/scripts/grocery.py check "Grocery" "Milk"

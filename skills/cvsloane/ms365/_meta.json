@@ -1,7 +1,8 @@
 {
   "owner": "cvsloane",
   "slug": "ms365",
-  "displayName": "Microsoft 365 Integration",
+  "displayName": "Microsoft 365 集成",
+  "description": "通过 Microsoft Graph API 访问 Microsoft 365 服务。支持邮件、日历、OneDrive、待办事项和联系人。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1767838739934,

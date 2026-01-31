@@ -1,27 +1,27 @@
 ---
 name: media-backup
-description: Archive Clawdbot conversation media (photos, videos) to a local folder. Works with any sync service (Dropbox, iCloud, Google Drive, OneDrive).
+description: 将 Clawdbot 对话媒体（照片、视频）存档到本地文件夹。适用于任何同步服务（Dropbox、iCloud、Google Drive、OneDrive）。
 metadata: {"clawdbot":{"env":["MEDIA_BACKUP_DEST"]}}
 ---
 
-# Media Backup
+# 媒体备份
 
-Simple backup of Clawdbot inbound media to a local folder. No APIs, no OAuth - just file copy.
+将 Clawdbot 入站媒体简单备份到本地文件夹。无需 API，无需 OAuth - 只需文件复制。
 
-Works with any cloud sync service since it's just copying to a local folder.
+适用于任何云同步服务，因为它只是复制到本地文件夹。
 
-## Setup
+## 设置
 
-Set your destination folder:
+设置您的目标文件夹：
 ```bash
 export MEDIA_BACKUP_DEST="$HOME/Dropbox/Clawdbot/media"
-# or
+# 或
 export MEDIA_BACKUP_DEST="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Clawdbot/media"  # iCloud
-# or  
+# 或  
 export MEDIA_BACKUP_DEST="$HOME/Google Drive/Clawdbot/media"
 ```
 
-Or add to clawdbot config:
+或添加到 clawdbot 配置：
 ```json
 {
   "skills": {
@@ -36,43 +36,43 @@ Or add to clawdbot config:
 }
 ```
 
-## Usage
+## 使用方法
 
 ```bash
-# Run backup
+# 运行备份
 uv run skills/media-backup/scripts/backup.py
 
-# Dry run (preview only)
+# 干运行（仅预览）
 uv run skills/media-backup/scripts/backup.py --dry-run
 
-# Custom source/destination
+# 自定义源/目标
 uv run skills/media-backup/scripts/backup.py --source ~/.clawdbot/media/inbound --dest ~/Backups/media
 
-# Check status
+# 检查状态
 uv run skills/media-backup/scripts/backup.py status
 ```
 
-## How It Works
+## 工作原理
 
-1. Scans `~/.clawdbot/media/inbound/` for media files
-2. Organizes by date: `YYYY-MM-DD/filename.jpg`
-3. Tracks archived files by content hash (no duplicates)
-4. Your cloud service syncs the folder automatically
+1. 扫描 `~/.clawdbot/media/inbound/` 中的媒体文件
+2. 按日期组织：`YYYY-MM-DD/filename.jpg`
+3. 通过内容哈希跟踪已存档文件（无重复）
+4. 您的云服务自动同步该文件夹
 
-## Cron Setup
+## 定时任务设置
 
-Run hourly backup:
+每小时运行备份：
 ```
 0 * * * * cd ~/clawd && uv run skills/media-backup/scripts/backup.py >> /tmp/media-backup.log 2>&1
 ```
 
-Or via Clawdbot cron job with task:
+或通过 Clawdbot 定时任务：
 ```
 Run media backup: uv run skills/media-backup/scripts/backup.py
 If files archived, reply: 📸 Archived [N] media files
 If none, reply: HEARTBEAT_OK
 ```
 
-## Supported Formats
+## 支持的格式
 
 jpg, jpeg, png, gif, webp, heic, mp4, mov, m4v, webm

@@ -1,7 +1,8 @@
 {
   "owner": "danpeg",
   "slug": "whatsapp-video-mockup",
-  "displayName": "WhatsApp video maker",
+  "displayName": "WhatsApp 视频制作器",
+  "description": "使用 Remotion 创建动画风格的 WhatsApp 聊天视频。带有 iPhone 边框、自动滚动和大型字体。",
   "latest": {
     "version": "1.0.0",
     "publishedAt": 1768988598325,
